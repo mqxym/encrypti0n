@@ -71,7 +71,7 @@
             swal({
                 title: "Sweet!",
                 text: "Here's a custom image.",
-                imageUrl: "assets/plugins/bootstrap-sweetalert/thumbs-up.jpg"
+                imageUrl: "../plugins/bootstrap-sweetalert/thumbs-up.jpg"
             });
         });
 

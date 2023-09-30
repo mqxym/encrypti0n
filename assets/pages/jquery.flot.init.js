@@ -295,7 +295,7 @@
 				borderWidth : 1,
 				borderColor : "#eeeeee"
 			},
-			colors : ['#dcdcdc', '#f76397', '#6a76fc'],
+			colors : ["#3bafda", "#f76397", "#34d3eb"],
 			tooltip : true,
 			tooltipOpts : {
 				defaultTheme : false
@@ -336,7 +336,7 @@
 		var uploads = [[0, 9], [1, 8], [2, 5], [3, 8], [4, 5], [5, 14], [6, 10]];
 		var downloads = [[0, 5], [1, 12], [2, 4], [3, 3], [4, 12], [5, 11], [6, 14]];
 		var plabels = ["Visits", "Pages/Visit"];
-		var pcolors = ['#f76397', '#6a76fc'];
+		var pcolors = ['#00b19d', '#3bafda'];
 		var borderColor = '#f5f5f5';
 		var bgColor = '#fff';
 		this.createPlotGraph("#website-stats", uploads, downloads, plabels, pcolors, borderColor, bgColor);
@@ -344,11 +344,11 @@
 		//Pie graph data
 		var pielabels = ["Series 1", "Series 2", "Series 3"];
 		var datas = [20, 30, 15];
-		var colors = ['#dcdcdc', '#f76397', '#6a76fc'];
+		var colors = ["#3bafda", "#26c6da", "#80deea"];
 		this.createPieGraph("#pie-chart #pie-chart-container", pielabels, datas, colors);
 
 		//real time data representation
-		var plot = this.createRealTimeGraph('#flotRealTime', this.randomData(), ['#6a76fc']);
+		var plot = this.createRealTimeGraph('#flotRealTime', this.randomData(), ['#3bafda']);
 		plot.draw();
 		var $this = this;
 		function updatePlot() {
@@ -363,7 +363,7 @@
 		//Donut pie graph data
 		var donutlabels = ["Series 1", "Series 2", "Series 3", "Series 4"];
 		var donutdatas = [35, 20, 10, 20];
-		var donutcolors = ['#dcdcdc', '#f76397', '#6a76fc', "#797979"];
+		var donutcolors = ["#3bafda", "#26c6da", "#80deea", "#00b19d"];
 		this.createDonutGraph("#donut-chart #donut-chart-container", donutlabels, donutdatas, donutcolors);
 
 		//Combine graph data
@@ -389,9 +389,9 @@ function($) {
 	$.FlotChart.init()
 }(window.jQuery);
 
-
-
 $(document).ready(function() {
+
+	
 
 	//------------- Ordered bars chart -------------//
 	$(function() {
@@ -483,7 +483,7 @@ $(document).ready(function() {
 					color : '#bdbdbd'
 				}
 			},
-			colors : ['#f76397', '#6a76fc','#dcdcdc'],
+			colors : ["#3bafda", "#26c6da", "#80deea"],
 			tooltip : true, //activate tooltip
 			tooltipOpts : {
 				content : "%s : %y.0",

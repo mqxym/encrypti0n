@@ -12,8 +12,8 @@ $( document ).ready(function() {
             width: $('#sparkline1').width(),
             height: '165',
             chartRangeMax: 50,
-            lineColor: '#6a76fc',
-            fillColor: 'rgba(106, 118, 252, 0.3)',
+            lineColor: '#3bafda',
+            fillColor: 'rgba(59,175,218,0.3)',
             highlightLineColor: 'rgba(0,0,0,.1)',
             highlightSpotColor: 'rgba(0,0,0,.2)',
         });
@@ -23,8 +23,8 @@ $( document ).ready(function() {
             width: $('#sparkline1').width(),
             height: '165',
             chartRangeMax: 40,
-            lineColor: '#f76397',
-            fillColor: 'rgba(247, 99, 151, 0.3)',
+            lineColor: '#5d9cec',
+            fillColor: 'rgba(93, 156, 236, 0.3)',
             composite: true,
             highlightLineColor: 'rgba(0,0,0,.1)',
             highlightSpotColor: 'rgba(0,0,0,.2)',
@@ -35,14 +35,14 @@ $( document ).ready(function() {
             height: '165',
             barWidth: '10',
             barSpacing: '3',
-            barColor: '#6a76fc'
+            barColor: '#3bafda'
         });
 
         $('#sparkline3').sparkline([20, 40, 30, 10], {
             type: 'pie',
             width: '165',
             height: '165',
-            sliceColors: ['#dcdcdc', '#f76397', '#6a76fc', '#797979']
+            sliceColors: ['#dcdcdc', '#3bafda', '#333333', '#00b19d']
         });
 
         $('#sparkline4').sparkline([0, 23, 43, 35, 44, 45, 56, 37, 40], {
@@ -50,7 +50,7 @@ $( document ).ready(function() {
             width: $('#sparkline1').width(),
             height: '165',
             chartRangeMax: 50,
-            lineColor: '#f76397',
+            lineColor: '#3bafda',
             fillColor: 'transparent',
             highlightLineColor: 'rgba(0,0,0,.1)',
             highlightSpotColor: 'rgba(0,0,0,.2)'
@@ -61,7 +61,7 @@ $( document ).ready(function() {
             width: $('#sparkline1').width(),
             height: '165',
             chartRangeMax: 40,
-            lineColor: '#6a76fc',
+            lineColor: '#5d9cec',
             fillColor: 'transparent',
             composite: true,
             highlightLineColor: 'rgba(0,0,0,1)',
@@ -73,25 +73,25 @@ $( document ).ready(function() {
             height: '165',
             barWidth: '10',
             barSpacing: '3',
-            barColor: '#f76397'
+            barColor: '#00b19d'
         });
 
         $('#sparkline6').sparkline([3, 6, 7, 8, 6, 4, 7, 10, 12, 7, 4, 9, 12, 13, 11, 12], {
             type: 'line',
             width: $('#sparkline1').width(),
             height: '165',
-            lineColor: '#6a76fc',
+            lineColor: '#fb6d9d',
             fillColor: 'transparent',
             composite: true,
             highlightLineColor: 'rgba(0,0,0,.1)',
             highlightSpotColor: 'rgba(0,0,0,.2)'
         });
 
-        
+
     },
         DrawMouseSpeed = function () {
             var mrefreshinterval = 500; // update display every 500ms
-            var lastmousex=-1; 
+            var lastmousex=-1;
             var lastmousey=-1;
             var lastmousetime;
             var mousetravel = 0;
@@ -121,8 +121,8 @@ $( document ).ready(function() {
                         width: $('#sparkline1').width(),
                         height: '165',
                         chartRangeMax: 50,
-                        lineColor: '#6a76fc',
-                        fillColor: 'rgba(106, 118, 252, 0.3)',
+                        lineColor: '#3bafda',
+                        fillColor: 'rgba(59,175,218,0.3)',
                         highlightLineColor: 'rgba(24,147,126,.1)',
                         highlightSpotColor: 'rgba(24,147,126,.2)',
                     });
@@ -131,12 +131,12 @@ $( document ).ready(function() {
                 setTimeout(mdraw, mrefreshinterval);
             }
             // We could use setInterval instead, but I prefer to do it this way
-            setTimeout(mdraw, mrefreshinterval); 
+            setTimeout(mdraw, mrefreshinterval);
         };
-    
+
     DrawSparkline();
     DrawMouseSpeed();
-    
+
     var resizeChart;
 
     $(window).resize(function(e) {

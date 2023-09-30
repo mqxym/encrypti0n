@@ -47,7 +47,7 @@
 		}
 	}
 	&:before {
-		background-color: #d8d9df;
+		background-color: @muted;
 		bottom: 0px;
 		content: "";
 		left: 50%;
@@ -58,9 +58,9 @@
 	}
 	.timeline-icon {
 		-webkit-border-radius: 50%;
-		background: #d8d9df;
+		background: @muted;
 		border-radius: 50%;
-		border: 1px solid #d8d9df;
+		border: 1px solid @muted;
 		color: @white;
 		display: block;
 		height: 20px;
@@ -100,7 +100,7 @@ h3.timeline-title {
 	.timeline-desk {
 		.arrow {
 			border-bottom: 8px solid transparent;
-			border-right: 8px solid @white !important;
+			border-right: 8px solid darken(@dark,5%) !important;
 			border-top: 8px solid transparent;
 			display: block;
 			height: 0;
@@ -121,7 +121,7 @@ h3.timeline-title {
 	.timeline-desk {
 		.arrow-alt {
 			border-bottom: 8px solid transparent;
-			border-left: 8px solid @white !important;
+			border-left: 8px solid darken(@dark,5%) !important;
 			border-top: 8px solid transparent;
 			display: block;
 			height: 0;
@@ -175,7 +175,7 @@ h3.timeline-title {
 		margin: 0;
 	}
 	.panel {
-		background: @white;
+		background: darken(@dark,5%);
 		display: block;
 		margin-bottom: 5px;
 		margin-left: 45px;
@@ -191,7 +191,7 @@ h3.timeline-title {
 		}
 	}
 	p {
-		color: #999999;
+		color: @muted;
 		font-size: 14px;
 		margin-bottom: 0;
 	}
@@ -288,6 +288,7 @@ h3.timeline-title {
 .sweet-alert {
   h2 {
     font-size: 22px;
+    color: @dark;
   }
   p {
     font-size: 14px;
@@ -380,6 +381,7 @@ h3.timeline-title {
         padding: 8px 16px;
         height: auto;
         font-weight: 600;
+        color: @muted;
         .border-radius(3px);
 
         &:hover {
@@ -391,7 +393,7 @@ h3.timeline-title {
         height: auto;
         font-size: 17px;
         margin: 8px auto;
-        color: @lightdark5;
+        color: @muted;
         width: 30px;
       }
     }
@@ -405,9 +407,9 @@ h3.timeline-title {
       background:  fade(@muted, 25%) !important;
       height: 36px;
       width: 36px;
+      color: @muted;
 
       &:before {
-        color: inherit;
         top: 7px;
       }
 
@@ -418,6 +420,7 @@ h3.timeline-title {
     .dd3-content {
       height: auto;
       border: none;
+      color: @muted;
       padding: 8px 16px 8px 46px;
       background:  fade(@muted, 25%) !important;
       font-weight: 600;
@@ -486,13 +489,12 @@ h3.timeline-title {
 
 .mails {
   a {
-    color: @lightdark7;
+    color: @muted;
   }
 
   td {
     vertical-align: middle !important;
     position: relative;
-    border-top: 1px solid #F5F5F5 !important;
 
     &:last-of-type {
       width: 100px;
@@ -528,7 +530,7 @@ h3.timeline-title {
 .mail-list {
 
   .list-group-item {
-     background-color: transparent;
+     background-color: transparent !important;
 
      &:hover {
        background-color: @light;
@@ -538,7 +540,7 @@ h3.timeline-title {
      }
   }
   .list-group-item.active{
-    background-color: @light;
+    background-color: @primary !important;
     color: @inverse;
     font-weight: 600;
     .border-radius(3px);
@@ -548,7 +550,7 @@ h3.timeline-title {
 .unread {
   a{
     font-weight: 600;
-    color: @lightdark4;
+    color: fade(@light,70%);
   }
 }
 
@@ -559,8 +561,9 @@ h3.timeline-title {
 
 .bootstrap-tagsinput {
   box-shadow: none;
+  background-color: transparent;
   padding: 3px 7px 6px;
-  border: 1px solid #e3e3e3;
+  border: 2px solid fade(@light,30%);
 
   .label-info {
     background-color: @primary !important;
@@ -574,11 +577,11 @@ h3.timeline-title {
 
   .ms-list {
     box-shadow: none;
-    border: 1px solid #e3e3e3;
+    border: 2px solid fade(@white,20%);
   }
   .ms-list.ms-focus {
     box-shadow: none;
-    border: 1px solid #aaaaaa;
+    border: 2px solid fade(@white,30%);
   }
   .ms-selectable {
     li.ms-elem-selectable{
@@ -593,6 +596,35 @@ h3.timeline-title {
     }
   }
 }
+.ms-selectable {
+    box-shadow: none;
+    outline: none !important;
+  }
+
+  .ms-container {
+    .ms-list.ms-focus {
+      box-shadow: none;
+    }
+    .ms-selectable {
+      li.ms-hover {
+        background-color: @primary;
+        color: @white !important;
+      }
+    }
+    .ms-selection {
+      li.ms-hover {
+        background-color: @primary;
+        color: @white !important;
+      }
+    }
+  }
+.ms-container .ms-selectable, .ms-container .ms-selection {
+  background-color: transparent;
+}
+.ms-container .ms-selectable li.ms-elem-selectable, .ms-container .ms-selection li.ms-elem-selection {
+  color: @muted;
+}
+/* Select2 */
 .select2-container {
   .select2-choice {
     background-image: none !important;
@@ -602,6 +634,7 @@ h3.timeline-title {
     line-height: 22px !important;
     background-color: transparent !important;
     box-shadow: none !important;
+    color: @white;
 
     .select2-arrow {
       background-image: none !important;
@@ -633,18 +666,19 @@ h3.timeline-title {
   width: 100%;
 
   .select2-choices {
-    border: 1px solid #E3E3E3  !important;
+    border: 2px solid fade(@white,20%)  !important;
     box-shadow: none !important;
+    background: transparent !important;
     background-image: none  !important;
     .border-radius(4px)  !important;
     min-height: 38px;
 
     .select2-search-choice {
-      padding: 4px 7px 4px 18px;
+      padding: 6px 8px 7px 19px;
       margin: 5px 0 3px 5px;
-      color: #555555;
-      background: #f5f5f5;
-      border-color: #e5e5e5;
+      color: @white;
+      background: fade(@white,20%);
+      border: none;
       -webkit-box-shadow: none;
       box-shadow: none;
     }
@@ -654,10 +688,17 @@ h3.timeline-title {
         font-family: inherit;
       }
     }
+    .select2-search-choice-close {
+      top: 6px;
+    }
   }
 }
 
+
 /* Wysiwig */
+.mce-tinymce {
+  background-color: transparent !important;
+}
 .mce-content-body p {
   color: #9398a0;
   font-size: 14px;
@@ -710,8 +751,8 @@ h3.timeline-title {
   border-width: 0px !important;
 }
 .mce-container .mce-menubar {
-  background-color: #f2f4f7 !important;
-  border: 1px solid #d7dce5 !important;
+  background-color: fade(@white,20%) !important;
+  border: none !important;
   padding: 2px;
 }
 .mce-container .mce-menubar .mce-btn button span {
@@ -721,31 +762,35 @@ h3.timeline-title {
   text-transform: capitalize;
 }
 .mce-container .mce-menubar .mce-btn button .mce-caret {
-  border-top-color: #707780;
+  border-top-color: @white;
+}
+.mce-caret {
+  border-top: 4px solid @white !important;
+}
+.mce-menubar .mce-menubtn:hover, .mce-menubar .mce-menubtn.mce-active, .mce-menubar .mce-menubtn:focus {
+  background-color: transparent !important;
 }
 .mce-container .mce-menubar .mce-btn button:hover {
-  background-color: #e8ebf1;
+  background-color: fade(@white,20%);
 }
 .mce-container .mce-menubar .mce-btn.mce-active button {
   background-color: #e8ebf1;
 }
 .mce-container .mce-btn {
-  background-color: #d7dce5;
+  background-color: fade(@white,20%);
   background-image: none;
   outline: 0;
   border: 0px;
   border-radius: 0px;
 }
 .mce-container .mce-btn button {
-  color: #ffffff;
+  color: @white !important;
   font-size: 14px;
   font-weight: 400;
   text-shadow: none;
+  padding: 5px 10px;
 }
-.mce-container .mce-btn:hover {
-  background-color: #b8c1d1;
-  background-image: none;
-}
+
 .mce-container .mce-primary {
   background-color: @primary;
   background-image: none;
@@ -764,37 +809,50 @@ h3.timeline-title {
   background-image: none;
 }
 .mce-container .mce-toolbar-grp {
-  background-color: #f2f4f7 !important;
-  border: 1px solid #d7dce5 !important;
+  background-color: fade(@white,20%) !important;
+  border: none !important;
   border-top-width: 0px !important;
   padding: 6px;
 }
-.mce-container .mce-edit-area {
-  border: 1px solid #d7dce5 !important;
-  border-width: 0px 1px !important;
+
+.mce-container .mce-btn-group .mce-btn:hover, .mce-container .mce-btn-group .mce-btn:focus {
+  background-color: fade(@white,20%) !important;
+  color: @dark;
+}
+.mce-stack-layout-item {
+  body {
+    background-color: transparent !important;
+  }
+}
+
+div.mce-edit-area {
+  background: transparent !important;
+}
+
+.mce-btn.mce-active button, .mce-btn.mce-active:hover button{
+  color: @dark !important;
 }
 .mce-container .mce-statusbar {
-  background-color: #f2f4f7 !important;
-  border: 1px solid #d7dce5 !important;
+  background-color: fade(@white,20%) !important;
+  border: none !important;
 }
 .mce-container .mce-statusbar .mce-path .mce-path-item {
-  color: #707780;
+  color: @white;
   font-size: 14px;
   font-weight: 400;
 }
 .mce-container .mce-widget {
-  color: #9398a0;
+  color: @white;
   font-size: 14px;
   font-weight: 400;
   border-left: 1px solid transparent;
 }
 .mce-container .mce-btn-group {
-  border: 1px solid #e9ecf2 !important;
+  border: none;
 }
 .mce-container .mce-btn-group .mce-btn {
   box-shadow: none;
   background-image: none;
-  background-color: @white;
   border-width: 0px;
   border-radius: 0px !important;
 }
@@ -810,11 +868,11 @@ h3.timeline-title {
   font-weight: 300;
 }
 .mce-container .mce-btn-group .mce-btn button .mce-caret {
-  color: #707780;
+  color: @white;
   font-size: 14px;
 }
 .mce-container .mce-ico {
-  color: #707780;
+  color: @white;
   font-size: 14px;
 }
 .mce-container .mce-panel {
@@ -831,7 +889,7 @@ h3.timeline-title {
   font-size: 14px;
 }
 .mce-container.mce-menu .mce-menu-item .mce-text {
-  color: #707780;
+  color: #707780 !important;
   font-size: 14px;
   font-weight: 400;
   text-transform: capitalize;
@@ -847,17 +905,7 @@ h3.timeline-title {
 .mce-container.mce-menu .mce-menu-item.mce-selected {
   background-color: @primary;
 }
-.mce-container.mce-menu .mce-menu-item:hover .mce-ico,
-.mce-container.mce-menu .mce-menu-item:focus .mce-ico,
-.mce-container.mce-menu .mce-menu-item.mce-selected .mce-ico,
-.mce-container.mce-menu .mce-menu-item:hover .mce-text,
-.mce-container.mce-menu .mce-menu-item:focus .mce-text,
-.mce-container.mce-menu .mce-menu-item.mce-selected .mce-text,
-.mce-container.mce-menu .mce-menu-item:hover .mce-menu-shortcut,
-.mce-container.mce-menu .mce-menu-item:focus .mce-menu-shortcut,
-.mce-container.mce-menu .mce-menu-item.mce-selected .mce-menu-shortcut {
-  color: @white;
-}
+
 .mce-container.mce-menu .mce-menu-item.mce-disabled .mce-ico,
 .mce-container.mce-menu .mce-menu-item.mce-disabled .mce-text,
 .mce-container.mce-menu .mce-menu-item.mce-disabled .mce-menu-shortcut {
@@ -886,7 +934,7 @@ h3.timeline-title {
   background-color: #d7dce5;
 }
 .mce-menubtn button {
-    color: @lightdark7 !important;
+    color: @dark !important;
 }
 .mce-menu-item-normal.mce-active {
     background-color: @primary !important;
@@ -896,18 +944,29 @@ h3.timeline-title {
     }
 }
 
-
+/* Time picker */
+.bootstrap-timepicker-widget table td input {
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: transparent;
+}
+.bootstrap-timepicker-widget table td a {
+  color: fade(@light,20%);
+}
 /* =============
    Charts
 ============= */
 
 .morris-hover.morris-default-style {
-    border-radius: 5px;
-    padding: 10px 12px;
-    background: #36404a;
-    border: none;
-    color: @white !important;
-
+  border-radius: 5px;
+  padding: 10px 12px;
+  background-color: @light5;
+  border: none;
+  color: @dark !important;
+  .morris-hover-point {
+    color: @dark !important;
+  }
 }
 .chart-detail-list {
   li {
@@ -968,9 +1027,11 @@ h3.timeline-title {
 /* Flot chart */
 #flotTip {
   padding: 8px 12px;
-  background-color: #36404a;
+  background-color: @light5;
+  border: 1px solid fade(@dark,10%);
   z-index: 100;
-  color: #ffffff;
+  color: @dark;
+  font-weight: 500;
   opacity: 0.9;
   font-size: 13px;
   -webkit-border-radius: 3px;
@@ -988,14 +1049,21 @@ h3.timeline-title {
     line-height: 10px;
     padding-right: 10px;
 }
-
+.legend div:first-of-type {
+    background-color: transparent !important;
+}
+.flot-tick-label {
+  color: @white !important;
+}
 
 /* Chartist chart */
 .ct-golden-section:before {
     float: none;
 }
+.ct-grid {
+    stroke: rgba(255, 255, 255, 0.1);
+}
 .ct-chart {
-
   max-height: 300px;
 
   .ct-label {
@@ -1071,7 +1139,23 @@ h3.timeline-title {
   font-weight: 600;
 }
 
-
+/* Nvd3 Chart */
+.nvd3 text {
+  fill: @muted;
+}
+.nvd3 .nv-axis line,
+.nvd3 .nv-axis path {
+  stroke: darken(@dark,3%);
+}
+.nvd3 .nv-discretebar .nv-groups text,
+.nvd3 .nv-multibarHorizontal .nv-groups text {
+  fill: fade(@white,80%);
+}
+.multi-chart .nv-legend-symbol {
+  fill: @white !important;
+  fill-opacity: 0;
+  stroke: @white !important;
+}
 
 
 
@@ -1126,7 +1210,7 @@ h3.timeline-title {
     -webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
     -webkit-transition: all 0.3s ease-out;
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
-    color: #333333;
+    color: @muted;
     padding: 5px 10px;
     display: inline-block;
     transition: all 0.3s ease-out;
@@ -1142,7 +1226,7 @@ h3.timeline-title {
 }
 
 .thumb {
-  background-color: @white;
+  background-color: darken(@dark,5%);
   border-radius: 3px;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
   margin-top: 30px;
@@ -1199,7 +1283,7 @@ h3.timeline-title {
 
 .wrapper-page {
   margin: 7.5% auto;
-  max-width: 360px;
+  width: 360px;
 
   .form-control {
     height: 40px;
@@ -1208,7 +1292,7 @@ h3.timeline-title {
   .form-control-feedback {
     left: 15px;
     top: 3px;
-    color: fade(@inverse,40%);
+    color: fade(@white,40%);
     font-size: 20px;
   }
 
@@ -1218,10 +1302,8 @@ h3.timeline-title {
 }
 
 .logo-lg {
-  font-size: 26px !important;
-  font-weight: 600;
-  line-height: 70px;
-  color: @primary !important;
+  font-size: 28px !important;
+  color: @white !important;
 }
 
 .user-thumb {
@@ -1244,11 +1326,11 @@ h3.timeline-title {
   font-weight: 300;
 
   h1 {
-    color: #252932;
+    color: @white;
     font-size: 98px;
     font-weight: 700;
     line-height: 98px;
-    text-shadow: rgba(61, 61, 61, 0.3) 1px 1px, rgba(61, 61, 61, 0.2) 2px 2px, rgba(61, 61, 61, 0.3) 3px 3px;
+    text-shadow: rgba(255, 255, 255, 0.3) 1px 1px, rgba(255, 255, 255, 0.2) 2px 2px, rgba(255, 255, 255, 0.3) 3px 3px;
   }
 
 }
@@ -1283,8 +1365,6 @@ h3.timeline-title {
     transform: translateY(20px);
   }
 }
-
-
 
 /* =============
    Tree view page
@@ -1333,7 +1413,7 @@ h3.timeline-title {
   .plan-price {
     font-size: 48px;
     margin-bottom: 10px;
-    color: @dark;
+    color: @white;
   }
   .plan-duration {
     font-size: 13px;

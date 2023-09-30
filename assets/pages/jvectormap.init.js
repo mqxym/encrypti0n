@@ -19,13 +19,13 @@
 			hoverColor : false,
 			regionStyle : {
 				initial : {
-					fill : '#6a76fc'
+					fill : '#3bafda'
 				}
 			},
 			 markerStyle: {
                 initial: {
                     r: 9,
-                    'fill': '#f76397',
+                    'fill': '#a288d5',
                     'fill-opacity': 0.9,
                     'stroke': '#fff',
                     'stroke-width' : 7,
@@ -125,7 +125,7 @@
 			backgroundColor : 'transparent',
 			regionStyle : {
 				initial : {
-					fill : '#6a76fc'
+					fill : '#3bafda'
 				}
 			}
 		});
@@ -135,7 +135,7 @@
 			backgroundColor : 'transparent',
 			regionStyle : {
 				initial : {
-					fill : '#6a76fc'
+					fill : '#3bafda'
 				}
 			}
 		});
@@ -145,7 +145,7 @@
 			backgroundColor : 'transparent',
 			regionStyle : {
 				initial : {
-					fill : '#6a76fc'
+					fill : '#3bafda'
 				}
 			}
 		});
@@ -155,7 +155,7 @@
 			backgroundColor : 'transparent',
 			regionStyle : {
 				initial : {
-					fill : '#6a76fc'
+					fill : '#3bafda'
 				}
 			}
 		});
@@ -166,7 +166,7 @@
 			backgroundColor : 'transparent',
 			regionStyle : {
 				initial : {
-					fill : '#6a76fc'
+					fill : '#3bafda'
 				}
 			}
 		});
@@ -177,7 +177,7 @@
 			backgroundColor : 'transparent',
 			regionStyle : {
 				initial : {
-					fill : '#6a76fc'
+					fill : '#3bafda'
 				}
 			}
 		});
@@ -187,7 +187,7 @@
 			backgroundColor : 'transparent',
 			regionStyle : {
 				initial : {
-					fill : '#6a76fc'
+					fill : '#3bafda'
 				}
 			}
 		});
@@ -197,7 +197,7 @@
 			backgroundColor : 'transparent',
 			regionStyle : {
 				initial : {
-					fill : '#6a76fc'
+					fill : '#3bafda'
 				}
 			}
 		});

@@ -9,8 +9,21 @@ Email: coderthemes@gmail.com
 File: Menu
 */
 
+body {
+  padding-bottom: 61px;
+}
+
 .wrapper {
   margin-top: 145px;
+}
+
+.container {
+  width: 95%;
+}
+
+.page-title {
+  margin-bottom: 20px;
+  margin-top: 0;
 }
 
 #topnav {
@@ -142,7 +155,6 @@ File: Menu
       text-transform: uppercase;
       font-weight: 600;
       padding: 11px 20px 15px;
-      color: @inverse;
       font-family: @font-2;
     }
 
@@ -195,7 +207,7 @@ File: Menu
 
   .notifi-title {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    color: @dark;
+    color: @white;
     font-size: 16px;
     font-weight: 400;
     padding: 5px 0px 10px;
@@ -264,7 +276,7 @@ File: Menu
   }
 
   .navbar-custom {
-    background-color: @white;
+    background-color: @dark;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   }
 
@@ -349,7 +361,7 @@ File: Menu
 
   .navigation-menu > li > a {
     display: block;
-    color: @dark;
+    color: fade(@white,70%);
     font-weight: 500;
     -webkit-transition: all .3s ease;
     transition: all .3s ease;
@@ -382,7 +394,7 @@ File: Menu
     i {
       font-size: 18px;
       margin-right: 5px;
-      color: fade(@dark,70%);
+      color: fade(@white,70%);
     }
   }
 
@@ -391,18 +403,17 @@ File: Menu
   }
 }
 
-@media (min-width: 992px) {
-  #topnav .navigation-menu > li > a {
-    padding-top: 22px;
-    padding-bottom: 22px;
-  }
-}
 
 
 /*
   Responsive Menu
 */
 @media (min-width: 992px) {
+
+  #topnav .navigation-menu > li > a {
+    padding-top: 22px;
+    padding-bottom: 22px;
+  }
 
   #topnav {
     .navigation-menu > li.last-elements .submenu {
@@ -436,7 +447,7 @@ File: Menu
       top: 100%;
       left: 0;
       z-index: 1000;
-      border: 1px solid #e7e7e7;
+      border: 1px solid fade(@white,10%);
       padding: 15px 0;
       list-style: none;
       min-width: 200px;
@@ -445,7 +456,7 @@ File: Menu
       margin-top: 10px;
       -webkit-transition: all .2s ease;
       transition: all .2s ease;
-      background-color: @white;
+      background-color: darken(@dark,5%);
       box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
     }
     .navigation-menu > li .submenu.megamenu {
@@ -485,8 +496,7 @@ File: Menu
       padding: 8px 25px;
       clear: both;
       white-space: nowrap;
-      font-weight: 500;
-      color: #494e53;
+      color: fade(@white,60%);
     }
     .navigation-menu > li .submenu li a:hover {
       color: @primary;
@@ -530,7 +540,7 @@ File: Menu
       float: none;
     }
     .navigation-menu > li > a {
-      color: @lightdark7;
+      color: fade(@white,70%);
       padding: 15px;
 
       i {
@@ -553,7 +563,7 @@ File: Menu
       display: block;
       position: relative;
       padding: 7px 20px;
-      color: @lightdark7;
+      color: fade(@white,50%);
     }
     .navigation-menu > li .submenu li a:hover {
       color: @primary;
@@ -605,9 +615,9 @@ File: Menu
     height: auto;
     padding-bottom: 0;
     overflow: auto;
-    border-top: 1px solid #e7e7e7;
-    border-bottom: 1px solid #e7e7e7;
-    background-color: #fff;
+    border-top: 1px solid fade(@white,50%);
+    border-bottom: 1px solid fade(@white,50%);
+    background-color: @dark;
   }
   #navigation.open {
     display: block;
@@ -646,3 +656,4 @@ File: Menu
   right: 0px;
   left: 0px;
 }
+

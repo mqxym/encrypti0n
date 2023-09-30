@@ -29,15 +29,15 @@
         return [{
             values: sin,
             key: 'Sine Wave',
-            color: "#f76397"
+            color: "#00b19d"
         }, {
             values: cos,
             key: 'Cosine Wave',
-            color: "#6a76fc"
+            color: "#ef5350"
         }, {
             values: sin2,
             key: 'Custom sine',
-            color: "#dcdcdc"
+            color: "#3DDCF7"
         }];
     }
     nv.addGraph(function() {
@@ -56,11 +56,11 @@
         values: [{
             'label': 'A Label',
             'value': -29.765957771107,
-            'color': '#f76397'
+            'color': '#00b19d'
         }, {
             'label': 'B Label',
             'value': 50,
-            'color': '#6a76fc'
+            'color': '#ef5350'
         }, {
             'label': 'C Label',
             'value': 32.807804682612,
@@ -104,7 +104,7 @@
         return 'M' + (-size / 2) + ',' + (-size / 2) + 'l' + size + ',' + size + 'm0,' + -(size) + 'l' + (-size) + ',' + size;
     });
     var scatterChart;
-    var colors = ['#f76397', '#6a76fc','#3ddcf7', '#ffaa00','#81c868', '#dcdcdc','#555555	', '#fb6d9d','#98a6ad', '#3bafda'];
+    var colors = ['#00b19d', '#ef5350','#3ddcf7', '#ffaa00','#81c868', '#dcdcdc','#555555	', '#fb6d9d','#98a6ad', '#3bafda'];
     //d3.scale.category10().range()
     nv.addGraph(function() {
         scatterChart = nv.models.scatterChart().useVoronoi(true).color(colors).duration(300);
@@ -174,7 +174,7 @@
         }]
     }, {
         'key': 'Series 2',
-        'color': "#6a76fc",
+        'color': "#3bafda",
         'values': [{
             'label': 'Group A',
             'value': 25.307646510375
@@ -259,12 +259,12 @@
 	      { 
 	        "label": "One",
 	        "value" : 29.765957771107,
-	        "color" : "#f76397"
-	      } ,
+	        "color" : "#00b19d"
+	      } , 
 	      { 
 	        "label": "Two",
 	        "value" : 60,
-	        'color': '#6a76fc'
+	        'color': '#ef5350'
 	      } , 
 	      { 
 	        "label": "Three",

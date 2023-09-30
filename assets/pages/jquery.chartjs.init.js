@@ -60,17 +60,17 @@ File: Chartjs
                     label: "Sales Analytics",
                     fill: false,
                     lineTension: 0.1,
-                    backgroundColor: "#6a76fc",
-                    borderColor: "#6a76fc",
+                    backgroundColor: "#3bafda",
+                    borderColor: "#3bafda",
                     borderCapStyle: 'butt',
                     borderDash: [],
                     borderDashOffset: 0.0,
                     borderJoinStyle: 'miter',
-                    pointBorderColor: "#6a76fc",
+                    pointBorderColor: "#3bafda",
                     pointBackgroundColor: "#fff",
                     pointBorderWidth: 1,
                     pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "#6a76fc",
+                    pointHoverBackgroundColor: "#3bafda",
                     pointHoverBorderColor: "#eef0f2",
                     pointHoverBorderWidth: 2,
                     pointRadius: 1,
@@ -105,13 +105,13 @@ File: Chartjs
                 {
                     data: [300, 50, 100],
                     backgroundColor: [
-                        "#6a76fc",
-                        "#f76397",
+                        "#3bafda",
+                        "#26c6da",
                         "#00b19d"
                     ],
                     hoverBackgroundColor: [
-                        "#6a76fc",
-                        "#f76397",
+                        "#3bafda",
+                        "#26c6da",
                         "#00b19d"
                     ],
                     hoverBorderColor: "#fff"
@@ -131,14 +131,14 @@ File: Chartjs
                 {
                     data: [300, 50, 100],
                     backgroundColor: [
-                        "#6a76fc",
+                        "#3bafda",
                         "#00b19d",
-                        "#f76397"
+                        "#26c6da"
                     ],
                     hoverBackgroundColor: [
-                        "#6a76fc",
+                        "#3bafda",
                         "#00b19d",
-                        "#f76397"
+                        "#26c6da"
                     ],
                     hoverBorderColor: "#fff"
                 }]
@@ -203,9 +203,9 @@ File: Chartjs
                     14
                 ],
                 backgroundColor: [
-                    "#6a76fc",
+                    "#3bafda",
                     "#7266ba",
-                    "#f76397",
+                    "#26c6da",
                     "#E7E9ED",
                     "#00b19d"
                 ],
