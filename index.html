@@ -120,22 +120,22 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <form class="form-horizontal" role="form"> 
+                        <form class="form-horizontal" role="form" id="mainForm"> 
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="card-box">                                                                    
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Text Input</label>
                                             <div class="col-md-10">
-                                                <textarea class="form-control" id="input" placeholder="Your message here" rows="5"></textarea>
+                                                <textarea class="form-control" name="inputText" placeholder="Your message here" rows="5"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Key</label>
                                             <div class="col-md-10">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control hidden" id="keyBlank" placeholder="Password" value="">
-                                                    <input type="password" class="form-control" id="keyPassword" placeholder="Password" value="">
+                                                    <input type="text" class="form-control hidden" name="keyBlank" placeholder="Password" value="">
+                                                    <input type="password" class="form-control" name="keyPassword" placeholder="Password" value="">
                                                     <span class="input-group-btn">
                                                         <button id="keyCopy" class="btn btn-purple waves-effect m-b-5"> 
                                                             <i class="md md-content-copy m-r-5"></i> 
@@ -150,7 +150,7 @@
                                                     </span>
                                                 </div>              
                                                 <div class="checkbox checkbox-primary">
-                                                    <input id="hideKey" type="checkbox" checked>
+                                                    <input name="hideKey" type="checkbox" checked>
                                                     <label for="hideKey">
                                                         Hide key
                                                     </label>
@@ -160,7 +160,7 @@
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Browser</label>
                                             <div class="col-md-4">
-                                                <select id="keySlot" class="form-control">
+                                                <select name="keySlot" class="form-control">
                                                     <option value="1">Slot 1</option>
                                                     <option value="2">Slot 2</option>
                                                     <option value="3">Slot 3</option>
@@ -174,11 +174,11 @@
                                                 </span>
                                             </div>
                                             <div class="col-md-6">
-                                                <button id="loadKey" class="btn btn-default waves-effect"> 
+                                                <button type="button" id="loadKey" class="btn btn-default waves-effect"> 
                                                     <i class="md  md-file-download m-r-5"></i> 
                                                     <span>Load</span> 
                                                 </button>
-                                                <button id="saveKey" class="btn btn-default waves-effect m-r-5"> 
+                                                <button type="button" id="saveKey" class="btn btn-default waves-effect m-r-5"> 
                                                     <i class="md md-file-upload m-r-5"></i> 
                                                     <span>Save</span> 
                                                 </button>
@@ -194,7 +194,7 @@
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Output</label>
                                             <div class="col-md-10">
-                                                <textarea class="form-control" id="input" readonly placeholder="The result of the encryption / decryption" rows="5"></textarea>
+                                                <textarea class="form-control" id="output" name="output" readonly placeholder="The result of the encryption / decryption" rows="5"></textarea>
                                                 <span class="help-block"><small>Encrypted output is base64 formatted </small></span>
                                             </div>
                                         </div>       
@@ -207,7 +207,7 @@
                                             <div class="col-md-10">
                                                 <div>
                                                     <div class="checkbox checkbox-primary">
-                                                        <input id="doHashing" type="checkbox" checked>
+                                                        <input id="doHashing" name="doHashing" type="checkbox" checked>
                                                         <label for="doHashing">
                                                             Enabled
                                                         </label>
@@ -220,7 +220,7 @@
                                                 </div>
                                                 <div>
                                                     <div class="checkbox checkbox-primary">
-                                                        <input id="doRoundOffset" type="checkbox" checked>
+                                                        <input id="doRoundOffset" name="doRoundOffset" type="checkbox" checked>
                                                         <label for="doRoundOffset">
                                                             Key-depended round offset
                                                         </label>
@@ -233,7 +233,7 @@
                                                 </div>
                                                 <div>
                                                     <div class="checkbox checkbox-primary">
-                                                        <input id="doHashSalting" type="checkbox" checked>
+                                                        <input id="doHashSalting" name="doHashSalting" type="checkbox" disabled>
                                                         <label for="doHashSalting">
                                                             Hash salting
                                                         </label>
@@ -249,7 +249,7 @@
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Hash difficulty</label>
                                             <div class="col-md-10">
-                                                <select id="hashDifficulty" class="form-control">
+                                                <select id="hashDifficulty" name="hashDifficulty" class="form-control">
                                                     <option value="low">Low</option>
                                                     <option value="medium" selected>Medium</option>
                                                     <option value="high">High</option>
@@ -265,19 +265,19 @@
                                             <label class="col-md-2 control-label">Encryption method</label>
                                             <div class="col-md-10">
                                                 <div class="checkbox checkbox-primary">
-                                                    <input id="doAES" type="checkbox" checked>
+                                                    <input id="doAES" name="doAES" type="checkbox" checked>
                                                     <label for="doAES">
                                                         AES
                                                     </label>
                                                 </div>
                                                 <div class="checkbox checkbox-primary">
-                                                    <input id="doBF" type="checkbox" checked>
+                                                    <input id="doBF" name="doBF" type="checkbox" checked>
                                                     <label for="doBF">
                                                         Blowfish
                                                     </label>
                                                 </div> 
                                                 <div class="checkbox checkbox-primary">
-                                                    <input id="doXOR" type="checkbox" checked>
+                                                    <input id="doXOR" name="doXOR" type="checkbox" checked>
                                                     <label for="doXOR">
                                                         XOR
                                                     </label>
@@ -292,7 +292,7 @@
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Configuration</label>
                                             <div class="col-md-10">
-                                                <button id="keyCopy" class="btn btn-purple btn-block waves-effect m-b-5"> 
+                                                <button id="saveSettings" type="button" class="btn btn-purple btn-block waves-effect m-b-5"> 
                                                     <i class="md md-save m-r-5"></i> 
                                                     <span>Save settings</span> 
                                                 </button>
@@ -317,33 +317,38 @@
         </div>
 
         <!-- jQuery  -->
-        <script src="assets/js/jquery.min.js"></script>
-        <script src="assets/js/bootstrap.min.js"></script>
-        <script src="assets/js/detect.js"></script>
-        <script src="assets/js/fastclick.js"></script>
-        <script src="assets/js/jquery.blockUI.js"></script>
-        <script src="assets/js/waves.js"></script>
-        <script src="assets/js/wow.min.js"></script>
-        <script src="assets/js/jquery.nicescroll.js"></script>
-        <script src="assets/js/jquery.scrollTo.min.js"></script>
+        <script src="assets/js/jquery.min.js" defer></script>
+        <script src="assets/js/bootstrap.min.js" defer></script>
+        <script src="assets/js/detect.js" defer></script>
+        <script src="assets/js/fastclick.js" defer></script>
+        <script src="assets/js/jquery.blockUI.js defer"></script>
+        <script src="assets/js/waves.js" defer></script>
+        <script src="assets/js/wow.min.js" defer></script>
+        <script src="assets/js/jquery.nicescroll.js" defer></script>
+        <script src="assets/js/jquery.scrollTo.min.js" defer></script>
 
         <!-- Counter Up  -->
-        <script src="plugins/waypoints/lib/jquery.waypoints.js"></script>
-        <script src="plugins/counterup/jquery.counterup.min.js"></script>
+        <script src="plugins/waypoints/lib/jquery.waypoints.js" defer></script>
+        <script src="plugins/counterup/jquery.counterup.min.js" defer></script>
 
         <!-- circliful Chart -->
-        <script src="plugins/jquery-circliful/js/jquery.circliful.min.js"></script>
-        <script src="plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+        <script src="plugins/jquery-circliful/js/jquery.circliful.min.js" defer></script>
+        <script src="plugins/jquery-sparkline/jquery.sparkline.min.js" defer></script>
 
         <!-- skycons -->
-        <script src="plugins/skyicons/skycons.min.js" type="text/javascript"></script>
+        <script src="plugins/skyicons/skycons.min.js" type="text/javascript"  defer></script>
 
         <!-- Page js  -->
-        <script src="assets/pages/jquery.dashboard.js"></script>
+        <script src="assets/pages/jquery.dashboard.js" defer></script>
 
         <!-- Custom main Js -->
-        <script src="assets/js/jquery.core.js"></script>
-        <script src="assets/js/jquery.app.js"></script>
+        <script src="assets/js/jquery.core.js" defer></script>
+        <script src="assets/js/jquery.app.js" defer></script>
+
+        <!-- App JS-->
+        <script src="app/crypto.js" defer></script>
+        <script src="app/lib.js" defer></script>
+        <script src="app/main.js" defer></script>
 
     </body>
 </html>
