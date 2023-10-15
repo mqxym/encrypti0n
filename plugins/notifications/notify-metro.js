@@ -25,7 +25,7 @@ $.notify.addStyle("metro", {
         },
         success: {
             "color": "#fafafa !important",
-            "background-color": "#81c868",
+            "background-color": "#65cf9a",
             "border": "1px solid #33b86c"
         },
         info: {

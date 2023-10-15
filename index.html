@@ -88,7 +88,7 @@
                         <!-- Navigation Menu-->
                         <ul class="navigation-menu">
                             <li class="has-submenu">
-                                <a href="index.html"><i class="md md-home"></i>App</a>
+                                <a href="/"><i class="md md-home"></i>App</a>
                             </li>
                             <li class="has-submenu">
                                 <a href="#"><i class="md md-settings-input-component"></i>Methods</a>
@@ -115,7 +115,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="page-title">Encrypt and Decrypt your texts with AES, Blowfish or XOR</h4>
+                        <h4 class="page-title">Encrypt and decrypt your texts with AES, Blowfish or XOR</h4>
                     </div>
                 </div>
                 <div class="row">
@@ -137,13 +137,13 @@
                                                     <input type="text" class="form-control hidden" id="keyBlank" name="keyBlank" placeholder="Password" value="">
                                                     <input type="password" class="form-control" id="keyPassword" name="keyPassword" placeholder="Password" value="">
                                                     <span class="input-group-btn">
-                                                        <button id="keyCopy" class="btn btn-purple waves-effect m-b-5"> 
+                                                        <button id="keyCopy" type="button" class="btn btn-purple waves-effect m-b-5"> 
                                                             <i class="md md-content-copy m-r-5"></i> 
                                                             <span>Copy</span> 
                                                         </button>
                                                     </span>
                                                     <span class="input-group-btn">
-                                                        <button id="keyGenerate" class="btn btn-default waves-effect m-b-5"> 
+                                                        <button id="keyGenerate" type="button" class="btn btn-default waves-effect m-b-5"> 
                                                             <i class="md md-cached m-r-5"></i> 
                                                             <span>Gen</span> 
                                                         </button>
@@ -166,6 +166,11 @@
                                                     <option value="3">Slot 3</option>
                                                     <option value="4">Slot 4</option>
                                                     <option value="5">Slot 5</option>
+                                                    <option value="6">Slot 6</option>
+                                                    <option value="7">Slot 7</option>
+                                                    <option value="8">Slot 8</option>
+                                                    <option value="9">Slot 9</option>
+                                                    <option value="10">Slot 10</option>
                                                 </select>
                                                 <span class="help-block">
                                                     <small>
@@ -185,17 +190,34 @@
                                             </div>
 
                                         </div>
+
+
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Action</label>
                                             <div class="col-md-10">
                                                 <button type="button" id="action" class="btn btn-primary btn-block w-md waves-effect waves-light m-b-5">Encrypt / Decrypt</button>
+                                                <span class="help-block">
+                                                    <small>
+                                                        To decrypt the programm checks for a valid config header (n=)
+                                                    </small>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group hidden">
+                                            <label class="col-md-2 control-label">Progress</label>
+                                            <div class="col-md-10">
+                                                <div class="progress m-t-10">
+                                                    <div class="progress-bar progress-bar-purple" id="progress-bar" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+                                                        <span class="sr-only">60% Complete</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Output</label>
                                             <div class="col-md-10">
                                                 <textarea class="form-control" id="output" name="output" readonly placeholder="The result of the encryption / decryption" rows="5"></textarea>
-                                                <span class="help-block"><small>Encrypted output is base64 formatted </small></span>
+                                                <span class="help-block"><small>Encrypted output is base64 formatted and uses a config header </small></span>
                                             </div>
                                         </div>       
                                     </div>
@@ -233,14 +255,14 @@
                                                 </div>
                                                 <div>
                                                     <div class="checkbox checkbox-primary">
-                                                        <input id="doHashSalting" name="doHashSalting" type="checkbox" disabled>
+                                                        <input id="doHashSalting" name="doHashSalting" type="checkbox">
                                                         <label for="doHashSalting">
                                                             Hash salting
                                                         </label>
                                                     </div>
                                                     <span class="help-block">
                                                         <small>
-                                                            Add random numbers to the hash function each round
+                                                            Add numbers to the hash function each round
                                                         </small>
                                                     </span> 
                                                 </div>
@@ -296,6 +318,11 @@
                                                     <i class="md md-save m-r-5"></i> 
                                                     <span>Save settings</span> 
                                                 </button>
+                                                <span class="help-block">
+                                                    <small>
+                                                        Your settings get loaded each time you visit the site.
+                                                    </small>
+                                                </span>
                                             </div>
                                         </div>                                                              
                                     </div>                                
@@ -340,6 +367,10 @@
 
         <!-- Page js  -->
         <script src="assets/pages/jquery.dashboard.js" defer></script>
+
+        <!-- Notification js -->
+        <script src="plugins/notifyjs/dist/notify.min.js" defer></script>
+        <script src="plugins/notifications/notify-metro.js" defer></script>
 
         <!-- Custom main Js -->
         <script src="assets/js/jquery.core.js" defer></script>
