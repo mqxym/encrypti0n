@@ -3,6 +3,9 @@ class Main {
     constructor (formHandler) {
         this.formHandler = formHandler;
         $('#action').on('click', this.action.bind(this));
+        $('#hideKey').on('change', this.toggleKey.bind(this));
+
+        //his.generateHeader();
     }
 
     getFormValue(name) {
@@ -23,14 +26,38 @@ class Main {
       };
     }
 
+    getSettings () {
+      return {
+        methods: this.getMethods(),
+        doHashing: this.getFormValue("doHashing"),
+        doHashSalting: this.getFormValue("doHashSalting"),
+        doRoundOffset: this.getFormValue("doRoundOffset"),
+        hashDifficulty: this.getFormValue("hashDifficulty"),
+      }
+    }
+
     action () {
       const key = this.getFormValue("keyPassword");
       const text = this.getFormValue("inputText");
       const methods = this.getMethods(); 
-      console.log(methods);
 
       const encryptedText = this.encrypt(key, text, methods);
-      this.setFormValue("output", encryptedText);
+      const header = this.generateHeader();
+      this.setFormValue("output", header + encryptedText);
+    }
+
+    toggleKey () {
+      if ($("#hideKey").is(":checked")) {
+        $("#keyBlank").addClass("hidden");
+        $("#keyPassword").removeClass("hidden");
+        this.setFormValue("keyPassword", this.getFormValue("keyBlank"));
+        console.log("Hide password");
+      } else {
+        $("#keyBlank").removeClass("hidden");
+        $("#keyPassword").addClass("hidden");
+        this.setFormValue("keyBlank", this.getFormValue("keyPassword"));
+        console.log("Show password");
+      }
     }
 
     encrypt (key, text, methods) {
@@ -52,15 +79,62 @@ class Main {
       return encryptedText;
     }
 
-    decrypt (key, cipher) {
+    decrypt (key, cipher, methods) {
+      try {
 
+        decrypted = cipher; 
+
+        if (methods.doAES) {
+          console.log("Start AES Decryption...");
+          decrypted = CryptoJS.AES.decrypt(decrypted, key).toString(CryptoJS.enc.Utf8);
+        }
+
+        if (methods.doBF) {
+          console.log("Start Blowfish Decryption...");
+          decrypted = CryptoJS.Blowfish.decrypt(decrypted, key).toString(CryptoJS.enc.Utf8);
+        }
+
+        if (methods.doXOR) {
+          console.log("Start XOR Decryption")
+          decrypted = base64ToHex(decrypted);
+          decrypted = XORdecrypt(key, decrypted);
+        }
+      
+       
+        return decrypted;
+      }
+      catch(err) {
+        return "";
+      }
     }
 
-    generateHeader (cipher) {
-
-    }
 
     checkForHeader (input) {
+
+    }
+
+    generateHeader () {
+      let headerCode = 0;
+      const settings = this.getSettings();
+      console.log(settings);
+
+      if(settings.methods.doAES) headerCode +=1;
+
+      if(settings.methods.doBF) headerCode +=2;
+
+      if(settings.methods.doXOR) headerCode +=4;
+
+      if(settings.doHashing) headerCode +=8;
+
+      if(settings.doHashSalting) headerCode +=16;
+
+      if(settings.doRoundOffset) headerCode +=32;
+
+      if(settings.hashDifficulty === "low") headerCode +=64;
+
+      if(settings.hashDifficulty === "high") headerCode += 128;
+
+      return headerCode + "=";
 
     }
 

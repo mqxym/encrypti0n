@@ -134,8 +134,8 @@
                                             <label class="col-md-2 control-label">Key</label>
                                             <div class="col-md-10">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control hidden" name="keyBlank" placeholder="Password" value="">
-                                                    <input type="password" class="form-control" name="keyPassword" placeholder="Password" value="">
+                                                    <input type="text" class="form-control hidden" id="keyBlank" name="keyBlank" placeholder="Password" value="">
+                                                    <input type="password" class="form-control" id="keyPassword" name="keyPassword" placeholder="Password" value="">
                                                     <span class="input-group-btn">
                                                         <button id="keyCopy" class="btn btn-purple waves-effect m-b-5"> 
                                                             <i class="md md-content-copy m-r-5"></i> 
@@ -150,7 +150,7 @@
                                                     </span>
                                                 </div>              
                                                 <div class="checkbox checkbox-primary">
-                                                    <input name="hideKey" type="checkbox" checked>
+                                                    <input name="hideKey" id="hideKey" type="checkbox" checked>
                                                     <label for="hideKey">
                                                         Hide key
                                                     </label>
