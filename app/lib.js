@@ -22,6 +22,14 @@ function notificationError (title, content) {
 	$.Notification.notify('error','top right',title , content);
 }
 
+function toggleVisibility (element, disable) {
+	if(disable) {
+		$("#"+element).addClass("hidden");
+	} else {
+		$("#"+element).removeClass("hidden");
+	}
+}
+
 function setWidthPercentage(element, percentage) {
 	if (percentage >= 0 && percentage <= 100) {
 		var widthValue = percentage + "%";

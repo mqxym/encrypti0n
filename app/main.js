@@ -4,8 +4,8 @@ class Main {
         this.formHandler = formHandler;
 
         if (!this.getFormValue("hideKey")) {
-          $("#keyBlank").removeClass("hidden");
-          $("#keyPassword").addClass("hidden"); 
+          toggleVisibility("keyBlank", false);
+          toggleVisibility("keyPassword", true); 
         }
 
         if (this.readSettings()) {
@@ -139,7 +139,7 @@ class Main {
       if (header) {
         //If header: decrypt
         const cipher = removeBeforeFirstEqual(text);
-        const decryptedText = this.decrypt(key, cipher, methods)
+        const decryptedText = this.decryptText(key, cipher, methods)
         if (!decryptedText) {
           notificationError("Decryption error", "Check your key or your input.");
         }
@@ -147,33 +147,12 @@ class Main {
 
       } else {
         //encrypt
-        const encryptedText = this.encrypt(key, text, methods);
+        const encryptedText = this.encryptText(key, text, methods);
         const header = this.generateHeader();
         this.setFormValue("output", header + "=" + encryptedText);       
       }
 
       //Notification
-    }
-
-    actionAfterHashing (key) {
-      console.log(key);
-      /*const header = this.checkForHeader(text);
-      const settings = this.getSettings();
-      const methods = settings.methods;
-
-      if (header) {
-        //If header: decrypt
-        const cipher = removeBeforeFirstEqual(text);
-        const decryptedText = this.decrypt(key, cipher, methods)
-        this.setFormValue("output", decryptedText);
-
-      } else {
-        //encrypt
-        const encryptedText = this.encrypt(key, text, methods);
-        const header = this.generateHeader();
-        this.setFormValue("output", header + "=" + encryptedText);       
-      }
-      */
     }
 
 
@@ -214,19 +193,21 @@ class Main {
 
     toggleKey () {
       if ($("#hideKey").is(":checked")) {
-        $("#keyBlank").addClass("hidden");
-        $("#keyPassword").removeClass("hidden");
+        toggleVisibility("keyBlank", true);
+        toggleVisibility("keyPassword", false);
         this.setFormValue("keyPassword", this.getFormValue("keyBlank"));
         console.log("Hide password");
       } else {
-        $("#keyBlank").removeClass("hidden");
-        $("#keyPassword").addClass("hidden");
+        toggleVisibility("keyBlank", false);
+        toggleVisibility("keyPassword", true);
         this.setFormValue("keyBlank", this.getFormValue("keyPassword"));
         console.log("Show password");
       }
     }
 
-    encrypt (key, text, methods) {
+    //Encrypt text with the selected method
+    //Returns b64 encrypted string
+    encryptText (key, text, methods) {
       let encryptedText = text;
       
       if (methods.doXOR) {
@@ -245,7 +226,10 @@ class Main {
       return encryptedText;
     }
 
-    decrypt (key, cipher, methods) {
+
+    //Decrypt text with the selected methods
+    //Returns utf-8 encoded string
+    decryptText (key, cipher, methods) {
       try {
 
         let decrypted = cipher; 
@@ -270,11 +254,12 @@ class Main {
         return decrypted;
       }
       catch(err) {
-        return "Error: " + err;
+        return "";
       }
     }
 
 
+    //Returns header or false 
     checkForHeader (inputString) {
       if (inputString.length < 5) {
         return false;
@@ -296,6 +281,7 @@ class Main {
       return false;
     }
 
+    //generates a numeric header for the settings enabled/disabled
     generateHeader () {
       let headerCode = 0;
       const settings = this.getSettings();
@@ -310,10 +296,6 @@ class Main {
       if(settings.hashDifficulty === "high") headerCode += 128;
 
       return headerCode;
-
-    }
-
-    readHeader (input) {
 
     }
 
