@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Encrypt and decrypt text with a password. Strong and Secure encryption methods. Use AES, Blowfish or XOR Encrpytion." />
+        <meta name="description" content="Encrypt and decrypt text or files with a password. Strong and Secure encryption methods. Use AES, Blowfish or XOR Encrpytion." />
         <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,AES,Blowfish,AES256,XOR,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="copyright" content="Maxim Schulz" />
@@ -21,7 +21,7 @@
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
 
-        <title>Encrypti0n.com - Secure and reliable AES text encryption online</title>
+        <title>Encrypti0n.com - Secure and reliable AES encryption online</title>
 
         <link href="plugins/jquery-circliful/css/jquery.circliful.css" rel="stylesheet" type="text/css" />
 
@@ -32,6 +32,8 @@
         <link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
+
+        <link href="plugins/dropzone/dist/dropzone.css" rel="stylesheet" type="text/css" />
 
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -104,7 +106,7 @@
                                 <a href="#"><i class="md md-help"></i>FAQ</a>
                             </li>
                             <li class="has-submenu">
-                                <a href="#"><i class="md md-launch"></i>Sourcecode</a>
+                                <a href="https://github.com/mqxym/encrypti0n"><i class="md md-launch"></i>Sourcecode</a>
                             </li>
                         </ul>                
                     </div> 
@@ -125,9 +127,16 @@
                                 <div class="col-md-6">
                                     <div class="card-box">                                                                    
                                         <div class="form-group">
-                                            <label class="col-md-2 control-label">Text Input</label>
+                                            <label class="col-md-2 control-label">Input</label>
                                             <div class="col-md-10">
-                                                <textarea class="form-control" name="inputText" placeholder="Your message here" rows="5"></textarea>
+                                                <textarea class="form-control" name="inputText" placeholder="Your text here" rows="5"></textarea>
+                                                
+                                                <!--<div class="fileupload btn btn-purple waves-effect waves-light">
+                                                    <span><i class="ion-upload m-r-5"></i>Upload</span>
+                                                    <input name="file" type="file" class="upload" multiple />
+                                                </div>-->
+                                                
+                                
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -310,7 +319,22 @@
                                                     </small>
                                                 </span>
                                             </div>
-                                        </div>  
+                                        </div> 
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label">Slots</label>
+                                            <div class="col-md-10">
+                                                <div class="checkbox checkbox-primary">
+                                                    <input id="saveHashes" name="saveHashes" type="checkbox" disabled>
+                                                    <label for="saveHashes">
+                                                        Save hashed keys
+                                                    </label>
+                                                </div>
+                                                <span class="help-block">
+                                                    <small>
+                                                        Save time when encrypting / decrypting.
+                                                    </small>
+                                                </span>
+                                            </div>
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Configuration</label>
                                             <div class="col-md-10">
@@ -354,23 +378,12 @@
         <script src="assets/js/jquery.nicescroll.js" defer></script>
         <script src="assets/js/jquery.scrollTo.min.js" defer></script>
 
-        <!-- Counter Up  -->
-        <script src="plugins/waypoints/lib/jquery.waypoints.js" defer></script>
-        <script src="plugins/counterup/jquery.counterup.min.js" defer></script>
-
-        <!-- circliful Chart -->
-        <script src="plugins/jquery-circliful/js/jquery.circliful.min.js" defer></script>
-        <script src="plugins/jquery-sparkline/jquery.sparkline.min.js" defer></script>
-
-        <!-- skycons -->
-        <script src="plugins/skyicons/skycons.min.js" type="text/javascript"  defer></script>
-
-        <!-- Page js  -->
-        <script src="assets/pages/jquery.dashboard.js" defer></script>
-
         <!-- Notification js -->
         <script src="plugins/notifyjs/dist/notify.min.js" defer></script>
         <script src="plugins/notifications/notify-metro.js" defer></script>
+
+        <!-- Dropzone js -->
+        <script src="plugins/dropzone/dist/dropzone.js" defer></script>
 
         <!-- Custom main Js -->
         <script src="assets/js/jquery.core.js" defer></script>

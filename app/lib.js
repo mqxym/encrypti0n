@@ -30,6 +30,10 @@ function toggleVisibility (element, disable) {
 	}
 }
 
+function disableElement(id, disable) {
+	$("#"+id).prop('disabled', disable);
+}
+
 function setWidthPercentage(element, percentage) {
 	if (percentage >= 0 && percentage <= 100) {
 		var widthValue = percentage + "%";
@@ -120,27 +124,6 @@ function hashPassword(pass, hashDifficulty, doRoundOffset, doHashSalting) {
 
 	return hashPass;
 }
-
-/*
-function doHashRounds (seed, currentRound, hashRounds, progress, callback) {
-	let hashPass = seed;
-
-	const currentPercent = Math.round(( currentRound / hashRounds) * 100);
-	setWidthPercentage(progress, currentPercent);
-
-	if (currentRound < hashRounds) {
-		currentRound++;
-		//console.log(currentPercent);
-		//console.log(currentRound);
-		hashPass = returnHash(hashPass);
-		setTimeout(() => doHashRounds(hashPass, currentRound, hashRounds, progress, callback), 10);
-	} else {
-		hashPass = CryptoJS.SHA512(hashPass).toString() + CryptoJS.SHA224(hashPass).toString() + CryptoJS.SHA256(hashPass).toString() + CryptoJS.SHA1(hashPass).toString() + CryptoJS.SHA3(hashPass).toString() + CryptoJS.SHA384(hashPass).toString() + CryptoJS.MD5(hashPass).toString();
-		console.log("Hashed key:\n" + hashPass);
-		callback(hashPass);
-	}
-}
-*/
 
 //repeating hash algorithm
 function returnHash(seed) {

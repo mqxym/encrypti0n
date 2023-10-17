@@ -19,6 +19,7 @@ class Main {
         $('#loadKey').on('click', this.loadKey.bind(this));
         $('#saveKey').on('click', this.saveKey.bind(this));
         $('#saveSettings').on('click', this.saveSettings.bind(this));
+        $('#doHashing').on('change', this.toggleHashing.bind(this));
 
     }
 
@@ -155,56 +156,6 @@ class Main {
       //Notification
     }
 
-
-
-    keyGenerate() {
-      const seed = Math.random() + "+" + Math.random() + "+" + Math.random();
-      const header = this.generateHeader() + "=";
-      const key = header + CryptoJS.AES.encrypt(seed, seed).toString().substr(10);
-      const formValues = {
-        keyBlank: key,
-        keyPassword: key
-      };
-      this.setFormValues(formValues);
-    }
-
-    keyCopy() {
-      let keyWasHidden = false;
-
-      if ($("#hideKey").is(":checked")) {
-        $("#hideKey").prop("checked", false);
-        this.toggleKey();
-        keyWasHidden = true;
-      }
-      var input = $("#keyBlank")[0];
-      input.select();
-      
-      // Copy the text inside the text field
-      document.execCommand("copy");
-      
-      // Deselect the text field
-      input.setSelectionRange(0, 0);
-
-      /*if (keyWasHidden) {
-        $("#hideKey").prop("checked", true);
-        this.toggleKey();
-      }*/
-    }
-
-    toggleKey () {
-      if ($("#hideKey").is(":checked")) {
-        toggleVisibility("keyBlank", true);
-        toggleVisibility("keyPassword", false);
-        this.setFormValue("keyPassword", this.getFormValue("keyBlank"));
-        console.log("Hide password");
-      } else {
-        toggleVisibility("keyBlank", false);
-        toggleVisibility("keyPassword", true);
-        this.setFormValue("keyBlank", this.getFormValue("keyPassword"));
-        console.log("Show password");
-      }
-    }
-
     //Encrypt text with the selected method
     //Returns b64 encrypted string
     encryptText (key, text, methods) {
@@ -258,6 +209,65 @@ class Main {
       }
     }
 
+    keyGenerate() {
+      const seed = Math.random() + "+" + Math.random() + "+" + Math.random();
+      const header = this.generateHeader() + "=";
+      const key = header + CryptoJS.AES.encrypt(seed, seed).toString().substr(10);
+      const formValues = {
+        keyBlank: key,
+        keyPassword: key
+      };
+      this.setFormValues(formValues);
+    }
+
+    keyCopy() {
+      let keyWasHidden = false;
+
+      if ($("#hideKey").is(":checked")) {
+        $("#hideKey").prop("checked", false);
+        this.toggleKey();
+        keyWasHidden = true;
+      }
+      var input = $("#keyBlank")[0];
+      input.select();
+      
+      // Copy the text inside the text field
+      document.execCommand("copy");
+      
+      // Deselect the text field
+      input.setSelectionRange(0, 0);
+
+      /*if (keyWasHidden) {
+        $("#hideKey").prop("checked", true);
+        this.toggleKey();
+      }*/
+    }
+
+    toggleKey () {
+      if ($("#hideKey").is(":checked")) {
+        toggleVisibility("keyBlank", true);
+        toggleVisibility("keyPassword", false);
+        this.setFormValue("keyPassword", this.getFormValue("keyBlank"));
+        console.log("Hide password");
+      } else {
+        toggleVisibility("keyBlank", false);
+        toggleVisibility("keyPassword", true);
+        this.setFormValue("keyBlank", this.getFormValue("keyPassword"));
+        console.log("Show password");
+      }
+    }
+
+    toggleHashing () {
+      if ($("#doHashing").is(":checked")) {
+        disableElement("doRoundOffset", false);
+        disableElement("doHashSalting", false);
+        disableElement("hashDifficulty", false);
+      } else {
+        disableElement("doRoundOffset", true);
+        disableElement("doHashSalting", true);
+        disableElement("hashDifficulty", true);
+      }
+    }
 
     //Returns header or false 
     checkForHeader (inputString) {
@@ -289,7 +299,12 @@ class Main {
       if(settings.methods.doAES) headerCode +=1;
       if(settings.methods.doBF) headerCode +=2;
       if(settings.methods.doXOR) headerCode +=4;
-      if(settings.doHashing) headerCode +=8;
+      //Other settings not needed when hashing disabled
+      if(settings.doHashing) {
+        headerCode +=8;
+      } else {
+        return headerCode;
+      }
       if(settings.doHashSalting) headerCode +=16;
       if(settings.doRoundOffset) headerCode +=32;
       if(settings.hashDifficulty === "low") headerCode +=64;
