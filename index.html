@@ -13,17 +13,15 @@
 
         
 
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
         <link rel="manifest" href="/site.webmanifest">
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
 
         <title>Encrypti0n.com - Secure and reliable AES encryption online</title>
-
-        <link href="plugins/jquery-circliful/css/jquery.circliful.css" rel="stylesheet" type="text/css" />
 
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/core.css" rel="stylesheet" type="text/css" />
@@ -34,6 +32,7 @@
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
 
         <link href="plugins/dropzone/dist/dropzone.css" rel="stylesheet" type="text/css" />
+        <link href="plugins/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css">
 
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -106,7 +105,7 @@
                                 <a href="#"><i class="md md-help"></i>FAQ</a>
                             </li>
                             <li class="has-submenu">
-                                <a href="https://github.com/mqxym/encrypti0n"><i class="md md-launch"></i>Sourcecode</a>
+                                <a href="https://github.com/mqxym/encrypti0n" target="_blank"><i class="md md-launch"></i>Sourcecode</a>
                             </li>
                         </ul>                
                     </div> 
@@ -117,7 +116,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="page-title">Encrypt and decrypt your texts with AES, Blowfish or XOR</h4>
+                        <h4 class="page-title">Encrypt and decrypt your texts or files with AES, Blowfish or XOR</h4>
                     </div>
                 </div>
                 <div class="row">
@@ -125,16 +124,33 @@
                         <form class="form-horizontal" role="form" id="mainForm"> 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="card-box">                                                                    
+                                    <div class="card-box">
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label">Type</label>
+                                            <div class="col-md-10">
+                                                <div class="radio radio-primary radio-inline">
+                                                    <input type="radio" name="type" id="radio1" value="doText" checked>
+                                                    <label for="radio1">
+                                                        Text
+                                                    </label>
+                                                </div>    
+                                                <div class="radio radio-purple radio-inline">
+                                                    <input type="radio" name="type" id="radio2" value="doFiles">
+                                                    <label for="radio2">
+                                                        Files
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>                                                            
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Input</label>
                                             <div class="col-md-10">
-                                                <textarea class="form-control" name="inputText" placeholder="Your text here" rows="5"></textarea>
+                                                <textarea id="inputText" class="form-control" name="inputText" placeholder="Your text here" rows="5"></textarea>
                                                 
-                                                <!--<div class="fileupload btn btn-purple waves-effect waves-light">
-                                                    <span><i class="ion-upload m-r-5"></i>Upload</span>
-                                                    <input name="file" type="file" class="upload" multiple />
-                                                </div>-->
+                                                <div id="inputFiles" class="fileupload btn btn-block btn-purple waves-effect waves-light">
+                                                    <span><i class="ion-upload m-r-5"></i>Select Files</span>
+                                                    <input name="inputFiles" type="file" class="upload" multiple />
+                                                </div>
                                                 
                                 
                                             </div>
@@ -146,15 +162,15 @@
                                                     <input type="text" class="form-control hidden" id="keyBlank" name="keyBlank" placeholder="Password" value="">
                                                     <input type="password" class="form-control" id="keyPassword" name="keyPassword" placeholder="Password" value="">
                                                     <span class="input-group-btn">
-                                                        <button id="keyCopy" type="button" class="btn btn-purple waves-effect m-b-5"> 
-                                                            <i class="md md-content-copy m-r-5"></i> 
-                                                            <span>Copy</span> 
-                                                        </button>
-                                                    </span>
-                                                    <span class="input-group-btn">
                                                         <button id="keyGenerate" type="button" class="btn btn-default waves-effect m-b-5"> 
                                                             <i class="md md-cached m-r-5"></i> 
                                                             <span>Gen</span> 
+                                                        </button>
+                                                    </span>
+                                                    <span class="input-group-btn">
+                                                        <button id="keyCopy" type="button" class="btn btn-warning waves-effect m-b-5"> 
+                                                            <i class="md md-content-copy m-r-5"></i> 
+                                                            <span>Copy</span> 
                                                         </button>
                                                     </span>
                                                 </div>              
@@ -225,7 +241,10 @@
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Output</label>
                                             <div class="col-md-10">
-                                                <textarea class="form-control" id="output" name="output" readonly placeholder="The result of the encryption / decryption" rows="5"></textarea>
+                                                <textarea class="form-control" id="outputText" name="outputText" readonly placeholder="The result of the encryption / decryption" rows="5"></textarea>
+                                                <div id="outputFiles">
+                                                    <p>Download encrypted files here</p>
+                                                </div>
                                                 <span class="help-block"><small>Encrypted output is base64 formatted and uses a config header </small></span>
                                             </div>
                                         </div>       
@@ -338,10 +357,13 @@
                                         <div class="form-group">
                                             <label class="col-md-2 control-label">Configuration</label>
                                             <div class="col-md-10">
-                                                <button id="saveSettings" type="button" class="btn btn-purple btn-block waves-effect m-b-5"> 
-                                                    <i class="md md-save m-r-5"></i> 
-                                                    <span>Save settings</span> 
-                                                </button>
+                                                <div class="m-r-15 m-l-15">
+                                                    <button id="saveSettings" type="button" class="btn btn-success btn-block waves-effect m-b-5"> 
+                                                        <i class="md md-save m-r-5"></i> 
+                                                        <span>Save settings</span> 
+                                                    </button>
+                                                </div>
+
                                                 <span class="help-block">
                                                     <small>
                                                         Your settings get loaded each time you visit the site.
@@ -384,6 +406,10 @@
 
         <!-- Dropzone js -->
         <script src="plugins/dropzone/dist/dropzone.js" defer></script>
+
+        <!-- Sweet-Alert  -->
+        <script src="../plugins/bootstrap-sweetalert/sweet-alert.min.js" defer></script>
+        <script src="assets/pages/jquery.sweet-alert.init.js" defer></script>
 
         <!-- Custom main Js -->
         <script src="assets/js/jquery.core.js" defer></script>

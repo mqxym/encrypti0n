@@ -12,6 +12,9 @@ class Main {
           this.setSettings(this.readSettings());
         }
 
+        this.changeType();
+
+        $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
         $('#action').on('click', this.action.bind(this));
         $('#keyGenerate').on('click', this.keyGenerate.bind(this));
         $('#keyCopy').on('click', this.keyCopy.bind(this));
@@ -77,6 +80,24 @@ class Main {
 
       console.log("Settings id " + this.readSettings() + " are loaded.");
       this.setFormValues(settings);
+    }
+
+    changeType () {
+      const selectedRadioValue = $('input[type=radio][name=type]:checked').val();
+
+      if (selectedRadioValue === "doText") {
+        toggleVisibility("inputText", false);
+        toggleVisibility("inputFiles", true);
+        toggleVisibility("outputText", false);
+        toggleVisibility("outputFiles", true);
+        console.log("Use text encryption.");
+      } else {
+        toggleVisibility("inputText", true);
+        toggleVisibility("inputFiles", false);
+        toggleVisibility("outputText", true);
+        toggleVisibility("outputFiles", false);
+        console.log("Use file encryption.");
+      }
     }
 
     async action () {
@@ -150,7 +171,7 @@ class Main {
         //encrypt
         const encryptedText = this.encryptText(key, text, methods);
         const header = this.generateHeader();
-        this.setFormValue("output", header + "=" + encryptedText);       
+        this.setFormValue("outputText", header + "=" + encryptedText);       
       }
 
       //Notification
@@ -221,26 +242,63 @@ class Main {
     }
 
     keyCopy() {
-      let keyWasHidden = false;
-
       if ($("#hideKey").is(":checked")) {
-        $("#hideKey").prop("checked", false);
-        this.toggleKey();
-        keyWasHidden = true;
+        if(this.getFormValue("keyPassword") === "") {
+          notificationError("Error", "No key to copy.");
+          console.log("No key to copy.");
+          return;
+        }
+      } else {
+        if(this.getFormValue("keyBlank") === "") {
+          notificationError("Error", "No key to copy.");
+          console.log("No key to copy.");
+          return;
+        }
       }
-      var input = $("#keyBlank")[0];
-      input.select();
       
-      // Copy the text inside the text field
-      document.execCommand("copy");
-      
-      // Deselect the text field
-      input.setSelectionRange(0, 0);
 
-      /*if (keyWasHidden) {
-        $("#hideKey").prop("checked", true);
-        this.toggleKey();
-      }*/
+      if (localStorage.getItem("copyAlert")) {
+        if ($("#hideKey").is(":checked")) {
+          checkCheckbox("hideKey", false);
+          this.toggleKey();
+        }
+        copyTextElement("keyBlank");
+        notificationSuccess("Success", "Your key was copied.");
+      } else {
+        if ($("#hideKey").is(":checked")) {
+          //Sweet alert
+          swal({
+            title: "Reveal key?",
+            text: "When you copy a key it will be shown.",
+            type: "warning",
+            confirmButtonText: "Copy, don't show again",
+            showCancelButton: true,
+            className: "custom-modal",
+          }, function (confirmed) {
+            if (confirmed) {
+              Main.keyCopyAfterAlert();
+              localStorage.setItem("copyAlert", "true");
+            }
+          });
+        } else {
+          copyTextElement("keyBlank");
+          notificationSuccess("Success", "Your key was copied.");
+        }
+      }
+    }
+
+    static keyCopyAfterAlert () {
+      if ($("#hideKey").is(":checked")) {
+        checkCheckbox("hideKey", false);
+        //ToggleKey
+        toggleVisibility("keyBlank", false);
+        toggleVisibility("keyPassword", true);
+        $("#keyBlank").val($("#keyPassword").val());
+        console.log("Show password");
+
+      }
+      copyTextElement("keyBlank");   
+      notificationSuccess("Success", "Your key was copied."); 
     }
 
     toggleKey () {
@@ -404,6 +462,10 @@ class FormHandler {
         if (name) {
           if ($(this).is(':checkbox')) {
             formValues[name] = $(this).is(':checked');
+          } else if ($(this).is(':radio')) {
+            if ($(this).is(':checked')) {
+              formValues[name] = value;
+            }
           } else if ($(this).is('select')) {
             formValues[name] = value;
           } else if (!$(this).is('[readonly]')) { // Check if input is not readonly
@@ -412,6 +474,7 @@ class FormHandler {
         }
         
       });
+      //console.log(formValues);
       return formValues;
     }
   
@@ -420,11 +483,12 @@ class FormHandler {
     }
 
     setFormValues(valuesToSet) {
+      //console.log(valuesToSet);
       for (const fieldName in valuesToSet) {
         if (valuesToSet.hasOwnProperty(fieldName)) {
           const $field = this.$form.find(`[name="${fieldName}"]`);
           if ($field.length) {
-            if ($field.is(':checkbox')) {
+            if ($field.is(':checkbox') || $field.is(':radio')) {
               $field.prop('checked', valuesToSet[fieldName]);
             } else {
               $field.val(valuesToSet[fieldName]);

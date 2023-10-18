@@ -10,6 +10,17 @@ function removeBeforeFirstEqual(inputString) {
 	return inputString;
 }
 
+function copyTextElement (id) {
+	var input = $("#"+id)[0];
+    input.select();
+      
+    // Copy the text inside the text field
+	document.execCommand("copy");
+      
+    // Deselect the text field
+    input.setSelectionRange(0, 0);
+}
+
 function notificationSuccess (title, content) {
 	$.Notification.notify('success','top right',title , content);
 }
@@ -32,6 +43,10 @@ function toggleVisibility (element, disable) {
 
 function disableElement(id, disable) {
 	$("#"+id).prop('disabled', disable);
+}
+
+function checkCheckbox (id, checked) {
+	$("#"+id).prop('checked', checked);
 }
 
 function setWidthPercentage(element, percentage) {
