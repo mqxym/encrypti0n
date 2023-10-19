@@ -8,19 +8,28 @@ class Main {
           toggleVisibility("keyPassword", true); 
         }
 
-        if (this.readSettings()) {
-          this.setSettings(this.readSettings());
+        if (this.readCryptoSettings()) {
+          if (this.readGeneralSettings()) {
+            this.setSettings(this.readCryptoSettings(), this.readGeneralSettings());
+          } else {
+            this.setSettings(this.readCryptoSettings());
+          }
         }
 
         this.changeType();
+        this.toggleHashing();
 
         $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
         $('#action').on('click', this.action.bind(this));
+        $('#clearInput').on('click', this.clearInput.bind(this));
+        $('#copyOutput').on('click', this.copyOutput.bind(this));
+
         $('#keyGenerate').on('click', this.keyGenerate.bind(this));
         $('#keyCopy').on('click', this.keyCopy.bind(this));
         $('#hideKey').on('change', this.toggleKey.bind(this));
         $('#loadKey').on('click', this.loadKey.bind(this));
         $('#saveKey').on('click', this.saveKey.bind(this));
+
         $('#saveSettings').on('click', this.saveSettings.bind(this));
         $('#doHashing').on('change', this.toggleHashing.bind(this));
 
@@ -55,30 +64,43 @@ class Main {
         doHashSalting: this.getFormValue("doHashSalting"),
         doRoundOffset: this.getFormValue("doRoundOffset"),
         hashDifficulty: this.getFormValue("hashDifficulty"),
+        type: this.getFormValue("type"),
+        saveHashes: this.getFormValue("saveHashes"),
       }
     }
 
-    setSettings (header) {
-      header = parseInt(header);
+    setSettings (cryptoHeader, generalSettingsHeader = false) {
+      const cHeader = parseInt(cryptoHeader);
 
       let settings = {};
 
-      settings["doAES"] = isBitSet(header, 0);
-      settings["doBF"] = isBitSet(header, 1);
-      settings["doXOR"] = isBitSet(header, 2);
-      settings["doHashing"] = isBitSet(header, 3);
-      settings["doHashSalting"] = isBitSet(header, 4);
-      settings["doRoundOffset"] = isBitSet(header, 5);
+      settings["doAES"] = isBitSet(cHeader, 0);
+      settings["doBF"] = isBitSet(cHeader, 1);
+      settings["doXOR"] = isBitSet(cHeader, 2);
+      settings["doHashing"] = isBitSet(cHeader, 3);
+      settings["doHashSalting"] = isBitSet(cHeader, 4);
+      settings["doRoundOffset"] = isBitSet(cHeader, 5);
 
-      if (isBitSet(header, 6)) {
+      if (isBitSet(cHeader, 6)) {
         settings["hashDifficulty"] = "low";
-      } else if (isBitSet(header, 7)) {
+      } else if (isBitSet(cHeader, 7)) {
         settings["hashDifficulty"] = "high";
       } else {
         settings["hashDifficulty"] = "medium";
       }
 
-      console.log("Settings id " + this.readSettings() + " are loaded.");
+      if(generalSettingsHeader) {
+        const gsHeader = parseInt(generalSettingsHeader);
+        if (isBitSet(gsHeader, 0)) {
+          settings["type"] = "doText";
+        } else if (isBitSet(gsHeader, 1)) {
+          settings["type"] = "doFiles";
+        }
+        settings["saveHashes"] = isBitSet(gsHeader, 2);
+      }
+
+      console.log("Crypto settings id " + this.readCryptoSettings() + " are loaded.");
+      console.log("General settings id " + this.readCryptoSettings() + " are loaded.");
       this.setFormValues(settings);
     }
 
@@ -90,17 +112,35 @@ class Main {
         toggleVisibility("inputFiles", true);
         toggleVisibility("outputText", false);
         toggleVisibility("outputFiles", true);
+        toggleVisibility("divClearInput", false);
+        toggleVisibility("divCopyOutput", false);
         console.log("Use text encryption.");
       } else {
         toggleVisibility("inputText", true);
         toggleVisibility("inputFiles", false);
         toggleVisibility("outputText", true);
         toggleVisibility("outputFiles", false);
+        toggleVisibility("divClearInput", true);
+        toggleVisibility("divCopyOutput", true);
         console.log("Use file encryption.");
       }
     }
 
+    clearInput() {
+      this.setFormValue("inputText", "");
+    }
+
+    copyOutput() {
+      copyTextElement("outputText");
+      ShowNotification.success("Success", "Your output was copied.");
+    }
+
     async action () {
+      if (this.getFormValue("type") === "doFiles") {
+        ShowNotification.error("Error", "File encryption is not supported right now.");
+        return;
+      }
+
       let key = "";
       if (this.getFormValue("hideKey")) {
         key = this.getFormValue("keyPassword");
@@ -111,20 +151,21 @@ class Main {
 
       if(!key) {
         console.log("No key set.");
-        notificationError("No key", "Your key is empty.");
+        ShowNotification.error("No key", "Your key is empty.");
         return;
       }
 
-      if(!text) {
+      if(!text && this.getFormValue("type") === "doText") {
         console.log("Input is empty.");
-        notificationError("No input", "Your text input is empty.");
+        ShowNotification.error("No input", "Your text input is empty.");
         return;
       }
 
-      const header = this.checkForHeader(text);
+      const cryptoHeader = this.checkForHeader(text);
 
-      if (header) {
-        this.setSettings(header);
+      if (cryptoHeader) {
+        this.setSettings(cryptoHeader);
+        this.toggleHashing(); //When needed activate the hashing checkboxes
       }
 
       const settings = this.getSettings();
@@ -132,7 +173,7 @@ class Main {
 
       if (!methods.doAES && !methods.doBF && !methods.doXOR) {
         console.log("No encryption method set.");
-        notificationError("No method", "No encryption method is set.");
+        ShowNotification.error("No method", "No encryption method is set.");
         return;
       }
 
@@ -140,7 +181,7 @@ class Main {
       if(settings.doHashing) {
         FormHandler.toggleButton("action", true);
         if (settings.hashDifficulty == "medium" || settings.hashDifficulty == "high") {
-          notificationWarning("Key hashing started", "Please wait while the hash process is running.");
+          ShowNotification.warning("Key hashing started", "Please wait while the hash process is running.");
         }
         
         await new Promise(r => setTimeout(r, 50));
@@ -151,27 +192,27 @@ class Main {
         FormHandler.toggleButton("action", false);
 
         if (settings.hashDifficulty == "medium" || settings.hashDifficulty == "high") {
-          notificationSuccess("Process finished" , "Hash process finished.");
+          ShowNotification.success("Process finished" , "Hash process finished.");
         }
         
       }
 
       
 
-      if (header) {
-        //If header: decrypt
+      if (cryptoHeader) {
+        //If cryptoHeader: decrypt
         const cipher = removeBeforeFirstEqual(text);
         const decryptedText = this.decryptText(key, cipher, methods)
         if (!decryptedText) {
-          notificationError("Decryption error", "Check your key or your input.");
+          ShowNotification.error("Decryption error", "Check your key or your input.");
         }
-        this.setFormValue("output", decryptedText);
+        this.setFormValue("outputText", decryptedText);
 
       } else {
         //encrypt
         const encryptedText = this.encryptText(key, text, methods);
-        const header = this.generateHeader();
-        this.setFormValue("outputText", header + "=" + encryptedText);       
+        const cryptoHeader = this.generateCryptoHeader();
+        this.setFormValue("outputText", cryptoHeader + "=" + encryptedText);       
       }
 
       //Notification
@@ -184,16 +225,15 @@ class Main {
       
       if (methods.doXOR) {
         console.log("Start XOR Encryption...");
-	      encryptedText = XORencrypt(key, encryptedText);
-        encryptedText = hexToBase64(encryptedText);
+	      encryptedText = CryptoWrapper.encryptXOR(encryptedText, key);
       }
       if (methods.doBF) {
         console.log("Start Blowfish Encryption...");
-	      encryptedText = CryptoJS.Blowfish.encrypt(encryptedText, key).toString().substr(10);
+	      encryptedText = CryptoWrapper.encryptBF(encryptedText, key);
       }
       if (methods.doAES) {
         console.log("Start AES Encryption...");
-	      encryptedText = CryptoJS.AES.encrypt(encryptedText, key).toString().substr(10);
+	      encryptedText = CryptoWrapper.encryptAES(encryptedText, key);
       }
       return encryptedText;
     }
@@ -208,18 +248,17 @@ class Main {
 
         if (methods.doAES) {
           console.log("Start AES Decryption...");  
-          decrypted = CryptoJS.AES.decrypt("U2FsdGVkX1" + decrypted, key).toString(CryptoJS.enc.Utf8);
+          decrypted = CryptoWrapper.decryptAES(decrypted, key);
         }
 
         if (methods.doBF) {
           console.log("Start Blowfish Decryption...");
-          decrypted = CryptoJS.Blowfish.decrypt("U2FsdGVkX1" + decrypted, key).toString(CryptoJS.enc.Utf8);
+          decrypted = CryptoWrapper.decryptBF(decrypted, key);
         }
 
         if (methods.doXOR) {
           console.log("Start XOR Decryption")
-          decrypted = base64ToHex(decrypted);
-          decrypted = XORdecrypt(key, decrypted);
+          decrypted = CryptoWrapper.decryptXOR(decrypted, key);
         }
       
        
@@ -232,8 +271,7 @@ class Main {
 
     keyGenerate() {
       const seed = Math.random() + "+" + Math.random() + "+" + Math.random();
-      const header = this.generateHeader() + "=";
-      const key = header + CryptoJS.AES.encrypt(seed, seed).toString().substr(10);
+      const key = CryptoJS.AES.encrypt(seed, "69.420" + seed).toString().substr(10);
       const formValues = {
         keyBlank: key,
         keyPassword: key
@@ -244,13 +282,13 @@ class Main {
     keyCopy() {
       if ($("#hideKey").is(":checked")) {
         if(this.getFormValue("keyPassword") === "") {
-          notificationError("Error", "No key to copy.");
+          ShowNotification.error("Error", "No key to copy.");
           console.log("No key to copy.");
           return;
         }
       } else {
         if(this.getFormValue("keyBlank") === "") {
-          notificationError("Error", "No key to copy.");
+          ShowNotification.error("Error", "No key to copy.");
           console.log("No key to copy.");
           return;
         }
@@ -263,7 +301,7 @@ class Main {
           this.toggleKey();
         }
         copyTextElement("keyBlank");
-        notificationSuccess("Success", "Your key was copied.");
+        ShowNotification.success("Success", "Your key was copied.");
       } else {
         if ($("#hideKey").is(":checked")) {
           //Sweet alert
@@ -282,7 +320,7 @@ class Main {
           });
         } else {
           copyTextElement("keyBlank");
-          notificationSuccess("Success", "Your key was copied.");
+          ShowNotification.success("Success", "Your key was copied.");
         }
       }
     }
@@ -298,7 +336,7 @@ class Main {
 
       }
       copyTextElement("keyBlank");   
-      notificationSuccess("Success", "Your key was copied."); 
+      ShowNotification.success("Success", "Your key was copied."); 
     }
 
     toggleKey () {
@@ -349,8 +387,21 @@ class Main {
       return false;
     }
 
-    //generates a numeric header for the settings enabled/disabled
-    generateHeader () {
+    generateGeneralSettingsHeader() {
+      let headerCode = 0;
+      const settings = this.getSettings();
+
+      console.log(settings);
+
+      if (settings.type === "doText") headerCode +=1;
+      if (settings.type === "doFiles") headerCode +=2;
+      if (settings.saveHashes) headerCode += 4;
+      
+      return headerCode;
+    }
+
+    //generates a numeric header for the hash settings enabled/disabled
+    generateCryptoHeader () {
       let headerCode = 0;
       const settings = this.getSettings();
 
@@ -372,15 +423,22 @@ class Main {
 
     }
 
-    readSettings () {
-      return localStorage.getItem("config");
+    readCryptoSettings () {
+      return localStorage.getItem("cryptoConfig");
+    }
+
+    readGeneralSettings () {
+      return localStorage.getItem("generalConfig");
     }
 
     saveSettings () {
-      const header = this.generateHeader();
-      localStorage.setItem("config", header);
-      console.log("Settings id " + header + " are saved.");
-      notificationSuccess("Settings saved", "Your settings have been saved.");
+      const cryptoSettingsHeader = this.generateCryptoHeader();
+      const generalSettingsHeader = this.generateGeneralSettingsHeader();
+      localStorage.setItem("cryptoConfig", cryptoSettingsHeader);
+      localStorage.setItem("generalConfig", generalSettingsHeader);
+
+      console.log("Crypto settings id " + cryptoSettingsHeader + " and general config id "+ generalSettingsHeader +" are saved.");
+      ShowNotification.success("Settings saved", "Your settings have been saved.");
     }
 
     loadKey () {
@@ -388,15 +446,23 @@ class Main {
 
       if ( !keySlot) {
         console.log("No slot selected");
-        notificationError("No key", "No key selected.");
+        ShowNotification.error("No key", "No key selected.");
         return;
       }
 
-      const key = localStorage.getItem("key" + keySlot);
+      let key = localStorage.getItem("key" + keySlot);
 
       if (!key) {
         console.log("No key in this slot.");
-        notificationError("No key", "No key in this slot.");
+        ShowNotification.error("No key", "No key in this slot.");
+        return;
+      }
+
+      key = CryptoWrapper.decryptAES(key, "Don't decrypt this, please.");
+
+      if (!key) {
+        console.log("Error while decrypting saved key.");
+        ShowNotification.error("Error", "Could not decrypt saved key.");
         return;
       }
 
@@ -406,7 +472,7 @@ class Main {
       };
 
       this.setFormValues(formValues);
-      notificationSuccess("Key loaded", "Key #" + keySlot + " was loaded.");
+      ShowNotification.success("Key loaded", "Key #" + keySlot + " was loaded.");
       console.log("Key #" + keySlot + " was loaded.");
 
     }
@@ -416,7 +482,7 @@ class Main {
 
       if ( !keySlot) {
         console.log("No slot selected");
-        notificationError("No key", "No key selected.");
+        ShowNotification.error("No key", "No key selected.");
         return;
       }
 
@@ -429,16 +495,57 @@ class Main {
       }
 
       if(key) {
+        key = CryptoWrapper.encryptAES(key, "Don't decrypt this, please.");
         localStorage.setItem("key"+keySlot, key);
         console.log("Key #" + keySlot + " was saved.")
-        notificationSuccess("Key saved", "Key slot #" + keySlot + " was saved.");
+        ShowNotification.success("Key saved", "Key slot #" + keySlot + " was saved.");
       } else {
         console.log("No key found.");
-        notificationError("No key", "Your key is empty.");
+        ShowNotification.error("No key", "Your key is empty.");
       }
     }
 
 
+}
+
+class ShowNotification {
+  static success (title, content) {
+    $.Notification.notify('success','top right',title , content);
+  }
+  static warning (title, content) {
+    $.Notification.notify('warning','top right',title , content);
+  }
+  static error (title, content) {
+    $.Notification.notify('error','top right',title , content);
+  }
+}
+
+class CryptoWrapper {
+  static encryptAES (text, key) {
+    return CryptoJS.AES.encrypt(text, key).toString().substr(10);
+  }
+
+  static encryptBF (text, key) {
+    return CryptoJS.Blowfish.encrypt(text, key).toString().substr(10);
+  }
+
+  static encryptXOR (text, key) {
+    const encryptedText = XORencrypt(key, text);
+    return hexToBase64(encryptedText);
+  }
+
+  static decryptAES (b64Cipher, key) {
+    return CryptoJS.AES.decrypt("U2FsdGVkX1" + b64Cipher, key).toString(CryptoJS.enc.Utf8);
+  }
+
+  static decryptBF (b64Cipher, key) {
+    return CryptoJS.Blowfish.decrypt("U2FsdGVkX1" + b64Cipher, key).toString(CryptoJS.enc.Utf8);
+  }
+
+  static decryptXOR (b64Cipher, key) {
+    const hexCipher = base64ToHex(b64Cipher);
+    return XORdecrypt(key, hexCipher);
+  }
 }
 
 class FormHandler {

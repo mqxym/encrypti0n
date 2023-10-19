@@ -7,7 +7,6 @@
         <meta name="description" content="Encrypt and decrypt text or files with a password. Strong and Secure encryption methods. Use AES, Blowfish or XOR Encrpytion." />
         <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,AES,Blowfish,AES256,XOR,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
-        <meta name="copyright" content="Maxim Schulz" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
@@ -146,13 +145,22 @@
                                             <label class="col-md-2 control-label">Input</label>
                                             <div class="col-md-10">
                                                 <textarea id="inputText" class="form-control" name="inputText" placeholder="Your text here" rows="5"></textarea>
-                                                
+                                                    
                                                 <div id="inputFiles" class="fileupload btn btn-block btn-purple waves-effect waves-light">
                                                     <span><i class="ion-upload m-r-5"></i>Select Files</span>
                                                     <input name="inputFiles" type="file" class="upload" multiple />
                                                 </div>
                                                 
                                 
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="divClearInput">
+                                            <label class="col-md-2 control-label"></label>
+                                            <div class="col-md-10">
+                                                <button id="clearInput" type="button" class="btn btn-sm btn-block btn-danger waves-effect m-b-5"> 
+                                                    <i class="md md-delete m-r-5"></i> 
+                                                    <span>Clear Input</span> 
+                                                </button>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -247,7 +255,16 @@
                                                 </div>
                                                 <span class="help-block"><small>Encrypted output is base64 formatted and uses a config header </small></span>
                                             </div>
-                                        </div>       
+                                        </div>     
+                                        <div class="form-group" id="divCopyOutput">
+                                            <label class="col-md-2 control-label"></label>
+                                            <div class="col-md-10">
+                                                <button id="copyOutput" type="button" class="btn btn-sm btn-warning btn-block waves-effect m-b-5"> 
+                                                    <i class="md md-content-copy m-r-5"></i> 
+                                                    <span>Copy Output</span> 
+                                                </button>
+                                            </div>
+                                        </div>  
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -408,7 +425,7 @@
         <script src="plugins/dropzone/dist/dropzone.js" defer></script>
 
         <!-- Sweet-Alert  -->
-        <script src="../plugins/bootstrap-sweetalert/sweet-alert.min.js" defer></script>
+        <script src="plugins/bootstrap-sweetalert/sweet-alert.min.js" defer></script>
         <script src="assets/pages/jquery.sweet-alert.init.js" defer></script>
 
         <!-- Custom main Js -->

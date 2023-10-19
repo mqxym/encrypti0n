@@ -21,18 +21,6 @@ function copyTextElement (id) {
     input.setSelectionRange(0, 0);
 }
 
-function notificationSuccess (title, content) {
-	$.Notification.notify('success','top right',title , content);
-}
-
-function notificationWarning(title, content) {
-	$.Notification.notify('warning','top right',title , content);
-}
-
-function notificationError (title, content) {
-	$.Notification.notify('error','top right',title , content);
-}
-
 function toggleVisibility (element, disable) {
 	if(disable) {
 		$("#"+element).addClass("hidden");
