@@ -20,6 +20,8 @@ class Main {
         this.toggleHashing();
 
         $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
+        $('#inputFiles').on('change', this.updateFileList.bind(this));
+
         $('#action').on('click', this.action.bind(this));
         $('#clearInput').on('click', this.clearInput.bind(this));
         $('#copyOutput').on('click', this.copyOutput.bind(this));
@@ -109,7 +111,8 @@ class Main {
 
       if (selectedRadioValue === "doText") {
         toggleVisibility("inputText", false);
-        toggleVisibility("inputFiles", true);
+        toggleVisibility("inputFilesDiv", true);
+        toggleVisibility("fileList", true);
         toggleVisibility("outputText", false);
         toggleVisibility("outputFiles", true);
         toggleVisibility("divClearInput", false);
@@ -117,12 +120,32 @@ class Main {
         console.log("Use text encryption.");
       } else {
         toggleVisibility("inputText", true);
-        toggleVisibility("inputFiles", false);
+        toggleVisibility("inputFilesDiv", false);
+        toggleVisibility("fileList", false);
         toggleVisibility("outputText", true);
         toggleVisibility("outputFiles", false);
         toggleVisibility("divClearInput", true);
         toggleVisibility("divCopyOutput", true);
         console.log("Use file encryption.");
+      }
+    }
+
+    updateFileList() {
+      const fileList = $('#inputFiles')[0].files;
+      const fileListContainer = $('#fileList');
+      fileListContainer.empty();
+
+      if (fileList.length === 0) {
+        fileListContainer.text("No files selected.");
+      } else {
+        fileListContainer.text("Selected files:");
+        const ul = $('<ul>');
+        for (let i = 0; i < fileList.length; i++) {
+          const file = fileList[i];
+          const li = $('<li>').text(`${file.name} (${formatBytes(file.size)})`);
+          ul.append(li);
+        }
+        fileListContainer.append(ul);
       }
     }
 
