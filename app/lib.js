@@ -10,6 +10,14 @@ function removeBeforeFirstEqual(inputString) {
 	return inputString;
 }
 
+function getFirstPartAfterDots(input) {
+	const parts = input.split('.');
+	if (parts.length >= 3) {
+		return parts.slice(0, (parts.length - 2)).join('.');
+	}
+	return input;
+}
+
 function copyTextElement (id) {
 	var input = $("#"+id)[0];
     input.select();

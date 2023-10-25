@@ -18,6 +18,7 @@ class Main {
 
         this.changeType();
         this.toggleHashing();
+        this.updateFileList();
 
         $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
         $('#inputFiles').on('change', this.updateFileList.bind(this));
@@ -102,7 +103,7 @@ class Main {
       }
 
       console.log("Crypto settings id " + this.readCryptoSettings() + " are loaded.");
-      console.log("General settings id " + this.readCryptoSettings() + " are loaded.");
+      console.log("General settings id " + this.readGeneralSettings() + " are loaded.");
       this.setFormValues(settings);
     }
 
@@ -117,6 +118,10 @@ class Main {
         toggleVisibility("outputFiles", true);
         toggleVisibility("divClearInput", false);
         toggleVisibility("divCopyOutput", false);
+        disableElement("doBF", false);
+        disableElement("doXOR", false);
+        $("#helpActionButton").text("To decrypt the programm checks for a valid config header (n=)");
+        $("#helpOutput").text("Encrypted output is base64 formatted and uses a config header");
         console.log("Use text encryption.");
       } else {
         toggleVisibility("inputText", true);
@@ -126,6 +131,12 @@ class Main {
         toggleVisibility("outputFiles", false);
         toggleVisibility("divClearInput", true);
         toggleVisibility("divCopyOutput", true);
+        disableElement("doBF", true);
+        disableElement("doXOR", true);
+        checkCheckbox("doBF", false);
+        checkCheckbox("doXOR", false);
+        $("#helpActionButton").text("To decrypt the programm checks for a valid file ending (n.dat)");
+        $("#helpOutput").text("Encrypted output is base64 formatted and uses a config-id.dat ending");
         console.log("Use file encryption.");
       }
     }
@@ -159,9 +170,12 @@ class Main {
     }
 
     async action () {
-      if (this.getFormValue("type") === "doFiles") {
-        ShowNotification.error("Error", "File encryption is not supported right now.");
-        return;
+      let settings = this.getSettings();
+      const type = settings.type;
+
+      if (type === "doFiles") {
+        //ShowNotification.error("Error", "File encryption is not supported right now.");
+        //return;
       }
 
       let key = "";
@@ -171,6 +185,7 @@ class Main {
         key = this.getFormValue("keyBlank");
       }
       const text = this.getFormValue("inputText"); 
+      const fileList = $('#inputFiles')[0].files;
 
       if(!key) {
         console.log("No key set.");
@@ -178,20 +193,65 @@ class Main {
         return;
       }
 
-      if(!text && this.getFormValue("type") === "doText") {
+      if(!text && type === "doText") {
         console.log("Input is empty.");
         ShowNotification.error("No input", "Your text input is empty.");
         return;
       }
+      
+      if(fileList.length === 0 && type === "doFiles") {
+        console.log("File input is empty.");
+        ShowNotification.error("No files", "You did not select any files.");
+        return;
+      }
 
-      const cryptoHeader = this.checkForHeader(text);
+      let cryptoHeader = false;
+
+      if(type === "doText") {
+        cryptoHeader = this.checkForHeader(text);
+      }
+
+      if (type === "doFiles") {
+        let files = fileList;
+        const outputDiv = $("#outputFiles");
+
+        outputDiv.empty();
+        //Check the files for a valid ending
+        if (files.length === 1) {
+          cryptoHeader = this.checkForFileEnding(files[0].name);
+        } else {
+          //Check all the files for the same ending
+          for (let i = 1; i < files.length; i++) {
+            if (this.checkForFileEnding(files[i].name) !== this.checkForFileEnding(files[i - 1].name)) {
+              if (!this.checkForFileEnding(files[i].name) || !this.checkForFileEnding(files[i - 1].name) ) {
+                ShowNotification.error("File error", "You can't encrypt files twice.");
+                console.log("Encrypted files with unencrypted files detected. Aborting.");
+                return;
+              }
+              ShowNotification.error("File error", "All files must have the same ending / encryption settings.");
+              console.log("Detected different encryption settings. Can not decrypt.");
+              return;
+            }
+            //this.encryptAndSaveFile(key, file, false);
+          }
+
+          cryptoHeader = this.checkForFileEnding(files[0].name);
+        }
+
+        if (cryptoHeader) {
+          outputDiv.append("<p>Download decrypted files here </p>");
+        } else {
+          outputDiv.append("<p>Download encrypted files here </p>");
+        }
+      }
+      
 
       if (cryptoHeader) {
         this.setSettings(cryptoHeader);
         this.toggleHashing(); //When needed activate the hashing checkboxes
+        settings = this.getSettings(); //Update settings
       }
 
-      const settings = this.getSettings();
       const methods = settings.methods;
 
       if (!methods.doAES && !methods.doBF && !methods.doXOR) {
@@ -208,7 +268,7 @@ class Main {
         }
         
         await new Promise(r => setTimeout(r, 50));
-        hashPassword(key, 
+        key = hashPassword(key, 
           settings.hashDifficulty, 
           settings.doRoundOffset, 
           settings.doHashSalting);
@@ -217,28 +277,113 @@ class Main {
         if (settings.hashDifficulty == "medium" || settings.hashDifficulty == "high") {
           ShowNotification.success("Process finished" , "Hash process finished.");
         }
-        
       }
 
-      
+      //Text Encryption / Decryption
+      if (type === "doText") {
+        if (cryptoHeader) {
+          //If cryptoHeader: decrypt
+          const cipher = removeBeforeFirstEqual(text);
+          const decryptedText = this.decryptText(key, cipher, methods)
+          if (!decryptedText) {
+            ShowNotification.error("Decryption error", "Check your key or your input.");
+          }
+          this.setFormValue("outputText", decryptedText);
 
-      if (cryptoHeader) {
-        //If cryptoHeader: decrypt
-        const cipher = removeBeforeFirstEqual(text);
-        const decryptedText = this.decryptText(key, cipher, methods)
-        if (!decryptedText) {
-          ShowNotification.error("Decryption error", "Check your key or your input.");
+        } else {
+          //encrypt
+          const encryptedText = this.encryptText(key, text, methods);
+          const cryptoHeader = this.generateCryptoHeader();
+          this.setFormValue("outputText", cryptoHeader + "=" + encryptedText);       
         }
-        this.setFormValue("outputText", decryptedText);
-
-      } else {
-        //encrypt
-        const encryptedText = this.encryptText(key, text, methods);
-        const cryptoHeader = this.generateCryptoHeader();
-        this.setFormValue("outputText", cryptoHeader + "=" + encryptedText);       
       }
 
-      //Notification
+      //File Encryption / Decryption
+      if (type === "doFiles") {
+        let files = fileList;
+        if (cryptoHeader) {
+          console.log("Start file decryption");
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            this.decryptAndSaveFile(key, file, methods);
+          }
+        } else {
+          //encrypt
+          console.log("Start file encryption");
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            this.encryptAndSaveFile(key, file, methods);
+          }
+        }
+      }
+    }
+
+    encryptAndSaveFile (key, file, methods) {
+      const reader = new FileReader();
+
+      const outputDiv = $("#outputFiles");
+
+      reader.onload = (e) => {
+        const data = e.target.result.split(',')[1];
+        const fileName = file.name + "."+ this.generateCryptoHeader() +".dat";
+
+        const encryptedData = CryptoWrapper.encryptAES(data, key);
+
+        const blob = new Blob([encryptedData], { type: "application/octet-stream" });
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Create a download link for the base64 data
+        let downloadLink = $("<a>").attr({
+            href: blobUrl,
+            download: fileName
+        }).text(`${fileName} (${formatBytes(blob.size)})`);
+
+        outputDiv.append(downloadLink);
+        outputDiv.append("<br>");
+        };
+      reader.readAsDataURL(file);
+    }
+
+    decryptAndSaveFile (key, file, methods) {
+      const reader = new FileReader();
+
+      const outputDiv = $("#outputFiles");
+
+      reader.onload = (e) => {
+        const data = e.target.result;
+
+        const fileName = getFirstPartAfterDots(file.name);
+        let decryptedData;
+
+        try {
+          decryptedData = CryptoWrapper.decryptAES(data, key);
+        } catch (error) {
+          ShowNotification.error("Error decrypting", "File " + fileName + " could not be decrypted. Check file or key. ");
+          return;
+        }
+
+        //decryptedData = decryptedData.split(',')[1];
+
+        const uint8Array = Uint8Array.from(atob(decryptedData), c => c.charCodeAt(0));
+
+        const blob = new Blob([uint8Array], { type: "application/octet-stream" });
+        const blobUrl = URL.createObjectURL(blob);
+
+        if (blob.size === 0) {
+          ShowNotification.error("Error decrypting", "File " + fileName + " could not be decrypted. Check file or key. ");
+          return;
+        }
+
+        // Create a download link for the base64 data
+        let downloadLink = $("<a>").attr({
+            href: blobUrl,
+            download: fileName
+        }).text(`${fileName} (${formatBytes(blob.size)})`);
+
+        outputDiv.append(downloadLink);
+        outputDiv.append("<br>");
+      };
+      reader.readAsText(file);
     }
 
     //Encrypt text with the selected method
@@ -388,6 +533,20 @@ class Main {
       }
     }
 
+    checkForFileEnding (fileName) {
+      const parts = fileName.split('.');
+
+      if (parts.length >= 3 && parts[parts.length - 1] === "dat") {
+        const number = parseInt(parts[parts.length - 2]);
+        if (!isNaN(number)) {
+          if (number < 1000) {
+            return number;
+          }
+        }
+      }
+      return false;
+    }
+
     //Returns header or false 
     checkForHeader (inputString) {
       if (inputString.length < 5) {
@@ -413,8 +572,6 @@ class Main {
     generateGeneralSettingsHeader() {
       let headerCode = 0;
       const settings = this.getSettings();
-
-      console.log(settings);
 
       if (settings.type === "doText") headerCode +=1;
       if (settings.type === "doFiles") headerCode +=2;
@@ -546,6 +703,7 @@ class ShowNotification {
 class CryptoWrapper {
   static encryptAES (text, key) {
     return CryptoJS.AES.encrypt(text, key).toString().substr(10);
+    //return CryptoJS.AES.encrypt(text, key)
   }
 
   static encryptBF (text, key) {
@@ -568,6 +726,10 @@ class CryptoWrapper {
   static decryptXOR (b64Cipher, key) {
     const hexCipher = base64ToHex(b64Cipher);
     return XORdecrypt(key, hexCipher);
+  }
+
+  static encryptDataAES (data, key) {
+    return CryptoJS.AES.encrypt(data, key);
   }
 }
 
