@@ -69,6 +69,7 @@ class Main {
         hashDifficulty: this.getFormValue("hashDifficulty"),
         type: this.getFormValue("type"),
         saveHashes: this.getFormValue("saveHashes"),
+        hideKey: this.getFormValue("hideKey"), 
       }
     }
 
@@ -100,6 +101,7 @@ class Main {
           settings["type"] = "doFiles";
         }
         settings["saveHashes"] = isBitSet(gsHeader, 2);
+        settings["hideKey"] = isBitSet(gsHeader, 3);
       }
 
       console.log("Crypto settings id " + this.readCryptoSettings() + " are loaded.");
@@ -576,6 +578,7 @@ class Main {
       if (settings.type === "doText") headerCode +=1;
       if (settings.type === "doFiles") headerCode +=2;
       if (settings.saveHashes) headerCode += 4;
+      if (settings.hideKey) headerCode += 8;
       
       return headerCode;
     }
