@@ -18,6 +18,7 @@ class Main {
 
         this.changeType();
         this.toggleHashing();
+        this.toggleKey();
         this.updateFileList();
 
         $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
