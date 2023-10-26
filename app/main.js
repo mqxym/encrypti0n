@@ -16,7 +16,7 @@ class Main {
           }
         }
 
-        this.changeType();
+        
         this.toggleHashing();
         this.toggleKey();
         this.updateFileList();
@@ -784,8 +784,10 @@ class FormHandler {
         if (valuesToSet.hasOwnProperty(fieldName)) {
           const $field = this.$form.find(`[name="${fieldName}"]`);
           if ($field.length) {
-            if ($field.is(':checkbox') || $field.is(':radio')) {
+            if ($field.is(':checkbox')) {
               $field.prop('checked', valuesToSet[fieldName]);
+            } else if ($field.is(':radio')) {
+              $field.filter(`[value="${valuesToSet[fieldName]}"]`).prop('checked', true);
             } else {
               $field.val(valuesToSet[fieldName]);
             }
