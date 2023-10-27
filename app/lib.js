@@ -226,7 +226,7 @@ function base64ToHexLarge(base64) {
 	  if (!base64Regex.test(base64)) {
 		throw new Error("Invalid Base64 input");
 	  }
-	  
+
 	// Convert the Base64 string to a byte array
 	const byteArr = new Uint8Array(atob(base64).split('').map(char => char.charCodeAt(0)));
   
@@ -284,4 +284,4 @@ function formatBytes(bytes, decimals = 2) {
 	const i = Math.floor(Math.log(bytes) / Math.log(k));
 
 	return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-	}
+}

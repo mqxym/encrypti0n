@@ -233,7 +233,6 @@ class Main {
               console.log("Detected different encryption settings. Can not decrypt.");
               return;
             }
-            //this.encryptAndSaveFile(key, file, false);
           }
 
           cryptoHeader = this.checkForFileEnding(files[0].name);
@@ -244,6 +243,18 @@ class Main {
         } else {
           outputDiv.append("<p>Download encrypted files here </p>");
         }
+      }
+
+      let totalSize = 0;
+
+      if (type === "doFiles") {
+        let files = fileList;
+
+        for (let i = 0; i < files.length; i++) {
+          totalSize += files[i].size;
+        }
+
+        console.log("Working with a total filesize of " + formatBytes(totalSize));
       }
       
 
@@ -303,12 +314,18 @@ class Main {
       if (type === "doFiles") {
         let files = fileList;
         if (cryptoHeader) {
+          if (totalSize > 30*1024*1024) {
+            ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " decrypting might take a while." );
+          }
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
             this.decryptAndSaveFile(key, file, methods);
           }
         } else {
           //encrypt
+          if (totalSize > 30*1024*1024) {
+            ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " encrypting might take a while." );
+          }
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
             this.encryptAndSaveFile(key, file, methods);
@@ -391,8 +408,6 @@ class Main {
           console.log(error);
           return;
         }
-
-        //decryptedData = decryptedData.split(',')[1];
 
         const uint8Array = Uint8Array.from(atob(decryptedData), c => c.charCodeAt(0));
 
@@ -831,11 +846,10 @@ class FormHandler {
       button.prop("disabled", disable);
     }
   
-  }
+}
 
 
 
 $(document).ready(function () {
   const main = new Main(new FormHandler('mainForm'));
-
 });
