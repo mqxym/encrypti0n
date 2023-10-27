@@ -194,6 +194,48 @@ function hexToBase64(str) {
 	);
 }
 
+function hexToBase64Large(hex) {
+	// Function to convert a hexadecimal string chunk to a byte array
+	function hexToBytes(hexChunk) {
+		const byteArr = [];
+		for (let i = 0; i < hexChunk.length; i += 2) {
+		byteArr.push(parseInt(hexChunk.substr(i, 2), 16));
+		}
+		return byteArr;
+	}
+
+	// Split the hex string into chunks (adjust the chunk size as needed)
+	const chunkSize = 512; // You can adjust this value based on your memory limitations
+	const chunks = [];
+	for (let i = 0; i < hex.length; i += chunkSize) {
+		chunks.push(hex.slice(i, i + chunkSize));
+	}
+
+	// Convert each chunk to a byte array and then to base64
+	const base64Chunks = chunks.map(hexToBytes).map(byteArr => btoa(String.fromCharCode(...byteArr)));
+
+	// Concatenate the base64 chunks
+	return base64Chunks.join("");
+}
+
+function base64ToHexLarge(base64) {
+	  // Regular expression to check for valid Base64 characters
+	  const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+
+	  // Check if the input is a valid Base64 string
+	  if (!base64Regex.test(base64)) {
+		throw new Error("Invalid Base64 input");
+	  }
+	  
+	// Convert the Base64 string to a byte array
+	const byteArr = new Uint8Array(atob(base64).split('').map(char => char.charCodeAt(0)));
+  
+	// Convert the byte array to a hexadecimal string
+	const hexArray = Array.from(byteArr, byte => byte.toString(16).padStart(2, '0'));
+	return hexArray.join('');
+  }
+  
+
 // Super simple XOR encrypt function
 function XORencrypt(key, plaintext) {
 	let cyphertext = [];

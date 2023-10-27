@@ -16,7 +16,7 @@ class Main {
           }
         }
 
-        
+        this.changeType();
         this.toggleHashing();
         this.toggleKey();
         this.updateFileList();
@@ -134,9 +134,7 @@ class Main {
         toggleVisibility("outputFiles", false);
         toggleVisibility("divClearInput", true);
         toggleVisibility("divCopyOutput", true);
-        disableElement("doBF", true);
         disableElement("doXOR", true);
-        checkCheckbox("doBF", false);
         checkCheckbox("doXOR", false);
         $("#helpActionButton").text("To decrypt the programm checks for a valid file ending (n.dat)");
         $("#helpOutput").text("Encrypted output is base64 formatted and uses a config-id.dat ending");
@@ -305,14 +303,12 @@ class Main {
       if (type === "doFiles") {
         let files = fileList;
         if (cryptoHeader) {
-          console.log("Start file decryption");
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
             this.decryptAndSaveFile(key, file, methods);
           }
         } else {
           //encrypt
-          console.log("Start file encryption");
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
             this.encryptAndSaveFile(key, file, methods);
@@ -328,9 +324,26 @@ class Main {
 
       reader.onload = (e) => {
         const data = e.target.result.split(',')[1];
+        let encryptedData = data;
+
         const fileName = file.name + "."+ this.generateCryptoHeader() +".dat";
 
-        const encryptedData = CryptoWrapper.encryptAES(data, key);
+        if(methods.doXOR) {
+          ShowNotification.error("Error encrypting", "XOR not supported for files.");
+          return;
+          console.log("Start XOR Encryption for file: " + file.name);
+          encryptedData = CryptoWrapper.encryptXOR(encryptedData, key);
+        }
+        
+        if (methods.doBF) {
+          console.log("Start Blowfish Encryption for file: " + file.name);
+          encryptedData = CryptoWrapper.encryptBF(encryptedData, key);
+        }
+
+        if (methods.doAES) {
+          console.log("Start AES Encryption for file: " + file.name);
+          encryptedData = CryptoWrapper.encryptAES(encryptedData, key);
+        }
 
         const blob = new Blob([encryptedData], { type: "application/octet-stream" });
         const blobUrl = URL.createObjectURL(blob);
@@ -354,14 +367,28 @@ class Main {
 
       reader.onload = (e) => {
         const data = e.target.result;
+        let decryptedData = data;
 
         const fileName = getFirstPartAfterDots(file.name);
-        let decryptedData;
 
         try {
-          decryptedData = CryptoWrapper.decryptAES(data, key);
+          if (methods.doAES) {
+            decryptedData = CryptoWrapper.decryptAES(decryptedData, key);
+          }
+
+          if(methods.doBF) {
+            decryptedData = CryptoWrapper.decryptBF(decryptedData, key);
+          }
+
+          if(methods.doXOR) {
+            ShowNotification.error("Error decrypting", "XOR not supported for files.");
+            return;
+            decryptedData = CryptoWrapper.decryptXOR(decryptedData, key);
+          }
+          
         } catch (error) {
           ShowNotification.error("Error decrypting", "File " + fileName + " could not be decrypted. Check file or key. ");
+          console.log(error);
           return;
         }
 
