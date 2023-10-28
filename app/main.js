@@ -77,6 +77,11 @@ class Main {
     setSettings (cryptoHeader, generalSettingsHeader = false) {
       const cHeader = parseInt(cryptoHeader);
 
+      if (cHeader > 255) {
+        ShowNotification.error("Error", "Could not load settings. Invalid data.");
+        return false;
+      }
+
       let settings = {};
 
       settings["doAES"] = isBitSet(cHeader, 0);
@@ -96,6 +101,11 @@ class Main {
 
       if(generalSettingsHeader) {
         const gsHeader = parseInt(generalSettingsHeader);
+        if (gsHeader > 15) {
+          ShowNotification.error("Error", "Could not load settings. Invalid data.");
+          return false;
+        }
+
         if (isBitSet(gsHeader, 0)) {
           settings["type"] = "doText";
         } else if (isBitSet(gsHeader, 1)) {
@@ -108,6 +118,7 @@ class Main {
       console.log("Crypto settings id " + this.readCryptoSettings() + " are loaded.");
       console.log("General settings id " + this.readGeneralSettings() + " are loaded.");
       this.setFormValues(settings);
+      return true;
     }
 
     changeType () {
@@ -259,7 +270,11 @@ class Main {
       
 
       if (cryptoHeader) {
-        this.setSettings(cryptoHeader);
+        const settingsCheck = this.setSettings(cryptoHeader);
+        if (!settingsCheck) {
+          ShowNotification.error("Error","Can't decrypt. Invalid header.");
+          return;
+        }
         this.toggleHashing(); //When needed activate the hashing checkboxes
         settings = this.getSettings(); //Update settings
       }
@@ -649,12 +664,42 @@ class Main {
 
     }
 
+    generateHashHeader () {
+      let headerCode = 0;
+      const settings = this.getSettings();
+
+      if(settings.doHashSalting) headerCode +=1;
+      if(settings.doRoundOffset) headerCode +=2;
+      if(settings.hashDifficulty === "low") headerCode +=4;
+      if(settings.hashDifficulty === "high") headerCode += 8;
+    }
+
     readCryptoSettings () {
       return localStorage.getItem("cryptoConfig");
     }
 
     readGeneralSettings () {
       return localStorage.getItem("generalConfig");
+    }
+
+    readSavedHashes () {
+      if(localStorage.getItem("savedHashes")) {
+        const savedHashesEncrypted = localStorage.getItem("savedHashes");
+        try {
+          const savedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, "You no decrypt nonono");
+          const savedHashesObject = JSON.parse(savedHashes);
+          return savedHashesObject;
+        } catch (error) {
+          return false;
+        }
+      }
+      return false;
+    }
+
+    saveSavedHashes (savedHashesObject) {
+      const savedHashes = JSON.stringify(savedHashesObject);
+      const savedHashesEncrypted = CryptoWrapper.encryptAES(savedHashes, "You no decrypt nonono");
+      localStorage.setItem("savedHashes", savedHashesEncrypted);
     }
 
     saveSettings () {
