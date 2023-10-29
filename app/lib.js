@@ -31,9 +31,9 @@ function copyTextElement (id) {
 
 function toggleVisibility (element, disable) {
 	if(disable) {
-		$("#"+element).addClass("hidden");
+		$("#"+element).addClass("d-none");
 	} else {
-		$("#"+element).removeClass("hidden");
+		$("#"+element).removeClass("d-none");
 	}
 }
 

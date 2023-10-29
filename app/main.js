@@ -292,18 +292,15 @@ class Main {
         FormHandler.toggleButton("action", true);
         if (settings.hashDifficulty == "medium" || settings.hashDifficulty == "high") {
           ShowNotification.warning("Key hashing started", "Please wait while the hash process is running.");
+          await new Promise(r => setTimeout(r, 350));
         }
         
-        await new Promise(r => setTimeout(r, 50));
+        
         key = hashPassword(key, 
           settings.hashDifficulty, 
           settings.doRoundOffset, 
           settings.doHashSalting);
         FormHandler.toggleButton("action", false);
-
-        if (settings.hashDifficulty == "medium" || settings.hashDifficulty == "high") {
-          ShowNotification.success("Process finished" , "Hash process finished.");
-        }
       }
 
       //Text Encryption / Decryption
@@ -331,6 +328,7 @@ class Main {
         if (cryptoHeader) {
           if (totalSize > 30*1024*1024) {
             ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " decrypting might take a while." );
+            await new Promise(r => setTimeout(r, 350));
           }
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -340,6 +338,7 @@ class Main {
           //encrypt
           if (totalSize > 30*1024*1024) {
             ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " encrypting might take a while." );
+            await new Promise(r => setTimeout(r, 350));
           }
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -363,8 +362,8 @@ class Main {
         if(methods.doXOR) {
           ShowNotification.error("Error encrypting", "XOR not supported for files.");
           return;
-          console.log("Start XOR Encryption for file: " + file.name);
-          encryptedData = CryptoWrapper.encryptXOR(encryptedData, key);
+          //console.log("Start XOR Encryption for file: " + file.name);
+          //encryptedData = CryptoWrapper.encryptXOR(encryptedData, key);
         }
         
         if (methods.doBF) {
@@ -415,7 +414,7 @@ class Main {
           if(methods.doXOR) {
             ShowNotification.error("Error decrypting", "XOR not supported for files.");
             return;
-            decryptedData = CryptoWrapper.decryptXOR(decryptedData, key);
+            //decryptedData = CryptoWrapper.decryptXOR(decryptedData, key);
           }
           
         } catch (error) {
@@ -533,18 +532,18 @@ class Main {
       } else {
         if ($("#hideKey").is(":checked")) {
           //Sweet alert
-          swal({
-            title: "Reveal key?",
-            text: "When you copy a key it will be shown.",
-            type: "warning",
-            confirmButtonText: "Copy, don't show again",
+          Swal.fire({
+            icon: 'warning',
+            title: 'Reveal key?',
+            text: 'When you copy a key it will be shown.',
             showCancelButton: true,
-            className: "custom-modal",
-          }, function (confirmed) {
-            if (confirmed) {
-              Main.keyCopyAfterAlert();
-              localStorage.setItem("copyAlert", "true");
-            }
+            confirmButtonText: "Copy, don't show again",
+            cancelButtonText: 'Cancel'
+          }).then((result) => {
+              if (result.isConfirmed) {
+                Main.keyCopyAfterAlert();
+                localStorage.setItem("copyAlert", "true");
+              } 
           });
         } else {
           copyTextElement("keyBlank");
@@ -687,6 +686,9 @@ class Main {
         const savedHashesEncrypted = localStorage.getItem("savedHashes");
         try {
           const savedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, "You no decrypt nonono");
+          if (!savedHashes) {
+            return false;
+          }
           const savedHashesObject = JSON.parse(savedHashes);
           return savedHashesObject;
         } catch (error) {
@@ -781,13 +783,34 @@ class Main {
 
 class ShowNotification {
   static success (title, content) {
-    $.Notification.notify('success','top right',title , content);
+    $.toast({
+      text: content,
+      heading: title,
+      showHideTransition: 'fade',
+      icon: "success", // 'success', 'warning', or 'error'
+      loaderBg: "#3b98b5",
+      position: 'top-right',
+    });
   }
   static warning (title, content) {
-    $.Notification.notify('warning','top right',title , content);
+    $.toast({
+      text: content,
+      heading: title,
+      showHideTransition: 'fade',
+      icon: "warning", // 'success', 'warning', or 'error'
+      loaderBg: "#3b98b5",
+      position: 'top-right',
+    });
   }
   static error (title, content) {
-    $.Notification.notify('error','top right',title , content);
+    $.toast({
+      text: content,
+      heading: title,
+      showHideTransition: 'fade',
+      icon: "error", // 'success', 'warning', or 'error'
+      loaderBg: "#3b98b5",
+      position: 'top-right',
+    });
   }
 }
 

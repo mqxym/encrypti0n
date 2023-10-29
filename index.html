@@ -1,8 +1,9 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8" />
+        <title>Encrypti0n.com - Secure and reliable AES text and file encryption online</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Encrypt and decrypt text or multiple files with a password. Strong and Secure encryption methods. Use AES, Blowfish or XOR Encryption." />
         <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,Blowfish,AES256,XOR,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
@@ -10,432 +11,459 @@
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
-        
-
-        <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
-        <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
-        <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#ffffff">
-
-        <title>Encrypti0n.com - Secure and reliable AES text and file encryption online</title>
-
-        <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/core.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/components.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
-
-        <link href="plugins/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css">
-
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
-
-        <script src="assets/js/modernizr.min.js"></script>
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="assets/images/favicon.ico">
 
 
+        <!-- Jquery Toast css -->
+        <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+
+		<!-- Theme Config Js -->
+		<script src="assets/js/head.js"></script>
+
+		<!-- Bootstrap css -->
+		<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+		<!-- App css -->
+		<link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+		<!-- Icons css -->
+		<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     </head>
-
 
     <body>
 
+        <!-- Begin page -->
+        <div id="wrapper">
 
-        <!-- Navigation Bar-->
-        <header id="topnav">
-            <div class="topbar-main">
-                <div class="container">
+            
+            <!-- ========== Menu ========== -->
+            <div class="app-menu">  
 
-                    <!-- Logo container-->
-                    <div class="logo m-b-10">
-                        <a href="/" class="logo">
-                            <i class="md md-lock"></i> 
-                            <span>Encrypti0n.com</span> 
-                        </a>
-                    </div>
-                    <!-- End Logo container-->
+                <!-- Brand Logo -->
+                <div class="logo-box">
+                    <!-- Brand Logo Light -->
+                    <a href="/" class="logo-light">
+                        <img src="assets/images/logo-light.png" alt="logo" class="logo-lg">
+                        <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                    </a>
 
-                    <div class="menu-extras">
+                    <!-- Brand Logo Dark -->
+                    <a href="/" class="logo-dark">
+                        <img src="assets/images/logo-dark.png" alt="dark logo" class="logo-lg">
+                        <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                    </a>
+                </div>
 
-                        <div class="menu-item">
-                            <!-- Mobile menu toggle-->
-                            <a class="navbar-toggle">
-                                <div class="lines">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
+                <!-- menu-left -->
+                <div class="scrollbar">
+                    <!--- Menu -->
+                    <ul class="menu">
+
+                        <li class="menu-title">Main</li>
+
+                        <li class="menu-item">
+                            <a href="/" data-bs-toggle="collapse" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-view-dashboard-outline"></i></span>
+                                <span class="menu-text"> App </span>
                             </a>
-                            <!-- End mobile menu toggle-->
-                        </div>
-                    </div>
+                        </li>
 
+                        <li class="menu-title">Information</li>
+
+                        <li class="menu-item">
+                            <a href="#" data-bs-toggle="collapse" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-video-input-component"></i></span>
+                                <span class="menu-text"> Methods </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="menuEcommerce">
+                                <ul class="sub-menu">
+                                    <li class="menu-item">
+                                        <a href="#" class="menu-link">
+                                            <span class="menu-text">AES</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="#" class="menu-link">
+                                            <span class="menu-text">Blowfish</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="#" class="menu-link">
+                                            <span class="menu-text">XOR</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="#" class="menu-link">
+                                            <span class="menu-text">Hashing</span>
+                                        </a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-help"></i></span>
+                                <span class="menu-text"> FAQ </span>
+                            </a>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-launch"></i></span>
+                                <span class="menu-text"> Sourcecode </span>
+                            </a>
+                        </li>
+
+                  
+                    <!--- End Menu -->
+                    <div class="clearfix"></div>
                 </div>
             </div>
-            <!-- End topbar -->
 
+            <div class="content-page">
+                <div class="navbar-custom">
+                    <div class="topbar">
+                        <div class="topbar-menu d-flex align-items-center gap-1">
+                            <div class="logo-box">
+                                <!-- Brand Logo Light -->
+                                <a href="index.html" class="logo-light">
+                                    <img src="assets/images/logo-light.png" alt="logo" class="logo-lg">
+                                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                                </a>
 
-            <!-- Navbar Start -->
-            <div class="navbar-custom">
-                <div class="container">
-                    <div id="navigation">
-                        <!-- Navigation Menu-->
-                        <ul class="navigation-menu">
-                            <li class="has-submenu">
-                                <a href="/"><i class="md md-home"></i>App</a>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="#"><i class="md md-settings-input-component"></i>Methods</a>
-                                <ul class="submenu">
-                                    <li><a href="index-teaser.html">AES</a></li>
-                                    <li><a href="index-teaser.html">Blowish</a></li>
-                                    <li><a href="index-teaser.html">XOR</a></li>
-                                    <li><a href="index-teaser.html">Hashing</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="has-submenu">
-                                <a href="faq.html"><i class="md md-help"></i>FAQ</a>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="https://github.com/mqxym/encrypti0n" target="_blank"><i class="md md-launch"></i>Sourcecode</a>
-                            </li>
-                        </ul>                
-                    </div> 
-                </div>
-            </div> 
-        </header>
-        <div class="wrapper">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h4 class="page-title">Encrypt and decrypt your texts and files with AES, Blowfish or XOR</h4>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <form class="form-horizontal" role="form" id="mainForm"> 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="card-box">
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Type</label>
-                                            <div class="col-md-10">
-                                                <div class="radio radio-primary radio-inline">
-                                                    <input type="radio" name="type" id="radio1" value="doText" checked>
-                                                    <label for="radio1">
-                                                        Text
-                                                    </label>
-                                                </div>    
-                                                <div class="radio radio-purple radio-inline">
-                                                    <input type="radio" name="type" id="radio2" value="doFiles">
-                                                    <label for="radio2">
-                                                        Files
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>                                                            
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Input</label>
-                                            <div class="col-md-10">
-                                                <textarea id="inputText" class="form-control" name="inputText" placeholder="Your text here" rows="5"></textarea>
-                                                    
-                                                <div id="inputFilesDiv" class="fileupload btn btn-block btn-purple waves-effect waves-light">
-                                                    <span><i class="ion-upload m-r-5"></i>Select Files</span>
-                                                    <input id="inputFiles" name="inputFiles" type="file" class="upload" multiple />
-                                                </div>
-
-                                                <div id="fileList" class="m-t-10">
-
-                                                </div>
-                                                
-                                
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="divClearInput">
-                                            <label class="col-md-2 control-label"></label>
-                                            <div class="col-md-10">
-                                                <button id="clearInput" type="button" class="btn btn-sm btn-block btn-danger waves-effect m-b-5"> 
-                                                    <i class="md md-delete m-r-5"></i> 
-                                                    <span>Clear Input</span> 
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Key</label>
-                                            <div class="col-md-10">
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control hidden" id="keyBlank" name="keyBlank" placeholder="Password" value="">
-                                                    <input type="password" class="form-control" id="keyPassword" name="keyPassword" placeholder="Password" value="">
-                                                    <span class="input-group-btn">
-                                                        <button id="keyGenerate" type="button" class="btn btn-default waves-effect m-b-5"> 
-                                                            <i class="md md-cached m-r-5"></i> 
-                                                            <span>Gen</span> 
-                                                        </button>
-                                                    </span>
-                                                    <span class="input-group-btn">
-                                                        <button id="keyCopy" type="button" class="btn btn-warning waves-effect m-b-5"> 
-                                                            <i class="md md-content-copy m-r-5"></i> 
-                                                            <span>Copy</span> 
-                                                        </button>
-                                                    </span>
-                                                </div>              
-                                                <div class="checkbox checkbox-primary">
-                                                    <input name="hideKey" id="hideKey" type="checkbox" checked>
-                                                    <label for="hideKey">
-                                                        Hide key
-                                                    </label>
-                                                </div>                                              
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Browser</label>
-                                            <div class="col-md-4">
-                                                <select name="keySlot" class="form-control">
-                                                    <option value="1">Slot 1</option>
-                                                    <option value="2">Slot 2</option>
-                                                    <option value="3">Slot 3</option>
-                                                    <option value="4">Slot 4</option>
-                                                    <option value="5">Slot 5</option>
-                                                    <option value="6">Slot 6</option>
-                                                    <option value="7">Slot 7</option>
-                                                    <option value="8">Slot 8</option>
-                                                    <option value="9">Slot 9</option>
-                                                    <option value="10">Slot 10</option>
-                                                </select>
-                                                <span class="help-block">
-                                                    <small>
-                                                        <b>Load</b> or <b>save</b> keys from or to browser
-                                                    </small>
-                                                </span>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <button type="button" id="loadKey" class="btn btn-default waves-effect"> 
-                                                    <i class="md  md-file-download m-r-5"></i> 
-                                                    <span>Load</span> 
-                                                </button>
-                                                <button type="button" id="saveKey" class="btn btn-default waves-effect m-r-5"> 
-                                                    <i class="md md-file-upload m-r-5"></i> 
-                                                    <span>Save</span> 
-                                                </button>
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Action</label>
-                                            <div class="col-md-10">
-                                                <button type="button" id="action" class="btn btn-primary btn-block w-md waves-effect waves-light m-b-5">Encrypt / Decrypt</button>
-                                                <span class="help-block">
-                                                    <small id="helpActionButton">
-                                                        To decrypt the programm checks for a valid config header (n=)
-                                                    </small>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group hidden">
-                                            <label class="col-md-2 control-label">Progress</label>
-                                            <div class="col-md-10">
-                                                <div class="progress m-t-10">
-                                                    <div class="progress-bar progress-bar-purple" id="progress-bar" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
-                                                        <span class="sr-only">60% Complete</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Output</label>
-                                            <div class="col-md-10">
-                                                <textarea class="form-control" id="outputText" name="outputText" readonly placeholder="The result of the encryption / decryption" rows="5"></textarea>
-                                                <div id="outputFiles">
-                                                    <p>Download encrypted / decrypted files here</p>
-                                                </div>
-                                                <span class="help-block"><small id="helpOutput">Encrypted output is base64 formatted and uses a config header or ending</small></span>
-                                            </div>
-                                        </div>     
-                                        <div class="form-group" id="divCopyOutput">
-                                            <label class="col-md-2 control-label"></label>
-                                            <div class="col-md-10">
-                                                <button id="copyOutput" type="button" class="btn btn-sm btn-warning btn-block waves-effect m-b-5"> 
-                                                    <i class="md md-content-copy m-r-5"></i> 
-                                                    <span>Copy Output</span> 
-                                                </button>
-                                            </div>
-                                        </div>  
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card-box">   
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Encryption method</label>
-                                            <div class="col-md-10">
-                                                <div class="checkbox checkbox-primary">
-                                                    <input id="doAES" name="doAES" type="checkbox" checked>
-                                                    <label for="doAES">
-                                                        AES
-                                                    </label>
-                                                </div>
-                                                <div class="checkbox checkbox-primary">
-                                                    <input id="doBF" name="doBF" type="checkbox" checked>
-                                                    <label for="doBF">
-                                                        Blowfish
-                                                    </label>
-                                                </div> 
-                                                <div class="checkbox checkbox-primary">
-                                                    <input id="doXOR" name="doXOR" type="checkbox" checked>
-                                                    <label for="doXOR">
-                                                        XOR
-                                                    </label>
-                                                </div>  
-                                                <span class="help-block">
-                                                    <small>
-                                                        Choose which encryption methods are used (one or more)
-                                                    </small>
-                                                </span>
-                                            </div>
-                                        </div>  
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Password hashing</label>
-                                            <div class="col-md-10">
-                                                <div>
-                                                    <div class="checkbox checkbox-primary">
-                                                        <input id="doHashing" name="doHashing" type="checkbox" checked>
-                                                        <label for="doHashing">
-                                                            Enabled
-                                                        </label>
-                                                    </div> 
-                                                    <span class="help-block">
-                                                        <small>
-                                                            Hashes passwords with 6 different hash methods in semi-random order many times
-                                                        </small>
-                                                    </span>                                                   
-                                                </div>
-                                                <div>
-                                                    <div class="checkbox checkbox-primary">
-                                                        <input id="doRoundOffset" name="doRoundOffset" type="checkbox" checked>
-                                                        <label for="doRoundOffset">
-                                                            Key-depended round offset
-                                                        </label>
-                                                    </div>
-                                                    <span class="help-block">
-                                                        <small>
-                                                            Do some extra hash rounds depended of the key
-                                                        </small>
-                                                    </span> 
-                                                </div>
-                                                <div>
-                                                    <div class="checkbox checkbox-primary">
-                                                        <input id="doHashSalting" name="doHashSalting" type="checkbox" checked>
-                                                        <label for="doHashSalting">
-                                                            Hash salting
-                                                        </label>
-                                                    </div>
-                                                    <span class="help-block">
-                                                        <small>
-                                                            Add numbers to the hash function each round
-                                                        </small>
-                                                    </span> 
-                                                </div>
-                                            </div>
-                                        </div> 
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Hash difficulty</label>
-                                            <div class="col-md-10">
-                                                <select id="hashDifficulty" name="hashDifficulty" class="form-control">
-                                                    <option value="low" selected>Low</option>
-                                                    <option value="medium">Medium</option>
-                                                    <option value="high">High</option>
-                                                </select>
-                                                <span class="help-block">
-                                                    <small>
-                                                        Low: 100+ hash rounds, Medium: 1000+, High: 5000+
-                                                    </small>
-                                                </span>
-                                            </div>
-                                        </div> 
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Slots</label>
-                                            <div class="col-md-10">
-                                                <div class="checkbox checkbox-primary">
-                                                    <input id="saveHashes" name="saveHashes" type="checkbox" disabled>
-                                                    <label for="saveHashes">
-                                                        Save hashed keys
-                                                    </label>
-                                                </div>
-                                                <span class="help-block">
-                                                    <small>
-                                                        Save time when encrypting / decrypting.
-                                                    </small>
-                                                </span>
-                                            </div>
-                                        <div class="form-group">
-                                            <label class="col-md-2 control-label">Configuration</label>
-                                            <div class="col-md-10">
-                                                <div class="m-r-15 m-l-15">
-                                                    <button id="saveSettings" type="button" class="btn btn-success btn-block waves-effect m-b-5"> 
-                                                        <i class="md md-save m-r-5"></i> 
-                                                        <span>Save settings</span> 
-                                                    </button>
-                                                </div>
-
-                                                <span class="help-block">
-                                                    <small>
-                                                        Your settings get loaded each time you visit the site.
-                                                    </small>
-                                                </span>
-                                            </div>
-                                        </div>                                                              
-                                    </div>                                
-                                </div>                           
+                                <!-- Brand Logo Dark -->
+                                <a href="index.html" class="logo-dark">
+                                    <img src="assets/images/logo-dark.png" alt="dark logo" class="logo-lg">
+                                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                                </a>
                             </div>
-                        </form>
+
+                            <!-- Sidebar Menu Toggle Button -->
+                            <button class="button-toggle-menu">
+                                <i class="mdi mdi-menu"></i>
+                            </button>
+                        </div>
+
+                        <ul class="topbar-menu d-flex align-items-center">
+
+                            <!-- Fullscreen Button -->
+                            <li class="d-none d-md-inline-block">
+                                <a class="nav-link waves-effect waves-light" href="" data-toggle="fullscreen">
+                                    <i class="fe-maximize font-22"></i>
+                                </a>
+                            </li>
+
+                            <!-- Light/Darj Mode Toggle Button -->
+                            <li class="d-none d-sm-inline-block">
+                                <div class="nav-link waves-effect waves-light" id="light-dark-mode">
+                                    <i class="ri-moon-line font-22"></i>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                <footer class="footer text-right">
-                    <div class="container">
+                <div class="content">
+
+                    <div class="container-fluid">
                         <div class="row">
-                            <div class="col-xs-12">
-                                2023 © Encrypti0n.com | No cookies or tracking.
+                            <div class="col-12">
+                                <div class="page-title-box">
+                                    <h4 class="page-title">Encrypt and decrypt your texts and files with AES, Blowfish or XOR</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <form role="form" id="mainForm"> 
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="mb-1 input-group">
+                                                                <label for="radio1" class="form-label col-2">Type</label>
+                                                                <div class="col-10">
+                                                                    <div class="d-flex flex-wrap">
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input class="form-check-input" name="type" value="doText" type="radio"id="radio1" checked>
+                                                                            <label class="form-check-label" for="radio1">Text</label>
+                                                                        </div>
+                                                                        <div class="form-check-pink form-check-inline">
+                                                                            <input class="form-check-input" name="type" value="doFiles" type="radio" id="radio2">
+                                                                            <label class="form-check-label" for="radio2">Files</label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                        </div>
+                                                        <div class="input-group mb-1">
+                                                            <label for="inputText" class="form-label col-2">Input</label>
+                                                            <div class="col-10">
+                                                                <textarea id="inputText" class="form-control" name="inputText" placeholder="Your (encrypted) text here" rows="5"></textarea>
+                                                                <div id="inputFilesDiv" class="d-grid d-none">
+                                                                    <button type="button" class="btn btn-outline-pink waves-effect" onclick="document.getElementById('inputFiles').click();">
+                                                                        <span><i class="mdi mdi-file-upload mr-5"></i>Select Files</span>
+                                                                    </button>
+                                                                    <input style="display: none;" id="inputFiles" name="inputFiles" type="file" class="upload" multiple />
+                                                                    <div id="fileList" class="mt-1">
+    
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group mb-2" id="divClearInput">
+                                                            <label class="col-2 control-label"></label>
+                                                            <div class="col-10 d-grid">
+                                                                <button id="clearInput" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
+                                                                    <i class="mdi mdi-delete me-1"></i> 
+                                                                    <span>Clear Input</span> 
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group mb-2" >
+                                                            <label class="col-2 control-label">Key</label>
+                                                            <div class="col-10">
+                                                                <div class="input-group mb-1">
+                                                                    <input type="text" class="form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password" value="">
+                                                                    <input type="password" class="form-control" id="keyPassword" name="keyPassword" placeholder="Password" value="">
+                                                                    <button id="keyGenerate" class="btn input-group-text btn-outline-secondary waves-effect" type="button">
+                                                                        <i class="mdi mdi-cached me-1"></i> 
+                                                                        <span>Gen</span> 
+                                                                    </button>
+                                                                    <button id="keyCopy" class="btn input-group-text btn-outline-warning waves-effect" type="button">
+                                                                        <i class="mdi mdi-content-copy me-1"></i> 
+                                                                        <span>Copy</span> 
+                                                                    </button>
+                                                                </div>
+                                                                <div class="form-check mb-1 form-check-primary">
+                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="hideKey" id="hideKey" checked="">
+                                                                    <label class="form-check-label" for="hideKey">Hide key</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group mb-2" >
+                                                            <label class="col-2 control-label">Browser</label>
+                                                            <div class="col-10">
+                                                                <div class="row">
+                                                                    <div class="col-4">
+                                                                        <select class="form-select" name="keySlot">
+                                                                            <option value="1">Slot 1</option>
+                                                                            <option value="2">Slot 2</option>
+                                                                            <option value="3">Slot 3</option>
+                                                                            <option value="4">Slot 4</option>
+                                                                            <option value="5">Slot 5</option>
+                                                                            <option value="6">Slot 6</option>
+                                                                            <option value="7">Slot 7</option>
+                                                                            <option value="8">Slot 8</option>
+                                                                            <option value="9">Slot 9</option>
+                                                                            <option value="10">Slot 10</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-8 mr-3">
+                                                                        <button type="button" id="loadKey" class="btn btn-outline-secondary waves-effect"> 
+                                                                            <i class="mdi mdi-file-download me-1"></i> 
+                                                                            Load
+                                                                        </button>
+                                                                        <button type="button" id="saveKey" class="btn btn-outline-secondary waves-effect mr-2"> 
+                                                                            <i class="mdi mdi-file-upload me-1"></i> 
+                                                                            Save 
+                                                                        </button>
+                                                                    </div>
+                                                                    <span class="help-block">
+                                                                        <small>
+                                                                            <b>Load</b> or <b>save</b> keys from or to browser
+                                                                        </small>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group mb-3" >
+                                                            <label class="col-2 control-label">Action</label>
+                                                            <div class="col-10">
+                                                                <div class="d-grid">
+                                                                    <button type="button" id="action" class="btn btn-outline-blue waves-effect mb-1">Encrypt / Decrypt</button>
+                                                                </div>
+                                                                <span class="help-block">
+                                                                    <small id="helpActionButton">
+                                                                        To decrypt the programm checks for a valid config header (n=)
+                                                                    </small>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group mb-2" >
+                                                            <label class="col-2 control-label">Output</label>
+                                                            <div class="col-10">
+                                                                <textarea class="form-control" id="outputText" name="outputText" readonly placeholder="The result of the encryption / decryption" rows="5"></textarea>
+                                                                <div class="d-none" id="outputFiles">
+                                                                    <p>Download encrypted / decrypted files here</p>
+                                                                </div>
+                                                                <span class="help-block">
+                                                                    <small id="helpOutput">
+                                                                        Encrypted output is base64 formatted and uses a config header or ending
+                                                                    </small>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group mb-2" id="divCopyOutput">
+                                                            <label class="col-2 control-label"></label>
+                                                            <div class="col-10">
+                                                                <div class="d-grid">
+                                                                    <button id="copyOutput" type="button" class="btn btn-sm btn-outline-warning waves-effect"> 
+                                                                        <i class="mdi mdi-content-copy me-1"></i> 
+                                                                        <span>Copy Output</span> 
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                </div>
+                                            </div> 
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="input-group mb-2">
+                                                            <label class="col-3 control-label">Encryption method</label>
+                                                            <div class="col-9">
+                                                                <div class="form-check mb-1 form-check-primary">
+                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="doAES" id="doAES" checked="">
+                                                                    <label class="form-check-label" for="doAES">AES</label>
+                                                                </div>
+                                                                <div class="form-check mb-1 form-check-primary">
+                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="doBF" id="doBF" checked="">
+                                                                    <label class="form-check-label" for="doBF">Blowfish</label>
+                                                                </div>
+                                                                <div class="form-check mb-1 form-check-primary">
+                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="doXOR" id="doXOR" checked="">
+                                                                    <label class="form-check-label" for="doXOR">XOR</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group mb-2">
+                                                            <label class="col-3 control-label">Password hashing</label>
+                                                            <div class="col-9">
+                                                                <div class="mb-2">
+                                                                    <div class="form-check mb-1 form-check-primary">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doHashing" id="doHashing" checked="">
+                                                                        <label class="form-check-label" for="doHashing">Enabled</label>
+                                                                    </div>
+                                                                    <span class="help-block">
+                                                                        <small>
+                                                                            Hashes passwords with 6 different hash methods in semi-random order many times
+                                                                        </small>
+                                                                    </span>  
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <div class="form-check mb-1 form-check-primary">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doRoundOffset" id="doRoundOffset" checked="">
+                                                                        <label class="form-check-label" for="doRoundOffset">Key-depended round offset</label>
+                                                                    </div>
+                                                                    <span class="help-block">
+                                                                        <small>
+                                                                            Do some extra hash rounds depended of the key
+                                                                        </small>
+                                                                    </span>  
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <div class="form-check mb-1 form-check-primary">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doHashSalting" id="doHashSalting" checked="">
+                                                                        <label class="form-check-label" for="doHashSalting">Hash salting</label>
+                                                                    </div>
+                                                                    <span class="help-block">
+                                                                        <small>
+                                                                            Add numbers to the hash function each round
+                                                                        </small>
+                                                                    </span>  
+                                                                </div>
+                                                             </div>
+                                                        </div>
+                                                        <div class="input-group mb-2">
+                                                            <label class="col-3 control-label">Hash difficulty</label>
+                                                            <div class="col-9">
+                                                                <select id="hashDifficulty" name="hashDifficulty" class="form-control">
+                                                                    <option value="low" selected>Low</option>
+                                                                    <option value="medium">Medium</option>
+                                                                    <option value="high">High</option>
+                                                                </select>
+                                                                <span class="help-block">
+                                                                    <small>
+                                                                        Low: 100+ hash rounds, Medium: 1000+, High: 5000+
+                                                                    </small>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group mb-2">
+                                                            <label class="col-3 control-label">Slots</label>
+                                                            <div class="col-9">
+                                                                <div class="form-check mb-1 form-check-primary">
+                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" id="saveHashes" name="saveHashes" disabled>
+                                                                    <label class="form-check-label" for="saveHashes">Save hashed keys</label>
+                                                                </div>
+                                                                <span class="help-block">
+                                                                    <small>
+                                                                        Save time when encrypting / decrypting.
+                                                                    </small>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group mb-2">
+                                                            <label class="col-3 control-label">Configuration</label>
+                                                            <div class="col-9">
+                                                                <div class="d-grid">
+                                                                    <button id="saveSettings" type="button" class="btn btn-sm btn-outline-success waves-effect"> 
+                                                                        <i class="mdi mdi-save me-1"></i> 
+                                                                        <span>Save settings</span> 
+                                                                    </button>
+                                                                </div>
+                                                                <span class="help-block">
+                                                                    <small>
+                                                                        Your settings get loaded each time you visit the site.
+                                                                    </small>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </div> 
+                                </form>
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div><script>document.write(new Date().getFullYear())</script> © Encrypti0n.com - No cookies. No tracking.</div>
                             </div>
                         </div>
                     </div>
                 </footer>
             </div>
         </div>
+        
+        <!-- Vendor js -->
+        <script src="assets/js/vendor.min.js" defer></script>
 
-        <!-- jQuery  -->
-        <script src="assets/js/jquery.min.js" defer></script>
-        <script src="assets/js/bootstrap.min.js" defer></script>
-        <script src="assets/js/detect.js" defer></script>
-        <script src="assets/js/fastclick.js" defer></script>
-        <script src="assets/js/jquery.blockUI.js defer"></script>
-        <script src="assets/js/waves.js" defer></script>
-        <script src="assets/js/wow.min.js" defer></script>
-        <script src="assets/js/jquery.nicescroll.js" defer></script>
-        <script src="assets/js/jquery.scrollTo.min.js" defer></script>
+        <!-- Theme App js -->
+        <script src="assets/js/app.min.js" defer></script>
 
-        <!-- Notification js -->
-        <script src="plugins/notifyjs/dist/notify.min.js" defer></script>
-        <script src="plugins/notifications/notify-metro.js" defer></script>
+        <!-- Tost-->
+        <script src="assets/libs/jquery-toast-plugin/jquery.toast.min.js" defer></script>>
 
-        <!-- Sweet-Alert  -->
-        <script src="plugins/bootstrap-sweetalert/sweet-alert.min.js" defer></script>
-        <script src="assets/pages/jquery.sweet-alert.init.js" defer></script>
+       <!-- Sweet Alerts js -->
+        <script src="assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
 
-        <!-- Custom main Js -->
-        <script src="assets/js/jquery.core.js" defer></script>
-        <script src="assets/js/jquery.app.js" defer></script>
-
-        <!-- App JS-->
-        <script src="app/crypto.js" defer></script>
-        <script src="app/lib.js" defer></script>
-        <script src="app/main.js" defer></script>
+         <!-- App JS-->
+         <script src="app/crypto.js" defer></script>
+         <script src="app/lib.js" defer></script>
+         <script src="app/main.js" defer></script>
 
     </body>
 </html>
