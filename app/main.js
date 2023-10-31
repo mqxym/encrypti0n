@@ -527,7 +527,9 @@ class Main {
           checkCheckbox("hideKey", false);
           this.toggleKey();
         }
+        $('#keyBlank').prop('readonly', true);
         copyTextElement("keyBlank");
+        $('#keyBlank').prop('readonly', false);
         ShowNotification.success("Success", "Your key was copied.");
       } else {
         if ($("#hideKey").is(":checked")) {
@@ -546,7 +548,9 @@ class Main {
               } 
           });
         } else {
+          $('#keyBlank').prop('readonly', true);
           copyTextElement("keyBlank");
+          $('#keyBlank').prop('readonly', false);
           ShowNotification.success("Success", "Your key was copied.");
         }
       }
@@ -562,7 +566,9 @@ class Main {
         console.log("Show password");
 
       }
-      copyTextElement("keyBlank");   
+      $('#keyBlank').prop('readonly', true);
+      copyTextElement("keyBlank");
+      $('#keyBlank').prop('readonly', false);   
       ShowNotification.success("Success", "Your key was copied."); 
     }
 
