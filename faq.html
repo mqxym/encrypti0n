@@ -1,16 +1,20 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8" />
+        <title>Encrypti0n.com - Secure and reliable AES text and file encryption online</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Encrypt and decrypt text or files with a password. Strong and Secure encryption methods. Use AES, Blowfish or XOR Encrpytion." />
+        <meta name="description" content="Encrypt and decrypt text or multiple files with a password. Strong and Secure encryption methods. Use AES, Blowfish or XOR Encryption." />
         <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,Blowfish,AES256,XOR,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
-        
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="assets/icons/favicon.ico">
+
+         
 
         <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
@@ -18,197 +22,263 @@
         <link rel="manifest" href="/site.webmanifest">
         <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#ffffff">
-
-        <title>Encrypti0n.com - Secure and reliable AES text and file encryption online</title>
-
-        <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/core.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/components.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
-
-        <link href="plugins/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css">
-
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
-
-        <script src="assets/js/modernizr.min.js"></script>
+        <meta name="theme-color" content="#000000">
 
 
+        <!-- Jquery Toast css -->
+        <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+
+		<!-- Theme Config Js -->
+		<script src="assets/js/head.js"></script>
+
+		<!-- Bootstrap css -->
+		<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+		<!-- App css -->
+		<link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+		<!-- Icons css -->
+		<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     </head>
-
 
     <body>
 
+        <!-- Begin page -->
+        <div id="wrapper">
 
-        <!-- Navigation Bar-->
-        <header id="topnav">
-            <div class="topbar-main">
-                <div class="container">
+            
+            <!-- ========== Menu ========== -->
+            <div class="app-menu">  
 
-                    <!-- Logo container-->
-                    <div class="logo m-b-10">
-                        <a href="/" class="logo">
-                            <i class="md md-lock"></i> 
-                            <span>Encrypti0n.com</span> 
-                        </a>
-                    </div>
-                    <!-- End Logo container-->
+                <!-- Brand Logo -->
+                <div class="logo-box">
+                    <!-- Brand Logo Light -->
+                    <a href="/" class="logo-light">
+                        <img src="assets/images/logo-dark.png" alt="logo" class="logo-lg">
+                        <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                    </a>
 
-                    <div class="menu-extras">
+                    <!-- Brand Logo Dark -->
+                    <a href="/" class="logo-dark">
+                        <img src="assets/images/logo.png" alt="dark logo" class="logo-lg">
+                        <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                    </a>
+                </div>
 
-                        <div class="menu-item">
-                            <!-- Mobile menu toggle-->
-                            <a class="navbar-toggle">
-                                <div class="lines">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
+                <!-- menu-left -->
+                <div class="scrollbar">
+                    <!--- Menu -->
+                    <ul class="menu">
+
+                        <li class="menu-title">Main</li>
+
+                        <li class="menu-item">
+                            <a href="/" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-view-dashboard-outline"></i></span>
+                                <span class="menu-text">App</span>
                             </a>
-                            <!-- End mobile menu toggle-->
-                        </div>
-                    </div>
+                        </li>
 
+                        <li class="menu-title">Information</li>
+
+                        <li class="menu-item">
+                            <a href="#methods" data-bs-toggle="collapse" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-video-input-component"></i></span>
+                                <span class="menu-text"> Methods </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="methods">
+                                <ul class="sub-menu">
+                                    <li class="menu-item">
+                                        <a href="#" class="menu-link">
+                                            <span class="menu-text">AES</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="#" class="menu-link">
+                                            <span class="menu-text">Blowfish</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="#" class="menu-link">
+                                            <span class="menu-text">XOR</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="#" class="menu-link">
+                                            <span class="menu-text">Hashing</span>
+                                        </a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="faq.html" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-help"></i></span>
+                                <span class="menu-text"> FAQ </span>
+                            </a>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-launch"></i></span>
+                                <span class="menu-text"> Sourcecode </span>
+                            </a>
+                        </li>
+
+                  
+                    <!--- End Menu -->
+                    <div class="clearfix"></div>
                 </div>
             </div>
-            <!-- End topbar -->
 
+            <div class="content-page">
+                <div class="navbar-custom">
+                    <div class="topbar">
+                        <div class="topbar-menu d-flex align-items-center gap-1">
+                            <div class="logo-box">
+                                <!-- Brand Logo Light -->
+                                <a href="/" class="logo-light">
+                                    <img src="assets/images/logo-dark.png" alt="logo" class="logo-lg">
+                                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                                </a>
 
-            <!-- Navbar Start -->
-            <div class="navbar-custom">
-                <div class="container">
-                    <div id="navigation">
-                        <!-- Navigation Menu-->
-                        <ul class="navigation-menu">
-                            <li class="has-submenu">
-                                <a href="/"><i class="md md-home"></i>App</a>
+                                <!-- Brand Logo Dark -->
+                                <a href="/" class="logo-dark">
+                                    <img src="assets/images/logo.png" alt="dark logo" class="logo-lg">
+                                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                                </a>
+                            </div>
+
+                            <!-- Sidebar Menu Toggle Button -->
+                            <button class="button-toggle-menu">
+                                <i class="mdi mdi-menu"></i>
+                            </button>
+                        </div>
+
+                        <ul class="topbar-menu d-flex align-items-center">
+
+                            <!-- Fullscreen Button -->
+                            <li class="d-none d-md-inline-block">
+                                <a class="nav-link waves-effect waves-light" href="" data-toggle="fullscreen">
+                                    <i class="fe-maximize font-22"></i>
+                                </a>
                             </li>
-                            <li class="has-submenu">
-                                <a href="#"><i class="md md-settings-input-component"></i>Methods</a>
-                                <ul class="submenu">
-                                    <li><a href="index-teaser.html">AES</a></li>
-                                    <li><a href="index-teaser.html">Blowish</a></li>
-                                    <li><a href="index-teaser.html">XOR</a></li>
-                                    <li><a href="index-teaser.html">Hashing</a></li>
-                                </ul>
+
+                            <!-- Light/Darj Mode Toggle Button -->
+                            <li class="d-none d-sm-inline-block">
+                                <div class="nav-link waves-effect waves-light" id="light-dark-mode">
+                                    <i class="ri-moon-line font-22"></i>
+                                </div>
                             </li>
-
-                            <li class="has-submenu">
-                                <a href="faq.html"><i class="md md-help"></i>FAQ</a>
-                            </li>
-                            <li class="has-submenu">
-                                <a href="https://github.com/mqxym/encrypti0n" target="_blank"><i class="md md-launch"></i>Sourcecode</a>
-                            </li>
-                        </ul>                
-                    </div> 
-                </div>
-            </div> 
-        </header>
-        <div class="wrapper">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="text-center">
-                            <h3 class="font-600">Frequently Asked Questions</h3>
-                            <p class="text-muted"> 
-                                Here, you'll discover the frequently asked questions about using the site.
-                                <br>
-                                Feel free to reach out to me if you require additional assistance or would like to include a new question in the list.
-                            </p>
-
-                            <a href="mailto:maxim@omg.lol"><button type="button" class="btn btn-success waves-effect waves-light m-t-10">Email me your question</button></a>
-                            <a href="https://twitter.com/messages/compose?recipient_id=mqxym77"><button type="button" class="btn btn-primary waves-effect waves-light m-t-10">Send me a tweet</button></a>
-
-                        </div>
-                    </div><!-- end col -->
-                </div>
-
-
-                <div class="row m-t-40">
-                    <div class="col-lg-9 center-page">
-                        <div>
-                            <div class="question-q-box">Q.</div>
-                            <h4 class="question">I encrypted text, how to decrypt it?</h4>
-                            <p class="answer">
-                                To decrypt the text, simply copy it into the input field, 
-                                and remember to use the same key when performing the decryption.
-                            </p>
-                        </div>
-
-                        <div>
-                            <div class="question-q-box">Q.</div>
-                            <h4 class="question">Where does the encryption happen?</h4>
-                            <p class="answer">
-                                The encryption process takes place right on your local computer or phone, with no data transmitted over the internet. 
-                                You can even download the source code and run it on your local device without needing an internet connection.
-                            </p>
-                        </div>
-
-                        <div>
-                            <div class="question-q-box">Q.</div>
-                            <h4 class="question">I have found a bug / issue. How can I reach out?</h4>
-                            <p class="answer">
-                                If you come across a bug or encounter any issues with the website, it would be most helpful if you could promptly submit an issue request on GitHub <a href="https://github.com/mqxym/encrypti0n/issues">(here)</a>. 
-                                Alternatively, you can also reach out to me via email using the button located above.
-                            </p>
-                        </div>
-
-                        <div>
-                            <div class="question-q-box">Q.</div>
-                            <h4 class="question">Where are keys stored?</h4>
-                            <p class="answer">
-                                The keys are stored in an storage known as "localStorage" within your web browser. 
-                                The design of the website ensures that the owner cannot access the information stored in your local storage, preserving your data's privacy and security.
-                                Furthermore, it's important to note that the keys are locally encrypted for an added layer of security.
-                            </p>
-                        </div>
+                        </ul>
                     </div>
                 </div>
-                <footer class="footer text-right">
-                    <div class="container">
+                <div class="content">
+                    <div class="container-fluid">
                         <div class="row">
-                            <div class="col-xs-12">
-                                2023 © Encrypti0n.com
+                            <div class="col-12">
+                                <div class="page-title-box">
+                                    <h4 class="page-title">FAQs</h4>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col-12">
+                                <div class="text-center">
+                                    <i class="h1 mdi mdi-comment-multiple-outline text-muted"></i>
+                                    <h3 class="mb-3">Frequently Asked Questions</h3>
+                                    <p class="text-muted"> Here, you'll discover the frequently asked questions about using the site.
+                                        <br>
+                                        Feel free to reach out to me if you require additional assistance or would like to 
+                                        include a new question in the list.
+                                    </p>
+
+                                    <a href="mailto:maxim@omg.lol" target="_blank">
+                                        <button type="button" class="btn btn-outline-success waves-effect waves-light mt-2 me-1"><i class="mdi mdi-email-outline me-1"></i> Email us your question</button>
+                                    </a> 
+                                    <a href="https://twitter.com/messages/compose?recipient_id=mqxym77" target="_blank">
+                                        <button type="button" class="btn btn-outline-primary waves-effect waves-light mt-2"><i class="mdi mdi-twitter me-1"></i> Send us a tweet</button>
+                                    </a>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row pt-5">
+                            <div class="col-lg-5 offset-lg-1">
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question" data-wow-delay=".1s">I encrypted text, how to decrypt it?</h4>
+                                    <p class="faq-answer mb-4">
+                                        To decrypt the text, simply copy it into the input field, 
+                                        and remember to use the same key when performing the decryption.
+                                    </p>
+                                </div>
+
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">Where does the encryption happen?</h4>
+                                    <p class="faq-answer mb-4">
+                                        The encryption process takes place right on your local computer or phone, with no data transmitted over the internet. 
+                                        You can even download the source code and run it on your local device without needing an internet connection.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="col-lg-5">
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">I have found a bug / issue. How can I reach out?</h4>
+                                    <p class="faq-answer mb-4">
+                                        If you come across a bug or encounter any issues with the website, it would be most helpful if you could promptly submit an issue request on GitHub <a href="https://github.com/mqxym/encrypti0n/issues">(here)</a>. 
+                                        Alternatively, you can also reach out to me via email using the button located above.
+                                    </p>
+                                </div>
+
+                                <!-- Question/Answer -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">Where are keys stored?</h4>
+                                    <p class="faq-answer mb-4">
+                                        The keys are stored in an storage known as "localStorage" within your web browser. 
+                                The design of the website ensures that the owner cannot access the information stored in your local storage, preserving your data's privacy and security.
+                                Furthermore, it's important to note that the keys are locally encrypted for an added layer of security.
+                                    </p>
+                                </div>
+
+                            </div>
+                            <!--/col-md-5-->
+                        </div>
+                        <!-- end row -->
+
+                        
+                    </div> <!-- container -->
+                </div> 
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div><script>document.write(new Date().getFullYear())</script> © Encrypti0n.com - No cookies. No tracking.</div>
                             </div>
                         </div>
                     </div>
                 </footer>
             </div>
         </div>
+        
+        <!-- Vendor js -->
+        <script src="assets/js/vendor.min.js" defer></script>
 
-        <!-- jQuery  -->
-        <script src="assets/js/jquery.min.js" defer></script>
-        <script src="assets/js/bootstrap.min.js" defer></script>
-        <script src="assets/js/detect.js" defer></script>
-        <script src="assets/js/fastclick.js" defer></script>
-        <script src="assets/js/jquery.blockUI.js defer"></script>
-        <script src="assets/js/waves.js" defer></script>
-        <script src="assets/js/wow.min.js" defer></script>
-        <script src="assets/js/jquery.nicescroll.js" defer></script>
-        <script src="assets/js/jquery.scrollTo.min.js" defer></script>
-
-        <!-- Notification js -->
-        <script src="plugins/notifyjs/dist/notify.min.js" defer></script>
-        <script src="plugins/notifications/notify-metro.js" defer></script>
-
-        <!-- Sweet-Alert  -->
-        <script src="plugins/bootstrap-sweetalert/sweet-alert.min.js" defer></script>
-        <script src="assets/pages/jquery.sweet-alert.init.js" defer></script>
-
-        <!-- Custom main Js -->
-        <script src="assets/js/jquery.core.js" defer></script>
-        <script src="assets/js/jquery.app.js" defer></script>
-
-        <!-- App JS-->
-        <script src="app/crypto.js" defer></script>
-        <script src="app/lib.js" defer></script>
-        <script src="app/main.js" defer></script>
+        <!-- Theme App js -->
+        <script src="assets/js/app.min.js" defer></script>
 
     </body>
 </html>
