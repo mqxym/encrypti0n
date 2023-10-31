@@ -82,12 +82,12 @@
                         <li class="menu-title">Information</li>
 
                         <li class="menu-item">
-                            <a href="#" data-bs-toggle="collapse" class="menu-link">
+                            <a href="#methods" data-bs-toggle="collapse" class="menu-link">
                                 <span class="menu-icon"><i class="mdi mdi-video-input-component"></i></span>
                                 <span class="menu-text"> Methods </span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <div class="collapse" id="menuEcommerce">
+                            <div class="collapse" id="methods">
                                 <ul class="sub-menu">
                                     <li class="menu-item">
                                         <a href="#" class="menu-link">
@@ -181,8 +181,8 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-12">
-                                <div class="page-title-box">
-                                    <h4 class="page-title">Encrypt and decrypt your texts and files with AES, Blowfish or XOR</h4>
+                                <div class="mb-3">
+                                    <h4 class="page-title text-break">Encrypt and decrypt your texts and files with AES, Blowfish or XOR</h4>
                                 </div>
                             </div>
                         </div>
@@ -194,9 +194,9 @@
                                             <div class="col-md-6">
                                                 <div class="card">
                                                     <div class="card-body">
-                                                        <div class="mb-1 input-group">
-                                                                <label for="radio1" class="form-label col-2">Type</label>
-                                                                <div class="col-10">
+                                                        <div class="mb-2 input-group">
+                                                                <label for="radio1" class="form-label col-12 col-sm-2 "><u>Type</u></label>
+                                                                <div class="col-12 col-sm-10">
                                                                     <div class="d-flex flex-wrap">
                                                                         <div class="form-check form-check-inline">
                                                                             <input class="form-check-input" name="type" value="doText" type="radio"id="radio1" checked>
@@ -210,9 +210,9 @@
 
                                                                 </div>
                                                         </div>
-                                                        <div class="input-group mb-1">
-                                                            <label for="inputText" class="form-label col-2">Input</label>
-                                                            <div class="col-10">
+                                                        <div class="input-group mb-2">
+                                                            <label for="inputText" class="form-label col-12 col-sm-2 "><u>Input</u></label>
+                                                            <div class="col-12 col-sm-10 ">
                                                                 <textarea id="inputText" class="form-control" name="inputText" placeholder="Your (encrypted) text here" rows="5"></textarea>
                                                                 <div id="inputFilesDiv" class="d-grid d-none">
                                                                     <button type="button" class="btn btn-outline-pink waves-effect" onclick="document.getElementById('inputFiles').click();">
@@ -226,8 +226,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-2" id="divClearInput">
-                                                            <label class="col-2 control-label"></label>
-                                                            <div class="col-10 d-grid">
+                                                            <label class="col-12 col-sm-2  control-label"></label>
+                                                            <div class="col-12 col-sm-10  d-grid">
                                                                 <button id="clearInput" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
                                                                     <i class="mdi mdi-delete me-1"></i> 
                                                                     <span>Clear Input</span> 
@@ -235,11 +235,11 @@
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-2" >
-                                                            <label class="col-2 control-label">Key</label>
-                                                            <div class="col-10">
+                                                            <label class="col-12 col-sm-2  control-label"><u>Key</u></label>
+                                                            <div class="col-12 col-sm-10 ">
                                                                 <div class="input-group mb-1">
-                                                                    <input type="text" class="form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password" value="">
-                                                                    <input type="password" class="form-control" id="keyPassword" name="keyPassword" placeholder="Password" value="">
+                                                                    <input type="text" class="form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password">
+                                                                    <input type="password" class="form-control" id="keyPassword" name="keyPassword" placeholder="Password">
                                                                     <button id="keyGenerate" class="btn input-group-text btn-outline-secondary waves-effect" type="button">
                                                                         <i class="mdi mdi-cached me-1"></i> 
                                                                         <span>Gen</span> 
@@ -250,14 +250,14 @@
                                                                     </button>
                                                                 </div>
                                                                 <div class="form-check mb-1 form-check-primary">
-                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="hideKey" id="hideKey" checked="">
+                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="hideKey" id="hideKey" checked>
                                                                     <label class="form-check-label" for="hideKey">Hide key</label>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-2" >
-                                                            <label class="col-2 control-label">Browser</label>
-                                                            <div class="col-10">
+                                                            <label class="col-12 col-sm-2  control-label"><u>Browser</u></label>
+                                                            <div class="col-12 col-sm-10 ">
                                                                 <div class="row">
                                                                     <div class="col-5">
                                                                         <select class="form-select" name="keySlot">
@@ -292,8 +292,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-3" >
-                                                            <label class="col-2 control-label">Action</label>
-                                                            <div class="col-10">
+                                                            <label class="col-12 col-sm-2  control-label"><u>Action</u></label>
+                                                            <div class="col-12 col-sm-10">
                                                                 <div class="d-grid">
                                                                     <button type="button" id="action" class="btn btn-outline-blue waves-effect mb-1">Encrypt / Decrypt</button>
                                                                 </div>
@@ -305,8 +305,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-2" >
-                                                            <label class="col-2 control-label">Output</label>
-                                                            <div class="col-10">
+                                                            <label class="col-12 col-sm-2  control-label"><u>Output</u></label>
+                                                            <div class="col-12 col-sm-10 ">
                                                                 <textarea class="form-control" id="outputText" name="outputText" readonly placeholder="The result of the encryption / decryption" rows="5"></textarea>
                                                                 <div class="d-none" id="outputFiles">
                                                                     <p>Download encrypted / decrypted files here</p>
@@ -319,8 +319,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-2" id="divCopyOutput">
-                                                            <label class="col-2 control-label"></label>
-                                                            <div class="col-10">
+                                                            <label class="col-12 col-sm-2  control-label"></label>
+                                                            <div class="col-12 col-sm-10 ">
                                                                 <div class="d-grid">
                                                                     <button id="copyOutput" type="button" class="btn btn-sm btn-outline-warning waves-effect"> 
                                                                         <i class="mdi mdi-content-copy me-1"></i> 
@@ -336,8 +336,8 @@
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <div class="input-group mb-2">
-                                                            <label class="col-3 control-label">Encryption method</label>
-                                                            <div class="col-9">
+                                                            <label class="col-12 col-sm-3  control-label mb-1"><u>Encryption method</u></label>
+                                                            <div class="col-12 col-sm-9 ">
                                                                 <div class="form-check mb-1 form-check-primary">
                                                                     <input class="form-check-input rounded-circle" type="checkbox" value="" name="doAES" id="doAES" checked="">
                                                                     <label class="form-check-label" for="doAES">AES</label>
@@ -353,8 +353,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-2">
-                                                            <label class="col-3 control-label">Password hashing</label>
-                                                            <div class="col-9">
+                                                            <label class="col-12 col-sm-3 mb-1 control-label"><u>Password hashing</u></label>
+                                                            <div class="col-12 col-sm-9  ml-2">
                                                                 <div class="mb-2">
                                                                     <div class="form-check mb-1 form-check-primary">
                                                                         <input class="form-check-input rounded-circle" type="checkbox" value="" name="doHashing" id="doHashing" checked="">
@@ -391,8 +391,8 @@
                                                              </div>
                                                         </div>
                                                         <div class="input-group mb-2">
-                                                            <label class="col-3 control-label">Hash difficulty</label>
-                                                            <div class="col-9">
+                                                            <label class="col-12 col-sm-3 mb-1 control-label"><u>Hash difficulty</u></label>
+                                                            <div class="col-12 col-sm-9 ">
                                                                 <select id="hashDifficulty" name="hashDifficulty" class="form-control">
                                                                     <option value="low" selected>Low</option>
                                                                     <option value="medium">Medium</option>
@@ -406,8 +406,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-2">
-                                                            <label class="col-3 control-label">Slots</label>
-                                                            <div class="col-9">
+                                                            <label class="col-12 col-sm-3  control-label mb-1"><u>Slots</u></label>
+                                                            <div class="col-12 col-sm-9 ">
                                                                 <div class="form-check mb-1 form-check-primary">
                                                                     <input class="form-check-input rounded-circle" type="checkbox" value="" id="saveHashes" name="saveHashes" disabled>
                                                                     <label class="form-check-label" for="saveHashes">Save hashed keys</label>
@@ -420,8 +420,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-2">
-                                                            <label class="col-3 control-label">Configuration</label>
-                                                            <div class="col-9">
+                                                            <label class="col-12 col-sm-3  control-label"><u>Configuration</u></label>
+                                                            <div class="col-12 col-sm-9 ">
                                                                 <div class="d-grid">
                                                                     <button id="saveSettings" type="button" class="btn btn-sm btn-outline-success waves-effect"> 
                                                                         <i class="mdi mdi-save me-1"></i> 
