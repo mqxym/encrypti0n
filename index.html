@@ -28,6 +28,10 @@
         <!-- Jquery Toast css -->
         <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
 
+        <!-- Loading button css -->
+        <link href="assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/libs/ladda/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
+
 		<!-- Theme Config Js -->
 		<script src="assets/js/head.js"></script>
 
@@ -294,7 +298,12 @@
                                                             <label class="col-12 col-sm-2  control-label"><u>Action</u></label>
                                                             <div class="col-12 col-sm-10">
                                                                 <div class="d-grid">
-                                                                    <button type="button" id="action" class="btn btn-outline-blue waves-effect mb-1">Encrypt / Decrypt</button>
+                                                                    <button type="button" id="action" class="ladda-button btn btn-outline-blue waves-effect mb-1" data-style="zoom-in" dir="ltr">
+                                                                        <span class="ladda-label">
+                                                                            Encrypt / Decrypt
+                                                                        </span>
+                                                                        <span class="ladda-spinner"></span>
+                                                                    </button>
                                                                 </div>
                                                                 <span class="help-block">
                                                                     <small id="helpActionButton">
@@ -469,10 +478,15 @@
        <!-- Sweet Alerts js -->
         <script src="assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
 
-         <!-- App JS-->
-         <script src="app/crypto.js" defer></script>
-         <script src="app/lib.js" defer></script>
-         <script src="app/main.js" defer></script>
+
+        <!-- Loading buttons js -->
+        <script src="assets/libs/ladda/spin.min.js"></script>
+        <script src="assets/libs/ladda/ladda.min.js"></script>
+
+        <!-- App JS-->
+        <script src="app/crypto.js" defer></script>
+        <script src="app/lib.js" defer></script>
+        <script src="app/main.js" defer></script>
 
     </body>
 </html>

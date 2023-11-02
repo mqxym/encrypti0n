@@ -37,6 +37,8 @@ class Main {
         $('#saveSettings').on('click', this.saveSettings.bind(this));
         $('#doHashing').on('change', this.toggleHashing.bind(this));
 
+        this.laddaButton = Ladda.create(document.getElementById('action'));
+
     }
 
     getFormValue(name) {
@@ -291,6 +293,7 @@ class Main {
       if(settings.doHashing) {
         FormHandler.toggleButton("action", true);
         if (settings.hashDifficulty == "medium" || settings.hashDifficulty == "high") {
+          this.actionLaddaStart();
           ShowNotification.warning("Key hashing started", "Please wait while the hash process is running.");
           await new Promise(r => setTimeout(r, 350));
         }
@@ -320,26 +323,31 @@ class Main {
           const cryptoHeader = this.generateCryptoHeader();
           this.setFormValue("outputText", cryptoHeader + "=" + encryptedText);       
         }
+        this.actionLaddaStop();
       }
+      
 
       //File Encryption / Decryption
       if (type === "doFiles") {
         let files = fileList;
-        if (cryptoHeader) {
-          if (totalSize > 30*1024*1024) {
-            ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " decrypting might take a while." );
-            await new Promise(r => setTimeout(r, 350));
+        this.totalFileCount = files.length;
+        this.processedFiles = 0;
+
+        if (totalSize > 30*1024*1024) {
+          ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " processing might take a while." );
+          if (!settings.doHashing || settings.hashDifficulty == "low") {
+            this.actionLaddaStart();
           }
+          await new Promise(r => setTimeout(r, 350));
+        }
+        if (cryptoHeader) {
+          //decrypt
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
             this.decryptAndSaveFile(key, file, methods);
           }
         } else {
           //encrypt
-          if (totalSize > 30*1024*1024) {
-            ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " encrypting might take a while." );
-            await new Promise(r => setTimeout(r, 350));
-          }
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
             this.encryptAndSaveFile(key, file, methods);
@@ -387,7 +395,12 @@ class Main {
 
         outputDiv.append(downloadLink);
         outputDiv.append("<br>");
-        };
+       
+        this.processedFiles++;
+        if (this.processedFiles == this.totalFileCount) {
+          this.actionLaddaStop();
+        }
+      };
       reader.readAsDataURL(file);
     }
 
@@ -411,6 +424,8 @@ class Main {
             decryptedData = CryptoWrapper.decryptBF(decryptedData, key);
           }
 
+          this.processedFiles++;
+
           if(methods.doXOR) {
             ShowNotification.error("Error decrypting", "XOR not supported for files.");
             return;
@@ -418,8 +433,12 @@ class Main {
           }
           
         } catch (error) {
+          this.processedFiles++;
           ShowNotification.error("Error decrypting", "File " + fileName + " could not be decrypted. Check file or key. ");
           console.log(error);
+          if (this.processedFiles == this.totalFileCount) {
+            this.actionLaddaStop();
+          }
           return;
         }
 
@@ -427,6 +446,11 @@ class Main {
 
         const blob = new Blob([uint8Array], { type: "application/octet-stream" });
         const blobUrl = URL.createObjectURL(blob);
+
+        
+        if (this.processedFiles == this.totalFileCount) {
+          this.actionLaddaStop();
+        }
 
         if (blob.size === 0) {
           ShowNotification.error("Error decrypting", "File " + fileName + " could not be decrypted. Check file or key. ");
@@ -438,11 +462,24 @@ class Main {
             href: blobUrl,
             download: fileName
         }).text(`${fileName} (${formatBytes(blob.size)})`);
+        
 
         outputDiv.append(downloadLink);
         outputDiv.append("<br>");
       };
       reader.readAsText(file);
+    }
+
+    actionLaddaStart() {
+      $("#action").removeClass("btn-outline-blue");
+      $("#action").addClass("btn-blue");
+      this.laddaButton.start();
+    }
+
+    actionLaddaStop() {
+      $("#action").removeClass("btn-blue");
+      $("#action").addClass("btn-outline-blue");
+      this.laddaButton.stop();
     }
 
     //Encrypt text with the selected method
@@ -464,7 +501,6 @@ class Main {
       }
       return encryptedText;
     }
-
 
     //Decrypt text with the selected methods
     //Returns utf-8 encoded string
