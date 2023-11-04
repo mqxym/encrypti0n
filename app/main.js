@@ -360,10 +360,8 @@ class Main {
         this.totalFileCount = files.length;
         this.processedFiles = 0;
 
-        if (!settings.doHashing || settings.hashDifficulty == "low") {
-          this.actionLaddaStart();
-          await new Promise(r => setTimeout(r, 150));
-        }
+        this.actionLaddaStart();
+        await new Promise(r => setTimeout(r, 150));
 
         if (totalSize > 30*1024*1024) {
           ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " processing might take a while." );
