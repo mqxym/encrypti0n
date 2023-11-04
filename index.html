@@ -343,88 +343,137 @@
                                             <div class="col-md-6">
                                                 <div class="card">
                                                     <div class="card-body">
-                                                        <div class="input-group mb-2">
-                                                            <label class="col-12 col-sm-3  control-label mb-1"><u>Encryption method</u></label>
-                                                            <div class="col-12 col-sm-9 ">
-                                                                <div class="form-check mb-1 form-check-primary">
-                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="doAES" id="doAES" checked="">
-                                                                    <label class="form-check-label" for="doAES">AES</label>
+                                                        <div class="mb-2 input-group">
+                                                            <label for="radio1" class="form-label col-12 col-sm-3 "><u>Settings</u></label>
+                                                            <div class="col-12 col-sm-9">
+                                                                <div class="d-flex flex-wrap">
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input" name="setting" value="settingsMain" type="radio"id="radio1" checked>
+                                                                        <label class="form-check-label" for="radio1">Main</label>
+                                                                    </div>
+                                                                    <div class="form-check-pink form-check-inline">
+                                                                        <input class="form-check-input" name="setting" value="settingsAdvanced" type="radio" id="radio2">
+                                                                        <label class="form-check-label" for="radio2">Advanced</label>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="form-check mb-1 form-check-primary">
-                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="doBF" id="doBF" checked="">
-                                                                    <label class="form-check-label" for="doBF">Blowfish</label>
+
+                                                            </div>
+                                                    </div>
+                                                        <div id="divMainSettings">
+                                                            <div class="input-group mb-2">
+                                                                <label class="col-12 col-sm-3  control-label mb-1"><u>Encryption method</u></label>
+                                                                <div class="col-12 col-sm-9 ">
+                                                                    <div class="form-check mb-1 form-check-primary">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doAES" id="doAES" checked="">
+                                                                        <label class="form-check-label" for="doAES">AES</label>
+                                                                    </div>
+                                                                    <div class="form-check mb-1 form-check-primary">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doBF" id="doBF" checked="">
+                                                                        <label class="form-check-label" for="doBF">Blowfish</label>
+                                                                    </div>
+                                                                    <div class="form-check mb-1 form-check-primary">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doXOR" id="doXOR" checked="">
+                                                                        <label class="form-check-label" for="doXOR">XOR</label>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="form-check mb-1 form-check-primary">
-                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="doXOR" id="doXOR" checked="">
-                                                                    <label class="form-check-label" for="doXOR">XOR</label>
+                                                            </div>
+                                                            <div class="input-group mb-2">
+                                                                <label class="col-12 col-sm-3 mb-1 control-label"><u>Password hashing</u></label>
+                                                                <div class="col-12 col-sm-9  ml-2">
+                                                                    <div class="mb-2">
+                                                                        <div class="form-check mb-1 form-check-primary">
+                                                                            <input class="form-check-input rounded-circle" type="checkbox" value="" name="doHashing" id="doHashing" checked="">
+                                                                            <label class="form-check-label" for="doHashing">Enabled</label>
+                                                                        </div>
+                                                                        <span class="help-block">
+                                                                            <small>
+                                                                                Hashes passwords with 6 different hash methods in semi-random order many times
+                                                                            </small>
+                                                                        </span>  
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <div class="form-check mb-1 form-check-primary">
+                                                                            <input class="form-check-input rounded-circle" type="checkbox" value="" name="doRoundOffset" id="doRoundOffset" checked="">
+                                                                            <label class="form-check-label" for="doRoundOffset">Key-depended round offset</label>
+                                                                        </div>
+                                                                        <span class="help-block">
+                                                                            <small>
+                                                                                Do some extra hash rounds depended of the key
+                                                                            </small>
+                                                                        </span>  
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <div class="form-check mb-1 form-check-primary">
+                                                                            <input class="form-check-input rounded-circle" type="checkbox" value="" name="doHashSalting" id="doHashSalting" checked="">
+                                                                            <label class="form-check-label" for="doHashSalting">Hash salting</label>
+                                                                        </div>
+                                                                        <span class="help-block">
+                                                                            <small>
+                                                                                Add numbers to the hash function each round
+                                                                            </small>
+                                                                        </span>  
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group mb-2">
+                                                                <label class="col-12 col-sm-3 mb-1 control-label"><u>Hash difficulty</u></label>
+                                                                <div class="col-12 col-sm-9 ">
+                                                                    <select id="hashDifficulty" name="hashDifficulty" class="form-control">
+                                                                        <option value="low" selected>Low</option>
+                                                                        <option value="medium">Medium</option>
+                                                                        <option value="high">High</option>
+                                                                    </select>
+                                                                    <span class="help-block">
+                                                                        <small>
+                                                                            Low: 100+ hash rounds, Medium: 1000+, High: 5000+
+                                                                        </small>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group mb-2">
+                                                                <label class="col-12 col-sm-3  control-label mb-1"><u>Slots</u></label>
+                                                                <div class="col-12 col-sm-9 ">
+                                                                    <div class="form-check mb-1 form-check-primary">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" id="saveHashes" name="saveHashes">
+                                                                        <label class="form-check-label" for="saveHashes">Save hashed keys</label>
+                                                                    </div>
+                                                                    <span class="help-block">
+                                                                        <small>
+                                                                            Save time when encrypting / decrypting.
+                                                                        </small>
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="input-group mb-2">
-                                                            <label class="col-12 col-sm-3 mb-1 control-label"><u>Password hashing</u></label>
-                                                            <div class="col-12 col-sm-9  ml-2">
-                                                                <div class="mb-2">
-                                                                    <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doHashing" id="doHashing" checked="">
-                                                                        <label class="form-check-label" for="doHashing">Enabled</label>
+                                                        <div class="d-none" id="divAdvancedSettings">
+                                                            <div class="input-group mb-2">
+                                                                <label class="col-12 col-sm-3  control-label"><u>Storage</u></label>
+                                                                <div class="col-12 col-sm-9 ">
+                                                                    <div class="d-grid mb-1">
+                                                                        <button id="removeSavedHashes" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
+                                                                            <i class="mdi mdi-delete me-1"></i> 
+                                                                            <span>Clear stored hashes</span> 
+                                                                        </button>
                                                                     </div>
-                                                                    <span class="help-block">
-                                                                        <small>
-                                                                            Hashes passwords with 6 different hash methods in semi-random order many times
-                                                                        </small>
-                                                                    </span>  
-                                                                </div>
-                                                                <div class="mb-2">
-                                                                    <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doRoundOffset" id="doRoundOffset" checked="">
-                                                                        <label class="form-check-label" for="doRoundOffset">Key-depended round offset</label>
+                                                                    <div class="d-grid mb-1">
+                                                                        <button id="removeSavedKeys" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
+                                                                            <i class="mdi mdi-delete me-1"></i> 
+                                                                            <span>Clear stored keys</span> 
+                                                                        </button>
                                                                     </div>
-                                                                    <span class="help-block">
-                                                                        <small>
-                                                                            Do some extra hash rounds depended of the key
-                                                                        </small>
-                                                                    </span>  
-                                                                </div>
-                                                                <div class="mb-2">
-                                                                    <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doHashSalting" id="doHashSalting" checked="">
-                                                                        <label class="form-check-label" for="doHashSalting">Hash salting</label>
+                                                                    <div class="d-grid mb-1">
+                                                                        <button id="removeConfig" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
+                                                                            <i class="mdi mdi-delete me-1"></i> 
+                                                                            <span>Clear config</span> 
+                                                                        </button>
                                                                     </div>
-                                                                    <span class="help-block">
-                                                                        <small>
-                                                                            Add numbers to the hash function each round
-                                                                        </small>
-                                                                    </span>  
+                                                                    <div class="d-grid">
+                                                                        <button id="removeAllData" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
+                                                                            <i class="mdi mdi-delete me-1"></i> 
+                                                                            <span>Clear all</span> 
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
-                                                             </div>
-                                                        </div>
-                                                        <div class="input-group mb-2">
-                                                            <label class="col-12 col-sm-3 mb-1 control-label"><u>Hash difficulty</u></label>
-                                                            <div class="col-12 col-sm-9 ">
-                                                                <select id="hashDifficulty" name="hashDifficulty" class="form-control">
-                                                                    <option value="low" selected>Low</option>
-                                                                    <option value="medium">Medium</option>
-                                                                    <option value="high">High</option>
-                                                                </select>
-                                                                <span class="help-block">
-                                                                    <small>
-                                                                        Low: 100+ hash rounds, Medium: 1000+, High: 5000+
-                                                                    </small>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="input-group mb-2">
-                                                            <label class="col-12 col-sm-3  control-label mb-1"><u>Slots</u></label>
-                                                            <div class="col-12 col-sm-9 ">
-                                                                <div class="form-check mb-1 form-check-primary">
-                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" id="saveHashes" name="saveHashes">
-                                                                    <label class="form-check-label" for="saveHashes">Save hashed keys</label>
-                                                                </div>
-                                                                <span class="help-block">
-                                                                    <small>
-                                                                        Save time when encrypting / decrypting.
-                                                                    </small>
-                                                                </span>
                                                             </div>
                                                         </div>
                                                         <div class="input-group mb-2">

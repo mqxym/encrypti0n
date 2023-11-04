@@ -17,11 +17,14 @@ class Main {
         }
 
         this.changeType();
+        this.switchSettings();
         this.toggleHashing();
         this.toggleKey();
         this.updateFileList();
 
+
         $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
+        $('input[type=radio][name=setting]').on('change', this.switchSettings.bind(this));
         $('#inputFiles').on('change', this.updateFileList.bind(this));
 
         $('#action').on('click', this.action.bind(this));
@@ -33,6 +36,11 @@ class Main {
         $('#hideKey').on('change', this.toggleKey.bind(this));
         $('#loadKey').on('click', this.loadKey.bind(this));
         $('#saveKey').on('click', this.saveKey.bind(this));
+
+        $('#removeSavedHashes').on('click', this.removeSavedHashes.bind(this));
+        $('#removeSavedKeys').on('click', this.removeSavedKeys.bind(this));
+        $('#removeConfig').on('click', this.removeConfig.bind(this));
+        $('#removeAllData').on('click', this.removeAllData.bind(this));
 
         $('#saveSettings').on('click', this.saveSettings.bind(this));
         $('#doHashing').on('change', this.toggleHashing.bind(this));
@@ -157,6 +165,18 @@ class Main {
         $("#helpActionButton").text("To decrypt the programm checks for a valid file ending (n.dat)");
         $("#helpOutput").text("Encrypted output is base64 formatted and uses a config-id.dat ending");
         console.log("Use file encryption.");
+      }
+    }
+
+    switchSettings () {
+      const selectedRadioValue = $('input[type=radio][name=setting]:checked').val();
+
+      if (selectedRadioValue === "settingsMain") {
+        ElementAction.show("divMainSettings");
+        ElementAction.hide("divAdvancedSettings");
+      } else {
+        ElementAction.hide("divMainSettings");
+        ElementAction.show("divAdvancedSettings");
       }
     }
 
@@ -816,6 +836,7 @@ class Main {
           const savedHashesObject = JSON.parse(savedHashes);
           return savedHashesObject;
         } catch (error) {
+          ShowNotification.error("Error", "Loading saved hashes failed.");
           return false;
         }
       }
@@ -905,7 +926,69 @@ class Main {
       }
     }
 
+    removeSavedHashes () {
+      Swal.fire({
+        icon: 'error',
+        title: 'Clear saved hashes?',
+        text: "This action can't be undone",
+        showCancelButton: true,
+        confirmButtonText: "Clear",
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) {
+            StorageHandler.deleteStoredHashes();
+            ShowNotification.success("Success", "Saved hashes cleared.");
+          } 
+      });
+    }
 
+    removeSavedKeys () {
+      Swal.fire({
+        icon: 'error',
+        title: 'Clear saved keys?',
+        text: "This action can't be undone",
+        showCancelButton: true,
+        confirmButtonText: "Clear",
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) {
+            StorageHandler.deleteStoredKeys();
+            ShowNotification.success("Success", "Saved keys cleared.");
+          } 
+      });
+    }
+
+    removeConfig () {
+      Swal.fire({
+        icon: 'error',
+        title: 'Clear config?',
+        text: "This action can't be undone",
+        showCancelButton: true,
+        confirmButtonText: "Clear",
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) {
+            StorageHandler.deleteConfigs();
+            ShowNotification.success("Success", "Config cleared.");
+          } 
+      });
+    }
+
+    removeAllData() {
+      Swal.fire({
+        icon: 'error',
+        title: 'Clear all data?',
+        text: "This action can't be undone",
+        showCancelButton: true,
+        confirmButtonText: "Clear",
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) {
+            StorageHandler.deleteAll();
+            ShowNotification.success("Success", "All data cleared.");
+          } 
+      });
+    }
 }
 
 class ElementAction {
@@ -1066,6 +1149,43 @@ class FormHandler {
       // Update form values and output
       this.updateFormValues();
     }
+}
+
+class StorageHandler {
+
+  static deleteStoredKeys () {
+    for (let i = 1; i <= 10; i++) {
+      let key = "key" + i;
+      if(localStorage.getItem(key)) {
+        localStorage.removeItem(key);
+      }
+    }
+  }
+
+  static deleteStoredHashes () {
+    if(localStorage.getItem("savedHashes")) {
+      localStorage.removeItem("savedHashes");
+    }
+  }
+
+  static deleteConfigs () {
+    if(localStorage.getItem("cryptoConfig")) {
+      localStorage.removeItem("cryptoConfig");
+    }
+    if(localStorage.getItem("generalConfig")) {
+      localStorage.removeItem("generalConfig");
+    }
+  }
+
+  static deleteAll() {
+    StorageHandler.deleteStoredKeys();
+    StorageHandler.deleteStoredHashes();
+    StorageHandler.deleteConfigs();
+
+    if(localStorage.getItem("copyAlert")) {
+      localStorage.removeItem("copyAlert");
+    }
+  }
 }
 
 
