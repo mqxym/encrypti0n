@@ -4,8 +4,8 @@ class Main {
         this.formHandler = formHandler;
 
         if (!this.getFormValue("hideKey")) {
-          toggleVisibility("keyBlank", false);
-          toggleVisibility("keyPassword", true); 
+          ElementAction.show("keyBlank");
+          ElementAction.hide("keyPassword"); 
         }
 
         if (this.readCryptoSettings()) {
@@ -127,28 +127,33 @@ class Main {
       const selectedRadioValue = $('input[type=radio][name=type]:checked').val();
 
       if (selectedRadioValue === "doText") {
-        toggleVisibility("inputText", false);
-        toggleVisibility("inputFilesDiv", true);
-        toggleVisibility("fileList", true);
-        toggleVisibility("outputText", false);
-        toggleVisibility("outputFiles", true);
-        toggleVisibility("divClearInput", false);
-        toggleVisibility("divCopyOutput", false);
-        disableElement("doBF", false);
-        disableElement("doXOR", false);
+        ElementAction.show("inputText");
+        ElementAction.show("outputText");
+        ElementAction.show("divClearInput");
+        ElementAction.show("divCopyOutput");
+
+        ElementAction.hide("inputFilesDiv");
+        ElementAction.hide("fileList");
+        ElementAction.hide("outputFiles");
+
+        ElementAction.enable("doXOR");
+
         $("#helpActionButton").text("To decrypt the programm checks for a valid config header (n=)");
         $("#helpOutput").text("Encrypted output is base64 formatted and uses a config header");
         console.log("Use text encryption.");
       } else {
-        toggleVisibility("inputText", true);
-        toggleVisibility("inputFilesDiv", false);
-        toggleVisibility("fileList", false);
-        toggleVisibility("outputText", true);
-        toggleVisibility("outputFiles", false);
-        toggleVisibility("divClearInput", true);
-        toggleVisibility("divCopyOutput", true);
-        disableElement("doXOR", true);
-        checkCheckbox("doXOR", false);
+        ElementAction.hide("inputText");
+        ElementAction.hide("outputText");
+        ElementAction.hide("divClearInput");
+        ElementAction.hide("divCopyOutput");
+
+        ElementAction.show("inputFilesDiv");
+        ElementAction.show("fileList");
+        ElementAction.show("outputFiles");
+
+        ElementAction.disable("doXOR");
+        ElementAction.uncheck("doXOR");
+
         $("#helpActionButton").text("To decrypt the programm checks for a valid file ending (n.dat)");
         $("#helpOutput").text("Encrypted output is base64 formatted and uses a config-id.dat ending");
         console.log("Use file encryption.");
@@ -179,18 +184,13 @@ class Main {
     }
 
     copyOutput() {
-      copyTextElement("outputText");
+      ElementAction.copyText("outputText");
       ShowNotification.success("Success", "Your output was copied.");
     }
 
     async action () {
       let settings = this.getSettings();
       const type = settings.type;
-
-      if (type === "doFiles") {
-        //ShowNotification.error("Error", "File encryption is not supported right now.");
-        //return;
-      }
 
       let key = "";
       if (this.getFormValue("hideKey")) {
@@ -291,19 +291,46 @@ class Main {
 
       //Hashes the password
       if(settings.doHashing) {
-        FormHandler.toggleButton("action", true);
-        if (settings.hashDifficulty == "medium" || settings.hashDifficulty == "high") {
-          this.actionLaddaStart();
-          ShowNotification.warning("Key hashing started", "Please wait while the hash process is running.");
-          await new Promise(r => setTimeout(r, 350));
+        //Check if key is in saved hash database
+
+        const original_key = key;
+        const hashHeader = this.generateHashHeader();
+        let savedHash = "";
+        let hashFound = false;
+
+        if (settings.saveHashes) {
+          savedHash = this.getSavedHash(original_key, hashHeader);
+          if (savedHash) {
+            key = savedHash;
+            hashFound = true;
+          }
         }
-        
-        
-        key = hashPassword(key, 
-          settings.hashDifficulty, 
-          settings.doRoundOffset, 
-          settings.doHashSalting);
-        FormHandler.toggleButton("action", false);
+
+        if (!settings.saveHashes || !hashFound) {
+
+          ElementAction.disable("action");
+
+          if (settings.hashDifficulty == "medium" || settings.hashDifficulty == "high") {
+            this.actionLaddaStart();
+            ShowNotification.warning("Key hashing started", "Please wait while the hash process is running.");
+            await new Promise(r => setTimeout(r, 350));
+          }
+          
+          
+          key = hashPassword(key, 
+            settings.hashDifficulty, 
+            settings.doRoundOffset, 
+            settings.doHashSalting);
+          
+          ElementAction.enable("action");
+        }
+
+        if(settings.saveHashes && !hashFound) {
+          this.setHash(original_key, key, hashHeader);
+        }
+
+
+        //Set key to saved hash database
       }
 
       //Text Encryption / Decryption
@@ -333,11 +360,13 @@ class Main {
         this.totalFileCount = files.length;
         this.processedFiles = 0;
 
+        if (!settings.doHashing || settings.hashDifficulty == "low") {
+          this.actionLaddaStart();
+          await new Promise(r => setTimeout(r, 150));
+        }
+
         if (totalSize > 30*1024*1024) {
           ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " processing might take a while." );
-          if (!settings.doHashing || settings.hashDifficulty == "low") {
-            this.actionLaddaStart();
-          }
           await new Promise(r => setTimeout(r, 350));
         }
         if (cryptoHeader) {
@@ -543,6 +572,7 @@ class Main {
     }
 
     keyCopy() {
+      console.log(this.getFormValue("hideKey"));
       if ($("#hideKey").is(":checked")) {
         if(this.getFormValue("keyPassword") === "") {
           ShowNotification.error("Error", "No key to copy.");
@@ -560,11 +590,11 @@ class Main {
 
       if (localStorage.getItem("copyAlert")) {
         if ($("#hideKey").is(":checked")) {
-          checkCheckbox("hideKey", false);
+          ElementAction.uncheck("hideKey");
           this.toggleKey();
         }
         $('#keyBlank').prop('readonly', true);
-        copyTextElement("keyBlank");
+        ElementAction.copyText("keyBlank");
         $('#keyBlank').prop('readonly', false);
         ShowNotification.success("Success", "Your key was copied.");
       } else {
@@ -585,7 +615,7 @@ class Main {
           });
         } else {
           $('#keyBlank').prop('readonly', true);
-          copyTextElement("keyBlank");
+          ElementAction.copyText("keyBlank");
           $('#keyBlank').prop('readonly', false);
           ShowNotification.success("Success", "Your key was copied.");
         }
@@ -594,29 +624,29 @@ class Main {
 
     static keyCopyAfterAlert () {
       if ($("#hideKey").is(":checked")) {
-        checkCheckbox("hideKey", false);
+        ElementAction.uncheck("hideKey");
         //ToggleKey
-        toggleVisibility("keyBlank", false);
-        toggleVisibility("keyPassword", true);
+        ElementAction.show("keyBlank");
+        ElementAction.hide("keyPassword");
         $("#keyBlank").val($("#keyPassword").val());
         console.log("Show password");
 
       }
       $('#keyBlank').prop('readonly', true);
-      copyTextElement("keyBlank");
+      ElementAction.copyText("keyBlank");
       $('#keyBlank').prop('readonly', false);   
       ShowNotification.success("Success", "Your key was copied."); 
     }
 
     toggleKey () {
       if ($("#hideKey").is(":checked")) {
-        toggleVisibility("keyBlank", true);
-        toggleVisibility("keyPassword", false);
+        ElementAction.hide("keyBlank");
+        ElementAction.show("keyPassword");
         this.setFormValue("keyPassword", this.getFormValue("keyBlank"));
         console.log("Hide password");
       } else {
-        toggleVisibility("keyBlank", false);
-        toggleVisibility("keyPassword", true);
+        ElementAction.hide("keyPassword");
+        ElementAction.show("keyBlank");
         this.setFormValue("keyBlank", this.getFormValue("keyPassword"));
         console.log("Show password");
       }
@@ -624,13 +654,13 @@ class Main {
 
     toggleHashing () {
       if ($("#doHashing").is(":checked")) {
-        disableElement("doRoundOffset", false);
-        disableElement("doHashSalting", false);
-        disableElement("hashDifficulty", false);
+        ElementAction.enable("doRoundOffset");
+        ElementAction.enable("doHashSalting");
+        ElementAction.enable("hashDifficulty");
       } else {
-        disableElement("doRoundOffset", true);
-        disableElement("doHashSalting", true);
-        disableElement("hashDifficulty", true);
+        ElementAction.disable("doRoundOffset");
+        ElementAction.disable("doHashSalting");
+        ElementAction.disable("hashDifficulty");
       }
     }
 
@@ -713,6 +743,8 @@ class Main {
       if(settings.doRoundOffset) headerCode +=2;
       if(settings.hashDifficulty === "low") headerCode +=4;
       if(settings.hashDifficulty === "high") headerCode += 8;
+
+      return headerCode;
     }
 
     readCryptoSettings () {
@@ -723,11 +755,63 @@ class Main {
       return localStorage.getItem("generalConfig");
     }
 
+    getSavedHash(key, hashHeader) {
+      const md5_key = CryptoJS.MD5(key).toString();
+
+      let savedHashes = this.readSavedHashes();
+
+      if(savedHashes) {
+        if(savedHashes.hasOwnProperty(md5_key)) {
+          if (savedHashes[md5_key].hasOwnProperty(hashHeader)) {
+            if(savedHashes[md5_key][hashHeader].hasOwnProperty('k')) {
+              console.log("Saved hash found. Start process.")
+              return savedHashes[md5_key][hashHeader].k;
+            }
+          }
+        }
+      }
+
+      return false;
+
+    }
+
+    setHash(key, hash, hashHeader) {
+      let hashObject = {};
+      const md5_key = CryptoJS.MD5(key).toString();
+      const current_date = getDate();
+
+      hashObject.k = hash;
+      hashObject.lu = current_date;
+
+      let savedHashes = this.readSavedHashes();
+
+      if (savedHashes) {
+        if(savedHashes.hasOwnProperty(md5_key)) {
+          if (savedHashes[md5_key].hasOwnProperty(hashHeader)) {
+            return;
+          } else {
+            savedHashes[md5_key][hashHeader] = hashObject;
+          }
+        } else {
+          savedHashes[md5_key] = {};
+          savedHashes[md5_key][hashHeader] = hashObject;
+        }
+      } else {
+        savedHashes = {};
+        savedHashes[md5_key] = {};
+        savedHashes[md5_key][hashHeader] = hashObject;
+      }
+
+      this.saveSavedHashes(savedHashes);
+
+      console.log(savedHashes);
+    }
+
     readSavedHashes () {
       if(localStorage.getItem("savedHashes")) {
         const savedHashesEncrypted = localStorage.getItem("savedHashes");
         try {
-          const savedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, "You no decrypt nonono");
+          const savedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, "If you have a better way securing this, message me.");
           if (!savedHashes) {
             return false;
           }
@@ -742,7 +826,10 @@ class Main {
 
     saveSavedHashes (savedHashesObject) {
       const savedHashes = JSON.stringify(savedHashesObject);
-      const savedHashesEncrypted = CryptoWrapper.encryptAES(savedHashes, "You no decrypt nonono");
+      const savedHashesEncrypted = CryptoWrapper.encryptAES(savedHashes, "If you have a better way securing this, message me.");
+      if(savedHashesEncrypted.length > 3 * 1024 * 1024) {
+        ShowNotification.warning("Storage limit", "Try resetting the saved hashes in the advanced settings.");
+      }
       localStorage.setItem("savedHashes", savedHashesEncrypted);
     }
 
@@ -823,13 +910,44 @@ class Main {
 
 }
 
+class ElementAction {
+  static hide (element) {
+    $("#"+element).addClass("d-none");
+  } 
+  static show (element) {
+    $("#"+element).removeClass("d-none");
+  } 
+  static disable (element) {
+    $("#"+element).prop('disabled', true);
+  } 
+  static enable (element) {
+    $("#"+element).prop('disabled', false);
+  } 
+  static check (element) {
+    $("#"+element).prop('checked', true);
+  } 
+  static uncheck (element) {
+    $("#"+element).prop('checked', false);
+  }
+  static copyText (element) {
+    var input = $("#"+element)[0];
+    input.select();
+      
+    // Copy the text inside the text field
+	  document.execCommand("copy");
+      
+    // Deselect the text field
+    input.setSelectionRange(0, 0);
+  }
+}
+
 class ShowNotification {
   static success (title, content) {
     $.toast({
       text: content,
       heading: title,
       showHideTransition: 'fade',
-      icon: "success", // 'success', 'warning', or 'error'
+      icon: "success",
       loaderBg: "#3b98b5",
       position: 'top-right',
     });
@@ -839,7 +957,7 @@ class ShowNotification {
       text: content,
       heading: title,
       showHideTransition: 'fade',
-      icon: "warning", // 'success', 'warning', or 'error'
+      icon: "warning", 
       loaderBg: "#3b98b5",
       position: 'top-right',
     });
@@ -849,7 +967,7 @@ class ShowNotification {
       text: content,
       heading: title,
       showHideTransition: 'fade',
-      icon: "error", // 'success', 'warning', or 'error'
+      icon: "error", 
       loaderBg: "#3b98b5",
       position: 'top-right',
     });
@@ -950,12 +1068,6 @@ class FormHandler {
       // Update form values and output
       this.updateFormValues();
     }
-
-    static toggleButton(id, disable) {
-      var button = $("#" + id);
-      button.prop("disabled", disable);
-    }
-  
 }
 
 

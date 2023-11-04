@@ -18,33 +18,6 @@ function getFirstPartAfterDots(input) {
 	return input;
 }
 
-function copyTextElement (id) {
-	var input = $("#"+id)[0];
-    input.select();
-      
-    // Copy the text inside the text field
-	document.execCommand("copy");
-      
-    // Deselect the text field
-    input.setSelectionRange(0, 0);
-}
-
-function toggleVisibility (element, disable) {
-	if(disable) {
-		$("#"+element).addClass("d-none");
-	} else {
-		$("#"+element).removeClass("d-none");
-	}
-}
-
-function disableElement(id, disable) {
-	$("#"+id).prop('disabled', disable);
-}
-
-function checkCheckbox (id, checked) {
-	$("#"+id).prop('checked', checked);
-}
-
 function setWidthPercentage(element, percentage) {
 	if (percentage >= 0 && percentage <= 100) {
 		var widthValue = percentage + "%";
@@ -53,6 +26,21 @@ function setWidthPercentage(element, percentage) {
 		console.log("Invalid percentage. It should be between 0 and 100.");
 	}
 }
+
+function getDate () {
+	const currentDate = new Date();
+
+	const year = currentDate.getFullYear();
+	const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+	const day = currentDate.getDate().toString().padStart(2, '0');
+	
+	const dateString = year + '-' + month + '-' + day;
+	
+	console.log(dateString); // Output will be in the format "YYYY-MM-DD"
+
+	return dateString;
+}
+
 
 function getRoundOffset(pass) {
 
