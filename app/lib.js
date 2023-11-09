@@ -35,8 +35,6 @@ function getDate () {
 	const day = currentDate.getDate().toString().padStart(2, '0');
 	
 	const dateString = year + '-' + month + '-' + day;
-	
-	console.log(dateString); // Output will be in the format "YYYY-MM-DD"
 
 	return dateString;
 }

@@ -12,7 +12,7 @@
 
     //  Default Config Value
     var defaultConfig = {
-        theme: "light",
+        theme: "dark",
 
         layout: {
             mode: "default",

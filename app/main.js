@@ -21,6 +21,7 @@ class Main {
         this.toggleHashing();
         this.toggleKey();
         this.updateFileList();
+        this.toggleMasterPassword();
 
 
         $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
@@ -36,6 +37,10 @@ class Main {
         $('#hideKey').on('change', this.toggleKey.bind(this));
         $('#loadKey').on('click', this.loadKey.bind(this));
         $('#saveKey').on('click', this.saveKey.bind(this));
+
+        $('#useMasterPW').on('change', this.toggleMasterPassword.bind(this));
+        $('#downloadSavedKeys').on('click', this.downloadSavedKeys.bind(this));
+        $('#keyUpload').on('change', this.keyUpload.bind(this));
 
         $('#removeSavedHashes').on('click', this.removeSavedHashes.bind(this));
         $('#removeSavedKeys').on('click', this.removeSavedKeys.bind(this));
@@ -81,13 +86,15 @@ class Main {
         type: this.getFormValue("type"),
         saveHashes: this.getFormValue("saveHashes"),
         hideKey: this.getFormValue("hideKey"), 
+        useMasterPW: this.getFormValue("useMasterPW"), 
+        includeConfig: this.getFormValue("includeConfig"), 
       }
     }
 
     setSettings (cryptoHeader, generalSettingsHeader = false) {
       const cHeader = parseInt(cryptoHeader);
 
-      if (cHeader > 255) {
+      if (cHeader > 255 || cHeader < 0) {
         ShowNotification.error("Error", "Could not load settings. Invalid data.");
         return false;
       }
@@ -111,7 +118,7 @@ class Main {
 
       if(generalSettingsHeader) {
         const gsHeader = parseInt(generalSettingsHeader);
-        if (gsHeader > 15) {
+        if (gsHeader > 63 || gsHeader < 0 ) {
           ShowNotification.error("Error", "Could not load settings. Invalid data.");
           return false;
         }
@@ -123,10 +130,13 @@ class Main {
         }
         settings["saveHashes"] = isBitSet(gsHeader, 2);
         settings["hideKey"] = isBitSet(gsHeader, 3);
+        settings["useMasterPW"] = isBitSet(gsHeader, 4);
+        settings["includeConfig"] = isBitSet(gsHeader, 5);
+        console.log("General settings id " + gsHeader + " are loaded.");
       }
 
-      console.log("Crypto settings id " + this.readCryptoSettings() + " are loaded.");
-      console.log("General settings id " + this.readGeneralSettings() + " are loaded.");
+      console.log("Crypto settings id " + cHeader + " are loaded.");
+      
       this.setFormValues(settings);
       return true;
     }
@@ -726,6 +736,8 @@ class Main {
       if (settings.type === "doFiles") headerCode +=2;
       if (settings.saveHashes) headerCode += 4;
       if (settings.hideKey) headerCode += 8;
+      if (settings.useMasterPW) headerCode += 16;
+      if (settings.includeConfig) headerCode += 32;
       
       return headerCode;
     }
@@ -766,11 +778,19 @@ class Main {
     }
 
     readCryptoSettings () {
-      return localStorage.getItem("cryptoConfig");
+      const item = localStorage.getItem("cryptoConfig");
+      if (item) {
+        return item;
+      } 
+      return false;
     }
 
     readGeneralSettings () {
-      return localStorage.getItem("generalConfig");
+      const item = localStorage.getItem("generalConfig");
+      if (item) {
+        return item;
+      } 
+      return false;
     }
 
     getSavedHash(key, hashHeader) {
@@ -821,13 +841,11 @@ class Main {
       }
 
       this.saveSavedHashes(savedHashes);
-
-      console.log(savedHashes);
     }
 
     readSavedHashes () {
-      if(localStorage.getItem("savedHashes")) {
-        const savedHashesEncrypted = localStorage.getItem("savedHashes");
+      const savedHashesEncrypted = localStorage.getItem("savedHashes");
+      if(savedHashesEncrypted) {
         try {
           const savedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, "If you have a better way securing this, message me.");
           if (!savedHashes) {
@@ -879,11 +897,10 @@ class Main {
         return;
       }
 
-      key = CryptoWrapper.decryptAES(key, "Don't decrypt this, please.");
+      key = this.decryptKey(key);
 
       if (!key) {
         console.log("Error while decrypting saved key.");
-        ShowNotification.error("Error", "Could not decrypt saved key.");
         return;
       }
 
@@ -924,6 +941,25 @@ class Main {
         console.log("No key found.");
         ShowNotification.error("No key", "Your key is empty.");
       }
+    }
+
+    decryptKey (keyEncrypted) {
+      let key = "";
+      try {
+        key = CryptoWrapper.decryptAES(keyEncrypted, "Don't decrypt this, please.");
+      } catch (error) {
+        ShowNotification.error("Error", "Could not decrypt saved key.");
+        return false
+      }
+     
+
+      if (!key) {
+        console.log("Error while decrypting saved key.");
+        ShowNotification.error("Error", "Could not decrypt saved key.");
+        return false;
+      }
+
+      return key;
     }
 
     removeSavedHashes () {
@@ -989,6 +1025,174 @@ class Main {
           } 
       });
     }
+
+    toggleMasterPassword () {
+      if ($("#useMasterPW").is(":checked")) {
+        ElementAction.show("masterPassword");
+        //console.log("Use master password.");
+      } else {
+        ElementAction.hide("masterPassword");
+        //console.log("Don't use master password.");
+      }
+    }
+
+    downloadSavedKeys () {
+      let savedKeys = {};
+      let keysFound = false;
+      const useMasterPassword = this.getFormValue("useMasterPW");
+      const masterPassword = this.getFormValue("masterPassword");
+      const includeConfig = this.getFormValue("includeConfig");
+
+      if (useMasterPassword) {
+        if(!masterPassword) {
+          ShowNotification.error("Error", "No master password set.");
+          return;
+        }
+      }
+      savedKeys.mPW = useMasterPassword;
+
+      for (let i = 1; i <= 10; i++) {
+        let key = "key" + i;
+        let item = localStorage.getItem(key);
+        if(item) {
+          keysFound = true;
+          if (useMasterPassword) {
+            item = CryptoWrapper.encryptAES(item, masterPassword);
+          }
+          savedKeys[key] = item;
+        }
+      }
+
+      if (includeConfig) {
+        savedKeys.config = {};
+        savedKeys.config.gC = this.readGeneralSettings();
+        savedKeys.config.cC = this.readCryptoSettings();
+      } else if (!keysFound) {
+        ShowNotification.error("Error","No keys saved.");
+        return;
+      }
+
+      let savedKeysString = JSON.stringify(savedKeys);
+
+      if (savedKeysString) {
+        const blob = new Blob([savedKeysString], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "keys.json";
+        a.click();
+        URL.revokeObjectURL(a.href);
+        return;
+      } 
+      ShowNotification.error("Error", "Download failed.");
+    }
+
+    keyUpload() {
+      const file = $('#keyUpload')[0].files[0];
+
+      if (file) {
+          const reader = new FileReader();
+  
+          reader.onload = (e) => {
+              let savedKeys = {};
+              const jsonData = e.target.result;
+              let keyFound = false;
+              let decryptedWorked = true;
+
+              try {
+                savedKeys = JSON.parse(jsonData);
+              } catch (error) {
+                ShowNotification.error("Failed to load", "File format error.");
+                return;
+              }
+
+              if (!savedKeys.hasOwnProperty("mPW")) {
+                ShowNotification.error("Missing information", "Could not load file.");
+                return;
+              }
+
+              if (typeof savedKeys.mPW !== 'boolean') {
+                ShowNotification.error("Format error", "Could not load file.");
+                return;
+              }
+
+              let masterPW = "";
+
+              if (savedKeys.mPW) {
+                masterPW = this.getFormValue("masterPassword");
+              }
+
+              //Load config
+              if(savedKeys.hasOwnProperty('config')) {
+                let cryptoConfig = "";
+                let generalConfig = "";
+                if(savedKeys.config.hasOwnProperty('cC') && savedKeys.config.hasOwnProperty('gC')) {
+                  if (savedKeys.config.cC) {
+                    cryptoConfig = savedKeys.config.cC;
+                    localStorage.setItem("cryptoConfig", savedKeys.config.cC);
+                  }
+                  
+                  if(savedKeys.config.gC) {
+                    generalConfig = savedKeys.config.gC;
+                    localStorage.setItem("generalConfig", savedKeys.config.gC);
+                  }
+
+                  if(savedKeys.config.gC && savedKeys.config.cC) {
+                    this.setSettings(cryptoConfig, generalConfig);
+                    ShowNotification.success("Config loaded", "Config saved and loaded.");
+                  } else if (savedKeys.config.cC) {
+                    this.setSettings(cryptoConfig);
+                    ShowNotification.success("Config loaded", "Config saved and loaded.");
+                  }
+                  this.changeType();
+                  this.toggleHashing();
+                  this.toggleKey();
+                  this.toggleMasterPassword();
+                  
+                }
+              }
+
+              //Load keys
+              for (let i = 1; i <= 10; i++) {
+                let key = "key" + i;
+                
+                if(savedKeys.hasOwnProperty(key)) {
+                  keyFound = true;
+                  //No master password
+                  if(!savedKeys.mPW) {
+                    localStorage.setItem(key, savedKeys[key]);
+                  } 
+                  
+                  //Has master password
+                  if(savedKeys.mPW) {
+                    try {
+                      let item = CryptoWrapper.decryptAES(savedKeys[key], masterPW);
+                      if (!item) {
+                        decryptedWorked = false;
+                      } else {
+                        localStorage.setItem(key, item);
+                      }
+                    } catch (error) {
+                      decryptedWorked = false;
+                    } 
+                  }
+                }
+              }
+              if(!decryptedWorked) {
+                ShowNotification.error("Failed to decrypt.", "Please check your master password.", false);
+                return;
+              }
+
+              if (keyFound) {
+                ShowNotification.success("Success", "All keys are loaded.");
+              }
+  
+          };
+
+          reader.readAsText(file);
+      } else {
+        ShowNotification.error("Failed to load", "No file selected.");
+      }
+    }
 }
 
 class ElementAction {
@@ -1043,7 +1247,7 @@ class ShowNotification {
       position: 'top-right',
     });
   }
-  static error (title, content) {
+  static error (title, content, hide = 6000) {
     $.toast({
       text: content,
       heading: title,
@@ -1051,6 +1255,7 @@ class ShowNotification {
       icon: "error", 
       loaderBg: "#3b98b5",
       position: 'top-right',
+      hideAfter: hide,
     });
   }
 }
@@ -1153,38 +1358,33 @@ class FormHandler {
 
 class StorageHandler {
 
+  static getAndRemove(key) {
+    if(localStorage.getItem(key)) {
+      localStorage.removeItem(key);
+    }
+  }
+
   static deleteStoredKeys () {
     for (let i = 1; i <= 10; i++) {
       let key = "key" + i;
-      if(localStorage.getItem(key)) {
-        localStorage.removeItem(key);
-      }
+      StorageHandler.getAndRemove(key);
     }
   }
 
   static deleteStoredHashes () {
-    if(localStorage.getItem("savedHashes")) {
-      localStorage.removeItem("savedHashes");
-    }
+    StorageHandler.getAndRemove("savedHashes");
   }
 
   static deleteConfigs () {
-    if(localStorage.getItem("cryptoConfig")) {
-      localStorage.removeItem("cryptoConfig");
-    }
-    if(localStorage.getItem("generalConfig")) {
-      localStorage.removeItem("generalConfig");
-    }
+    StorageHandler.getAndRemove("cryptoConfig");
+    StorageHandler.getAndRemove("generalConfig");
   }
 
   static deleteAll() {
     StorageHandler.deleteStoredKeys();
     StorageHandler.deleteStoredHashes();
     StorageHandler.deleteConfigs();
-
-    if(localStorage.getItem("copyAlert")) {
-      localStorage.removeItem("copyAlert");
-    }
+    StorageHandler.getAndRemove("copyAlert");
   }
 }
 

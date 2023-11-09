@@ -368,11 +368,11 @@
                                                                         <label class="form-check-label" for="doAES">AES</label>
                                                                     </div>
                                                                     <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doBF" id="doBF" checked="">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doBF" id="doBF">
                                                                         <label class="form-check-label" for="doBF">Blowfish</label>
                                                                     </div>
                                                                     <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doXOR" id="doXOR" checked="">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doXOR" id="doXOR">
                                                                         <label class="form-check-label" for="doXOR">XOR</label>
                                                                     </div>
                                                                 </div>
@@ -431,7 +431,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3  control-label mb-1"><u>Slots</u></label>
+                                                                <label class="col-12 col-sm-3  control-label mb-1"><u>Performance</u></label>
                                                                 <div class="col-12 col-sm-9 ">
                                                                     <div class="form-check mb-1 form-check-primary">
                                                                         <input class="form-check-input rounded-circle" type="checkbox" value="" id="saveHashes" name="saveHashes">
@@ -473,6 +473,42 @@
                                                                             <span>Clear all</span> 
                                                                         </button>
                                                                     </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group mb-2">
+                                                                <label class="col-12 col-sm-3  control-label"><u>Key Slots</u></label>
+                                                                <div class="col-12 col-sm-9 ">
+                                                                    <p class="mb-2"><b>Download</b> and <b>upload</b> saved keys</p>
+                                                                    <div class="form-check mb-1 form-check-primary">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" name="useMasterPW" id="useMasterPW">
+                                                                        <label class="form-check-label" for="useMasterPW">Use master password</label>
+                                                                    </div>
+                                                                    <input type="password" class="form-control d-none" id="masterPassword" name="masterPassword" placeholder="Master key">
+                                                                    <span class="help-block ">
+                                                                        <small>
+                                                                            Encrypt saved keys before downloading with your custom password
+                                                                        </small>
+                                                                    </span>
+                                                                    <div class="form-check mb-1 mt-1 form-check-primary">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" name="includeConfig" id="includeConfig">
+                                                                        <label class="form-check-label" for="includeConfig">Include saved settings in download</label>
+                                                                    </div>
+                                                                    <div class="row mt-2">
+                                                                        <div class="col-6">
+                                                                            Save
+                                                                            <div class="d-grid mb-1">
+                                                                                <button type="button" id="downloadSavedKeys" class="btn btn-xs btn-outline-pink waves-effect"> 
+                                                                                    <i class="mdi mdi-file-download me-1"></i> 
+                                                                                    <span>Download saved keys</span> 
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            Load
+                                                                            <input type="file" id="keyUpload" accept="application/json" class="form-control" style="padding: 0.25rem; font-size: 14px;">
+                                                                        </div>
+                                                                    </div>
+       
                                                                 </div>
                                                             </div>
                                                         </div>
