@@ -268,11 +268,11 @@ class Main {
           for (let i = 1; i < files.length; i++) {
             if (this.checkForFileEnding(files[i].name) !== this.checkForFileEnding(files[i - 1].name)) {
               if (!this.checkForFileEnding(files[i].name) || !this.checkForFileEnding(files[i - 1].name) ) {
-                ShowNotification.error("File error", "You can't encrypt files twice.");
+                ShowNotification.error("File error", "You can't encrypt files twice.", false);
                 console.log("Encrypted files with unencrypted files detected. Aborting.");
                 return;
               }
-              ShowNotification.error("File error", "All files must have the same ending / encryption settings.");
+              ShowNotification.error("File error", "All files must have the same ending / encryption settings.", false);
               console.log("Detected different encryption settings. Can not decrypt.");
               return;
             }
@@ -600,7 +600,6 @@ class Main {
     }
 
     keyCopy() {
-      console.log(this.getFormValue("hideKey"));
       if ($("#hideKey").is(":checked")) {
         if(this.getFormValue("keyPassword") === "") {
           ShowNotification.error("Error", "No key to copy.");
@@ -616,7 +615,7 @@ class Main {
       }
       
 
-      if (localStorage.getItem("copyAlert")) {
+      if (StorageHandler.getItem("copyAlert")) {
         if ($("#hideKey").is(":checked")) {
           ElementAction.uncheck("hideKey");
           this.toggleKey();
@@ -638,7 +637,7 @@ class Main {
           }).then((result) => {
               if (result.isConfirmed) {
                 Main.keyCopyAfterAlert();
-                localStorage.setItem("copyAlert", "true");
+                StorageHandler.setItem("copyAlert", "true");
               } 
           });
         } else {
@@ -778,19 +777,11 @@ class Main {
     }
 
     readCryptoSettings () {
-      const item = localStorage.getItem("cryptoConfig");
-      if (item) {
-        return item;
-      } 
-      return false;
+      return StorageHandler.getItem("cryptoConfig");
     }
 
     readGeneralSettings () {
-      const item = localStorage.getItem("generalConfig");
-      if (item) {
-        return item;
-      } 
-      return false;
+      return StorageHandler.getItem("generalConfig");
     }
 
     getSavedHash(key, hashHeader) {
@@ -844,7 +835,7 @@ class Main {
     }
 
     readSavedHashes () {
-      const savedHashesEncrypted = localStorage.getItem("savedHashes");
+      const savedHashesEncrypted = StorageHandler.getItem("savedHashes");
       if(savedHashesEncrypted) {
         try {
           const savedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, "If you have a better way securing this, message me.");
@@ -867,14 +858,14 @@ class Main {
       if(savedHashesEncrypted.length > 3 * 1024 * 1024) {
         ShowNotification.warning("Storage limit", "Try resetting the saved hashes in the advanced settings.");
       }
-      localStorage.setItem("savedHashes", savedHashesEncrypted);
+      StorageHandler.setItem("savedHashes", savedHashesEncrypted);
     }
 
     saveSettings () {
       const cryptoSettingsHeader = this.generateCryptoHeader();
       const generalSettingsHeader = this.generateGeneralSettingsHeader();
-      localStorage.setItem("cryptoConfig", cryptoSettingsHeader);
-      localStorage.setItem("generalConfig", generalSettingsHeader);
+      StorageHandler.setItem("cryptoConfig", cryptoSettingsHeader);
+      StorageHandler.setItem("generalConfig", generalSettingsHeader);
 
       console.log("Crypto settings id " + cryptoSettingsHeader + " and general config id "+ generalSettingsHeader +" are saved.");
       ShowNotification.success("Settings saved", "Your settings have been saved.");
@@ -889,7 +880,7 @@ class Main {
         return;
       }
 
-      let key = localStorage.getItem("key" + keySlot);
+      let key = StorageHandler.getItem("key" + keySlot);
 
       if (!key) {
         console.log("No key in this slot.");
@@ -934,7 +925,7 @@ class Main {
 
       if(key) {
         key = CryptoWrapper.encryptAES(key, "Don't decrypt this, please.");
-        localStorage.setItem("key"+keySlot, key);
+        StorageHandler.setItem("key"+keySlot, key);
         console.log("Key #" + keySlot + " was saved.")
         ShowNotification.success("Key saved", "Key slot #" + keySlot + " was saved.");
       } else {
@@ -1053,7 +1044,7 @@ class Main {
 
       for (let i = 1; i <= 10; i++) {
         let key = "key" + i;
-        let item = localStorage.getItem(key);
+        let item = StorageHandler.getItem(key);
         if(item) {
           keysFound = true;
           if (useMasterPassword) {
@@ -1128,12 +1119,12 @@ class Main {
                 if(savedKeys.config.hasOwnProperty('cC') && savedKeys.config.hasOwnProperty('gC')) {
                   if (savedKeys.config.cC) {
                     cryptoConfig = savedKeys.config.cC;
-                    localStorage.setItem("cryptoConfig", savedKeys.config.cC);
+                    StorageHandler.setItem("cryptoConfig", savedKeys.config.cC);
                   }
                   
                   if(savedKeys.config.gC) {
                     generalConfig = savedKeys.config.gC;
-                    localStorage.setItem("generalConfig", savedKeys.config.gC);
+                    StorageHandler.setItem("generalConfig", savedKeys.config.gC);
                   }
 
                   if(savedKeys.config.gC && savedKeys.config.cC) {
@@ -1159,7 +1150,7 @@ class Main {
                   keyFound = true;
                   //No master password
                   if(!savedKeys.mPW) {
-                    localStorage.setItem(key, savedKeys[key]);
+                    StorageHandler.setItem(key, savedKeys[key]);
                   } 
                   
                   //Has master password
@@ -1169,7 +1160,7 @@ class Main {
                       if (!item) {
                         decryptedWorked = false;
                       } else {
-                        localStorage.setItem(key, item);
+                        StorageHandler.setItem(key, item);
                       }
                     } catch (error) {
                       decryptedWorked = false;
@@ -1357,6 +1348,25 @@ class FormHandler {
 }
 
 class StorageHandler {
+
+  static getItem (key) {
+    const item = localStorage.getItem(key);
+    if (item) {
+      return item;
+    } else {
+      return false;
+    }
+  }
+
+  static setItem (key, value) {
+    try {
+      localStorage.setItem(key,value);
+      return true;
+    } catch (error) {
+      ShowNotification.error("Saving error", "Failed to set data, please try clearing data", false);
+      return false;
+    }
+  }
 
   static getAndRemove(key) {
     if(localStorage.getItem(key)) {
