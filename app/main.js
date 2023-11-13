@@ -22,6 +22,7 @@ class Main {
         this.toggleKey();
         this.updateFileList();
         this.toggleMasterPassword();
+        this.setSlotNames();
 
 
         $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
@@ -44,8 +45,11 @@ class Main {
 
         $('#removeSavedHashes').on('click', this.removeSavedHashes.bind(this));
         $('#removeSavedKeys').on('click', this.removeSavedKeys.bind(this));
+        $('#removeSlotNames').on('click', this.removeSlotNames.bind(this));
         $('#removeConfig').on('click', this.removeConfig.bind(this));
         $('#removeAllData').on('click', this.removeAllData.bind(this));
+        
+        $('#changeSlotName').on('click', this.changeSlotName.bind(this));
 
         $('#saveSettings').on('click', this.saveSettings.bind(this));
         $('#doHashing').on('change', this.toggleHashing.bind(this));
@@ -784,6 +788,26 @@ class Main {
       return StorageHandler.getItem("generalConfig");
     }
 
+    readSlotNames() {
+      const item = StorageHandler.getItem("slotNames");
+      if (item) {
+        try {
+          const slotNames = JSON.parse(item);
+          return slotNames;
+        } catch (error) {
+          ShowNotification.error("Error", "Loading slot names failed.");
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+
+    saveSlotNames (object) {
+      const string = JSON.stringify(object);
+      StorageHandler.setItem("slotNames", string);
+    }
+
     getSavedHash(key, hashHeader) {
       const md5_key = CryptoJS.MD5(key).toString();
 
@@ -984,6 +1008,22 @@ class Main {
           } 
       });
     }
+    
+    removeSlotNames () {
+      Swal.fire({
+        icon: 'error',
+        title: 'Clear slot names?',
+        text: "This action can't be undone",
+        showCancelButton: true,
+        confirmButtonText: "Clear",
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) {
+            StorageHandler.deleteSlotNames();
+            ShowNotification.success("Success", "Slot names cleared.");
+          } 
+      });
+    }
 
     removeConfig () {
       Swal.fire({
@@ -1034,11 +1074,9 @@ class Main {
       const masterPassword = this.getFormValue("masterPassword");
       const includeConfig = this.getFormValue("includeConfig");
 
-      if (useMasterPassword) {
-        if(!masterPassword) {
-          ShowNotification.error("Error", "No master password set.");
-          return;
-        }
+      if (useMasterPassword && !masterPassword) {
+        ShowNotification.error("Error", "No master password set.");
+        return;
       }
       savedKeys.mPW = useMasterPassword;
 
@@ -1063,7 +1101,7 @@ class Main {
         return;
       }
 
-      let savedKeysString = JSON.stringify(savedKeys);
+      const savedKeysString = JSON.stringify(savedKeys);
 
       if (savedKeysString) {
         const blob = new Blob([savedKeysString], { type: "application/json" });
@@ -1183,6 +1221,47 @@ class Main {
       } else {
         ShowNotification.error("Failed to load", "No file selected.");
       }
+    }
+
+    setSlotNames() {
+      const slotNames = this.readSlotNames();
+
+      if(!slotNames) {
+        return;
+      }
+
+      for (let i = 1; i <= 10; i++) {
+        if (slotNames.hasOwnProperty(i)) {
+          $(".form-select[name='keySlot'] option[value='" + i + "']").text(slotNames[i]);
+        }
+      }
+    }
+
+    changeSlotName() {
+      const keySlot = this.getFormValue("keySlotChange");
+      const newName = this.getFormValue("slotName");
+      let slotNames = this.readSlotNames();
+
+      if (!slotNames) {
+        slotNames = {};
+      }
+
+      if ( !keySlot) {
+        console.log("No slot selected");
+        ShowNotification.error("No key", "No key selected.");
+        return;
+      }
+      if ( !newName) {
+        console.log("No name entered");
+        ShowNotification.error("No name", "Please enter a name.");
+        return;
+      }
+
+      slotNames[keySlot] = newName;
+
+      $(".form-select[name='keySlot'] option[value='" + keySlot + "']").text(newName);
+
+      this.saveSlotNames(slotNames);
     }
 }
 
@@ -1384,6 +1463,10 @@ class StorageHandler {
   static deleteStoredHashes () {
     StorageHandler.getAndRemove("savedHashes");
   }
+  
+  static deleteSlotNames () {
+    StorageHandler.getAndRemove("slotNames");
+  }
 
   static deleteConfigs () {
     StorageHandler.getAndRemove("cryptoConfig");
@@ -1393,6 +1476,7 @@ class StorageHandler {
   static deleteAll() {
     StorageHandler.deleteStoredKeys();
     StorageHandler.deleteStoredHashes();
+    StorageHandler.deleteSlotNames();
     StorageHandler.deleteConfigs();
     StorageHandler.getAndRemove("copyAlert");
   }

@@ -462,6 +462,12 @@
                                                                         </button>
                                                                     </div>
                                                                     <div class="d-grid mb-1">
+                                                                        <button id="removeSlotNames" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
+                                                                            <i class="mdi mdi-delete me-1"></i> 
+                                                                            <span>Clear slot names</span> 
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="d-grid mb-1">
                                                                         <button id="removeConfig" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
                                                                             <i class="mdi mdi-delete me-1"></i> 
                                                                             <span>Clear config</span> 
@@ -511,12 +517,41 @@
        
                                                                 </div>
                                                             </div>
+                                                            <div class="input-group mb-2">
+                                                                <label class="col-12 col-sm-3  control-label"><u>Slot name</u></label>
+                                                                <div class="col-12 col-sm-9 ">
+                                                                    <div class="row">
+                                                                        <div class="col-4">
+                                                                            <select class="form-select" name="keySlotChange">
+                                                                                <option value="1">Slot 1</option>
+                                                                                <option value="2">Slot 2</option>
+                                                                                <option value="3">Slot 3</option>
+                                                                                <option value="4">Slot 4</option>
+                                                                                <option value="5">Slot 5</option>
+                                                                                <option value="6">Slot 6</option>
+                                                                                <option value="7">Slot 7</option>
+                                                                                <option value="8">Slot 8</option>
+                                                                                <option value="9">Slot 9</option>
+                                                                                <option value="10">Slot 10</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-5">
+                                                                            <input type="text" name="slotName" id="slotName" class="form-control" placeholder="New name">
+                                                                        </div>
+                                                                        <div class="col-3">
+                                                                            <button id="changeSlotName" type="button" class="btn btn-outline-success waves-effect"> 
+                                                                                <span>Save</span> 
+                                                                            </button>                                                                        
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <div class="input-group mb-2">
                                                             <label class="col-12 col-sm-3  control-label"><u>Configuration</u></label>
                                                             <div class="col-12 col-sm-9 ">
                                                                 <div class="d-grid">
-                                                                    <button id="saveSettings" type="button" class="btn btn-sm btn-outline-success waves-effect"> 
+                                                                    <button id="saveSettings" type="button" class="btn btn-outline-success waves-effect"> 
                                                                         <i class="mdi mdi-save me-1"></i> 
                                                                         <span>Save settings</span> 
                                                                     </button>
