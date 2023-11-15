@@ -92,6 +92,7 @@ class Main {
         hideKey: this.getFormValue("hideKey"), 
         useMasterPW: this.getFormValue("useMasterPW"), 
         includeConfig: this.getFormValue("includeConfig"), 
+        includeSlotNames: this.getFormValue("includeSlotNames"), 
       }
     }
 
@@ -122,7 +123,7 @@ class Main {
 
       if(generalSettingsHeader) {
         const gsHeader = parseInt(generalSettingsHeader);
-        if (gsHeader > 63 || gsHeader < 0 ) {
+        if (gsHeader > 127 || gsHeader < 0 ) {
           ShowNotification.error("Error", "Could not load settings. Invalid data.");
           return false;
         }
@@ -136,6 +137,7 @@ class Main {
         settings["hideKey"] = isBitSet(gsHeader, 3);
         settings["useMasterPW"] = isBitSet(gsHeader, 4);
         settings["includeConfig"] = isBitSet(gsHeader, 5);
+        settings["includeSlotNames"] = isBitSet(gsHeader, 6);
         console.log("General settings id " + gsHeader + " are loaded.");
       }
 
@@ -741,6 +743,7 @@ class Main {
       if (settings.hideKey) headerCode += 8;
       if (settings.useMasterPW) headerCode += 16;
       if (settings.includeConfig) headerCode += 32;
+      if (settings.includeSlotNames) headerCode += 64;
       
       return headerCode;
     }
@@ -1073,6 +1076,7 @@ class Main {
       const useMasterPassword = this.getFormValue("useMasterPW");
       const masterPassword = this.getFormValue("masterPassword");
       const includeConfig = this.getFormValue("includeConfig");
+      const includeSlotNames = this.getFormValue("includeSlotNames");
 
       if (useMasterPassword && !masterPassword) {
         ShowNotification.error("Error", "No master password set.");
@@ -1092,14 +1096,20 @@ class Main {
         }
       }
 
-      if (includeConfig) {
-        savedKeys.config = {};
-        savedKeys.config.gC = this.readGeneralSettings();
-        savedKeys.config.cC = this.readCryptoSettings();
+      if (includeConfig || includeSlotNames) {
+        if (includeConfig) {
+          savedKeys.config = {};
+          savedKeys.config.gC = this.readGeneralSettings();
+          savedKeys.config.cC = this.readCryptoSettings();
+        }
+        if (includeSlotNames) {
+          savedKeys.slotNames = this.readSlotNames();
+        }
       } else if (!keysFound) {
         ShowNotification.error("Error","No keys saved.");
         return;
       }
+
 
       const savedKeysString = JSON.stringify(savedKeys);
 
@@ -1177,6 +1187,14 @@ class Main {
                   this.toggleKey();
                   this.toggleMasterPassword();
                   
+                }
+              }
+
+              //Load SlotNames
+              if(savedKeys.hasOwnProperty('slotNames')) {
+                if (savedKeys.slotNames) {
+                  this.saveSlotNames(savedKeys.slotNames);
+                  this.setSlotNames();
                 }
               }
 
