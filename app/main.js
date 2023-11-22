@@ -364,9 +364,6 @@ class Main {
         if(settings.saveHashes && !hashFound) {
           this.setHash(original_key, key, hashHeader);
         }
-
-
-        //Set key to saved hash database
       }
 
       //Text Encryption / Decryption
