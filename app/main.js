@@ -1222,7 +1222,7 @@ class Main {
                 }
               }
               if(!decryptedWorked) {
-                ShowNotification.error("Failed to decrypt.", "Please check your master password.", false);
+                ShowNotification.error("Failed to load keys.", "Please check your master password.", false);
                 return;
               }
 
