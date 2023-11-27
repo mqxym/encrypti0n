@@ -368,6 +368,7 @@ class Main {
 
       //Text Encryption / Decryption
       if (type === "doText") {
+        ElementAction.hide("progressBarDiv");
         if (cryptoHeader) {
           //If cryptoHeader: decrypt
           const cipher = removeBeforeFirstEqual(text);
@@ -392,12 +393,21 @@ class Main {
         let files = fileList;
         this.totalFileCount = files.length;
         this.processedFiles = 0;
+        this.totalSize = totalSize;
+        this.progressBarPercent = 0;
 
         this.actionLaddaStart();
+        if (this.totalFileCount > 1) {
+          ElementAction.show("progressBarDiv");
+          setWidthPercentage("#progressBar", 0);
+        } else {
+          ElementAction.hide("progressBarDiv");
+          setWidthPercentage("#progressBar", 0);
+        }
         await new Promise(r => setTimeout(r, 150));
 
         if (totalSize > 30*1024*1024) {
-          ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " processing might take a while." );
+          ShowNotification.warning("Total size",  "Working with a total of " + formatBytes(totalSize) + " processing might take a while or could fail." );
           await new Promise(r => setTimeout(r, 350));
         }
         if (cryptoHeader) {
@@ -409,7 +419,7 @@ class Main {
         } else {
           //encrypt
           for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+            const file = files[i];            
             this.encryptAndSaveFile(key, file, methods);
           }
         }
@@ -457,6 +467,14 @@ class Main {
         outputDiv.append("<br>");
        
         this.processedFiles++;
+
+        let widthPercent = file.size / this.totalSize * 100
+        widthPercent = parseInt(widthPercent.toFixed(0));
+        
+        this.progressBarPercent += widthPercent;
+
+        setWidthPercentage("#progressBar", this.progressBarPercent);
+
         if (this.processedFiles == this.totalFileCount) {
           this.actionLaddaStop();
         }
@@ -485,6 +503,13 @@ class Main {
           }
 
           this.processedFiles++;
+
+          let widthPercent = file.size / this.totalSize * 100
+          widthPercent = parseInt(widthPercent.toFixed(0));
+          
+          this.progressBarPercent += widthPercent;
+  
+          setWidthPercentage("#progressBar", this.progressBarPercent);
 
           if(methods.doXOR) {
             ShowNotification.error("Error decrypting", "XOR not supported for files.");
