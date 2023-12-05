@@ -204,6 +204,29 @@ function hexToBase64Large(hex) {
 	return base64Chunks.join("");
 }
 
+function hexToBase64LargeNew(hex) {
+  
+	// Function to convert a hexadecimal string to Base64
+	function chunkToBase64(hexChunk) {
+	  const byteArr = [];
+	  for (let i = 0; i < hexChunk.length; i += 2) {
+		byteArr.push(parseInt(hexChunk.substr(i, 2), 16));
+	  }
+	  const binaryString = String.fromCharCode(...byteArr);
+	  return btoa(binaryString);
+	}
+  
+	// Split the hex string into chunks (adjust the chunk size as needed)
+	const chunkSize = 512; // You can adjust this value based on your memory limitations
+	const chunks = [];
+	for (let i = 0; i < hex.length; i += chunkSize) {
+	  chunks.push(hex.slice(i, i + chunkSize));
+	}
+  
+	// Convert each chunk to Base64 and concatenate
+	return chunks.map(chunkToBase64).join("");
+  }
+
 function base64ToHexLarge(base64) {
 	  // Regular expression to check for valid Base64 characters
 	  const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
