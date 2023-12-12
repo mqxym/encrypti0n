@@ -1582,7 +1582,7 @@ class VersionManager {
   }
 
   clearStoredHashes() {
-      //StorageHandler.clearStoredHashes();
+      StorageHandler.deleteStoredHashes();
       console.log("Data cleared for update.");
   }
 }
@@ -1592,7 +1592,7 @@ class VersionManager {
 $(document).ready(function () {
   const main = new Main(new FormHandler('mainForm'));
 
-  const currentVersion = '1.0'
+  const currentVersion = '1.01'
   const versionManager = new VersionManager(currentVersion);
   versionManager.updateVersion();
 });
