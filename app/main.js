@@ -477,6 +477,7 @@ class Main {
 
         if (this.processedFiles == this.totalFileCount) {
           this.actionLaddaStop();
+          setWidthPercentage("#progressBar", 100);
         }
       };
       reader.readAsDataURL(file);
@@ -523,6 +524,7 @@ class Main {
           console.log(error);
           if (this.processedFiles == this.totalFileCount) {
             this.actionLaddaStop();
+            setWidthPercentage("#progressBar", 100);
           }
           return;
         }
@@ -535,6 +537,7 @@ class Main {
         
         if (this.processedFiles == this.totalFileCount) {
           this.actionLaddaStop();
+          setWidthPercentage("#progressBar", 100);
         }
 
         if (blob.size === 0) {
@@ -1522,8 +1525,74 @@ class StorageHandler {
   }
 }
 
+class VersionManager {
+  constructor(currentVersion) {
+    this.currentVersion = currentVersion;
+    this.previousVersion = localStorage.getItem('version');
+
+    // If no version is set in localStorage, set it to the current version and return
+    if (!this.previousVersion) {
+        localStorage.setItem('version', this.currentVersion);
+        return;
+    }
+
+    this.versionActions = {
+        '1.01': {
+            changes: ["Improved security and updated hash function.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
+            actions: ["clearStoredHashes"]
+        }/*,
+        '1.02': {
+            changes: ["New feature added", ""],
+            actions: ["clearStoredHashes","test"]
+        }*/
+    };
+  }
+  updateVersion() {
+      if (this.previousVersion !== this.currentVersion) {
+          this.handleVersionUpdate();
+      }
+  }
+
+  handleVersionUpdate() {
+    const updateSequence = this.getUpdateSequence();
+
+    updateSequence.reduce((promise, version) => {
+        return promise.then(() => {
+            const { changes, actions } = this.versionActions[version];
+            const changeList = changes.join('<br>');
+            return Swal.fire({
+                title: `Update to ${version} Available!`,
+                html: `${changeList}`,
+                icon: "info",
+            }).then(() => {
+                actions.forEach(action => this[action]());
+                localStorage.setItem('version', version);
+            });
+        });
+    }, Promise.resolve());
+  }
+
+  getUpdateSequence() {
+      const versions = Object.keys(this.versionActions);
+      return versions.filter(version => this.isVersionBetween(version, this.previousVersion, this.currentVersion));
+  }
+
+  isVersionBetween(version, minVersion, maxVersion) {
+      return version > minVersion && version <= maxVersion;
+  }
+
+  clearStoredHashes() {
+      //StorageHandler.clearStoredHashes();
+      console.log("Data cleared for update.");
+  }
+}
+
 
 
 $(document).ready(function () {
   const main = new Main(new FormHandler('mainForm'));
+
+  const currentVersion = '1.0'
+  const versionManager = new VersionManager(currentVersion);
+  versionManager.updateVersion();
 });

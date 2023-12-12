@@ -117,6 +117,9 @@ function hashPassword(pass, hashDifficulty, doRoundOffset, doHashSalting) {
 
 
 	hashPass = CryptoJS.SHA512(hashPass).toString() + CryptoJS.SHA224(hashPass).toString() + CryptoJS.SHA256(hashPass).toString() + CryptoJS.SHA1(hashPass).toString() + CryptoJS.SHA3(hashPass).toString() + CryptoJS.SHA384(hashPass).toString() + CryptoJS.MD5(hashPass).toString();
+	
+	//Enable in future versions
+	//hashPass = hexToBase64(hashPass);
 	console.log("Hashed key:\n" + hashPass);
 
 	return hashPass;
