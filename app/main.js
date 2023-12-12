@@ -816,8 +816,11 @@ class Main {
       return StorageHandler.getItem("generalConfig");
     }
 
-    readSlotNames() {
+    readSlotNames(readAsJson = false) {
       const item = StorageHandler.getItem("slotNames");
+      if (readAsJson) {
+        return item;
+      }
       if (item) {
         try {
           const slotNames = JSON.parse(item);
@@ -1128,13 +1131,19 @@ class Main {
           savedKeys.config.cC = this.readCryptoSettings();
         }
         if (includeSlotNames) {
-          savedKeys.slotNames = this.readSlotNames();
+          const slotNames = this.readSlotNames();
+          if (slotNames) {
+            if (useMasterPassword) {
+              savedKeys.slotNames = CryptoWrapper.encryptAES(JSON.stringify(slotNames), masterPassword);
+            } else {
+              savedKeys.slotNames = slotNames;
+            }
+          }
         }
       } else if (!keysFound) {
         ShowNotification.error("Error","No keys saved.");
         return;
       }
-
 
       const savedKeysString = JSON.stringify(savedKeys);
 
@@ -1218,8 +1227,28 @@ class Main {
               //Load SlotNames
               if(savedKeys.hasOwnProperty('slotNames')) {
                 if (savedKeys.slotNames) {
-                  this.saveSlotNames(savedKeys.slotNames);
-                  this.setSlotNames();
+                  let slotNames = "";
+                  let slotDecryptionWorked = true;
+                  if(masterPW) {
+                    try {
+                      slotNames = CryptoWrapper.decryptAES(savedKeys.slotNames, masterPW);
+                      slotNames = JSON.parse(slotNames);
+                      if (!slotNames) {
+                        slotDecryptionWorked = false;
+                      }
+                    } catch (error) {
+                      slotDecryptionWorked = false;
+                    }
+                    
+                  } else {
+                    slotNames = savedKeys.slotNames;
+                  }
+                  if(!slotDecryptionWorked) {
+                    ShowNotification.error("Failed to load slot names.", "Please check your master password.", false);
+                  } else {
+                    this.saveSlotNames(slotNames);
+                    this.setSlotNames();
+                  }
                 }
               }
 
@@ -1540,7 +1569,12 @@ class VersionManager {
         '1.01': {
             changes: ["Improved security and updated hash function.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
             actions: ["clearStoredHashes"]
-        }/*,
+        },
+        '1.02': {
+            changes: ["Downloaded slot names are now encrypted.", "When using master password."],
+            actions: []
+        }
+        /*,
         '1.02': {
             changes: ["New feature added", ""],
             actions: ["clearStoredHashes","test"]
@@ -1592,7 +1626,7 @@ class VersionManager {
 $(document).ready(function () {
   const main = new Main(new FormHandler('mainForm'));
 
-  const currentVersion = '1.01'
+  const currentVersion = '1.02'
   const versionManager = new VersionManager(currentVersion);
   versionManager.updateVersion();
 });
