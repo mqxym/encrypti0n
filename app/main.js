@@ -374,7 +374,7 @@ class Main {
           const cipher = removeBeforeFirstEqual(text);
           const decryptedText = this.decryptText(key, cipher, methods)
           if (!decryptedText) {
-            ShowNotification.error("Decryption error", "Check your key or your input.");
+            ShowNotification.error("Decryption error", "Check your key or your input.", false);
           }
           this.setFormValue("outputText", decryptedText);
 
