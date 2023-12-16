@@ -1612,7 +1612,22 @@ class VersionManager {
   }
 
   isVersionBetween(version, minVersion, maxVersion) {
-      return version > minVersion && version <= maxVersion;
+    return this.compareVersions(version, minVersion) > 0 && this.compareVersions(version, maxVersion) <= 0;
+  }
+
+  compareVersions(versionA, versionB) {
+      const splitA = versionA.split('.').map(Number);
+      const splitB = versionB.split('.').map(Number);
+
+      for (let i = 0; i < Math.max(splitA.length, splitB.length); i++) {
+          const numA = splitA[i] || 0;
+          const numB = splitB[i] || 0;
+
+          if (numA > numB) return 1;
+          if (numA < numB) return -1;
+      }
+
+      return 0;
   }
 
   clearStoredHashes() {
