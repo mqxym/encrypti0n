@@ -141,6 +141,36 @@ function returnHash(seed) {
 		let currentChar = seed.charAt(i).toLowerCase();
 		
 		switch (currentChar) {
+			case "0":
+				key = CryptoJS.SHA384(key + "SF39" + pastHash[0] + pastHash[1]).toString();
+				break;
+			case "1":
+				key = hexToBase64(CryptoJS.SHA384(key + "DS44" + pastHash[0] + pastHash[1]).toString());
+				break;
+			case "2":
+				key = CryptoJS.SHA384(key + "XL55" + pastHash[0] + pastHash[1]).toString();
+				break;
+			case "3":
+				key = CryptoJS.SHA512(key + "NC01" + pastHash[0] + pastHash[1]).toString();
+				break;
+			case "4":
+				key = hexToBase64(CryptoJS.SHA512(key + "LU50" + pastHash[0] + pastHash[1]).toString());
+				break;
+			case "5":
+				key = CryptoJS.SHA512(key + "GL12" + pastHash[0] + pastHash[1]).toString();
+				break;
+			case "6":
+				key = CryptoJS.SHA256(key + "GG31" + pastHash[0] + pastHash[1]).toString();
+				break;
+			case "7":
+				key = hexToBase64(CryptoJS.SHA256(key + "HL11" + pastHash[0] + pastHash[1]).toString());
+				break;
+			case "8":
+				key = CryptoJS.SHA256(key + "XF91" + pastHash[0] + pastHash[1]).toString();
+				break;
+			case "9":
+				key = hexToBase64(CryptoJS.SHA3(key + "BM15" + pastHash[0] + pastHash[1]).toString());
+				break;
 			case "f":
 				key = CryptoJS.MD5(key + "TT85" + pastHash[0] + pastHash[1]).toString();
 				break;
@@ -159,36 +189,7 @@ function returnHash(seed) {
 			case "a":
 				key = CryptoJS.SHA3(key + "WT66" + pastHash[0] + pastHash[1]).toString();
 				break;
-			case "9":
-				key = hexToBase64(CryptoJS.SHA3(key + "BM15" + pastHash[0] + pastHash[1]).toString());
-				break;
-			case "8":
-				key = CryptoJS.SHA256(key + "XF91" + pastHash[0] + pastHash[1]).toString();
-				break;
-			case "7":
-				key = hexToBase64(CryptoJS.SHA256(key + "HL11" + pastHash[0] + pastHash[1]).toString());
-				break;
-			case "6":
-				key = CryptoJS.SHA256(key + "GG31" + pastHash[0] + pastHash[1]).toString();
-				break;
-			case "5":
-				key = CryptoJS.SHA512(key + "GL12" + pastHash[0] + pastHash[1]).toString();
-				break;
-			case "4":
-				key = hexToBase64(CryptoJS.SHA512(key + "LU50" + pastHash[0] + pastHash[1]).toString());
-				break;
-			case "3":
-				key = CryptoJS.SHA512(key + "NC01" + pastHash[0] + pastHash[1]).toString();
-				break;
-			case "2":
-				key = CryptoJS.SHA384(key + "XL55" + pastHash[0] + pastHash[1]).toString();
-				break;
-			case "1":
-				key = hexToBase64(CryptoJS.SHA384(key + "DS44" + pastHash[0] + pastHash[1]).toString());
-				break;
-			case "0":
-				key = CryptoJS.SHA384(key + "SF39" + pastHash[0] + pastHash[1]).toString();
-				break;
+
 		}
 		pastHash.push(key);
 		pastHash.shift();
