@@ -1573,6 +1573,10 @@ class VersionManager {
         '1.02': {
             changes: ["Downloaded slot names are now encrypted.", "When using master password."],
             actions: []
+        },
+        '1.03': {
+            changes: ["Improved security and updated hash function.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
+            actions: ["clearStoredHashes"]
         }
         /*,
         '1.02': {
@@ -1641,7 +1645,7 @@ class VersionManager {
 $(document).ready(function () {
   const main = new Main(new FormHandler('mainForm'));
 
-  const currentVersion = '1.02'
+  const currentVersion = '1.03'
   const versionManager = new VersionManager(currentVersion);
   versionManager.updateVersion();
 });
