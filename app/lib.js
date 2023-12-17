@@ -64,12 +64,12 @@ function getRoundOffset(pass) {
 			case "a":
 			case "b":
 			case "c":
-				sum += 5;
+				sum += 2;
 				break;
 			case "d":
 			case "e":
 			case "f":
-				sum += 2;
+				sum += 1;
 				break;
 		}
 
@@ -88,11 +88,11 @@ function hashPassword(pass, hashDifficulty, doRoundOffset, doHashSalting) {
 	let hashRounds = 1;
 
 	if (hashDifficulty == "low") {
-		hashRounds = 100;
+		hashRounds = 50;
 	} else if (hashDifficulty == "medium") {
-		hashRounds = 1000;
+		hashRounds = 500;
 	} else if (hashDifficulty == "high") {
-		hashRounds = 4000;
+		hashRounds = 2000;
 	}
 
 	if (doRoundOffset) {
@@ -188,6 +188,9 @@ function returnHash(seed) {
 				break;
 			case "a":
 				key = CryptoJS.SHA3(key + "WT66" + pastHash[0] + pastHash[1]).toString();
+				break;
+			default: 
+				key = CryptoJS.SHA512(key + "GN8GN8GN89" + pastHash[0] + pastHash[1]).toString();
 				break;
 
 		}

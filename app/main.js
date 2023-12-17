@@ -1577,6 +1577,10 @@ class VersionManager {
         '1.03': {
             changes: ["Improved security and updated hash function.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
             actions: ["clearStoredHashes"]
+        },
+        '1.04': {
+            changes: ["Updated hash function and round offset.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
+            actions: ["clearStoredHashes"]
         }
         /*,
         '1.02': {
@@ -1645,7 +1649,7 @@ class VersionManager {
 $(document).ready(function () {
   const main = new Main(new FormHandler('mainForm'));
 
-  const currentVersion = '1.03'
+  const currentVersion = '1.04'
   const versionManager = new VersionManager(currentVersion);
   versionManager.updateVersion();
 });
