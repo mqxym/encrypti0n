@@ -8,20 +8,21 @@ class Main {
           ElementAction.hide("keyPassword"); 
         }
 
-        if (this.readCryptoSettings()) {
-          if (this.readGeneralSettings()) {
-            this.setSettings(this.readCryptoSettings(), this.readGeneralSettings());
+        const cryptoSettings = this.readCryptoSettings();
+        const generalSettings = this.readGeneralSettings();
+
+        if (cryptoSettings) {
+          if (generalSettings) {
+            this.setSettings(cryptoSettings, generalSettings);
           } else {
-            this.setSettings(this.readCryptoSettings());
+            this.setSettings(generalSettings);
           }
         }
 
-        this.changeType();
+        this.applySettingsToGui();
+
         this.switchSettings();
-        this.toggleHashing();
-        this.toggleKey();
         this.updateFileList();
-        this.toggleMasterPassword();
         this.setSlotNames();
 
 
@@ -42,6 +43,9 @@ class Main {
         $('#useMasterPW').on('change', this.toggleMasterPassword.bind(this));
         $('#downloadSavedKeys').on('click', this.downloadSavedKeys.bind(this));
         $('#keyUpload').on('change', this.keyUpload.bind(this));
+
+        $('#setGc').on('click', this.setGc.bind(this));
+        $('#setCc').on('click', this.setCc.bind(this));
 
         $('#removeSavedHashes').on('click', this.removeSavedHashes.bind(this));
         $('#removeSavedKeys').on('click', this.removeSavedKeys.bind(this));
@@ -99,7 +103,7 @@ class Main {
     setSettings (cryptoHeader, generalSettingsHeader = false) {
       const cHeader = parseInt(cryptoHeader);
 
-      if (cHeader > 255 || cHeader < 0) {
+      if (cHeader > 255 || cHeader < 1) {
         ShowNotification.error("Error", "Could not load settings. Invalid data.");
         return false;
       }
@@ -109,9 +113,18 @@ class Main {
       settings["doAES"] = isBitSet(cHeader, 0);
       settings["doBF"] = isBitSet(cHeader, 1);
       settings["doXOR"] = isBitSet(cHeader, 2);
-      settings["doHashing"] = isBitSet(cHeader, 3);
-      settings["doHashSalting"] = isBitSet(cHeader, 4);
-      settings["doRoundOffset"] = isBitSet(cHeader, 5);
+
+      const doHashing = isBitSet(cHeader, 3);
+      settings["doHashing"] = doHashing
+
+      if (doHashing) {
+        settings["doHashSalting"] = isBitSet(cHeader, 4);
+        settings["doRoundOffset"] = isBitSet(cHeader, 5);
+      } else {
+        settings["doHashSalting"] = false;
+        settings["doRoundOffset"] = false;
+      }
+     
 
       if (isBitSet(cHeader, 6)) {
         settings["hashDifficulty"] = "low";
@@ -145,6 +158,13 @@ class Main {
       
       this.setFormValues(settings);
       return true;
+    }
+
+    applySettingsToGui () {
+      this.changeType();
+      this.toggleHashing();
+      this.toggleKey();
+      this.toggleMasterPassword();
     }
 
     changeType () {
@@ -1008,6 +1028,52 @@ class Main {
       return key;
     }
 
+    setGc() {
+      const gcValue = this.getFormValue("gcValue");
+      const gcInt = convertToRoundInteger(gcValue);
+
+      if (!gcInt) {
+        console.log("Input is invalid.");
+        ShowNotification.error("Invalid input.", "Enter only numbers.")
+        return;
+      }
+
+      if (gcInt > 127 || gcInt < 0 ) {
+        ShowNotification.error("General value", "Must be between 0 and 127");
+        return false;
+      }
+
+      this.setFormValue("gcValue", "");
+
+      this.setSettings(this.generateCryptoHeader(), gcInt);
+      this.applySettingsToGui();
+      this.saveSettings();
+
+
+    }
+
+    setCc() {
+      const ccValue = this.getFormValue("ccValue");
+      const ccInt = convertToRoundInteger(ccValue);
+
+      if (!ccInt) {
+        console.log("Input is invalid.");
+        ShowNotification.error("Invalid input.", "Enter only numbers.")
+        return;
+      }
+
+      if (ccInt > 255 || ccInt < 1) {
+        ShowNotification.error("Crypto value", "Must be between 1 and 255");
+        return false;
+      }
+
+      this.setFormValue("ccValue", "");
+
+      this.setSettings(ccInt);
+      this.applySettingsToGui();
+      this.saveSettings();
+    }
+
     removeSavedHashes () {
       Swal.fire({
         icon: 'error',
@@ -1216,10 +1282,7 @@ class Main {
                     this.setSettings(cryptoConfig);
                     ShowNotification.success("Config loaded", "Config saved and loaded.");
                   }
-                  this.changeType();
-                  this.toggleHashing();
-                  this.toggleKey();
-                  this.toggleMasterPassword();
+                  this.applySettingsToGui();
                   
                 }
               }

@@ -1,6 +1,15 @@
 function isBitSet(number, bit) {
 	return (number & (1 << bit)) !== 0;
 }
+
+function convertToRoundInteger(text) {
+    var number = parseInt(text);
+    if (isNaN(number)) {
+        return false;
+    } else {
+        return Math.round(number);
+    }
+}
   
 function removeBeforeFirstEqual(inputString) {
 	const parts = inputString.split('=');

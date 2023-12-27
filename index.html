@@ -41,6 +41,7 @@
 
 		<!-- Icons css -->
 		<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
     </head>
 
     <body>
@@ -443,6 +444,45 @@
                                                             </div>
                                                         </div>
                                                         <div class="d-none" id="divAdvancedSettings">
+                                                            <div class="input-group mb-2">
+                                                                <label class="col-12 col-sm-3  control-label"><u>Manual config</u></label>
+                                                                <div class="col-12 col-sm-9 ">
+                                                                    <div class="row">
+                                                                        <div class="col-8">
+                                                                            <input type="text" pattern="[0-9]*" name="ccValue" id="ccValue" class="form-control" placeholder="Crypto Config">
+                                                                        </div>
+                                                                        <div class="col-4">
+                                                                            <div class="d-grid mb-1">
+                                                                                <button id="setCc" type="button" class="btn btn-outline-success waves-effect"> 
+                                                                                    <i class="mdi mdi-save me-1"></i> 
+                                                                                    <span>Save</span> 
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-8">
+                                                                            <input type="text" pattern="[0-9]*" name="gcValue" id="gcValue" class="form-control" placeholder="General Config">
+                                                                        </div>
+                                                                        <div class="col-4">
+                                                                            <div class="d-grid mb-1">
+                                                                                <button id="setGc" type="button" class="btn btn-outline-success waves-effect"> 
+                                                                                    <i class="mdi mdi-save me-1"></i> 
+                                                                                    <span>Save</span> 
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <span class="help-block ">
+                                                                        <small>
+                                                                            Applies and saves configuration
+                                                                        </small>
+                                                                    </span>
+                                                                    
+                                                                </div>
+                                                            </div>
                                                             <div class="input-group mb-2">
                                                                 <label class="col-12 col-sm-3  control-label"><u>Storage</u></label>
                                                                 <div class="col-12 col-sm-9 ">
