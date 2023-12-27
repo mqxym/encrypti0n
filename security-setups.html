@@ -3,18 +3,16 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Encrypti0n.com - Frequently Asked Questions</title>
+        <title>Tips for optimal encryption security -  Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Frequently asked questions for Encrypti0n.com" />
-        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,Blowfish,AES256,XOR,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
+        <meta name="description" content="Setups for the paranoid and the ultra paranoid" />
+        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,base64,Blowfish,AES256,XOR,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
         <!-- App favicon -->
         <link rel="shortcut icon" href="assets/icons/favicon.ico">
-
-         
 
         <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
@@ -28,6 +26,10 @@
         <!-- Jquery Toast css -->
         <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
 
+        <!-- Loading button css -->
+        <link href="assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/libs/ladda/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
+
 		<!-- Theme Config Js -->
 		<script src="assets/js/head.js"></script>
 
@@ -39,6 +41,7 @@
 
 		<!-- Icons css -->
 		<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
     </head>
 
     <body>
@@ -158,15 +161,11 @@
                         </div>
 
                         <ul class="topbar-menu d-flex align-items-center">
-
-                            <!-- Fullscreen Button -->
                             <li class="d-none d-md-inline-block">
                                 <a class="nav-link waves-effect waves-light" href="" data-toggle="fullscreen">
                                     <i class="fe-maximize font-22"></i>
                                 </a>
                             </li>
-
-                            <!-- Light/Darj Mode Toggle Button -->
                             <li class="d-none d-sm-inline-block">
                                 <div class="nav-link waves-effect waves-light" id="light-dark-mode">
                                     <i class="ri-moon-line font-22"></i>
@@ -176,111 +175,48 @@
                     </div>
                 </div>
                 <div class="content">
+
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-12">
-                                <div class="page-title-box">
-                                    <h4 class="page-title">FAQs</h4>
+                                <div class="mb-3">
+                                    <h4 class="page-title text-break">Configs, setups and best practices for your situation</h4>
                                 </div>
                             </div>
                         </div>
-                         <div class="row">
-                            <div class="col-12">
-                                <div class="text-center">
-                                    <i class="h1 mdi mdi-comment-multiple-outline text-muted"></i>
-                                    <h3 class="mb-3">Frequently Asked Questions</h3>
-                                    <p class="text-muted"> Here, you'll discover the frequently asked questions about using the site.
-                                        <br>
-                                        Feel free to reach out to me if you require additional assistance or would like to 
-                                        include a new question in the list.
-                                    </p>
-
-                                    <a href="mailto:maxim@omg.lol" target="_blank">
-                                        <button type="button" class="btn btn-outline-success waves-effect waves-light mt-2 me-1">
-                                            <i class="mdi mdi-email-outline me-1"></i> 
-                                            Email me your question
-                                        </button>
-                                    </a> 
-                                    <a href="https://twitter.com/messages/compose?recipient_id=mqxym77" target="_blank">
-                                        <button type="button" class="btn btn-outline-primary waves-effect waves-light mt-2">
-                                            <i class="mdi mdi-twitter me-1"></i> 
-                                            Send me a tweet
-                                        </button>
-                                    </a>
-                                    
-                                </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <form role="form" id="mainForm"> 
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4 text-center">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h5>Ultra paranoid</h5>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                            <div class="col-md-4 text-center">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h5>Paranoid</h5>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                            <div class="col-md-4 text-center">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h5>Casual</h5>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </div> 
+                                </form>
+                              
                             </div>
                         </div>
-
-
-                        <div class="row pt-5">
-                            <div class="col-lg-5 offset-lg-1">
-                                <!-- Question/Answer -->
-                                <div>
-                                    <div class="faq-question-q-box">Q.</div>
-                                    <h4 class="faq-question" data-wow-delay=".1s">I encrypted text, how to decrypt it?</h4>
-                                    <p class="faq-answer mb-4">
-                                        To decrypt the text, simply copy it into the input field, 
-                                        and remember to use the same key when performing the decryption.
-                                    </p>
-                                </div>
-
-                                <!-- Question/Answer -->
-                                <div>
-                                    <div class="faq-question-q-box">Q.</div>
-                                    <h4 class="faq-question">Where does the encryption happen?</h4>
-                                    <p class="faq-answer mb-4">
-                                        The encryption process takes place right on your local computer or phone, with no data transmitted over the internet. 
-                                        You can even download the source code and run it on your local device without needing an internet connection.
-                                    </p>
-                                </div>
-                                <div>
-                                    <div class="faq-question-q-box">Q.</div>
-                                    <h4 class="faq-question">How to export keys / config to a different device?</h4>
-                                    <p class="faq-answer mb-4">
-                                        To transfer your configuration and saved keys to another device, you can access the export options within the advanced tab. 
-                                        We recommend encrypting your export for enhanced security. If you wish to create a complete copy, simply check all the relevant boxes. You can then save your configuration in a cloud storage service of your preference and access it from your other device.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-5">
-                                <!-- Question/Answer -->
-                                <div>
-                                    <div class="faq-question-q-box">Q.</div>
-                                    <h4 class="faq-question">I have found a bug / issue. How can I reach out?</h4>
-                                    <p class="faq-answer mb-4">
-                                        If you come across a bug or encounter any issues with the website, it would be most helpful if you could promptly submit an issue request on GitHub <a href="https://github.com/mqxym/encrypti0n/issues">(here)</a>. 
-                                        Alternatively, you can also reach out to me via email using the button located above.
-                                    </p>
-                                </div>
-
-                                <!-- Question/Answer -->
-                                <div>
-                                    <div class="faq-question-q-box">Q.</div>
-                                    <h4 class="faq-question">Where are keys stored?</h4>
-                                    <p class="faq-answer mb-4">
-                                        The keys are stored in an storage known as "localStorage" within your web browser. 
-                                The design of the website ensures that the owner cannot access the information stored in your local storage, preserving your data's privacy and security.
-                                Furthermore, it's important to note that the keys are locally encrypted for an added layer of security.
-                                    </p>
-                                </div>
-                                <div>
-                                    <div class="faq-question-q-box">Q.</div>
-                                    <h4 class="faq-question">How to change slot names?</h4>
-                                    <p class="faq-answer mb-4">
-                                        In the advanced tab, you have the flexibility to change slot names as you see fit.
-                                    </p>
-                                </div>
-
-                            </div>
-                            
-                            <!--/col-md-5-->
-                        </div>
-                        <!-- end row -->
-
-                        
-                    </div> <!-- container -->
+                    </div>
                 </div> 
                 <footer class="footer">
                     <div class="container-fluid">
@@ -299,6 +235,22 @@
 
         <!-- Theme App js -->
         <script src="assets/js/app.min.js" defer></script>
+
+        <!-- Toast-->
+        <script src="assets/libs/jquery-toast-plugin/jquery.toast.min.js" defer></script>
+
+       <!-- Sweet Alerts js -->
+        <script src="assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
+
+
+        <!-- Loading buttons js -->
+        <script src="assets/libs/ladda/spin.min.js" defer></script>
+        <script src="assets/libs/ladda/ladda.min.js" defer></script>
+
+        <!-- App JS-->
+        <script src="app/crypto.js" defer></script>
+        <script src="app/lib.js" defer></script>
+        <script src="app/main.js" defer></script>
 
     </body>
 </html>
