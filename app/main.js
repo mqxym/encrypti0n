@@ -1,7 +1,8 @@
 class Main {
 
-    constructor (formHandler) {
+    constructor (formHandler, urlQueryStringHandler) {
         this.formHandler = formHandler;
+        this.urlQueryStringHandler = urlQueryStringHandler;
 
         if (!this.getFormValue("hideKey")) {
           ElementAction.show("keyBlank");
@@ -1707,10 +1708,61 @@ class VersionManager {
   }
 }
 
+class URLQueryStringHandler {
+  constructor() {
+      this.url = new URL(window.location.href);
+      this.params = this.parseParams();
+  }
 
+  // Parse the URL parameters into an object
+  parseParams() {
+      const params = {};
+      for (const [key, value] of this.url.searchParams) {
+          params[key] = value;
+      }
+      return params;
+  }
+
+  // Set a single parameter
+  setParam(key, value) {
+      this.params[key] = value;
+      this.updateQueryString();
+  }
+
+  // Set multiple parameters
+  setParams(params) {
+      for (const key in params) {
+          this.params[key] = params[key];
+      }
+      this.updateQueryString();
+  }
+
+  // Get a parameter value by key
+  getParam(key) {
+      return this.params[key] || null;
+  }
+
+  // Update the URL query string with the current parameters
+  updateQueryString() {
+      const searchParams = new URLSearchParams();
+      for (const key in this.params) {
+          searchParams.set(key, this.params[key]);
+      }
+      this.url.search = searchParams.toString();
+      window.history.pushState({}, '', this.url);
+  }
+
+  // Get the current URL
+  getURL() {
+      return this.url.toString();
+  }
+}
 
 $(document).ready(function () {
-  const main = new Main(new FormHandler('mainForm'));
+  const main = new Main(
+    new FormHandler('mainForm'), 
+    new URLQueryStringHandler()
+  );
 
   const currentVersion = '1.04'
   const versionManager = new VersionManager(currentVersion);
