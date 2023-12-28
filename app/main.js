@@ -12,11 +12,21 @@ class Main {
         const cryptoSettings = this.readCryptoSettings();
         const generalSettings = this.readGeneralSettings();
 
-        if (cryptoSettings) {
+        const cryptoUrlString = this.urlQueryStringHandler.getParam("cc");
+        const overrideCryptoSettings = this.urlQueryStringHandler.getParam("overrideSettings");
+
+        if (cryptoSettings && !overrideCryptoSettings) {
+          this.urlQueryStringHandler.setParam("cc", cryptoSettings);
           if (generalSettings) {
             this.setSettings(cryptoSettings, generalSettings);
           } else {
-            this.setSettings(generalSettings);
+            this.setSettings(cryptoSettings);
+          }
+        } else if (cryptoUrlString) {
+          if (generalSettings) {
+            this.setSettings(cryptoUrlString, generalSettings);
+          } else {
+            this.setSettings(cryptoUrlString);
           }
         }
 
@@ -105,7 +115,7 @@ class Main {
       const cHeader = parseInt(cryptoHeader);
 
       if (cHeader > 255 || cHeader < 1) {
-        ShowNotification.error("Error", "Could not load settings. Invalid data.");
+        ShowNotification.error("Error", "Could not load settings. Invalid data.", false);
         return false;
       }
 
@@ -156,6 +166,8 @@ class Main {
       }
 
       console.log("Crypto settings id " + cHeader + " are loaded.");
+
+      this.urlQueryStringHandler.setParam("cc", cHeader);
       
       this.setFormValues(settings);
       return true;
@@ -944,6 +956,7 @@ class Main {
       StorageHandler.setItem("generalConfig", generalSettingsHeader);
 
       console.log("Crypto settings id " + cryptoSettingsHeader + " and general config id "+ generalSettingsHeader +" are saved.");
+      this.urlQueryStringHandler.setParam("cc", cryptoSettingsHeader);
       ShowNotification.success("Settings saved", "Your settings have been saved.");
     }
 
