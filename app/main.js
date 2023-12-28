@@ -1762,7 +1762,7 @@ class URLQueryStringHandler {
           searchParams.set(key, this.params[key]);
       }
       this.url.search = searchParams.toString();
-      window.history.pushState({}, '', this.url);
+      window.history.replaceState({}, '', this.url);
   }
 
   // Get the current URL
