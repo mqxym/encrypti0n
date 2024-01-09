@@ -122,6 +122,12 @@
                                 <span class="menu-text"> FAQ </span>
                             </a>
                         </li>
+                        <li class="menu-item">
+                            <a href="security-setups.html" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-lightning-bolt"></i></span>
+                                <span class="menu-text"> Setups </span>
+                            </a>
+                        </li>
 
                         <li class="menu-item">
                             <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
@@ -186,33 +192,82 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-12">
-                                <form role="form" id="mainForm"> 
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-4 text-center">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <h5>Ultra paranoid</h5>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4>Paranoid</h4>
+                                                    <p>Medium fast encryption and decryption. When you want to be safe.</p>
+                                                    <div>
+                                                        <ul>
+                                                            <li>
+                                                                Use crypto settings 63 click <a href="/?cc=63&overrideSettings=1" target="_blank">here</a> and save settings.
+                                                                <ul>
+                                                                    <li>Hash difficulty <b>medium</b></li>
+                                                                    <li>Hash salting and <b>round offset</b></li>
+                                                                </ul>
+                                                            </li>
+                                                            <li>Remember a <b>12+ character</b> password consting of:</li>
+                                                            <ul>
+                                                                <li>Upper and lowercase letters</li>
+                                                                <li>Numbers</li>
+                                                                <li>Special characters</li>
+                                                            </ul>
+                                                            <li>Don't save the password anywhere</li>
+                                                            <li>Don't save hashed passwords</li>
+                                                            <li>Don't save the password in a slot</li>
+                                                        </ul>
+                                                        <p class="text-left"></p>
                                                     </div>
                                                 </div>
-                                            </div> 
-                                            <div class="col-md-4 text-center">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <h5>Paranoid</h5>
+                                            </div>
+                                        </div> 
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4>Ultra paranoid</h4>
+                                                    <p>Slow encryption and decryption. When you want to be very safe.</p>
+                                                    <div>
+                                                        <ul>
+                                                            <li>
+                                                                Use crypto settings 191 click <a href="/?cc=191&overrideSettings=1" target="_blank">here</a> and save settings.
+                                                                <ul>
+                                                                    <li>Hash difficulty <b>high</b></li>
+                                                                    <li>Hash salting and <b>round offset</b></li>
+                                                                </ul>
+                                                            </li>
+                                                            <li>Remember a <b>20+ character</b> password consting of:</li>
+                                                            <ul>
+                                                                <li>Upper and lowercase letters</li>
+                                                                <li>Numbers</li>
+                                                                <li>Special characters</li>
+                                                            </ul>
+                                                            <li>Don't save the password anywhere</li>
+                                                            <li>Don't save hashed passwords</li>
+                                                            <li>Don't save the password in a slot</li>
+                                                        </ul>
+                                                        <p class="text-left"></p>
                                                     </div>
                                                 </div>
-                                            </div> 
-                                            <div class="col-md-4 text-center">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <h5>Casual</h5>
-                                                    </div>
+                                            </div>
+                                        </div> 
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4>Casual</h4>
+                                                    <p>Use the website how you like </p>
+                                                    <ul>
+                                                        <li>Save passwords</li>
+                                                        <li>Export data</li>
+                                                        <li>Save slot names</li>
+                                                    </ul>
                                                 </div>
-                                            </div> 
-                                        </div>
-                                    </div> 
-                                </form>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div> 
                               
                             </div>
                         </div>
@@ -235,22 +290,6 @@
 
         <!-- Theme App js -->
         <script src="assets/js/app.min.js" defer></script>
-
-        <!-- Toast-->
-        <script src="assets/libs/jquery-toast-plugin/jquery.toast.min.js" defer></script>
-
-       <!-- Sweet Alerts js -->
-        <script src="assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
-
-
-        <!-- Loading buttons js -->
-        <script src="assets/libs/ladda/spin.min.js" defer></script>
-        <script src="assets/libs/ladda/ladda.min.js" defer></script>
-
-        <!-- App JS-->
-        <script src="app/crypto.js" defer></script>
-        <script src="app/lib.js" defer></script>
-        <script src="app/main.js" defer></script>
 
     </body>
 </html>
