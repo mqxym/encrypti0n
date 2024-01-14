@@ -479,13 +479,19 @@ class Main {
         
         if (methods.doBF) {
           console.log("Start Blowfish Encryption for file: " + file.name);
-          encryptedData = CryptoWrapper.encryptBF(encryptedData, key);
+          encryptedData = CryptoWrapper.encryptBF(encryptedData, key, false);
+          if (methods.doAES ) {
+            encryptedData = atob(encryptedData);
+          }
+          
         }
 
         if (methods.doAES) {
           console.log("Start AES Encryption for file: " + file.name);
-          encryptedData = CryptoWrapper.encryptAES(encryptedData, key);
+          encryptedData = CryptoWrapper.encryptAES(encryptedData, key, false);
         }
+
+        encryptedData = Uint8Array.from(atob(encryptedData), char => char.charCodeAt(0));
 
         const blob = new Blob([encryptedData], { type: "application/octet-stream" });
         const blobUrl = URL.createObjectURL(blob);
@@ -522,18 +528,21 @@ class Main {
       const outputDiv = $("#outputFiles");
 
       reader.onload = (e) => {
-        const data = e.target.result;
+        const data = e.target.result.split(',')[1];
         let decryptedData = data;
 
         const fileName = getFirstPartAfterDots(file.name);
 
         try {
           if (methods.doAES) {
-            decryptedData = CryptoWrapper.decryptAES(decryptedData, key);
+            decryptedData = CryptoWrapper.decryptAES(decryptedData, key, false);
+            if (methods.doBF ) {
+              decryptedData = btoa(decryptedData);
+            }
           }
 
           if(methods.doBF) {
-            decryptedData = CryptoWrapper.decryptBF(decryptedData, key);
+            decryptedData = CryptoWrapper.decryptBF(decryptedData, key, false);
           }
 
           this.processedFiles++;
@@ -563,7 +572,6 @@ class Main {
         }
 
         const uint8Array = Uint8Array.from(atob(decryptedData), c => c.charCodeAt(0));
-
         const blob = new Blob([uint8Array], { type: "application/octet-stream" });
         const blobUrl = URL.createObjectURL(blob);
 
@@ -588,7 +596,7 @@ class Main {
         outputDiv.append(downloadLink);
         outputDiv.append("<br>");
       };
-      reader.readAsText(file);
+      reader.readAsDataURL(file);
     }
 
     actionLaddaStart() {
@@ -1480,13 +1488,19 @@ class ShowNotification {
 }
 
 class CryptoWrapper {
-  static encryptAES (text, key) {
-    return CryptoJS.AES.encrypt(text, key).toString().substr(10);
+  static encryptAES (text, key, toString = true) {
+    if (toString) {
+      return CryptoJS.AES.encrypt(text, key).toString().substr(10);
+    }
+    return CryptoJS.AES.encrypt(text, key);
     //return CryptoJS.AES.encrypt(text, key)
   }
 
-  static encryptBF (text, key) {
-    return CryptoJS.Blowfish.encrypt(text, key).toString().substr(10);
+  static encryptBF (text, key, toString = true) {
+    if (toString) {
+      return CryptoJS.Blowfish.encrypt(text, key).toString().substr(10);
+    }
+    return CryptoJS.Blowfish.encrypt(text, key);
   }
 
   static encryptXOR (text, key) {
@@ -1494,12 +1508,18 @@ class CryptoWrapper {
     return hexToBase64(encryptedText);
   }
 
-  static decryptAES (b64Cipher, key) {
-    return CryptoJS.AES.decrypt("U2FsdGVkX1" + b64Cipher, key).toString(CryptoJS.enc.Utf8);
+  static decryptAES (b64Cipher, key, fromString = true) {
+    if (fromString) {
+      return CryptoJS.AES.decrypt("U2FsdGVkX1" + b64Cipher, key).toString(CryptoJS.enc.Utf8);
+    }
+    return CryptoJS.AES.decrypt(b64Cipher, key).toString(CryptoJS.enc.Utf8);
   }
 
-  static decryptBF (b64Cipher, key) {
-    return CryptoJS.Blowfish.decrypt("U2FsdGVkX1" + b64Cipher, key).toString(CryptoJS.enc.Utf8);
+  static decryptBF (b64Cipher, key, fromString = true) {
+    if (fromString) {
+      return CryptoJS.Blowfish.decrypt("U2FsdGVkX1" + b64Cipher, key).toString(CryptoJS.enc.Utf8);
+    }
+    return CryptoJS.Blowfish.decrypt(b64Cipher, key).toString(CryptoJS.enc.Utf8);
   }
 
   static decryptXOR (b64Cipher, key) {
@@ -1658,6 +1678,10 @@ class VersionManager {
         '1.04': {
             changes: ["Updated hash function and round offset.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
             actions: ["clearStoredHashes"]
+        },
+        '1.05': {
+            changes: ["Updated hash function and file encryption.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
+            actions: ["clearStoredHashes"]
         }
         /*,
         '1.02': {
@@ -1777,7 +1801,7 @@ $(document).ready(function () {
     new URLQueryStringHandler()
   );
 
-  const currentVersion = '1.04'
+  const currentVersion = '1.05'
   const versionManager = new VersionManager(currentVersion);
   versionManager.updateVersion();
 });
