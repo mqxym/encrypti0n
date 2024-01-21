@@ -212,7 +212,7 @@ class Main {
         ElementAction.uncheck("doXOR");
 
         $("#helpActionButton").text("To decrypt the programm checks for a valid file ending (n.dat)");
-        $("#helpOutput").text("Encrypted output is base64 formatted and uses a config-id.dat ending");
+        $("#helpOutput").text("Encrypted output is binary encoded and uses a config-id.dat ending");
         console.log("Use file encryption.");
       }
     }
