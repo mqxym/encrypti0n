@@ -224,52 +224,31 @@ function hexToBase64(str) {
 	);
 }
 
-function hexToBase64Large(hex) {
-	// Function to convert a hexadecimal string chunk to a byte array
-	function hexToBytes(hexChunk) {
-		const byteArr = [];
-		for (let i = 0; i < hexChunk.length; i += 2) {
-		byteArr.push(parseInt(hexChunk.substr(i, 2), 16));
+function hexToBase64Large(hexString) {
+	// Function to convert a hex string to a byte array
+	function hexToBytes(hex) {
+		const bytes = [];
+		for (let c = 0; c < hex.length; c += 2) {
+			bytes.push(parseInt(hex.substr(c, 2), 16));
 		}
-		return byteArr;
+		return bytes;
 	}
 
-	// Split the hex string into chunks (adjust the chunk size as needed)
-	const chunkSize = 512; // You can adjust this value based on your memory limitations
-	const chunks = [];
-	for (let i = 0; i < hex.length; i += chunkSize) {
-		chunks.push(hex.slice(i, i + chunkSize));
-	}
+	// Convert the entire hex string to a byte array
+	const byteArray = hexToBytes(hexString);
 
-	// Convert each chunk to a byte array and then to base64
-	const base64Chunks = chunks.map(hexToBytes).map(byteArr => btoa(String.fromCharCode(...byteArr)));
+	// Convert byte array to binary string
+	let binaryString = '';
+	byteArray.forEach((byte) => {
+		binaryString += String.fromCharCode(byte);
+	});
 
-	// Concatenate the base64 chunks
-	return base64Chunks.join("");
+	// Encode the binary string to base64
+	let base64String =  btoa(binaryString);
+
+    return base64String;
 }
 
-function hexToBase64LargeNew(hex) {
-  
-	// Function to convert a hexadecimal string to Base64
-	function chunkToBase64(hexChunk) {
-	  const byteArr = [];
-	  for (let i = 0; i < hexChunk.length; i += 2) {
-		byteArr.push(parseInt(hexChunk.substr(i, 2), 16));
-	  }
-	  const binaryString = String.fromCharCode(...byteArr);
-	  return btoa(binaryString);
-	}
-  
-	// Split the hex string into chunks (adjust the chunk size as needed)
-	const chunkSize = 512; // You can adjust this value based on your memory limitations
-	const chunks = [];
-	for (let i = 0; i < hex.length; i += chunkSize) {
-	  chunks.push(hex.slice(i, i + chunkSize));
-	}
-  
-	// Convert each chunk to Base64 and concatenate
-	return chunks.map(chunkToBase64).join("");
-  }
 
 function base64ToHexLarge(base64) {
 	  // Regular expression to check for valid Base64 characters

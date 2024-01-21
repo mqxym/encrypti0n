@@ -193,7 +193,7 @@ class Main {
         ElementAction.hide("fileList");
         ElementAction.hide("outputFiles");
 
-        ElementAction.enable("doXOR");
+        //ElementAction.enable("doXOR");
 
         $("#helpActionButton").text("To decrypt the programm checks for a valid config header (n=)");
         $("#helpOutput").text("Encrypted output is base64 formatted and uses a config header");
@@ -208,8 +208,8 @@ class Main {
         ElementAction.show("fileList");
         ElementAction.show("outputFiles");
 
-        ElementAction.disable("doXOR");
-        ElementAction.uncheck("doXOR");
+        //ElementAction.disable("doXOR");
+        //ElementAction.uncheck("doXOR");
 
         $("#helpActionButton").text("To decrypt the programm checks for a valid file ending (n.dat)");
         $("#helpOutput").text("Encrypted output is binary encoded and uses a config-id.dat ending");
@@ -471,10 +471,13 @@ class Main {
         const fileName = file.name + "."+ this.generateCryptoHeader() +".dat";
 
         if(methods.doXOR) {
-          ShowNotification.error("Error encrypting", "XOR not supported for files.");
-          return;
-          //console.log("Start XOR Encryption for file: " + file.name);
-          //encryptedData = CryptoWrapper.encryptXOR(encryptedData, key);
+          //ShowNotification.error("Error encrypting", "XOR not supported for files.");
+          //return;
+          console.log("Start XOR Encryption for file: " + file.name);
+          encryptedData = CryptoWrapper.encryptXOR(encryptedData, key);
+          if (methods.doAES || methods.doBF) {
+            encryptedData = atob(encryptedData);
+          }
         }
         
         if (methods.doBF) {
@@ -535,14 +538,26 @@ class Main {
 
         try {
           if (methods.doAES) {
+            console.log("Start AES Decryption for file: " + file.name);
             decryptedData = CryptoWrapper.decryptAES(decryptedData, key, false);
-            if (methods.doBF ) {
+            if (methods.doBF || methods.doXOR) {
               decryptedData = btoa(decryptedData);
             }
           }
 
           if(methods.doBF) {
+            console.log("Start Blowfish Decryption for file: " + file.name);
             decryptedData = CryptoWrapper.decryptBF(decryptedData, key, false);
+            if (methods.doXOR) {
+              decryptedData = btoa(decryptedData);
+            }
+          }
+
+          if(methods.doXOR) {
+            //ShowNotification.error("Error decrypting", "XOR not supported for files.");
+            //return;
+            console.log("Start XOR Decryption for file: " + file.name);
+            decryptedData = CryptoWrapper.decryptXOR(decryptedData, key);
           }
 
           this.processedFiles++;
@@ -553,12 +568,6 @@ class Main {
           this.progressBarPercent += widthPercent;
   
           setWidthPercentage("#progressBar", this.progressBarPercent);
-
-          if(methods.doXOR) {
-            ShowNotification.error("Error decrypting", "XOR not supported for files.");
-            return;
-            //decryptedData = CryptoWrapper.decryptXOR(decryptedData, key);
-          }
           
         } catch (error) {
           this.processedFiles++;
@@ -1505,7 +1514,7 @@ class CryptoWrapper {
 
   static encryptXOR (text, key) {
     const encryptedText = XORencrypt(key, text);
-    return hexToBase64(encryptedText);
+    return hexToBase64Large(encryptedText);
   }
 
   static decryptAES (b64Cipher, key, fromString = true) {
@@ -1523,7 +1532,7 @@ class CryptoWrapper {
   }
 
   static decryptXOR (b64Cipher, key) {
-    const hexCipher = base64ToHex(b64Cipher);
+    const hexCipher = base64ToHexLarge(b64Cipher);
     return XORdecrypt(key, hexCipher);
   }
 
@@ -1682,6 +1691,10 @@ class VersionManager {
         '1.05': {
             changes: ["Updated hash function and file encryption.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
             actions: ["clearStoredHashes"]
+        },
+        '1.06': {
+            changes: ["XOR encryption for files is now supported"],
+            actions: []
         }
         /*,
         '1.02': {
@@ -1801,7 +1814,7 @@ $(document).ready(function () {
     new URLQueryStringHandler()
   );
 
-  const currentVersion = '1.05'
+  const currentVersion = '1.06'
   const versionManager = new VersionManager(currentVersion);
   versionManager.updateVersion();
 });
