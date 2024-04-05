@@ -36,41 +36,44 @@ class Main {
         this.updateFileList();
         this.setSlotNames();
 
-
-        $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
-        $('input[type=radio][name=setting]').on('change', this.switchSettings.bind(this));
-        $('#inputFiles').on('change', this.updateFileList.bind(this));
-
-        $('#action').on('click', this.action.bind(this));
-        $('#clearInput').on('click', this.clearInput.bind(this));
-        $('#copyOutput').on('click', this.copyOutput.bind(this));
-
-        $('#keyGenerate').on('click', this.keyGenerate.bind(this));
-        $('#keyCopy').on('click', this.keyCopy.bind(this));
-        $('#hideKey').on('change', this.toggleKey.bind(this));
-        $('#loadKey').on('click', this.loadKey.bind(this));
-        $('#saveKey').on('click', this.saveKey.bind(this));
-
-        $('#useMasterPW').on('change', this.toggleMasterPassword.bind(this));
-        $('#downloadSavedKeys').on('click', this.downloadSavedKeys.bind(this));
-        $('#keyUpload').on('change', this.keyUpload.bind(this));
-
-        $('#setGc').on('click', this.setGc.bind(this));
-        $('#setCc').on('click', this.setCc.bind(this));
-
-        $('#removeSavedHashes').on('click', this.removeSavedHashes.bind(this));
-        $('#removeSavedKeys').on('click', this.removeSavedKeys.bind(this));
-        $('#removeSlotNames').on('click', this.removeSlotNames.bind(this));
-        $('#removeConfig').on('click', this.removeConfig.bind(this));
-        $('#removeAllData').on('click', this.removeAllData.bind(this));
-        
-        $('#changeSlotName').on('click', this.changeSlotName.bind(this));
-
-        $('#saveSettings').on('click', this.saveSettings.bind(this));
-        $('#doHashing').on('change', this.toggleHashing.bind(this));
+        this.bindInputs();
 
         this.laddaButton = Ladda.create(document.getElementById('action'));
 
+    }
+
+    bindInputs() {
+      $('input[type=radio][name=type]').on('change', this.changeType.bind(this));
+      $('input[type=radio][name=setting]').on('change', this.switchSettings.bind(this));
+      $('#inputFiles').on('change', this.updateFileList.bind(this));
+
+      $('#action').on('click', this.action.bind(this));
+      $('#clearInput').on('click', this.clearInput.bind(this));
+      $('#copyOutput').on('click', this.copyOutput.bind(this));
+
+      $('#keyGenerate').on('click', this.keyGenerate.bind(this));
+      $('#keyCopy').on('click', this.keyCopy.bind(this));
+      $('#hideKey').on('change', this.toggleKey.bind(this));
+      $('#loadKey').on('click', this.loadKey.bind(this));
+      $('#saveKey').on('click', this.saveKey.bind(this));
+
+      $('#useMasterPW').on('change', this.toggleMasterPassword.bind(this));
+      $('#downloadSavedKeys').on('click', this.downloadSavedKeys.bind(this));
+      $('#keyUpload').on('change', this.keyUpload.bind(this));
+
+      $('#setGc').on('click', this.setGc.bind(this));
+      $('#setCc').on('click', this.setCc.bind(this));
+
+      $('#removeSavedHashes').on('click', this.removeSavedHashes.bind(this));
+      $('#removeSavedKeys').on('click', this.removeSavedKeys.bind(this));
+      $('#removeSlotNames').on('click', this.removeSlotNames.bind(this));
+      $('#removeConfig').on('click', this.removeConfig.bind(this));
+      $('#removeAllData').on('click', this.removeAllData.bind(this));
+      
+      $('#changeSlotName').on('click', this.changeSlotName.bind(this));
+
+      $('#saveSettings').on('click', this.saveSettings.bind(this));
+      $('#doHashing').on('change', this.toggleHashing.bind(this));
     }
 
     getFormValue(name) {

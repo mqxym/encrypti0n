@@ -456,6 +456,24 @@
                                                         </div>
                                                         <div class="d-none" id="divAdvancedSettings">
                                                             <div class="input-group mb-2">
+                                                                <label class="col-12 col-sm-3  control-label"><u>Encrypt Data</u></label>
+                                                                <div class="col-12 col-sm-9 ">
+                                                                    <div class="d-grid mb-1">
+                                                                        <button data-bs-toggle="modal" data-bs-target="#do-application-encryption" id="encryptApplication" type="button" class="btn btn-sm btn-outline-success waves-effect"> 
+                                                                            <i class="mdi mdi-delete me-1"></i> 
+                                                                            <span>Encrypt entire application</span> 
+                                                                        </button>
+                                                                    </div>
+                                                                    <span class="help-block ">
+                                                                        <small>
+                                                                            This is recommended for paranoid users. It encrypts all saved keys, config, and slot names with a master password. 
+                                                                            Master password must be entered each time you visit the site.
+                                                                        </small>
+                                                                    </span>
+                                                                   
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group mb-2">
                                                                 <label class="col-12 col-sm-3  control-label"><u>Manual config</u></label>
                                                                 <div class="col-12 col-sm-9 ">
                                                                     <div class="row">
@@ -631,6 +649,79 @@
                         </div>
                     </div>
                 </div> 
+                <div id="do-application-encryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Encrypt Entire Application</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <form role="form" id="encryptApplicationForm">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p>
+                                                Encrypts your <b>saved keys</b>, <b>config</b> and <b>slot names</b> with a master password.
+                                            </p>
+                                            
+                                            <div class="mb-3">
+                                                <label for="field-3" class="form-label">Master Password</label>
+                                                <input id="encryptApplicationMPw" name="encryptApplicationMPw" type="password" class="form-control" id="field-3" placeholder="Secure Password">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="field-3" class="form-label">Re-Enter Password</label>
+                                                <input id="encryptApplicationMPwConfirmation" name="encryptApplicationMPwConfirmation" type="password" class="form-control" id="field-3">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                                <button type="button" id="encrypt-application" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                    <span class="ladda-label">
+                                        Encrypt!
+                                    </span>
+                                    <span class="ladda-spinner"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="do-application-decryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">The Application Is Encrypted</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p>
+                                           Please decrypt with your master password:
+                                        </p>
+                                        
+                                        <div class="mb-3">
+                                            <label for="field-3" class="form-label">Master Password</label>
+                                            <input type="password" class="form-control" id="field-3">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                                
+                                <button type="button" id="decrypt-application" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                    <span class="ladda-label">
+                                        Decrypt!
+                                    </span>
+                                    <span class="ladda-spinner"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">
