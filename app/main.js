@@ -1502,7 +1502,6 @@ class CryptoWrapper {
       return CryptoJS.AES.encrypt(text, key).toString().substr(10);
     }
     return CryptoJS.AES.encrypt(text, key);
-    //return CryptoJS.AES.encrypt(text, key)
   }
 
   static encryptBF (text, key, toString = true) {
@@ -1534,10 +1533,6 @@ class CryptoWrapper {
   static decryptXOR (b64Cipher, key) {
     const hexCipher = base64ToHexLarge(b64Cipher);
     return XORdecrypt(key, hexCipher);
-  }
-
-  static encryptDataAES (data, key) {
-    return CryptoJS.AES.encrypt(data, key);
   }
 }
 
