@@ -1,6 +1,9 @@
 class Main {
 
     constructor (formHandler, urlQueryStringHandler) {
+        this.GKEY = "dcZ5TT74oLyZun0yywszpdD8rNzIyjYPZIVBGmGrobMuGj4rULoNVahjMFyE7A5NTROIZmNsmLi4UATSoQaD2nJE7LTOB"
+        this.mPw = "";
+        
         this.formHandler = formHandler;
         this.urlQueryStringHandler = urlQueryStringHandler;
 
@@ -9,27 +12,15 @@ class Main {
           ElementAction.hide("keyPassword"); 
         }
 
-        const cryptoSettings = this.readCryptoSettings();
-        const generalSettings = this.readGeneralSettings();
+        this.isEncrypted = Boolean(StorageHandler.getItem("isEncrypted"));
 
-        const cryptoUrlString = this.urlQueryStringHandler.getParam("cc");
-        const overrideCryptoSettings = this.urlQueryStringHandler.getParam("overrideSettings");
+        console.log("Application is encrypted: " + this.isEncrypted);
 
-        if (cryptoSettings && !overrideCryptoSettings) {
-          this.urlQueryStringHandler.setParam("cc", cryptoSettings);
-          if (generalSettings) {
-            this.setSettings(cryptoSettings, generalSettings);
-          } else {
-            this.setSettings(cryptoSettings);
-          }
-        } else if (cryptoUrlString) {
-          if (generalSettings) {
-            this.setSettings(cryptoUrlString, generalSettings);
-          } else {
-            this.setSettings(cryptoUrlString);
-          }
+        if (this.isEncrypted) {
+          $('#do-application-decryption').modal('show');
         }
 
+        this.readAndSetSettings();
         this.applySettingsToGui();
 
         this.switchSettings();
@@ -40,6 +31,29 @@ class Main {
 
         this.laddaButton = Ladda.create(document.getElementById('action'));
 
+    }
+
+    readAndSetSettings () {
+      const cryptoSettings = this.readCryptoSettings();
+      const generalSettings = this.readGeneralSettings();
+
+      const cryptoUrlString = this.urlQueryStringHandler.getParam("cc");
+      const overrideCryptoSettings = this.urlQueryStringHandler.getParam("overrideSettings");
+
+      if (cryptoSettings && !overrideCryptoSettings) {
+        this.urlQueryStringHandler.setParam("cc", cryptoSettings);
+        if (generalSettings) {
+          this.setSettings(cryptoSettings, generalSettings);
+        } else {
+          this.setSettings(cryptoSettings);
+        }
+      } else if (cryptoUrlString) {
+        if (generalSettings) {
+          this.setSettings(cryptoUrlString, generalSettings);
+        } else {
+          this.setSettings(cryptoUrlString);
+        }
+      }
     }
 
     bindInputs() {
@@ -61,6 +75,9 @@ class Main {
       $('#downloadSavedKeys').on('click', this.downloadSavedKeys.bind(this));
       $('#keyUpload').on('change', this.keyUpload.bind(this));
 
+      $('#encryptApplication').on('click', this.encryptApplication.bind(this));
+      $('#decryptApplication').on('click', this.decryptApplication.bind(this));
+
       $('#setGc').on('click', this.setGc.bind(this));
       $('#setCc').on('click', this.setCc.bind(this));
 
@@ -74,6 +91,74 @@ class Main {
 
       $('#saveSettings').on('click', this.saveSettings.bind(this));
       $('#doHashing').on('change', this.toggleHashing.bind(this));
+    }
+
+    async encryptApplication() {
+      const eaFormHandler = new FormHandler("encryptApplicationForm");
+
+      const mPw = eaFormHandler.formValues["encryptApplicationMPw"];
+      const mPwConfirmation = eaFormHandler.formValues["encryptApplicationMPwConfirmation"];
+
+      if (mPw !== mPwConfirmation) {
+        ShowNotification.error("Error", "Master password and confirmation do not match.");
+        return;
+      }
+
+      const encryptLadda = Ladda.create(document.getElementById('encryptApplication'));
+
+      $("#encryptApplication").removeClass("btn-outline-success");
+      $("#encryptApplication").addClass("btn-success");
+      encryptLadda.start();
+
+      await new Promise(r => setTimeout(r, 350));
+
+      const key = hashPassword(mPw, "medium", false, true);
+      const checkSum = hashPassword(mPw, "low", false, false).substring(0, 30);
+
+      this.mPw = CryptoWrapper.encryptAES(key, this.GKEY, true);
+
+      StorageHandler.setItem("isEncrypted", "true");
+      StorageHandler.setItem("pwCheck", checkSum);
+
+      encryptLadda.stop();
+      $('#do-application-encryption').modal('hide');
+      ShowNotification.success("Success", "Your application was encrypted.");
+    }
+
+    async decryptApplication() {
+      const mPw = $('#decryptApplicationMPw').val();
+      const decryptLadda = Ladda.create(document.getElementById('decryptApplication'));
+
+      $("#decryptApplication").removeClass("btn-outline-success");
+      $("#decryptApplication").addClass("btn-success");
+      decryptLadda.start();
+      await new Promise(r => setTimeout(r, 350));
+
+      const isValidKey = this.checkMasterPassword(mPw);
+
+      if (!isValidKey) {
+        decryptLadda.stop();
+        ShowNotification.error("Error", "Master password is not valid.");
+        return false;
+      }
+      const key = hashPassword(mPw, "medium", false, true);
+
+      this.mPw = CryptoWrapper.encryptAES(key, this.GKEY, true);
+
+      $('#do-application-decryption').modal('hide');
+      decryptLadda.stop();
+      ShowNotification.success("Success", "Your application was decrypted.");
+    }
+
+    checkMasterPassword(password) {
+      const key = hashPassword(password, "low", false, false).substring(0, 30);
+      const checkSum = StorageHandler.getItem("pwCheck");
+
+      if (key === checkSum) {
+        return true;
+      }
+
+      return false;
     }
 
     getFormValue(name) {

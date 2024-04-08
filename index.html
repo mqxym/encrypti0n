@@ -459,7 +459,7 @@
                                                                 <label class="col-12 col-sm-3  control-label"><u>Encrypt Data</u></label>
                                                                 <div class="col-12 col-sm-9 ">
                                                                     <div class="d-grid mb-1">
-                                                                        <button data-bs-toggle="modal" data-bs-target="#do-application-encryption" id="encryptApplication" type="button" class="btn btn-sm btn-outline-success waves-effect"> 
+                                                                        <button data-bs-toggle="modal" data-bs-target="#do-application-encryption" id="encryptApplicationModal" type="button" class="btn btn-sm btn-outline-success waves-effect"> 
                                                                             <i class="mdi mdi-delete me-1"></i> 
                                                                             <span>Encrypt entire application</span> 
                                                                         </button>
@@ -666,11 +666,11 @@
                                             
                                             <div class="mb-3">
                                                 <label for="field-3" class="form-label">Master Password</label>
-                                                <input id="encryptApplicationMPw" name="encryptApplicationMPw" type="password" class="form-control" id="field-3" placeholder="Secure Password">
+                                                <input name="encryptApplicationMPw" type="password" class="form-control" id="field-3" placeholder="Secure Password">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="field-3" class="form-label">Re-Enter Password</label>
-                                                <input id="encryptApplicationMPwConfirmation" name="encryptApplicationMPwConfirmation" type="password" class="form-control" id="field-3">
+                                                <input name="encryptApplicationMPwConfirmation" type="password" class="form-control" id="field-3">
                                             </div>
                                         </div>
                                     </div>
@@ -678,7 +678,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                                <button type="button" id="encrypt-application" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                <button type="button" id="encryptApplication" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
                                     <span class="ladda-label">
                                         Encrypt!
                                     </span>
@@ -704,7 +704,7 @@
                                         
                                         <div class="mb-3">
                                             <label for="field-3" class="form-label">Master Password</label>
-                                            <input type="password" class="form-control" id="field-3">
+                                            <input id="decryptApplicationMPw" type="password" class="form-control" id="field-3">
                                         </div>
                                     </div>
                                 </div>
@@ -712,7 +712,7 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
                                 
-                                <button type="button" id="decrypt-application" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                <button type="button" id="decryptApplication" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
                                     <span class="ladda-label">
                                         Decrypt!
                                     </span>
