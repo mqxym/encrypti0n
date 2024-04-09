@@ -2,7 +2,7 @@ class Main {
 
     constructor (formHandler, urlQueryStringHandler) {
         this.GKEY = "dcZ5TT74oLyZun0yywszpdD8rNzIyjYPZIVBGmGrobMuGj4rULoNVahjMFyE7A5NTROIZmNsmLi4UATSoQaD2nJE7LTOB"
-        this.mPw = "";
+        this.mPw = false;
         
         this.formHandler = formHandler;
         this.urlQueryStringHandler = urlQueryStringHandler;
@@ -112,17 +112,56 @@ class Main {
 
       await new Promise(r => setTimeout(r, 350));
 
-      const key = hashPassword(mPw, "medium", false, true);
+      console.log("Generating master password checksum...");
       const checkSum = hashPassword(mPw, "low", false, false).substring(0, 30);
+      StorageHandler.setItem("pwCheck", checkSum);
 
-      this.mPw = CryptoWrapper.encryptAES(key, this.GKEY, true);
+      const key = this.saveMasterPasswordinRAM(mPw);
+
+      this.decryptAndEncryptLocalData(key);
 
       StorageHandler.setItem("isEncrypted", "true");
-      StorageHandler.setItem("pwCheck", checkSum);
 
       encryptLadda.stop();
       $('#do-application-encryption').modal('hide');
       ShowNotification.success("Success", "Your application was encrypted.");
+    }
+
+    decryptAndEncryptLocalData(newPw) {
+      let oldPw = "Don't decrypt this, please.";
+
+      //Encrypt saved keys
+      console.log("Decrypting and encrypting saved keys...");
+      for (let i = 1; i <= 10; i++) {
+        let key = "key" + i;
+        let savedKey = StorageHandler.getItem(key);
+
+        if (savedKey) {
+          try {
+            let decryptedKey = CryptoWrapper.decryptAES(savedKey, oldPw, true);
+            let encryptedKey = CryptoWrapper.encryptAES(decryptedKey, newPw, true);
+            StorageHandler.setItem(key, encryptedKey);
+          } catch (error) {
+            ShowNotification.error("Error", "Decryption or encryption of data failed.");
+          }
+        }
+      }
+
+      //Encrypt saved hashes
+      console.log("Decrypting and encrypting saved hashes...");
+      oldPw = "If you have a better way securing this, message me."
+      const savedHashesEncrypted = StorageHandler.getItem("savedHashes");
+      if(savedHashesEncrypted) {
+        try {
+          const decryptedSavedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, oldPw, true );
+          if (decryptedSavedHashes) {
+            const encryptedHashes = CryptoWrapper.encryptAES(decryptedSavedHashes, newPw, true);
+            StorageHandler.setItem("savedHashes", encryptedHashes);
+          }
+        } catch (error) {
+          ShowNotification.error("Error", "Decryption or encryption of data failed.");
+        }
+      }
     }
 
     async decryptApplication() {
@@ -141,9 +180,8 @@ class Main {
         ShowNotification.error("Error", "Master password is not valid.");
         return false;
       }
-      const key = hashPassword(mPw, "medium", false, true);
 
-      this.mPw = CryptoWrapper.encryptAES(key, this.GKEY, true);
+      this.saveMasterPasswordinRAM(mPw);
 
       $('#do-application-decryption').modal('hide');
       decryptLadda.stop();
@@ -159,6 +197,22 @@ class Main {
       }
 
       return false;
+    }
+
+    saveMasterPasswordinRAM(password) {
+      console.log("Hashing master password...");
+      const key = hashPassword(password, "medium", false, true);
+      this.mPw = CryptoWrapper.encryptAES(key, this.GKEY, true);
+
+      return key;
+    }
+
+    getMasterPassword() {
+      if (!this.mPw) {  
+        ShowNotification.error("Error", "Master password not found in running context.");
+        return false;
+      }
+      return CryptoWrapper.decryptAES(this.mPw, this.GKEY, true);
     }
 
     getFormValue(name) {
@@ -1031,7 +1085,15 @@ class Main {
       const savedHashesEncrypted = StorageHandler.getItem("savedHashes");
       if(savedHashesEncrypted) {
         try {
-          const savedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, "If you have a better way securing this, message me.");
+          let decryptionKey = "If you have a better way securing this, message me."
+          if (this.isEncrypted) {
+             decryptionKey = this.getMasterPassword();
+
+            if (!decryptionKey) {
+              return false;
+            }
+          }
+          const savedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, decryptionKey );
           if (!savedHashes) {
             return false;
           }
@@ -1047,7 +1109,15 @@ class Main {
 
     saveSavedHashes (savedHashesObject) {
       const savedHashes = JSON.stringify(savedHashesObject);
-      const savedHashesEncrypted = CryptoWrapper.encryptAES(savedHashes, "If you have a better way securing this, message me.");
+      let encryptionKey = "If you have a better way securing this, message me."
+      if (this.isEncrypted) {
+          encryptionKey = this.getMasterPassword();
+
+        if (!encryptionKey) {
+          return false;
+        }
+      }
+      const savedHashesEncrypted = CryptoWrapper.encryptAES(savedHashes, encryptionKey);
       if(savedHashesEncrypted.length > 3 * 1024 * 1024) {
         ShowNotification.warning("Storage limit", "Try resetting the saved hashes in the advanced settings.");
       }
@@ -1117,8 +1187,17 @@ class Main {
         key = this.getFormValue("keyBlank");
       }
 
+      let encryptionKey = "Don't decrypt this, please."
+      if (this.isEncrypted) {
+         encryptionKey = this.getMasterPassword();
+
+        if (!encryptionKey) {
+          return false;
+        }
+      }
+
       if(key) {
-        key = CryptoWrapper.encryptAES(key, "Don't decrypt this, please.");
+        key = CryptoWrapper.encryptAES(key, encryptionKey);
         StorageHandler.setItem("key"+keySlot, key);
         console.log("Key #" + keySlot + " was saved.")
         ShowNotification.success("Key saved", "Key slot #" + keySlot + " was saved.");
@@ -1130,8 +1209,18 @@ class Main {
 
     decryptKey (keyEncrypted) {
       let key = "";
+
+      let decryptionKey = "Don't decrypt this, please."
+      if (this.isEncrypted) {
+         decryptionKey = this.getMasterPassword();
+
+        if (!decryptionKey) {
+          return false;
+        }
+      }
+
       try {
-        key = CryptoWrapper.decryptAES(keyEncrypted, "Don't decrypt this, please.");
+        key = CryptoWrapper.decryptAES(keyEncrypted, decryptionKey);
       } catch (error) {
         ShowNotification.error("Error", "Could not decrypt saved key.");
         return false
