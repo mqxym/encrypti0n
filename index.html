@@ -460,17 +460,28 @@
                                                                 <div class="col-12 col-sm-9 ">
                                                                     <div class="d-grid mb-1">
                                                                         <button data-bs-toggle="modal" data-bs-target="#do-application-encryption" id="encryptApplicationModal" type="button" class="btn btn-sm btn-outline-success waves-effect"> 
-                                                                            <i class="mdi mdi-delete me-1"></i> 
-                                                                            <span>Encrypt entire application</span> 
+                                                                            <i class="mdi mdi-lock me-1"></i> 
+                                                                            <span>(Re-)Encrypt application data</span> 
                                                                         </button>
                                                                     </div>
                                                                     <span class="help-block ">
                                                                         <small>
-                                                                            This is recommended for paranoid users. It encrypts all saved keys, config, and slot names with a master password. 
-                                                                            Master password must be entered each time you visit the site.
+                                                                            This is recommended for paranoid users. It encrypts all saved keys and saved key hashes with a master password. 
+                                                                            Master password must be entered each time you visit the site. <br>
+                                                                            <b>When you have already encrypted your application you can use this button to change the master password.</b>
                                                                         </small>
                                                                     </span>
-                                                                   
+                                                                    <div class="d-grid mt-2 mb-1">
+                                                                        <button id="removeApplicationEncryption" type="button" class="btn btn-sm btn-outline-warning waves-effect"> 
+                                                                            <i class="mdi mdi-lock-open me-1"></i> 
+                                                                            <span>Remove data encryption</span> 
+                                                                        </button>
+                                                                    </div>
+                                                                    <span class="help-block ">
+                                                                        <small>
+                                                                            Removes the encryption with custom master password and rolls back to the standard keys.
+                                                                        </small>
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                             <div class="input-group mb-2">
@@ -552,13 +563,13 @@
                                                                 <div class="col-12 col-sm-9 ">
                                                                     <p class="mb-2"><b>Download</b> and <b>upload</b> saved keys / config</p>
                                                                     <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" name="useMasterPW" id="useMasterPW">
+                                                                        <input class="form-check-input rounded-circle" type="checkbox" name="useMasterPW" id="useMasterPW" checked>
                                                                         <label class="form-check-label" for="useMasterPW">Use master password</label>
                                                                     </div>
                                                                     <input type="password" class="form-control d-none" id="masterPassword" name="masterPassword" placeholder="Master key">
                                                                     <span class="help-block ">
                                                                         <small>
-                                                                            Encrypt saved keys before downloading with your custom password
+                                                                            Encrypt your data download with a custom password (the site uses your master password when your encrypted the application already)
                                                                         </small>
                                                                     </span>
                                                                     <div class="form-check mb-1 mt-1 form-check-primary">
@@ -669,14 +680,13 @@
                                             </p>
                                             <p>
                                                 <b>Attention:</b> If you forget your master password, you can't decrypt your app data anymore.
-                                            </p>
-                                            
+                                            </p>                                          
                                             <div class="mb-3">
-                                                <label for="field-3" class="form-label">Master Password</label>
-                                                <input name="encryptApplicationMPw" type="password" class="form-control" id="field-3" placeholder="Secure Password">
+                                                <label for="field-2" class="form-label">(New) Master Password</label>
+                                                <input name="encryptApplicationMPw" type="password" class="form-control" id="field-2" placeholder="Secure Password">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="field-3" class="form-label">Re-Enter Password</label>
+                                                <label for="field-3" class="form-label">Re-Enter (New) Password</label>
                                                 <input name="encryptApplicationMPwConfirmation" type="password" class="form-control" id="field-3">
                                             </div>
                                         </div>
@@ -700,7 +710,6 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">The Application Is Encrypted</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-4">
                                 <div class="row">
@@ -717,8 +726,6 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                                
                                 <button type="button" id="decryptApplication" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
                                     <span class="ladda-label">
                                         Decrypt!

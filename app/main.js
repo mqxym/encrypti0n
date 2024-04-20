@@ -2,6 +2,9 @@ class Main {
 
     constructor (formHandler, urlQueryStringHandler) {
         this.GKEY = "dcZ5TT74oLyZun0yywszpdD8rNzIyjYPZIVBGmGrobMuGj4rULoNVahjMFyE7A5NTROIZmNsmLi4UATSoQaD2nJE7LTOB"
+        this.COOLKEY = "Don't decrypt this, please.";
+        this.NICEKEY = "If you have a better way securing this, message me.";
+
         this.mPw = false;
         
         this.formHandler = formHandler;
@@ -40,6 +43,8 @@ class Main {
       const cryptoUrlString = this.urlQueryStringHandler.getParam("cc");
       const overrideCryptoSettings = this.urlQueryStringHandler.getParam("overrideSettings");
 
+      let result = false;
+
       if (cryptoSettings && !overrideCryptoSettings) {
         this.urlQueryStringHandler.setParam("cc", cryptoSettings);
         if (generalSettings) {
@@ -49,9 +54,13 @@ class Main {
         }
       } else if (cryptoUrlString) {
         if (generalSettings) {
-          this.setSettings(cryptoUrlString, generalSettings);
+          result = this.setSettings(cryptoUrlString, generalSettings);
         } else {
-          this.setSettings(cryptoUrlString);
+          result = this.setSettings(cryptoUrlString);
+        }
+
+        if (result) {
+          ShowNotification.success("Settings loaded", "Crypto settings " + cryptoUrlString + " were loaded from URL.");
         }
       }
     }
@@ -77,6 +86,7 @@ class Main {
 
       $('#encryptApplication').on('click', this.encryptApplication.bind(this));
       $('#decryptApplication').on('click', this.decryptApplication.bind(this));
+      $('#removeApplicationEncryption').on('click', this.removeApplicationEncryption.bind(this));
 
       $('#setGc').on('click', this.setGc.bind(this));
       $('#setCc').on('click', this.setCc.bind(this));
@@ -99,9 +109,20 @@ class Main {
       const mPw = eaFormHandler.formValues["encryptApplicationMPw"];
       const mPwConfirmation = eaFormHandler.formValues["encryptApplicationMPwConfirmation"];
 
+      if (!mPw || !mPwConfirmation) {
+        ShowNotification.error("Error", "Please fill in all fields.");
+        return;
+      }
+
       if (mPw !== mPwConfirmation) {
         ShowNotification.error("Error", "Master password and confirmation do not match.");
         return;
+      }
+
+      let oldMPw = false;
+      if (this.isEncrypted )  {
+        oldMPw = this.getMasterPassword();
+        if (!oldMPw) return;
       }
 
       const encryptLadda = Ladda.create(document.getElementById('encryptApplication'));
@@ -118,17 +139,45 @@ class Main {
 
       const key = this.saveMasterPasswordinRAM(mPw);
 
-      this.decryptAndEncryptLocalData(key);
+      this.decryptAndEncryptLocalData(key, oldMPw);
 
       StorageHandler.setItem("isEncrypted", "true");
+      this.isEncrypted = true;
+      this.changeUIMasterPassword();
 
       encryptLadda.stop();
       $('#do-application-encryption').modal('hide');
-      ShowNotification.success("Success", "Your application was encrypted.");
+
+      if (oldMPw) {
+        ShowNotification.success("Success", "Your application was encrypted with the new password.");
+      }  else {
+        ShowNotification.success("Success", "Your application was encrypted.");
+      }    
     }
 
-    decryptAndEncryptLocalData(newPw) {
-      let oldPw = "Don't decrypt this, please.";
+    decryptAndEncryptLocalData(newPw = false, oldPw = false) {
+
+
+      let newPwSavedKeys;
+      let newPwSavedHashes;
+      let oldPwSavedKeys;
+      let oldPwSavedHashes;
+      // When newPw is false the default key is used for encryption
+      // When newPw is a string the newPw is used for encryption
+
+      if (!newPw) {  //Decrypt to default
+        newPwSavedKeys = this.COOLKEY;
+        newPwSavedHashes = this.NICEKEY;
+        oldPwSavedKeys = oldPwSavedHashes = oldPw;
+      } else if (!oldPw) { //Encrypt with newPw
+        oldPwSavedKeys = this.COOLKEY;
+        oldPwSavedHashes = this.NICEKEY;
+        newPwSavedKeys = newPwSavedHashes = newPw;
+      } else { //Decrypt with oldPw and encrypt with newPw
+        oldPwSavedKeys = oldPwSavedHashes = oldPw;
+        newPwSavedKeys = newPwSavedHashes = newPw;
+      }
+      
 
       //Encrypt saved keys
       console.log("Decrypting and encrypting saved keys...");
@@ -138,8 +187,8 @@ class Main {
 
         if (savedKey) {
           try {
-            let decryptedKey = CryptoWrapper.decryptAES(savedKey, oldPw, true);
-            let encryptedKey = CryptoWrapper.encryptAES(decryptedKey, newPw, true);
+            const decryptedKey = CryptoWrapper.decryptAES(savedKey, oldPwSavedKeys, true);
+            const encryptedKey = CryptoWrapper.encryptAES(decryptedKey, newPwSavedKeys, true);
             StorageHandler.setItem(key, encryptedKey);
           } catch (error) {
             ShowNotification.error("Error", "Decryption or encryption of data failed.");
@@ -149,13 +198,13 @@ class Main {
 
       //Encrypt saved hashes
       console.log("Decrypting and encrypting saved hashes...");
-      oldPw = "If you have a better way securing this, message me."
+      oldPw = this.NICEKEY;
       const savedHashesEncrypted = StorageHandler.getItem("savedHashes");
       if(savedHashesEncrypted) {
         try {
-          const decryptedSavedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, oldPw, true );
+          const decryptedSavedHashes = CryptoWrapper.decryptAES(savedHashesEncrypted, oldPwSavedHashes, true );
           if (decryptedSavedHashes) {
-            const encryptedHashes = CryptoWrapper.encryptAES(decryptedSavedHashes, newPw, true);
+            const encryptedHashes = CryptoWrapper.encryptAES(decryptedSavedHashes, newPwSavedHashes, true);
             StorageHandler.setItem("savedHashes", encryptedHashes);
           }
         } catch (error) {
@@ -209,10 +258,43 @@ class Main {
 
     getMasterPassword() {
       if (!this.mPw) {  
-        ShowNotification.error("Error", "Master password not found in running context.");
+        ShowNotification.error("Error", "Master password not found in running context. Please reload the page.");
         return false;
       }
       return CryptoWrapper.decryptAES(this.mPw, this.GKEY, true);
+    }
+
+    removeApplicationEncryption () {
+
+      if (!this.isEncrypted) {
+        ShowNotification.warning("Warning", "Can't remove encryption. Application is not encrypted.");
+        return
+      }
+
+      const oldMPw = this.getMasterPassword();
+
+      if (!oldMPw) {
+        return;
+      }
+      Swal.fire({
+        icon: 'warning',
+        title: 'Remove App Encryption?',
+        text: 'Defaults back to normal encryption. Your local data like saved keys could be at risk.',
+        showCancelButton: true,
+        confirmButtonText: "Remove",
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) {
+            this.decryptAndEncryptLocalData(false, oldMPw);
+            StorageHandler.getAndRemove("isEncrypted");
+            StorageHandler.getAndRemove("pwCheck");
+            this.isEncrypted = false;
+            this.mPw = false;
+            ShowNotification.success("Success", "Your application encryption was removed.");
+            this.changeUIMasterPassword();
+            this.toggleMasterPassword();
+          } 
+      });
     }
 
     getFormValue(name) {
@@ -319,7 +401,18 @@ class Main {
       this.changeType();
       this.toggleHashing();
       this.toggleKey();
+      this.changeUIMasterPassword();
       this.toggleMasterPassword();
+    }
+
+    changeUIMasterPassword() {
+      if (this.isEncrypted) {
+        ElementAction.check("useMasterPW");
+        ElementAction.disable("useMasterPW");
+        ElementAction.hide("masterPassword");
+      } else {
+        ElementAction.enable("useMasterPW");
+      }
     }
 
     changeType () {
@@ -1085,7 +1178,7 @@ class Main {
       const savedHashesEncrypted = StorageHandler.getItem("savedHashes");
       if(savedHashesEncrypted) {
         try {
-          let decryptionKey = "If you have a better way securing this, message me."
+          let decryptionKey = this.NICEKEY;
           if (this.isEncrypted) {
              decryptionKey = this.getMasterPassword();
 
@@ -1109,7 +1202,7 @@ class Main {
 
     saveSavedHashes (savedHashesObject) {
       const savedHashes = JSON.stringify(savedHashesObject);
-      let encryptionKey = "If you have a better way securing this, message me."
+      let encryptionKey = this.NICEKEY;
       if (this.isEncrypted) {
           encryptionKey = this.getMasterPassword();
 
@@ -1187,7 +1280,7 @@ class Main {
         key = this.getFormValue("keyBlank");
       }
 
-      let encryptionKey = "Don't decrypt this, please."
+      let encryptionKey = this.COOLKEY
       if (this.isEncrypted) {
          encryptionKey = this.getMasterPassword();
 
@@ -1210,7 +1303,7 @@ class Main {
     decryptKey (keyEncrypted) {
       let key = "";
 
-      let decryptionKey = "Don't decrypt this, please."
+      let decryptionKey = this.COOLKEY;
       if (this.isEncrypted) {
          decryptionKey = this.getMasterPassword();
 
@@ -1363,12 +1456,14 @@ class Main {
     }
 
     toggleMasterPassword () {
-      if ($("#useMasterPW").is(":checked")) {
-        ElementAction.show("masterPassword");
-        //console.log("Use master password.");
-      } else {
-        ElementAction.hide("masterPassword");
-        //console.log("Don't use master password.");
+      if (!this.isEncrypted) {
+        if ($("#useMasterPW").is(":checked")) {
+          ElementAction.show("masterPassword");
+          //console.log("Use master password.");
+        } else {
+          ElementAction.hide("masterPassword");
+          //console.log("Don't use master password.");
+        }
       }
     }
 
@@ -1380,18 +1475,25 @@ class Main {
       const includeConfig = this.getFormValue("includeConfig");
       const includeSlotNames = this.getFormValue("includeSlotNames");
 
-      if (useMasterPassword && !masterPassword) {
+      // Check if master password is set and the application is not encrypted
+      if (!this.isEncrypted && useMasterPassword && !masterPassword) {
         ShowNotification.error("Error", "No master password set.");
         return;
       }
       savedKeys.mPW = useMasterPassword;
+      savedKeys.isEncrypted = this.isEncrypted;
+      if (this.isEncrypted) {
+        savedKeys.pwCheck = StorageHandler.getItem("pwCheck");
+      }
 
+
+      //Loop through saved keys and save them in the object
       for (let i = 1; i <= 10; i++) {
         let key = "key" + i;
         let item = StorageHandler.getItem(key);
         if(item) {
           keysFound = true;
-          if (useMasterPassword) {
+          if (useMasterPassword && !this.isEncrypted) {
             item = CryptoWrapper.encryptAES(item, masterPassword);
           }
           savedKeys[key] = item;
@@ -1407,8 +1509,10 @@ class Main {
         if (includeSlotNames) {
           const slotNames = this.readSlotNames();
           if (slotNames) {
-            if (useMasterPassword) {
+            if (useMasterPassword && !this.isEncrypted) {
               savedKeys.slotNames = CryptoWrapper.encryptAES(JSON.stringify(slotNames), masterPassword);
+            } else if (this.isEncrypted) {
+              savedKeys.slotNames = CryptoWrapper.encryptAES(JSON.stringify(slotNames), this.getMasterPassword());
             } else {
               savedKeys.slotNames = slotNames;
             }
@@ -1452,20 +1556,36 @@ class Main {
                 return;
               }
 
-              if (!savedKeys.hasOwnProperty("mPW")) {
+              if (!savedKeys.hasOwnProperty("mPW") || !savedKeys.hasOwnProperty("mPW")) {
                 ShowNotification.error("Missing information", "Could not load file.");
                 return;
               }
 
-              if (typeof savedKeys.mPW !== 'boolean') {
+              if (typeof savedKeys.mPW !== 'boolean' || typeof savedKeys.isEncrypted !== 'boolean') {
                 ShowNotification.error("Format error", "Could not load file.");
                 return;
               }
 
               let masterPW = "";
 
-              if (savedKeys.mPW) {
+              if (savedKeys.mPW && !savedKeys.isEncrypted) {
                 masterPW = this.getFormValue("masterPassword");
+              } else if (savedKeys.isEncrypted) {
+                // When the application of the download was encrypted with a master password
+                masterPW = this.getMasterPassword();
+                if (!savedKeys.hasOwnProperty("pwCheck") )  {
+                  ShowNotification.error("Failed to load data", "Please use the same key as in the file.");
+                  return
+                }
+                if (!masterPW) {
+                  ShowNotification.error("Could not decrypt data", "Please encrypt the application with the same master password as in the file.", false);
+                  return;
+                }
+                const pwCheckLocal = StorageHandler.getItem("pwCheck");
+                if (pwCheckLocal !== savedKeys.pwCheck) {
+                  ShowNotification.error("Failed to load data", "Please use the same master password as in the file.");
+                  return
+                }
               }
 
               //Load config
@@ -1514,11 +1634,11 @@ class Main {
                   } else {
                     slotNames = savedKeys.slotNames;
                   }
-                  if(!slotDecryptionWorked) {
-                    ShowNotification.error("Failed to load slot names.", "Please check your master password.", false);
-                  } else {
+                  if(slotDecryptionWorked) {
                     this.saveSlotNames(slotNames);
                     this.setSlotNames();
+                  } else {
+                    ShowNotification.error("Failed to load slot names.", "Please check your master password.", false);
                   }
                 }
               }
@@ -1532,10 +1652,16 @@ class Main {
                   //No master password
                   if(!savedKeys.mPW) {
                     StorageHandler.setItem(key, savedKeys[key]);
+                    continue;
                   } 
+
+                  if (savedKeys.isEncrypted) {
+                    StorageHandler.setItem(key, savedKeys[key]);
+                    continue;
+                  }
                   
-                  //Has master password
-                  if(savedKeys.mPW) {
+                  //Has master password && did not use app encryption
+                  if(savedKeys.mPW && !savedKeys.isEncrypted) {
                     try {
                       let item = CryptoWrapper.decryptAES(savedKeys[key], masterPW);
                       if (!item) {
@@ -1829,6 +1955,10 @@ class StorageHandler {
     StorageHandler.deleteSlotNames();
     StorageHandler.deleteConfigs();
     StorageHandler.getAndRemove("copyAlert");
+    StorageHandler.getAndRemove("__UBOLD_CONFIG__");
+    StorageHandler.getAndRemove("isEncrypted");
+    StorageHandler.getAndRemove("version");
+    StorageHandler.getAndRemove("pwCheck");
   }
 }
 
@@ -1866,6 +1996,10 @@ class VersionManager {
         },
         '1.06': {
             changes: ["XOR encryption for files is now supported"],
+            actions: []
+        },
+        '2.0': {
+            changes: ["You can now encrypt the applications local data with a master password in the advanced tab"],
             actions: []
         }
         /*,
@@ -1986,7 +2120,7 @@ $(document).ready(function () {
     new URLQueryStringHandler()
   );
 
-  const currentVersion = '1.06'
+  const currentVersion = '2.0'
   const versionManager = new VersionManager(currentVersion);
   versionManager.updateVersion();
 });
