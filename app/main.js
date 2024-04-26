@@ -1486,6 +1486,10 @@ class Main {
         savedKeys.pwCheck = StorageHandler.getItem("pwCheck");
       }
 
+      if (!this.getMasterPassword()) {
+        return;
+      }
+
 
       //Loop through saved keys and save them in the object
       for (let i = 1; i <= 10; i++) {

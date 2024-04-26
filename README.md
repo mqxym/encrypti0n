@@ -1,11 +1,12 @@
 # encrypti0n.com
+
 is a web application to encrypt and decrypt text and files locally within the browser.
 Try it out here: https://encrypti0n.com
   
 ## Features
 
 - Use one or multiple chained encryption methods (AES256 / Blowfish / XOR)
-- Generate long keys and save them in the browser in one of the ten slots (This data is encrypted with a fixed key)
+- Generate long keys and save them in the browser in one of the ten slots (This data is encrypted with a fixed key or a custom master password)
 - Rename key slots
 - Export and import saved keys, slot names, configs
 - Encrypt the locally saved data and exports with a master password
