@@ -1978,31 +1978,31 @@ class VersionManager {
     }
 
     this.versionActions = {
-        '1.01': {
+        '1.0.1': {
             changes: ["Improved security and updated hash function.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
             actions: ["clearStoredHashes"]
         },
-        '1.02': {
+        '1.1.0': {
             changes: ["Downloaded slot names are now encrypted.", "When using master password."],
             actions: []
         },
-        '1.03': {
+        '1.2.0': {
             changes: ["Improved security and updated hash function.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
             actions: ["clearStoredHashes"]
         },
-        '1.04': {
+        '1.4.0': {
             changes: ["Updated hash function and round offset.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
             actions: ["clearStoredHashes"]
         },
-        '1.05': {
+        '1.5.0': {
             changes: ["Updated hash function and file encryption.", "Stored hashes must be deleted.", "Decryption of previously encrypted files will fail."],
             actions: ["clearStoredHashes"]
         },
-        '1.06': {
+        '1.6.0': {
             changes: ["XOR encryption for files is now supported"],
             actions: []
         },
-        '2.0': {
+        '2.0.0': {
             changes: ["You can now encrypt the applications local data with a master password in the advanced tab"],
             actions: []
         }
