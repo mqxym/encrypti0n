@@ -12,7 +12,7 @@ Try it out here: https://encrypti0n.com
 - Encrypt the locally saved data and exports with a master password
 - Hashing options:
   - No Hashing (Encrypts directly with the entered key)
-  - Key dependend extra hash rounds
+  - Key dependent extra hash rounds
   - Hash salting
   - Hash difficulty low to high (50-2000 hash rounds)
 - Cache already calculated hashes in the browser for faster encryption and decryption
