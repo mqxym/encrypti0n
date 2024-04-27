@@ -198,7 +198,6 @@ class Main {
 
       //Encrypt saved hashes
       console.log("Decrypting and encrypting saved hashes...");
-      oldPw = this.NICEKEY;
       const savedHashesEncrypted = StorageHandler.getItem("savedHashes");
       if(savedHashesEncrypted) {
         try {
