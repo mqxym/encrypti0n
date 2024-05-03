@@ -86,6 +86,10 @@ function getRoundOffset(pass) {
 	return sum;
 }
 
+function getLongBase64Password(hashPass) {
+	return hexToBase64(CryptoJS.SHA512(hashPass).toString() + CryptoJS.SHA224(hashPass).toString() + CryptoJS.SHA256(hashPass).toString() + CryptoJS.SHA1(hashPass).toString() + CryptoJS.SHA3(hashPass).toString() + CryptoJS.SHA384(hashPass).toString() + CryptoJS.MD5(hashPass).toString());
+}
+
 //calculates a password hash as a repeating hash algorithm
 function hashPassword(pass, hashDifficulty, doRoundOffset, doHashSalting) {
 	if (pass == "") {
@@ -111,10 +115,6 @@ function hashPassword(pass, hashDifficulty, doRoundOffset, doHashSalting) {
 	console.log("Hashing " + hashRounds + " rounds");
 	console.time('HashTime');
 
-	//doHashRounds(hashPass, 0, hashRounds, progress, callback);
-
-	//console.log(hashPass);
-
 	if (doHashSalting) {
 		for (let i = 0; i < hashRounds; i++) {
 			hashPass = returnHash(hashPass + i*1337);
@@ -126,13 +126,20 @@ function hashPassword(pass, hashDifficulty, doRoundOffset, doHashSalting) {
 	}
 
 
-	hashPass = CryptoJS.SHA512(hashPass).toString() + CryptoJS.SHA224(hashPass).toString() + CryptoJS.SHA256(hashPass).toString() + CryptoJS.SHA1(hashPass).toString() + CryptoJS.SHA3(hashPass).toString() + CryptoJS.SHA384(hashPass).toString() + CryptoJS.MD5(hashPass).toString();
-	
-	hashPass = hexToBase64(hashPass);
+	hashPass = getLongBase64Password(hashPass);
+
 	//console.log("Hashed key:\n" + hashPass);
 	console.timeEnd('HashTime');
 
 	return hashPass;
+}
+
+function hashBetween (startHash) {
+	let hashPass = startHash;
+	for (let i = 0; i < 15; i++) {
+		hashPass = returnHash(hashPass + i*420)
+	}
+	return getLongBase64Password(hashPass);
 }
 
 //repeating hash algorithm
