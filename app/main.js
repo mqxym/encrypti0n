@@ -80,6 +80,8 @@ class Main {
       $('#loadKey').on('click', this.loadKey.bind(this));
       $('#saveKey').on('click', this.saveKey.bind(this));
 
+      $('#saveHashes').on('change', this.toggleSaveHashes.bind(this));
+
       $('#useMasterPW').on('change', this.toggleMasterPassword.bind(this));
       $('#downloadSavedKeys').on('click', this.downloadSavedKeys.bind(this));
       $('#keyUpload').on('change', this.keyUpload.bind(this));
@@ -1016,6 +1018,24 @@ class Main {
         ElementAction.disable("doRoundOffset");
         ElementAction.disable("doHashSalting");
         ElementAction.disable("hashDifficulty");
+      }
+    }
+
+    toggleSaveHashes() {
+      if (this.getFormValue("saveHashes")) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Delete all saved hashes?',
+          text: 'This action can not be undone.',
+          showCancelButton: true,
+          confirmButtonText: "Yes, delete",
+          cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+              StorageHandler.getAndRemove("savedHashes");
+              ShowNotification.success("Success", "All saved hashes were deleted.");
+            } 
+        });
       }
     }
 
@@ -2017,12 +2037,11 @@ class VersionManager {
         '2.0.0': {
             changes: ["You can now encrypt the applications local data with a master password in the advanced tab"],
             actions: []
+        },
+        '2.1.0': {
+            changes: ["<u><a href='https://github.com/mqxym/encrypti0n/releases/tag/2.1.0' target='_blank'>Changelog</a></u>","Updated encryption process.", "XOR or Blowfish decryption of old data will fail.", "Download version <a href='https://github.com/mqxym/encrypti0n/releases/tag/2.0.1' target='_blank'>2.0.1 from GitHub </a> to decrypt these objects."],
+            actions: []
         }
-        /*,
-        '1.02': {
-            changes: ["New feature added", ""],
-            actions: ["clearStoredHashes","test"]
-        }*/
     };
   }
   updateVersion() {
@@ -2136,7 +2155,9 @@ $(document).ready(function () {
     new URLQueryStringHandler()
   );
 
-  const currentVersion = '2.0'
+  const currentVersion = '2.1.0'
+  $('#version').html(currentVersion);
+  
   const versionManager = new VersionManager(currentVersion);
   versionManager.updateVersion();
 });
