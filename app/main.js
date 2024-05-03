@@ -80,6 +80,8 @@ class Main {
       $('#loadKey').on('click', this.loadKey.bind(this));
       $('#saveKey').on('click', this.saveKey.bind(this));
 
+      $('#saveHashes').on('change', this.toggleSaveHashes.bind(this));
+
       $('#useMasterPW').on('change', this.toggleMasterPassword.bind(this));
       $('#downloadSavedKeys').on('click', this.downloadSavedKeys.bind(this));
       $('#keyUpload').on('change', this.keyUpload.bind(this));
@@ -198,7 +200,6 @@ class Main {
 
       //Encrypt saved hashes
       console.log("Decrypting and encrypting saved hashes...");
-      oldPw = this.NICEKEY;
       const savedHashesEncrypted = StorageHandler.getItem("savedHashes");
       if(savedHashesEncrypted) {
         try {
@@ -496,16 +497,16 @@ class Main {
       let settings = this.getSettings();
       const type = settings.type;
 
-      let key = "";
+      let inputKey = "";
       if (this.getFormValue("hideKey")) {
-        key = this.getFormValue("keyPassword");
+        inputKey = this.getFormValue("keyPassword");
       } else {
-        key = this.getFormValue("keyBlank");
+        inputKey = this.getFormValue("keyBlank");
       }
       const text = this.getFormValue("inputText"); 
       const fileList = $('#inputFiles')[0].files;
 
-      if(!key) {
+      if(!inputKey) {
         console.log("No key set.");
         ShowNotification.error("No key", "Your key is empty.");
         return;
@@ -593,19 +594,21 @@ class Main {
         return;
       }
 
+      let keys = [];
+
       //Hashes the password
       if(settings.doHashing) {
         //Check if key is in saved hash database
 
-        const original_key = key;
+        const originalKey = inputKey;
         const hashHeader = this.generateHashHeader();
         let savedHash = "";
         let hashFound = false;
 
         if (settings.saveHashes) {
-          savedHash = this.getSavedHash(original_key, hashHeader);
+          savedHash = this.getSavedHash(originalKey, hashHeader);
           if (savedHash) {
-            key = savedHash;
+            keys[0] = savedHash;
             hashFound = true;
           }
         }
@@ -621,7 +624,7 @@ class Main {
           }
           
           
-          key = hashPassword(key, 
+          keys[0] = hashPassword(inputKey, 
             settings.hashDifficulty, 
             settings.doRoundOffset, 
             settings.doHashSalting);
@@ -630,9 +633,22 @@ class Main {
         }
 
         if(settings.saveHashes && !hashFound) {
-          this.setHash(original_key, key, hashHeader);
+          this.setHash(originalKey, keys[0], hashHeader);
         }
       }
+
+      // Calculate in between hashes
+      if (methods.doBF) {
+        keys[1] = hashBetween(keys[0]);
+
+        if (methods.doXOR) {
+          keys[2] = hashBetween(keys[1]);
+        }
+      } else if (methods.doXOR) {
+        keys[2] = hashBetween(keys[0]);
+      }
+
+      console.log(keys);
 
       //Text Encryption / Decryption
       if (type === "doText") {
@@ -640,7 +656,7 @@ class Main {
         if (cryptoHeader) {
           //If cryptoHeader: decrypt
           const cipher = removeBeforeFirstEqual(text);
-          const decryptedText = this.decryptText(key, cipher, methods)
+          const decryptedText = this.decryptText(keys, cipher, methods)
           if (!decryptedText) {
             ShowNotification.error("Decryption error", "Check your key or your input.", false);
           }
@@ -648,7 +664,7 @@ class Main {
 
         } else {
           //encrypt
-          const encryptedText = this.encryptText(key, text, methods);
+          const encryptedText = this.encryptText(keys, text, methods);
           const cryptoHeader = this.generateCryptoHeader();
           this.setFormValue("outputText", cryptoHeader + "=" + encryptedText);       
         }
@@ -682,19 +698,19 @@ class Main {
           //decrypt
           for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            this.decryptAndSaveFile(key, file, methods);
+            this.decryptAndSaveFile(keys, file, methods);
           }
         } else {
           //encrypt
           for (let i = 0; i < files.length; i++) {
             const file = files[i];            
-            this.encryptAndSaveFile(key, file, methods);
+            this.encryptAndSaveFile(keys, file, methods);
           }
         }
       }
     }
 
-    encryptAndSaveFile (key, file, methods) {
+    encryptAndSaveFile (keys, file, methods) {
       const reader = new FileReader();
 
       const outputDiv = $("#outputFiles");
@@ -709,7 +725,7 @@ class Main {
           //ShowNotification.error("Error encrypting", "XOR not supported for files.");
           //return;
           console.log("Start XOR Encryption for file: " + file.name);
-          encryptedData = CryptoWrapper.encryptXOR(encryptedData, key);
+          encryptedData = CryptoWrapper.encryptXOR(encryptedData, keys[2]);
           if (methods.doAES || methods.doBF) {
             encryptedData = atob(encryptedData);
           }
@@ -717,7 +733,7 @@ class Main {
         
         if (methods.doBF) {
           console.log("Start Blowfish Encryption for file: " + file.name);
-          encryptedData = CryptoWrapper.encryptBF(encryptedData, key, false);
+          encryptedData = CryptoWrapper.encryptBF(encryptedData, keys[1], false);
           if (methods.doAES ) {
             encryptedData = atob(encryptedData);
           }
@@ -726,7 +742,7 @@ class Main {
 
         if (methods.doAES) {
           console.log("Start AES Encryption for file: " + file.name);
-          encryptedData = CryptoWrapper.encryptAES(encryptedData, key, false);
+          encryptedData = CryptoWrapper.encryptAES(encryptedData, keys[0], false);
         }
 
         encryptedData = Uint8Array.from(atob(encryptedData), char => char.charCodeAt(0));
@@ -760,7 +776,7 @@ class Main {
       reader.readAsDataURL(file);
     }
 
-    decryptAndSaveFile (key, file, methods) {
+    decryptAndSaveFile (keys, file, methods) {
       const reader = new FileReader();
 
       const outputDiv = $("#outputFiles");
@@ -774,7 +790,7 @@ class Main {
         try {
           if (methods.doAES) {
             console.log("Start AES Decryption for file: " + file.name);
-            decryptedData = CryptoWrapper.decryptAES(decryptedData, key, false);
+            decryptedData = CryptoWrapper.decryptAES(decryptedData, keys[0], false);
             if (methods.doBF || methods.doXOR) {
               decryptedData = btoa(decryptedData);
             }
@@ -782,17 +798,15 @@ class Main {
 
           if(methods.doBF) {
             console.log("Start Blowfish Decryption for file: " + file.name);
-            decryptedData = CryptoWrapper.decryptBF(decryptedData, key, false);
+            decryptedData = CryptoWrapper.decryptBF(decryptedData, keys[1], false);
             if (methods.doXOR) {
               decryptedData = btoa(decryptedData);
             }
           }
 
           if(methods.doXOR) {
-            //ShowNotification.error("Error decrypting", "XOR not supported for files.");
-            //return;
             console.log("Start XOR Decryption for file: " + file.name);
-            decryptedData = CryptoWrapper.decryptXOR(decryptedData, key);
+            decryptedData = CryptoWrapper.decryptXOR(decryptedData, keys[2]);
           }
 
           this.processedFiles++;
@@ -857,44 +871,44 @@ class Main {
 
     //Encrypt text with the selected method
     //Returns b64 encrypted string
-    encryptText (key, text, methods) {
+    encryptText (keys, text, methods) {
       let encryptedText = text;
       
       if (methods.doXOR) {
         console.log("Start XOR Encryption...");
-	      encryptedText = CryptoWrapper.encryptXOR(encryptedText, key);
+	      encryptedText = CryptoWrapper.encryptXOR(encryptedText, keys[2]);
       }
       if (methods.doBF) {
         console.log("Start Blowfish Encryption...");
-	      encryptedText = CryptoWrapper.encryptBF(encryptedText, key);
+	      encryptedText = CryptoWrapper.encryptBF(encryptedText, keys[1]);
       }
       if (methods.doAES) {
         console.log("Start AES Encryption...");
-	      encryptedText = CryptoWrapper.encryptAES(encryptedText, key);
+	      encryptedText = CryptoWrapper.encryptAES(encryptedText, keys[0]);
       }
       return encryptedText;
     }
 
     //Decrypt text with the selected methods
     //Returns utf-8 encoded string
-    decryptText (key, cipher, methods) {
+    decryptText (keys, cipher, methods) {
       try {
 
         let decrypted = cipher; 
 
         if (methods.doAES) {
           console.log("Start AES Decryption...");  
-          decrypted = CryptoWrapper.decryptAES(decrypted, key);
+          decrypted = CryptoWrapper.decryptAES(decrypted, keys[0]);
         }
 
         if (methods.doBF) {
           console.log("Start Blowfish Decryption...");
-          decrypted = CryptoWrapper.decryptBF(decrypted, key);
+          decrypted = CryptoWrapper.decryptBF(decrypted, keys[1]);
         }
 
         if (methods.doXOR) {
           console.log("Start XOR Decryption")
-          decrypted = CryptoWrapper.decryptXOR(decrypted, key);
+          decrypted = CryptoWrapper.decryptXOR(decrypted, keys[2]);
         }
       
        
@@ -1004,6 +1018,24 @@ class Main {
         ElementAction.disable("doRoundOffset");
         ElementAction.disable("doHashSalting");
         ElementAction.disable("hashDifficulty");
+      }
+    }
+
+    toggleSaveHashes() {
+      if (this.getFormValue("saveHashes")) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Delete all saved hashes?',
+          text: 'This action can not be undone.',
+          showCancelButton: true,
+          confirmButtonText: "Yes, delete",
+          cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+              StorageHandler.getAndRemove("savedHashes");
+              ShowNotification.success("Success", "All saved hashes were deleted.");
+            } 
+        });
       }
     }
 
@@ -2005,12 +2037,11 @@ class VersionManager {
         '2.0.0': {
             changes: ["You can now encrypt the applications local data with a master password in the advanced tab"],
             actions: []
+        },
+        '2.1.0': {
+            changes: ["<u><a href='https://github.com/mqxym/encrypti0n/releases/tag/2.1.0' target='_blank'>Changelog</a></u>","Updated encryption process.", "XOR or Blowfish decryption of old data will fail.", "Download version <a href='https://github.com/mqxym/encrypti0n/releases/tag/2.0.1' target='_blank'>2.0.1 from GitHub </a> to decrypt these objects."],
+            actions: []
         }
-        /*,
-        '1.02': {
-            changes: ["New feature added", ""],
-            actions: ["clearStoredHashes","test"]
-        }*/
     };
   }
   updateVersion() {
@@ -2124,7 +2155,9 @@ $(document).ready(function () {
     new URLQueryStringHandler()
   );
 
-  const currentVersion = '2.0'
+  const currentVersion = '2.1.0'
+  $('#version').html(currentVersion);
+  
   const versionManager = new VersionManager(currentVersion);
   versionManager.updateVersion();
 });
