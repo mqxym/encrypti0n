@@ -635,20 +635,23 @@ class Main {
         if(settings.saveHashes && !hashFound) {
           this.setHash(originalKey, keys[0], hashHeader);
         }
-      }
 
-      // Calculate in between hashes
-      if (methods.doBF) {
-        keys[1] = hashBetween(keys[0]);
+        // Calculate in between hashes
+        if (methods.doBF) {
+          keys[1] = hashBetween(keys[0]);
 
-        if (methods.doXOR) {
-          keys[2] = hashBetween(keys[1]);
+          if (methods.doXOR) {
+            keys[2] = hashBetween(keys[1]);
+          }
+        } else if (methods.doXOR) {
+          keys[2] = hashBetween(keys[0]);
         }
-      } else if (methods.doXOR) {
-        keys[2] = hashBetween(keys[0]);
+      } else {
+        // no hashing
+        keys[0] = inputKey;
+        keys[1] = inputKey;
+        keys[2] = inputKey;
       }
-
-      console.log(keys);
 
       //Text Encryption / Decryption
       if (type === "doText") {
@@ -2038,10 +2041,11 @@ class VersionManager {
             changes: ["You can now encrypt the applications local data with a master password in the advanced tab"],
             actions: []
         },
-        '2.1.0': {
-            changes: ["<u><a href='https://github.com/mqxym/encrypti0n/releases/tag/2.1.0' target='_blank'>Changelog</a></u>","Updated encryption process.", "XOR or Blowfish decryption of old data will fail.", "Download version <a href='https://github.com/mqxym/encrypti0n/releases/tag/2.0.1' target='_blank'>2.0.1 from GitHub </a> to decrypt these objects."],
+        '2.1.1': {
+            changes: ["<u><a href='https://github.com/mqxym/encrypti0n/releases/tag/2.1.1' target='_blank'>Changelog</a></u>","Updated encryption process.", "XOR or Blowfish decryption of old data will fail.", "Download version <a href='https://github.com/mqxym/encrypti0n/releases/tag/2.0.1' target='_blank'>2.0.1 from GitHub </a> to decrypt these objects."],
             actions: []
         }
+
     };
   }
   updateVersion() {
@@ -2155,7 +2159,7 @@ $(document).ready(function () {
     new URLQueryStringHandler()
   );
 
-  const currentVersion = '2.1.0'
+  const currentVersion = '2.1.1'
   $('#version').html(currentVersion);
   
   const versionManager = new VersionManager(currentVersion);
