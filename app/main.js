@@ -2044,6 +2044,10 @@ class VersionManager {
         '2.1.1': {
             changes: ["<u><a href='https://github.com/mqxym/encrypti0n/releases/tag/2.1.1' target='_blank'>Changelog</a></u>","Updated encryption process.", "XOR or Blowfish decryption of old data will fail.", "Download version <a href='https://github.com/mqxym/encrypti0n/releases/tag/2.0.1' target='_blank'>2.0.1 from GitHub </a> to decrypt these objects."],
             actions: []
+        },
+        '3.0.0': {
+            changes: ["<u><a href='https://github.com/mqxym/encrypti0n/releases/tag/3.0.0a1' target='_blank'>Changelog</a></u>","Complete App Rework in alpha version released.", "<b>Use New App in the menu from now on and delete / migrate the old apps data.</b>","The deprecated app will be removed soon."],
+            actions: []
         }
 
     };
@@ -2159,7 +2163,7 @@ $(document).ready(function () {
     new URLQueryStringHandler()
   );
 
-  const currentVersion = '2.1.1'
+  const currentVersion = '3.0.0'
   $('#version').html(currentVersion);
   
   const versionManager = new VersionManager(currentVersion);
