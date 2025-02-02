@@ -74,6 +74,13 @@ export class ElementHandler {
     $("#"+preId+"Text").removeClass("d-none");
   }
 
+  static fillButtonGray (id) {
+    $("#"+id).addClass("btn-secondary").removeClass("btn-outline-secondary");
+  }
+  static emptyButtonGray (id) {
+    $("#"+id).addClass("btn-outline-secondary").removeClass("btn-secondary");
+  }
+
   static populateSelectWithSlotNames(slotNames, selectId) {
     const $select = $('#' + selectId);
     $select.empty(); // Clear existing options

@@ -210,7 +210,7 @@
                                 <h4 class="page-title">Main App</h4>
                             </div>
                         </div>
-                        <form id="mainForm">
+                        <form id="mainForm" role="form">
                             <div class="row mb-3">
                                 <div class="col-xxl-3 col-lg-5 col-12 mb-3">
                                     <div class="card border-secondary border h-100 w-100">
@@ -221,19 +221,19 @@
                                         
                                                 <!-- Right content -->
                                                 <div>
-                                                    <button class="btn btn-sm btn-secondary rounded-pill">
+                                                    <button type="button" id="showTextEncryption" class="btn btn-sm btn-secondary rounded-pill">
                                                         Text
                                                     </button>
                                                 </div>
                                                 <div class="ms-1">
-                                                    <button class="btn btn-sm btn-outline-secondary rounded-pill">
+                                                    <button type="button" id="showFilesEncryption" class="btn btn-sm btn-outline-secondary rounded-pill">
                                                         Files
                                                     </button>
                                                 </div>
                                             </div>
                                            
                                         </div>
-                                        <div class="card-body">
+                                        <div class="card-body" id="textEncryptionInput">
                                             <div class="d-flex flex-row align-items-center" id="inputAction">
                                                 <span class="help-block me-auto">
                                                     <small id="helpOutput">
@@ -244,6 +244,24 @@
                                             </div>
                                             
                                             <textarea id="inputText" class="form-control mb-1 border border-blue" name="inputText" placeholder="Input" rows="5"></textarea>
+                                            <p class="card-text text-muted">The site detects if your input is <span class="badge badge-outline-pink rounded-pill" id="encryptedPill">encrypted</span> or <span id="notEncryptedPill" class="badge bg-blue rounded-pill">not encrypted</span>.</p>
+                                        </div>
+                                        <div class="card-body d-none" id="fileEncryptionInput">
+                                            <div class="d-flex flex-row align-items-center" id="inputAction">
+                                                <span class="help-block me-auto">
+                                                    <small id="helpOutput">
+                                                        Select the files you want to encrypt or decrypt:
+                                                    </small>
+                                                </span>
+                                                
+                                            </div>
+                                            <div class="d-grid">
+                                                <button type="button" class="mb-2 btn  btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
+                                                    <span><i class="mdi mdi-file-upload mr-5"></i>Select Files</span>
+                                                </button>
+                                            </div>
+                                            
+                                            <textarea readonly id="selected files" class="form-control mb-1 border border-secondary" name="selectedFiles" placeholder="selected files.." rows="4"></textarea>
                                             <p class="card-text text-muted">The site detects if your input is <span class="badge badge-outline-pink rounded-pill" id="encryptedPill">encrypted</span> or <span id="notEncryptedPill" class="badge bg-blue rounded-pill">not encrypted</span>.</p>
                                         </div>
                                         
@@ -284,11 +302,14 @@
                                                 <input type="text" class="border border-secondary rounded-start form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password">
                                                 <input type="password" class="border border-secondary rounded-start form-control" id="keyPassword" name="keyPassword" placeholder="Password">
                                                 <button id="keyGenerate" class="btn input-group-text btn-outline-secondary waves-effect" type="button" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Generate Password">
-                                                    <i class="mdi mdi-cached me-1"></i> 
+                                                    <i id="keyGenerateText" class="mdi mdi-cached me-1"></i> 
+                                                    <i id="keyGenerateSuccess" class="mdi mdi-check-all d-none"></i> 
                                                     <span>New</span> 
                                                 </button>
-                                                <button id="keyCopy" type="button" class="btn input-group-text btn-sm btn-outline-warning waves-effect" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Copy Password"> 
-                                                    <i class="mdi mdi-content-copy me-1"></i> 
+                                                <button id="keyCopy" type="button" class="rounded-end btn input-group-text btn-outline-warning waves-effect" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Copy Password"> 
+                                                    <i id="keyCopyText" class="mdi mdi-content-copy me-1"></i> 
+                                                    <i id="keyCopySuccess" class="mdi mdi-check-all d-none"></i> 
+                                                    <i id="keyCopyFail" class="mdi mdi-close-circle-multiple d-none"></i> 
                                                 </button>
                                             </div>
                                             <div class="form-check mb-1 form-check-primary">

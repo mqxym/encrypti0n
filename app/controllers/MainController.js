@@ -24,7 +24,8 @@ export class MainController {
     this.encryptionService = new EncryptionService();
     this.confManager = new ConfigManager();
 
-    this.appVersion = "3.0.0a2";
+    this.appVersion = "3.0.0a3";
+    this.doFiles = false;
     
     this.bindButtons();
     this.initUI();
@@ -40,6 +41,8 @@ export class MainController {
     });
 
     document.getElementById('inputText').addEventListener('input', (event) => this.handleDataChange(event));
+    document.getElementById('showTextEncryption').addEventListener('click', () => this.showTextInput());
+    document.getElementById('showFilesEncryption').addEventListener('click', () => this.showFileInput());
     document.getElementById('PBKDF2Options').addEventListener('click', () => $('#PBKDF2OptionsModal').modal('show'));
     document.getElementById('renameSlots').addEventListener('click', () => $('#renameSlotsModal').modal('show'));
     /*
@@ -88,6 +91,20 @@ export class MainController {
       ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
     }
     //this.updateFileList();
+  }
+
+  showFileInput () {
+    ElementHandler.fillButtonGray('showFilesEncryption');
+    ElementHandler.emptyButtonGray('showTextEncryption');
+    ElementHandler.show('fileEncryptionInput');
+    ElementHandler.hide('textEncryptionInput');
+  }
+
+  showTextInput () {
+    ElementHandler.emptyButtonGray('showFilesEncryption');
+    ElementHandler.fillButtonGray('showTextEncryption');
+    ElementHandler.hide('fileEncryptionInput');
+    ElementHandler.show('textEncryptionInput');
   }
 
   async handleAction() {
@@ -283,7 +300,7 @@ export class MainController {
       Swal.fire({
         icon: 'success',
         title: 'The application is decrypted!',
-        text: "You can now use your saved data",
+        text: "You can now use your saved data.",
         timer: 2500,
         showCancelButton: false,
         confirmButtonText: "Ok",
@@ -429,23 +446,43 @@ export class MainController {
   /**********************************
    * Key management (slots)
    **********************************/
-  keyGenerate() {
+  async keyGenerate() {
+    if (this.actionInProgress) return;
+    this.actionInProgress = true;
+
     const randomKey = Math.random().toString(36).substring(2) + Date.now().toString(36);
     this.formHandler.setFormValue('keyBlank', randomKey);
     this.formHandler.setFormValue('keyPassword', randomKey);
+    ElementHandler.buttonRemoveTextAddSuccess("keyGenerate");
+    await this.delay(1000);
+    ElementHandler.buttonRemoveStatusAddText("keyGenerate");
+    this.actionInProgress = false;
   }
 
-  keyCopy() {
+  async keyCopy() {
+    if (this.actionInProgress) return;
+    this.actionInProgress = true;
+
     const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     const keyToCopy = hideKey ? keyPassword : keyBlank;
     if (!keyToCopy) {
+      ElementHandler.buttonRemoveTextAddFail("keyCopy");
+      await this.delay(1000);
+      ElementHandler.buttonRemoveStatusAddText("keyCopy");
+      this.actionInProgress = false;
       return;
     }
-    navigator.clipboard.writeText(keyToCopy).then(() => {
-     
-    }, err => {
-      console.error(err);
-      
+    navigator.clipboard.writeText(keyToCopy).then(async () => {
+      ElementHandler.buttonRemoveTextAddSuccess("keyCopy");
+      await this.delay(1000);
+      ElementHandler.buttonRemoveStatusAddText("keyCopy");
+      this.actionInProgress = false;
+    }, async err => {
+      ElementHandler.buttonRemoveTextAddFail("keyCopy");
+      await this.delay(1000);
+      ElementHandler.buttonRemoveStatusAddText("keyCopy");
+      this.actionInProgress = false;
+      return;
     });
   }
 
@@ -580,6 +617,14 @@ export class MainController {
           await this.confManager.deleteAllConfigData();
           await this.initUI();
           $('#do-application-decryption').modal('hide');
+          Swal.fire({
+            icon: 'success',
+            title: 'All data deleted!',
+            text: "The application is cleared.",
+            timer: 2500,
+            showCancelButton: false,
+            confirmButtonText: "Ok",
+          });
         } 
     });
     
