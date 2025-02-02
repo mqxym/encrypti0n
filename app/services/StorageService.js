@@ -10,40 +10,16 @@ export class StorageService {
     setItem(key, value) {
       localStorage.setItem(key, value);
     }
-  
-    removeItem(key) {
-      localStorage.removeItem(key);
+
+    getConf() {
+      return JSON.parse(this.getItem('encMainConf'));
     }
-  
-    clearAll() {
-      localStorage.clear();
+
+    setConf(value) {
+      localStorage.setItem('encMainConf', JSON.stringify(value));
     }
-    deleteStoredKeys() {
-      for (let i = 1; i <= 10; i++) {
-        localStorage.removeItem('key' + i);
-      }
-    }
-  
-    deleteStoredHashes() {
-      localStorage.removeItem('savedHashes');
-    }
-  
-    deleteSlotNames() {
-      localStorage.removeItem('slotNames');
-    }
-  
-    deleteConfigs() {
-      localStorage.removeItem('cryptoConfig');
-      localStorage.removeItem('generalConfig');
-    }
-  
+
     deleteAllData() {
-      this.deleteStoredKeys();
-      this.deleteStoredHashes();
-      this.deleteSlotNames();
-      this.deleteConfigs();
-      localStorage.removeItem('copyAlert');
-      localStorage.removeItem('isEncrypted');
-      localStorage.removeItem('pwCheck');
+      localStorage.removeItem('encMainConf');
     }
   }

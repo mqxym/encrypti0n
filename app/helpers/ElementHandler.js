@@ -60,6 +60,29 @@ export class ElementHandler {
     $(".removed-right").removeClass("removed-right").addClass("mdi-arrow-right-thick").removeClass("mdi-close-circle-multiple");
     $(".removed-down").removeClass("removed-down").addClass("mdi-arrow-down-bold").removeClass("mdi-close-circle-multiple");
   }
+  static buttonRemoveTextAddSuccess (preId) {
+    $(`#${preId}Text`).addClass("d-none");
+    $(`#${preId}Success`).removeClass("d-none");
+  }
+  static buttonRemoveTextAddFail (preId) {
+    $("#"+preId+"Text").addClass("d-none");
+    $("#"+preId+"Fail").removeClass("d-none");
+  }
+  static buttonRemoveStatusAddText (preId) {
+    $("#"+preId+"Success").addClass("d-none");
+    $("#"+preId+"Fail").addClass("d-none");
+    $("#"+preId+"Text").removeClass("d-none");
+  }
+
+  static populateSelectWithSlotNames(slotNames, selectId) {
+    const $select = $('#' + selectId);
+    $select.empty(); // Clear existing options
+    for (const key in slotNames) {
+        if (slotNames.hasOwnProperty(key)) {
+            $select.append(`<option value="${key}">${slotNames[key]}</option>`);
+        }
+    }
+  }
 
 
   static disable (element) {
