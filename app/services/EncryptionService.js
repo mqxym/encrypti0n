@@ -28,9 +28,14 @@ export class EncryptionService {
    * @param {string} passphrase
    * @param {string} algorithmName - 'aesgcm', 'aesctr', or 'xor'
    */
-  async encryptData(plainData, passphrase, algorithmName) {
+  async encryptData(plainData, passphrase, algorithmName, roundDifficulty = null, saltDifficulty = null) {
     const passphraseBytes = new TextEncoder().encode(passphrase);
     const algo = this.getAlgorithm(algorithmName);
+
+    if (algorithmName = 'aesgcm') {
+      algo.setRoundDifficulty(roundDifficulty);
+      algo.setSaltDifficulty(saltDifficulty);
+    }
 
     const { headerBytes, ciphertextBytes } = await algo.encrypt(plainData, passphraseBytes);
     const combined = new Uint8Array(headerBytes.length + ciphertextBytes.length);
@@ -56,7 +61,10 @@ export class EncryptionService {
     switch (algoFlag) {
       case 0x01: // AES-GCM
         algorithmName = 'aesgcm';
-        headerLen = 1 + 16 + 12; // 29
+        const diffByte = combined[1];
+        const saltBit = (diffByte >> 2) & 0x01;
+        const saltLength = saltBit === 0 ? 12 : 16;
+        headerLen = 1 + 1 + saltLength + 12; // 29
         break;
       case 0x02: // AES-CTR
         algorithmName = 'aesctr';

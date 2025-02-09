@@ -18,6 +18,11 @@
             $('#preloader').delay(350).fadeOut('slow');
         });
 
+        $(document).on('click', '.spinner-link', function() {
+            $('#status').show();
+            $('#preloader').show();
+          });
+
         // Popovers
         const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
         const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))

@@ -186,6 +186,41 @@ export class ConfigManager {
     this._securelyClearObject(data);
   }
 
+  async setOptions(options) {
+    const data = await this.getDecryptedData();
+    const validRoundDifficulties = ['low', 'middle', 'high'];
+    const validSaltDifficulties = ['low', 'high'];
+  
+    if (
+      (options.saltDifficulty === null || this._isPropertyInArray(options, 'saltDifficulty', validSaltDifficulties)) &&
+      (options.roundDifficulty === null || this._isPropertyInArray(options, 'roundDifficulty', validRoundDifficulties))
+    ) {
+      // For any option that is null, use the current decrypted value
+      if (options.saltDifficulty === null) {
+        options.saltDifficulty = data.Options ? data.Options.saltDifficulty : null;
+      }
+      if (options.roundDifficulty === null) {
+        options.roundDifficulty = data.Options ? data.Options.roundDifficulty : null;
+      }
+      data.Options = options;
+      await this.setDecryptedData(data);
+    }
+    this._securelyClearObject(data);
+  }
+
+  async readOptions() {
+    const data = await this.getDecryptedData();
+    if (!data.Options) {
+      throw new Error(`Options does not exist`);
+    }
+    const options = data.Options;
+    return options;
+  }
+
+  _isPropertyInArray(obj, prop, arr) {
+    return obj.hasOwnProperty(prop) && arr.includes(obj[prop]);
+  }   
+
   // -----------------------------
   // Master Password Management
   // -----------------------------
@@ -204,7 +239,7 @@ export class ConfigManager {
 
     // 2. Update config with new salt & rounds
     const newSalt = this.encryptionManager.generateRandomSalt();
-    const newRounds = this._getRandomInt(500000, 510000);
+    const newRounds = this._getRandomInt(5000000, 5001000);
     this.config.isUsingMasterPassword = true;
     this.config.PKDF2Salt = newSalt;
     this.config.PKDF2Rounds = newRounds;

@@ -4,6 +4,7 @@ import { ShowNotification } from '../helpers/ShowNotification.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { StorageService } from '../services/StorageService.js';
 import { EncryptionService } from '../services/EncryptionService.js';
+import { pbkdf2Service } from '../services/pbkdf2Service.js';
 import { ConfigManager } from '../services/configManagement/ConfigManager.js';
 
 
@@ -23,8 +24,9 @@ export class MainController {
     this.storageService = new StorageService();
     this.encryptionService = new EncryptionService();
     this.confManager = new ConfigManager();
+    this.pbkdf2Service = new pbkdf2Service('pbkdf2-modal',this.confManager);
 
-    this.appVersion = "3.0.0a3";
+    this.appVersion = "3.0.0a4";
     this.doFiles = false;
     
     this.bindButtons();
@@ -43,7 +45,7 @@ export class MainController {
     document.getElementById('inputText').addEventListener('input', (event) => this.handleDataChange(event));
     document.getElementById('showTextEncryption').addEventListener('click', () => this.showTextInput());
     document.getElementById('showFilesEncryption').addEventListener('click', () => this.showFileInput());
-    document.getElementById('PBKDF2Options').addEventListener('click', () => $('#PBKDF2OptionsModal').modal('show'));
+    document.getElementById('PBKDF2Options').addEventListener('click', () => $('#pbkdf2-modal').modal('show'));
     document.getElementById('renameSlots').addEventListener('click', () => $('#renameSlotsModal').modal('show'));
     /*
     // Master password encryption of the application:
@@ -89,6 +91,17 @@ export class MainController {
     } else {
       const slotNames = await this.confManager.readSlotNames();
       ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
+      await this.pbkdf2Service.loadOptions();
+    }
+    // no crypto api error message
+    if (!window.crypto || !window.crypto.subtle) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Your browser does not support this application.',
+        text: "Please update your browser or system.",
+        showCancelButton: false,
+        confirmButtonText: "Ok"
+      })
     }
     //this.updateFileList();
   }
@@ -98,6 +111,9 @@ export class MainController {
     ElementHandler.emptyButtonGray('showTextEncryption');
     ElementHandler.show('fileEncryptionInput');
     ElementHandler.hide('textEncryptionInput');
+    ElementHandler.show('fileEncryptionOutput');
+    ElementHandler.hide('textEncryptionOutput');
+    this.doFiles = true;
   }
 
   showTextInput () {
@@ -105,6 +121,9 @@ export class MainController {
     ElementHandler.fillButtonGray('showTextEncryption');
     ElementHandler.hide('fileEncryptionInput');
     ElementHandler.show('textEncryptionInput');
+    ElementHandler.show('textEncryptionOutput');
+    ElementHandler.hide('fileEncryptionOutput');
+    this.doFiles = false;
   }
 
   async handleAction() {
@@ -113,8 +132,7 @@ export class MainController {
     if (this.actionInProgress) return;
   
     this.actionInProgress = true;
-  
-    // Initialize LaddaButtonManager with buttons having the ID 'actionRight'
+
     const laddaManager = new LaddaButtonManager('.action-button');
     laddaManager.startAll();
     laddaManager.setProgressAll(0.75);
@@ -178,9 +196,10 @@ export class MainController {
       return false;
     }
     const algo = 'aesgcm';
-
+   
     try {
-      const encryptedB64 = await this.encryptionService.encryptData(inputText, passphrase, algo);
+      const usedOptions = await pbkdf2Service.getCurrentOptions(this.confManager);
+      const encryptedB64 = await this.encryptionService.encryptData(inputText, passphrase, algo, usedOptions.roundDifficulty, usedOptions.saltDifficulty);
       this.formHandler.setFormValue('outputText', encryptedB64);
       return true;
     } catch (err) {
@@ -290,13 +309,19 @@ export class MainController {
       this.actionInProgress = false;
       return;
     }
+    const laddaDecryptApplication = Ladda.create(document.getElementById('decryptApplication'));
+
     try {
+      laddaDecryptApplication.start();
+      laddaDecryptApplication.setProgress(0.7);
+
       await this.confManager.unlockSession(decryptApplicationMPw);
       $('#do-application-decryption').modal('hide');
       const slotNames = await this.confManager.readSlotNames();
       ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
       ElementHandler.show('removeApplicationEncryption');
       ElementHandler.hide('encryptApplicationModal');
+      await this.pbkdf2Service.loadOptions();
       Swal.fire({
         icon: 'success',
         title: 'The application is decrypted!',
@@ -311,7 +336,9 @@ export class MainController {
       await this.delay(500);
       ElementHandler.buttonRemoveStatusAddText('decryptApplication');
       this.actionInProgress = false;
-    }
+    } finally {
+      laddaDecryptApplication.stop();
+    }   
   }
 
   handleAppEncryptionRemove() {
