@@ -32,6 +32,12 @@ export class ElementHandler {
   static buttonClassPinkToBlueOutline (inputClass) {
     $("."+inputClass).removeClass("btn-outline-pink").addClass("btn-outline-blue");
   }
+  static buttonClassBlueToPink (inputClass) {
+    $("."+inputClass).removeClass("btn-blue").addClass("btn-pink");
+  }
+  static buttonClassPinkToBlue (inputClass) {
+    $("."+inputClass).removeClass("btn-pink").addClass("btn-blue");
+  }
   static fillButtonClassBlue (inputClass) {
     $("."+inputClass).removeClass("btn-outline-blue").addClass("btn-blue");
   }
@@ -97,7 +103,12 @@ export class ElementHandler {
   } 
   static enable (element) {
     $("#"+element).prop('disabled', false);
-  } 
+  }
+
+  static setPlaceholderById(id, placeholderText) {
+    $(`#${id}`).attr('placeholder', placeholderText);
+  }
+   
   static check (element) {
     $("#"+element).prop('checked', true);
   } 

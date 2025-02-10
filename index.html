@@ -6,7 +6,7 @@
         <title>AES Text And File Encryption Tool Online - Secure and Reliable - Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="All in one encryption/decryption tool for text and files. Encrypt to base64. Highly customizable. Reliable and secure." />
-        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,base64,Blowfish,AES256,XOR,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
+        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,base64,AES256,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
@@ -48,6 +48,11 @@
 
         <!-- Begin page -->
         <div id="wrapper">
+            <div id="preloader">
+                <div id="status">
+                    <div class="spinner">Loading...</div>
+                </div>
+            </div>
 
             
             <!-- ========== Menu ========== -->
@@ -73,22 +78,49 @@
                     <!--- Menu -->
                     <ul class="menu">
 
-                        <li class="menu-title">Main</li>
+                        <li class="menu-title">Apps</li>
+
+                       
                         <li class="menu-item">
-                            <a href="/" class="menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-view-dashboard-outline"></i></span>
-                                <span class="menu-text">App (Deprecated)</span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="/index_new.html" class="menu-link">
+                            <a href="/index.html" class="spinner-link menu-link">
                                 <span class="menu-icon"><i class="mdi mdi-new-box"></i></span>
-                                <span class="menu-text">New App (Alpha Version)</span>
+                                <span class="menu-text">Main App</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/web-crypto-api-playground.html" class="spinner-link menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-view-dashboard-outline"></i></span>
+                                <span class="menu-text">Crypto Playground</span>
                             </a>
                         </li>
 
+                        <li class="menu-title">App Information</li>
 
-                        <li class="menu-title">Information (Deprecated)</li>
+                        <li class="menu-item">
+                            <a href="/index.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-help"></i></span>
+                                <span class="menu-text"> FAQ </span>
+                            </a>
+                        </li>
+
+                        <li class="menu-title">Links</li>
+
+                        <li class="menu-item">
+                            <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-code-braces"></i></span>
+                                <span class="menu-text"> Sourcecode </span>
+                            </a>
+                        </li>
+                        
+
+                        <li class="menu-title">Deprecated Sites</li>
+
+                        <li class="menu-item">
+                            <a href="/index-old.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class=" mdi mdi-view-dashboard-outline"></i></span>
+                                <span class="menu-text">Previous App</span>
+                            </a>
+                        </li>
 
                         <li class="menu-item">
                             <a href="#methods" data-bs-toggle="collapse" class="menu-link">
@@ -98,22 +130,22 @@
                             </a>
                             <div class="collapse" id="methods">
                                 <ul class="sub-menu">
-                                    <li class="menu-item">
+                                    <li class="menu-item spinner-link">
                                         <a href="methods-aes-encryption.html" class="menu-link">
                                             <span class="menu-text">AES</span>
                                         </a>
                                     </li>
-                                    <li class="menu-item">
+                                    <li class="menu-item spinner-link">
                                         <a href="methods-blowfish-encryption.html" class="menu-link">
                                             <span class="menu-text">Blowfish</span>
                                         </a>
                                     </li>
-                                    <li class="menu-item">
+                                    <li class="menu-item spinner-link">
                                         <a href="methods-xor-encryption.html" class="menu-link">
                                             <span class="menu-text">XOR</span>
                                         </a>
                                     </li>
-                                    <li class="menu-item">
+                                    <li class="menu-item spinner-link">
                                         <a href="methods-password-hashing.html" class="menu-link">
                                             <span class="menu-text">Hashing</span>
                                         </a>
@@ -123,26 +155,17 @@
                         </li>
 
                         <li class="menu-item">
-                            <a href="faq.html" class="menu-link">
+                            <a href="faq-old.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-help"></i></span>
                                 <span class="menu-text"> FAQ </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="security-setups.html" class="menu-link">
+                            <a href="security-setups.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-lightning-bolt"></i></span>
                                 <span class="menu-text"> Setups </span>
                             </a>
                         </li>
-
-                        <li class="menu-item">
-                            <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-launch"></i></span>
-                                <span class="menu-text"> Sourcecode </span>
-                            </a>
-                        </li>
-
-                  
                     <!--- End Menu -->
                     <div class="clearfix"></div>
                 </div>
@@ -173,12 +196,56 @@
                         </div>
 
                         <ul class="topbar-menu d-flex align-items-center">
+                            <li class="dropdown">
+                                <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                                    <i class="fe-settings font-22 d-md-none"></i>
+                                    <i class="fe-settings d-sm-inline-block d-none"></i>
+                                    <span class="ms-1 d-none d-md-inline-block">
+                                        App Data <i class="mdi mdi-chevron-down"></i>
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end profile-dropdown border border-secondary rounded ">
+                                    <!-- item-->
+                                    <div class="dropdown-header noti-title">
+                                        <h6 class="m-0 font-16 fw-semibold">Manage App Data</h6>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+
+                                    <div class="dropdown-header noti-title">
+                                        <h6 class="text-overflow m-0"> Encrypt local data with a master password</h6>
+                                    </div>
+
+                                    <!-- item-->
+                                    <a class="dropdown-item notify-item" id="encryptApplicationModal">
+                                        <i class="mdi mdi-lock me-1"></i>
+                                        Encrypt Application
+                                    </a>
+                                    <a class="dropdown-item notify-item d-none" id="removeApplicationEncryption">
+                                        <i class="mdi mdi-lock-open-plus me-1"></i>
+                                        Remove Application Encryption
+                                    </a>
+
+                                    <div class="dropdown-divider"></div>
+
+                                    <!-- item-->
+                                    <div class="dropdown-header noti-title">
+                                        <h6 class="text-overflow m-0"> Clear all saved local data</h6>
+                                    </div>
+
+                                    
+                                    <a id="removeAllData" class="dropdown-item notify-item btn btn-outline-secondary d-block waves-effect waves-light mt-auto mb-2">
+                                        <i class="mdi mdi-delete me-1"></i>
+                                        Clear all data
+                                    </a>
+
+                                </div>
+                            </li>
                             <li class="d-none d-md-inline-block">
                                 <a class="nav-link waves-effect waves-light" href="" data-toggle="fullscreen">
                                     <i class="fe-maximize font-22"></i>
                                 </a>
                             </li>
-                            <li class="d-none d-sm-inline-block">
+                            <li class="">
                                 <div class="nav-link waves-effect waves-light" id="light-dark-mode">
                                     <i class="ri-moon-line font-22"></i>
                                 </div>
@@ -187,490 +254,376 @@
                     </div>
                 </div>
                 <div class="content">
-
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <h4 class="page-title text-break">Encrypt and decrypt your texts and files with AES, Blowfish or XOR</h4>
+                    <div class="container-fluid px-2">
+                        <div class="col-12 mb-1">
+                            <div class="page-title-box">
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
+                                        <li class="breadcrumb-item active"><a href="/index.html">Main App</a></li>
+                                    </ol>
                                 </div>
+                                <h4 class="page-title">Main App</h4>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <form role="form" id="mainForm"> 
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-6 d-flex">
-                                                <div class="card flex-fill">
-                                                    <div class="card-body">
-                                                        <div class="mb-2 input-group">
-                                                                <label for="radio1" class="form-label col-12 col-sm-2 "><u>Type</u></label>
-                                                                <div class="col-12 col-sm-10">
-                                                                    <div class="d-flex flex-wrap">
-                                                                        <div class="form-check form-check-inline">
-                                                                            <input class="form-check-input" name="type" value="doText" type="radio"id="radio1" checked>
-                                                                            <label class="form-check-label" for="radio1">Text</label>
-                                                                        </div>
-                                                                        <div class="form-check-pink form-check-inline">
-                                                                            <input class="form-check-input" name="type" value="doFiles" type="radio" id="radio2">
-                                                                            <label class="form-check-label" for="radio2">Files</label>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-                                                        </div>
-                                                        <div class="input-group mb-2">
-                                                            <label for="inputText" class="form-label col-12 col-sm-2 "><u>Input</u></label>
-                                                            <div class="col-12 col-sm-10 ">
-                                                                <textarea id="inputText" class="form-control" name="inputText" placeholder="Your (encrypted) text here" rows="5"></textarea>
-                                                                <div id="inputFilesDiv" class="d-grid d-none">
-                                                                    <button type="button" class="btn btn-outline-pink waves-effect" onclick="document.getElementById('inputFiles').click();">
-                                                                        <span><i class="mdi mdi-file-upload mr-5"></i>Select Files</span>
-                                                                    </button>
-                                                                    <input style="display: none;" id="inputFiles" name="inputFiles" type="file" class="upload" multiple />
-                                                                    <span class="help-block">
-                                                                        <small>
-                                                                            On <b>mobile devices</b> only files smaller than <b>6MB</b> are supported
-                                                                        </small>
-                                                                    </span>
-                                                                    <div id="fileList" class="mt-1">
-    
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="input-group mb-2" id="divClearInput">
-                                                            <label class="col-12 col-sm-2  control-label"></label>
-                                                            <div class="col-12 col-sm-10  d-grid">
-                                                                <button id="clearInput" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
-                                                                    <i class="mdi mdi-delete me-1"></i> 
-                                                                    <span>Clear Input</span> 
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="input-group mb-2" >
-                                                            <label class="col-12 col-sm-2  control-label"><u>Key</u></label>
-                                                            <div class="col-12 col-sm-10 ">
-                                                                <div class="input-group mb-1">
-                                                                    <input type="text" class="form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password">
-                                                                    <input type="password" class="form-control" id="keyPassword" name="keyPassword" placeholder="Password">
-                                                                    <button id="keyGenerate" class="btn input-group-text btn-outline-secondary waves-effect" type="button">
-                                                                        <i class="mdi mdi-cached me-1"></i> 
-                                                                        <span>Gen</span> 
-                                                                    </button>
-                                                                    <button id="keyCopy" class="btn input-group-text btn-outline-warning waves-effect" type="button">
-                                                                        <i class="mdi mdi-content-copy me-1"></i> 
-                                                                        <span>Copy</span> 
-                                                                    </button>
-                                                                </div>
-                                                                <div class="form-check mb-1 form-check-primary">
-                                                                    <input class="form-check-input rounded-circle" type="checkbox" value="" name="hideKey" id="hideKey" checked>
-                                                                    <label class="form-check-label" for="hideKey">Hide key</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="input-group mb-2" >
-                                                            <label class="col-12 col-sm-2  control-label"><u>Browser</u></label>
-                                                            <div class="col-12 col-sm-10 ">
-                                                                <div class="row">
-                                                                    <div class="col-5">
-                                                                        <select class="form-select" name="keySlot">
-                                                                            <option value="1">Slot 1</option>
-                                                                            <option value="2">Slot 2</option>
-                                                                            <option value="3">Slot 3</option>
-                                                                            <option value="4">Slot 4</option>
-                                                                            <option value="5">Slot 5</option>
-                                                                            <option value="6">Slot 6</option>
-                                                                            <option value="7">Slot 7</option>
-                                                                            <option value="8">Slot 8</option>
-                                                                            <option value="9">Slot 9</option>
-                                                                            <option value="10">Slot 10</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-7 mr-3">
-                                                                        <button type="button" id="loadKey" class="btn btn-outline-secondary waves-effect"> 
-                                                                            <i class="mdi mdi-file-download me-1"></i> 
-                                                                            Load
-                                                                        </button>
-                                                                        <button type="button" id="saveKey" class="btn btn-outline-secondary waves-effect mr-2"> 
-                                                                            <i class="mdi mdi-file-upload me-1"></i> 
-                                                                            Save 
-                                                                        </button>
-                                                                    </div>
-                                                                    <span class="help-block">
-                                                                        <small>
-                                                                            <b>Load</b> or <b>save</b> keys from or to browser
-                                                                        </small>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="input-group mb-3" >
-                                                            <label class="col-12 col-sm-2  control-label"><u>Action</u></label>
-                                                            <div class="col-12 col-sm-10">
-                                                                <div class="d-grid">
-                                                                    <button type="button" id="action" class="ladda-button btn btn-outline-blue waves-effect mb-1" data-style="zoom-in" dir="ltr">
-                                                                        <span class="ladda-label">
-                                                                            Encrypt / Decrypt
-                                                                        </span>
-                                                                        <span class="ladda-spinner"></span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="progress d-none" id="progressBarDiv">
-                                                                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-                                                                </div>
-                                                                <span class="help-block">
-                                                                    <small id="helpActionButton">
-                                                                        To decrypt the programm checks for a valid config header (n=)
-                                                                    </small>
-                                                                </span>                                                               
-                                                            </div>
-                                                        </div>
-                                                        <div class="input-group mb-2" >
-                                                            <label class="col-12 col-sm-2  control-label"><u>Output</u></label>
-                                                            <div class="col-12 col-sm-10 ">
-                                                                <textarea class="form-control" id="outputText" name="outputText" readonly placeholder="The result of the encryption / decryption" rows="5"></textarea>
-                                                                <div class="d-none" id="outputFiles">
-                                                                    <p>Download encrypted / decrypted files here</p>
-                                                                </div>
-                                                                <span class="help-block">
-                                                                    <small id="helpOutput">
-                                                                        Encrypted output is base64 formatted and uses a config header or ending
-                                                                    </small>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="input-group mb-2" id="divCopyOutput">
-                                                            <label class="col-12 col-sm-2  control-label"></label>
-                                                            <div class="col-12 col-sm-10 ">
-                                                                <div class="d-grid">
-                                                                    <button id="copyOutput" type="button" class="btn btn-sm btn-outline-warning waves-effect"> 
-                                                                        <i class="mdi mdi-content-copy me-1"></i> 
-                                                                        <span>Copy Output</span> 
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div> 
+                        <form id="mainForm" role="form">
+                            <div class="row">
+                                <div class="col-xxl-3 col-lg-5 col-12 mb-3 mb-xxl-0">
+                                    <div class="card border-secondary border h-100 w-100">
+                                        <div class="card-header" style="height: 60px;">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <!-- Left content -->
+                                                <div class="me-auto"><h2>Data</h2></div>
+                                        
+                                                <!-- Right content -->
+                                                <div>
+                                                    <button type="button" id="showTextEncryption" class="btn btn-sm btn-secondary rounded-pill">
+                                                        Text
+                                                    </button>
                                                 </div>
-                                            </div> 
-                                            <div class="col-md-6 d-flex">
-                                                <div class="card flex-fill">
-                                                    <div class="card-body">
-                                                        <div class="mb-2 input-group">
-                                                            <label for="radio1" class="form-label col-12 col-sm-3 "><u>Settings</u></label>
-                                                            <div class="col-12 col-sm-9">
-                                                                <div class="d-flex flex-wrap">
-                                                                    <div class="form-check form-check-inline">
-                                                                        <input class="form-check-input" name="setting" value="settingsMain" type="radio" id="radio3" checked>
-                                                                        <label class="form-check-label" for="radio3">Main</label>
-                                                                    </div>
-                                                                    <div class="form-check-pink form-check-inline">
-                                                                        <input class="form-check-input" name="setting" value="settingsAdvanced" type="radio" id="radio4">
-                                                                        <label class="form-check-label" for="radio4">Advanced</label>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div id="divMainSettings">
-                                                            <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3  control-label mb-1"><u>Encryption method</u></label>
-                                                                <div class="col-12 col-sm-9 ">
-                                                                    <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doAES" id="doAES" checked>
-                                                                        <label class="form-check-label" for="doAES">AES</label>
-                                                                    </div>
-                                                                    <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doBF" id="doBF">
-                                                                        <label class="form-check-label" for="doBF">Blowfish</label>
-                                                                    </div>
-                                                                    <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" name="doXOR" id="doXOR">
-                                                                        <label class="form-check-label" for="doXOR">XOR</label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3 mb-1 control-label"><u>Password hashing</u></label>
-                                                                <div class="col-12 col-sm-9  ml-2">
-                                                                    <div class="mb-2">
-                                                                        <div class="form-check mb-1 form-check-primary">
-                                                                            <input class="form-check-input rounded-circle" type="checkbox" value="" name="doHashing" id="doHashing" checked="">
-                                                                            <label class="form-check-label" for="doHashing">Enabled</label>
-                                                                        </div>
-                                                                        <span class="help-block">
-                                                                            <small>
-                                                                                Hashes passwords with 6 different hash methods in semi-random order many times
-                                                                            </small>
-                                                                        </span>  
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <div class="form-check mb-1 form-check-primary">
-                                                                            <input class="form-check-input rounded-circle" type="checkbox" value="" name="doRoundOffset" id="doRoundOffset" checked="">
-                                                                            <label class="form-check-label" for="doRoundOffset">Key-depended round offset</label>
-                                                                        </div>
-                                                                        <span class="help-block">
-                                                                            <small>
-                                                                                Do some extra hash rounds depended of the key (32-128)
-                                                                            </small>
-                                                                        </span>  
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <div class="form-check mb-1 form-check-primary">
-                                                                            <input class="form-check-input rounded-circle" type="checkbox" value="" name="doHashSalting" id="doHashSalting" checked="">
-                                                                            <label class="form-check-label" for="doHashSalting">Hash salting</label>
-                                                                        </div>
-                                                                        <span class="help-block">
-                                                                            <small>
-                                                                                Add numbers to the hash function each round
-                                                                            </small>
-                                                                        </span>  
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3 mb-1 control-label"><u>Hash difficulty</u></label>
-                                                                <div class="col-12 col-sm-9 ">
-                                                                    <select id="hashDifficulty" name="hashDifficulty" class="form-control">
-                                                                        <option value="low" selected>Low</option>
-                                                                        <option value="medium">Medium</option>
-                                                                        <option value="high">High</option>
-                                                                    </select>
-                                                                    <span class="help-block">
-                                                                        <small>
-                                                                            Low: 50+ hash rounds, Medium: 500+, High: 2000+
-                                                                        </small>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3  control-label mb-1"><u>Performance</u></label>
-                                                                <div class="col-12 col-sm-9 ">
-                                                                    <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" value="" id="saveHashes" name="saveHashes">
-                                                                        <label class="form-check-label" for="saveHashes">Save hashed keys</label>
-                                                                    </div>
-                                                                    <span class="help-block">
-                                                                        <small>
-                                                                            Save time when encrypting / decrypting.
-                                                                        </small>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-none" id="divAdvancedSettings">
-                                                            <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3  control-label"><u>Encrypt Data</u></label>
-                                                                <div class="col-12 col-sm-9 ">
-                                                                    <div class="d-grid mb-1">
-                                                                        <button data-bs-toggle="modal" data-bs-target="#do-application-encryption" id="encryptApplicationModal" type="button" class="btn btn-sm btn-outline-success waves-effect"> 
-                                                                            <i class="mdi mdi-lock me-1"></i> 
-                                                                            <span>(Re-)Encrypt application data</span> 
-                                                                        </button>
-                                                                    </div>
-                                                                    <span class="help-block ">
-                                                                        <small>
-                                                                            This is recommended for paranoid users. It encrypts all saved keys and saved key hashes with a master password. 
-                                                                            Master password must be entered each time you visit the site. <br>
-                                                                            <b>When you have already encrypted your application you can use this button to change the master password.</b>
-                                                                        </small>
-                                                                    </span>
-                                                                    <div class="d-grid mt-2 mb-1">
-                                                                        <button id="removeApplicationEncryption" type="button" class="btn btn-sm btn-outline-warning waves-effect"> 
-                                                                            <i class="mdi mdi-lock-open me-1"></i> 
-                                                                            <span>Remove data encryption</span> 
-                                                                        </button>
-                                                                    </div>
-                                                                    <span class="help-block ">
-                                                                        <small>
-                                                                            Removes the encryption with custom master password and rolls back to the standard keys.
-                                                                        </small>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3  control-label"><u>Manual config</u></label>
-                                                                <div class="col-12 col-sm-9 ">
-                                                                    <div class="row">
-                                                                        <div class="col-8">
-                                                                            <input type="text" pattern="[0-9]*" name="ccValue" id="ccValue" class="form-control" placeholder="Crypto Config">
-                                                                        </div>
-                                                                        <div class="col-4">
-                                                                            <div class="d-grid mb-1">
-                                                                                <button id="setCc" type="button" class="btn btn-outline-success waves-effect"> 
-                                                                                    <i class="mdi mdi-save me-1"></i> 
-                                                                                    <span>Save</span> 
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-
-                                                                    </div>
-                                                                    <div class="row">
-                                                                        <div class="col-8">
-                                                                            <input type="text" pattern="[0-9]*" name="gcValue" id="gcValue" class="form-control" placeholder="General Config">
-                                                                        </div>
-                                                                        <div class="col-4">
-                                                                            <div class="d-grid mb-1">
-                                                                                <button id="setGc" type="button" class="btn btn-outline-success waves-effect"> 
-                                                                                    <i class="mdi mdi-save me-1"></i> 
-                                                                                    <span>Save</span> 
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-
-                                                                    </div>
-                                                                    <span class="help-block ">
-                                                                        <small>
-                                                                            Applies and saves configuration
-                                                                        </small>
-                                                                    </span>
-                                                                    
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3  control-label"><u>Storage</u></label>
-                                                                <div class="col-12 col-sm-9 ">
-                                                                    <div class="d-grid mb-1">
-                                                                        <button id="removeSavedHashes" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
-                                                                            <i class="mdi mdi-delete me-1"></i> 
-                                                                            <span>Clear stored hashes</span> 
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="d-grid mb-1">
-                                                                        <button id="removeSavedKeys" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
-                                                                            <i class="mdi mdi-delete me-1"></i> 
-                                                                            <span>Clear stored keys</span> 
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="d-grid mb-1">
-                                                                        <button id="removeSlotNames" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
-                                                                            <i class="mdi mdi-delete me-1"></i> 
-                                                                            <span>Clear slot names</span> 
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="d-grid mb-1">
-                                                                        <button id="removeConfig" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
-                                                                            <i class="mdi mdi-delete me-1"></i> 
-                                                                            <span>Clear config</span> 
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="d-grid">
-                                                                        <button id="removeAllData" type="button" class="btn btn-sm btn-outline-danger waves-effect"> 
-                                                                            <i class="mdi mdi-delete me-1"></i> 
-                                                                            <span>Clear all</span> 
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3  control-label"><u>Export data</u></label>
-                                                                <div class="col-12 col-sm-9 ">
-                                                                    <p class="mb-2"><b>Download</b> and <b>upload</b> saved keys / config</p>
-                                                                    <div class="form-check mb-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" name="useMasterPW" id="useMasterPW" checked>
-                                                                        <label class="form-check-label" for="useMasterPW">Use master password</label>
-                                                                    </div>
-                                                                    <input type="password" class="form-control d-none" id="masterPassword" name="masterPassword" placeholder="Master key">
-                                                                    <span class="help-block ">
-                                                                        <small>
-                                                                            Encrypt your data download with a custom password (the site uses your master password when your encrypted the application already)
-                                                                        </small>
-                                                                    </span>
-                                                                    <div class="form-check mb-1 mt-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" name="includeConfig" id="includeConfig">
-                                                                        <label class="form-check-label" for="includeConfig">Include saved settings in download</label>
-                                                                    </div>
-                                                                    <div class="form-check mb-1 mt-1 form-check-primary">
-                                                                        <input class="form-check-input rounded-circle" type="checkbox" name="includeSlotNames" id="includeSlotNames">
-                                                                        <label class="form-check-label" for="includeSlotNames">Include slot names in download</label>
-                                                                    </div>
-                                                                    <div class="row mt-2">
-                                                                        <div class="col-6">
-                                                                            <b>Export</b>
-                                                                            <div class="d-grid mb-1">
-                                                                                <button type="button" id="downloadSavedKeys" class="btn btn-xs btn-outline-pink waves-effect"> 
-                                                                                    <i class="mdi mdi-file-download me-1"></i> 
-                                                                                    <span>Download data</span> 
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-6">
-                                                                            <b>Import</b>
-                                                                            <input type="file" id="keyUpload" accept="application/json" class="form-control" style="padding: 0.25rem; font-size: 14px;">
-                                                                        </div>
-                                                                    </div>
-       
-                                                                </div>
-                                                            </div>
-                                                            <div class="input-group mb-2">
-                                                                <label class="col-12 col-sm-3  control-label"><u>Slot Names</u></label>
-                                                                <div class="col-12 col-sm-9 ">
-                                                                    <div class="row">
-                                                                        <div class="col-4">
-                                                                            <select class="form-select" name="keySlotChange">
-                                                                                <option value="1">Slot 1</option>
-                                                                                <option value="2">Slot 2</option>
-                                                                                <option value="3">Slot 3</option>
-                                                                                <option value="4">Slot 4</option>
-                                                                                <option value="5">Slot 5</option>
-                                                                                <option value="6">Slot 6</option>
-                                                                                <option value="7">Slot 7</option>
-                                                                                <option value="8">Slot 8</option>
-                                                                                <option value="9">Slot 9</option>
-                                                                                <option value="10">Slot 10</option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="col-5">
-                                                                            <input type="text" name="slotName" id="slotName" class="form-control" placeholder="New name">
-                                                                        </div>
-                                                                        <div class="col-3">
-                                                                            <button id="changeSlotName" type="button" class="btn btn-outline-success waves-effect"> 
-                                                                                <span>Save</span> 
-                                                                            </button>                                                                        
-                                                                        </div>
-                                                                    </div>
-                                                                    <span class="help-block ">
-                                                                        <small>
-                                                                            Change the name for each slot.
-                                                                        </small>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="input-group mb-2">
-                                                            <label class="col-12 col-sm-3  control-label"><u>Configuration</u></label>
-                                                            <div class="col-12 col-sm-9 ">
-                                                                <div class="d-grid">
-                                                                    <button id="saveSettings" type="button" class="btn btn-outline-success waves-effect"> 
-                                                                        <i class="mdi mdi-save me-1"></i> 
-                                                                        <span>Save settings</span> 
-                                                                    </button>
-                                                                </div>
-                                                                <span class="help-block">
-                                                                    <small>
-                                                                        Your settings get loaded each time you visit the site.
-                                                                    </small>
-                                                                </span>
-                                                            </div>
-                                                        </div>
+                                                <div class="ms-1">
+                                                    <button type="button" id="showFilesEncryption" class="btn btn-sm btn-outline-secondary rounded-pill">
+                                                        Files
+                                                    </button>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+                                        <div class="card-body" id="textEncryptionInput">
+                                            <div class="d-flex flex-row align-items-center" id="inputAction">
+                                                <span class="help-block me-auto">
+                                                    <small id="helpOutput">
+                                                        Enter the text you want to encrypt or decrypt:
+                                                    </small>
+                                                </span>
+                                                <i class="fs-4 mdi mdi-delete-circle-outline" id="clearInput" data-bs-container="#inputAction" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Clear Input"></i>
+                                            </div>
+                                            
+                                            <textarea id="inputText" class="form-control mb-1 border border-blue" style="resize: none;" name="inputText" placeholder="Your input here" rows="5"></textarea>
+                                            <p class="card-text text-muted">The site detects if your input is <span class="badge badge-outline-pink rounded-pill" id="encryptedPill">encrypted</span> or <span id="notEncryptedPill" class="badge bg-blue rounded-pill">not encrypted</span>.</p>
+                                        </div>
+                                        <div class="card-body d-none" id="fileEncryptionInput">
+                                            <div class="d-flex flex-row align-items-center" id="inputAction">
+                                                <span class="help-block me-auto">
+                                                    <small id="helpOutput">
+                                                        Select the files you want to encrypt or decrypt:
+                                                    </small>
+                                                </span>
+                                                
+                                            </div>
+                                            <div class="d-grid">
+                                                <button type="button" class="mb-2 btn  btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
+                                                    <span><i class="mdi mdi-file-upload mr-5"></i>Select Files</span>
+                                                </button>
+                                            </div>
+                                            
+                                            <div class="form-control border border-secondary rounded" style="height: 120px;" id="fileList" name="fileList">Selected files appear here...</div>
+                                            <p class="card-text text-muted">The site detects if your files are <span class="badge badge-outline-pink rounded-pill" id="encryptedFilesPill">encrypted</span> or <span id="notEncryptedFilesPill" class="badge bg-blue rounded-pill">not encrypted</span>.</p>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-xxl-1 col-lg-2 col-12 d-flex justify-content-center align-items-center mb-3">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
+                                        <i class="mdi mdi-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="col-xxl-3 col-lg-5 col-12 mb-xxl-0 mb-3">
+                                    <div class="card border-secondary border mb-3 w-100 h-100">
+                                        <div class="card-header" style="height: 60px;">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <!-- Left content -->
+                                                <div class="me-auto"><h2>Password</h2></div>
+                                        
+                                                <!-- Right content -->
+                                                <div>
+                                                    <a href="#PBKDF2Info" class="btn btn-xs btn-outline-secondary rounded-pill">
+                                                        Salted PBKDF2
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="card-body">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <span class="help-block me-auto">
+                                                    <small id="helpOutput">
+                                                        Enter or generate the encryption password:
+                                                    </small>
+                                                </span>
+                                                
+                                            </div>
+                                            </span>
+                                            <div class="d-flex flex-row align-items-center mb-1">
+                                                <div class="input-group " id="tooltip-copy">
+                                                    <input type="text" class="border border-secondary rounded-start form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password">
+                                                    <input type="password" class="border border-secondary rounded-start form-control" id="keyPassword" name="keyPassword" placeholder="Password">
+                                                    <button id="keyCopy" type="button" class="rounded-end btn input-group-text btn-outline-warning waves-effect" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Copy Password">
+                                                        <i id="keyCopyText" class="mdi mdi-content-copy me-1"></i>
+                                                        <i id="keyCopySuccess" class="mdi mdi-check-all d-none"></i>
+                                                        <i id="keyCopyFail" class="mdi mdi-close-circle-multiple d-none"></i> 
+                                                    </button>
+                                                </div>
+                                                <button id="keyGenerate" class="btn btn-outline-secondary waves-effect ms-1" style="min-width: 90px;" type="button" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Generate Password">
+                                                    <i id="keyGenerateText" class="mdi mdi-cached me-1"></i> 
+                                                    <i id="keyGenerateSuccess" class="mdi mdi-check-all d-none"></i> 
+                                                    <span>New</span> 
+                                                </button>
+                                            </div>
+                                            <div class="form-check form-check-primary">
+                                                <input class="form-check-input rounded-circle" type="checkbox" value="" name="hideKey" id="hideKey" checked>
+                                                <label class="form-check-label" for="hideKey">Hide Password</label>
+                                            </div>
+                                            <hr class="mt-1 mb-1">
+                                            <h5 class="mb-0">Local Password Manager</h5>
+                                            <div class="d-flex flex-row align-items-center" id="slotAction">
+                                                <span class="help-block me-auto">
+                                                    <small>
+                                                        Load or save passwords
+                                                    </small>
+                                                </span>
+                                                <i class="fs-4 mdi mdi-circle-edit-outline" id="renameSlots" data-bs-container="#slotAction" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Rename Slots"></i>
+                                            </div>
+                                            <div class="input-group" >
+                                                
+                                                <div class="d-flex flex-row align-items-center w-100" id="tooltip-password">
+                                                    <div class="me-auto flex-grow-1">
+                                                        <select class="border border-secondary form-select w-100" id="keySlot" name="keySlot">
+                                                            <option value="1">Slot 1</option>
+                                                            <option value="2">Slot 2</option>
+                                                            <option value="3">Slot 3</option>
+                                                            <option value="4">Slot 4</option>
+                                                            <option value="5">Slot 5</option>
+                                                            <option value="6">Slot 6</option>
+                                                            <option value="7">Slot 7</option>
+                                                            <option value="8">Slot 8</option>
+                                                            <option value="9">Slot 9</option>
+                                                            <option value="10">Slot 10</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <button type="button" id="loadKey" class=" ms-1 btn btn-outline-secondary waves-effect" > 
+                                                            <i id="loadKeyFail" class="mdi d-none mdi-close-circle-multiple"></i> 
+                                                            <i id="loadKeySuccess" class="mdi mdi-check-all d-none"></i> 
+                                                            <span id="loadKeyText">Load</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="ms-1">
+                                                        <button type="button" id="saveKey" class="btn btn-outline-secondary waves-effect mr-2" > 
+                                                            <i id="saveKeySuccess" class="mdi mdi-check-all d-none"></i> 
+                                                            <i id="saveKeyFail" class="mdi mdi-close-circle-multiple d-none"></i> 
+                                                            <span id="saveKeyText">Save</span> 
+                                                        </button>
                                                     </div>
                                                 </div>
-                                            </div> 
+                                            </div>
+                                            <p class="card-text position-absolute bottom-0 end-0 m-2">
+                                                <u id="PBKDF2Options">Open PBKDF2 Options</u>
+                                            </p>
                                         </div>
-                                    </div> 
-                                </form>
-                              
+                                    </div>
+                                </div>
+                                <div class="col-xxl-1 col-lg-12 d-flex justify-content-center align-items-center mb-3 pe-xxl-4" id="tooltip-encrypt">
+                                    <button type="button" id="actionRight" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-none d-xxl-block" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
+                                        <i class="mdi mdi-arrow-right-thick ladda-label"></i>
+                                    </button>
+                                    <button type="button" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-xxl-none"  data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
+                                        <i class="mdi mdi-arrow-down-bold ladda-label"></i>
+                                    </button>
+                                </div>
+                                <div class="col-xxl-4 col-lg-12">
+                                    <div class="card border-secondary border mb-3 h-100 w-100">
+                                        <div class="card-header" style="height: 60px;">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <div class="me-auto"><h2>Output</h2></div>
+                                                <a href="#AESGCMInfo" class="btn btn-xs btn-outline-secondary rounded-pill">
+                                                    AES-GCM | 256-bit
+                                                </a>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="card-body" id="textEncryptionOutput">
+                                            <span class="help-block  d-none d-xxl-block">
+                                                <small">
+                                                    Click  <i class="mdi mdi-arrow-right-circle-outline"></i> to start the <span class="action-explanation">encryption</span>.
+                                                </small>
+                                            </span>
+                                            <span class="help-block d-xxl-none">
+                                                <small>
+                                                    Click  <i class="mdi mdi-arrow-down-circle-outline"></i> to start <span class="action-explanation">encryption</span>.
+                                                </small>
+                                            </span>
+                                        
+                                            <div class="input-group mb-2" >
+                                                <div class="col-12">
+                                                    <textarea class="form-control border border-pink" id="outputText" name="outputText" style="resize: none;" readonly placeholder="The encryption result appears here" rows="5"></textarea>
+                                                    <span class="help-block">
+                                                        <small id="outputFooter">
+                                                            Encrypted output is base64 formatted.
+                                                        </small>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="input-group mb-2" id="divCopyOutput">
+                                                <div class="col-12 ">
+                                                    <div class="d-grid">
+                                                        <button id="copyOutput" type="button" class="btn btn-sm btn-outline-warning waves-effect"> 
+                                                            <i id="copyOutputText" class="mdi mdi-content-copy me-1"></i> 
+                                                            <i id="copyOutputSuccess" class="mdi mdi-check-all me-1 d-none"></i> 
+                                                            <i id="copyOutputFail" class="mdi mdi-close-circle-multiple me-1 d-none"></i> 
+                                                            <span>Copy Output</span> 
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body d-none" id="fileEncryptionOutput">
+                                            <span class="help-block  d-none d-xxl-block">
+                                                <small">
+                                                    Click  <i class="mdi mdi-arrow-right-circle-outline"></i> to start the <span class="action-explanation">encryption</span>.
+                                                </small>
+                                            </span>
+                                            <span class="help-block d-xxl-none">
+                                                <small>
+                                                    Click  <i class="mdi mdi-arrow-down-circle-outline"></i> to start <span class="action-explanation">encryption</span>.
+                                                </small>
+                                            </span>
+                                        
+                                            <div class="input-group mb-2" >
+                                                <div class="col-12">
+                                                    <div class="form-control border border-secondary rounded" style="height: 120px;"id="outputFiles" name="outputFiles">The encrypted files appears here</div>
+                                                    <span class="help-block">
+                                                        <small id="outputFooter">
+                                                            Encrypted files are in raw binary format.
+                                                        </small>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <hr>
+                            <div class="row">
+                                <!-- Card 1 -->
+                                <div class="col-lg-4 col-xxl-3 col-12 mb-3">
+                                  <div class="card border-dashed border-secondary border h-100">
+                                    <div class="card-header">
+                                      <div class="row align-items-center">
+                                        <div class="col">
+                                          <h2 class="h4 mb-0">How is the data encrypted?</h2>
+                                        </div>
+                                        <h3 class="col-auto mt-3">
+                                          <i class="mdi mdi-forwardburger"></i>
+                                        </h3>
+                                      </div>
+                                    </div>
+                                    <div class="card-subtitle px-3 pt-2">
+                                      <span class="help-block">
+                                        <small>What happens with the data?</small>
+                                      </span>
+                                    </div>
+                                    <div class="card-body">
+                                      <blockquote class="blockquote mb-2">
+                                        <p>
+                                          Encrypti0n.com's algorithms are secure by default. Your data gets encrypted with an AES-GCM algorithm with a securely derived 256-bit key directly using the web crypto API on your device.
+                                        </p>
+                                        <p>
+                                          The 256-bit key gets derived using your input password and the PBKDF2 key derivation algorithm.
+                                        </p>
+                                      </blockquote>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-xxl-1 d-none d-xxl-flex d-flex justify-content-center align-items-center mb-3">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
+                                        <i class="mdi mdi-plus"></i>
+                                    </button>
+                                </div>
+                              
+                                <!-- Card 2 -->
+                                <div class="col-lg-4 col-xxl-3 col-12 mb-3" id="PBKDF2Info">
+                                  <div class="card border-dashed border-secondary border h-100">
+                                    <div class="card-header">
+                                      <div class="row align-items-center">
+                                        <div class="col">
+                                          <h2 class="h4 mb-0">What is the PBKDF2 key derivation algorithm?</h2>
+                                        </div>
+                                        <h3 class="col-auto mt-3">
+                                          <i class="mdi mdi-file-code-outline"></i>
+                                        </h3>
+                                      </div>
+                                    </div>
+                                    <div class="card-subtitle px-3 pt-2">
+                                      <span class="help-block">
+                                        <small>What happens with the password?</small>
+                                      </span>
+                                    </div>
+                                    <div class="card-body">
+                                      <blockquote class="blockquote mb-2">
+                                        <p>
+                                          PBKDF2 is explicitly designed for password-based key derivation. It mitigates the risks of using a weak password by introducing computational cost and salting to resist brute-force and rainbow table attacks.
+                                        </p>
+                                                
+                                        <p>
+                                          You can customize the rounds and salt by opening the <u>PBKDF2 Options</u> (if you know what you are doing).
+                                        </p>
+                                        <p>
+                                          <i>By default, the site uses a random, secure 16-byte salt and 5M SHA-256 rounds on every action.</i>
+                                        </p>
+                                      </blockquote>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-xxl-1 d-none d-xxl-flex d-flex justify-content-center align-items-center mb-3">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
+                                        <i class="mdi mdi-arrow-right-thick"></i>
+                                    </button>
+                                </div>
+                              
+                                <!-- Card 3 -->
+                                <div class="col-lg-4 col-xxl-4 col-12 mb-3" id="AESGCMInfo">
+                                  <div class="card border-dashed border-secondary border h-100">
+                                    <div class="card-header">
+                                      <div class="row align-items-center">
+                                        <div class="col">
+                                          <h2 class="h4 mb-0">What is AES-GCM Encryption?</h2>
+                                        </div>
+                                        <h3 class="col-auto mt-3">
+                                          <i class="mdi mdi-lock"></i>
+                                        </h3>
+                                      </div>
+                                    </div>
+                                    <div class="card-subtitle px-3 pt-2">
+                                      <span class="help-block">
+                                        <small>What is the output?</small>
+                                      </span>
+                                    </div>
+                                    <div class="card-body">
+                                      <blockquote class="blockquote mb-2">
+                                        <p>
+                                          AES-GCM 256-bit encryption is an advanced cryptographic method combining the AES algorithm with GCM mode, which provides both data encryption and integrity verification.
+                                        </p>
+                                        <p>
+                                          AES-GCM is secure because it uses AES in counter mode to encrypt data, ensuring confidentiality. It also generates a Galois authentication tag to verify integrity and detect tampering.
+                                        </p>
+                                        <p>
+                                          <i>By default, the site generates a new random, secure 12-byte nonce on every action.</i>
+                                        </p>
+                                      </blockquote>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div> 
-                <div id="do-application-encryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                <div id="do-application-encryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="encryptApplication-Modal" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Encrypt Entire Application</h4>
+                                <h4 class="modal-title">Encrypt Application Data</h4>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-4">
@@ -678,33 +631,39 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <p>
-                                                Encrypts your <b>saved keys</b> and <b>key cache</b> with a master password.
-                                                <!--Encrypts your <b>saved keys</b>, <b>key cache</b> and <b>slot names</b> with a master password.-->
+                                                Encrypts <b>all locally saved data (e.g. passwords, names, configs etc.)</b> with a master password.
                                             </p>
                                             <p>
-                                                Don't close the window or browser tab while encrypting. It may take a few seconds.
+                                                The encryption process uses AES-GCM and PBKDF2 with a random salt and 5M rounds. Don't close the windows while encrypting.
                                             </p>
                                             <p>
                                                 <b>Attention:</b> If you forget your master password, you can't decrypt your app data anymore.
                                             </p>                                          
                                             <div class="mb-3">
-                                                <label for="field-2" class="form-label">(New) Master Password</label>
-                                                <input name="encryptApplicationMPw" type="password" class="form-control" id="field-2" placeholder="Secure Password">
+                                                <label for="field-2" class="form-label">Master Password</label>
+                                                <input name="encryptApplicationMPw" type="password" class="form-control border border-secondary" id="encryptApplicationPw" placeholder="Secure Password">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="field-3" class="form-label">Re-Enter (New) Password</label>
-                                                <input name="encryptApplicationMPwConfirmation" type="password" class="form-control" id="field-3">
+                                                <label for="field-3" class="form-label">Confirm Password</label>
+                                                <input name="encryptApplicationMPwConfirmation" type="password" class="form-control border border-secondary" id="encryptApplicationPwConfirmation">
                                             </div>
+                                            <p class="text-pink d-none" id="encryptApplicationMatchFail">
+                                                The two entered passwords don't match.
+                                            </p>
+                                            <p class="text-pink d-none" id="encryptApplicationMissingPw">
+                                                You have to enter your secure master password two times to encrypt the applications data.
+                                            </p>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                                <button type="button" id="encryptApplication" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
-                                    <span class="ladda-label">
+                                <button type="button" id="encryptApplication" class="ladda-button btn btn-pink waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                    <span class="ladda-label" id="encryptApplicationText">
                                         Encrypt!
                                     </span>
+                                    <i id="loadKeySuccess" class="mdi mdi-check-all d-none"></i>
                                     <span class="ladda-spinner"></span>
                                 </button>
                             </div>
@@ -715,28 +674,164 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">The Application Is Encrypted</h4>
+                                <h4 class="modal-title">The Application is Encrypted</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body p-4">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p>
-                                           Please decrypt with your master password:
-                                        </p>
-                                        
-                                        <div class="mb-3">
-                                            <label for="field-3" class="form-label">Master Password</label>
-                                            <input id="decryptApplicationMPw" type="password" class="form-control" id="field-3">
+                            <form role="form" id="applicationDecryptionForm">
+                                <div class="modal-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p>
+                                            To use saved data, please decrypt with your master password:
+                                            </p>
+                                            
+                                            <div class="mb-3">
+                                                <label for="field-3" class="form-label">Master Password</label>
+                                                <input name="decryptApplicationMPw" type="password" class="form-control border border-secondary" id="field-3">
+                                            </div>
+                                            <p>
+                                                If you don't remember your master password, deleting data is the only option.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="modal-footer d-flex justify-content-between">
+                                    <button type="button" id="removeLocalDataDecryptionModal" class="btn btn-outline-danger waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                        <span>Delete all data</span>
+                                        
+                                    </button>
+                                    <button type="button" id="decryptApplication" class="ladda-button btn btn-blue waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                        <span class="ladda-label" id="decryptApplicationText">Decrypt!</span>
+                                        <i id="decryptApplicationFail" class="mdi mdi-close-circle-multiple d-none"></i> 
+                                        <span class="ladda-spinner"></span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div id="pbkdf2-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="pbkdf2-modal-label" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title" id="pbkdf2-modal-label">Configure PBKDF2 Algorithm</h4>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                          <form role="form" id="pbkdf2-form">
+                            <div class="row">
+                              <div class="col-md-12">
+                                <p>
+                                  <b>Set Hash Round Number</b>
+                                  <br>
+                                  <span class="help-block">
+                                    <small>
+                                      Low: 100k rounds <br>
+                                      Middle: 5M rounds <br>
+                                      High: 10M rounds
+                                    </small>
+                                  </span>
+                                </p>
+                                <div class="d-flex flex-row align-items-center">
+                                  <div>
+                                    <button type="button" id="round-low" class="btn btn-sm btn-outline-secondary rounded-pill">
+                                      Low
+                                    </button>
+                                  </div>
+                                  <div class="ms-1">
+                                    <button type="button" id="round-middle" class="btn btn-sm btn-secondary rounded-pill">
+                                      Middle
+                                    </button>
+                                  </div>
+                                  <div class="ms-1">
+                                    <button type="button" id="round-high" class="btn btn-sm btn-outline-secondary rounded-pill">
+                                      High
+                                    </button>
+                                  </div>
+                                </div>
+                                <hr>
+                                <p class="mt-3">
+                                  <b>Set Salt Length</b>
+                                  <br>
+                                  <span class="help-block">
+                                    <small>
+                                      Low: Random 12-byte <br>
+                                      High: Random 16-byte
+                                    </small>
+                                  </span>
+                                </p>
+                                <div class="d-flex flex-row align-items-center">
+                                  <div>
+                                    <button type="button" id="salt-low" class="btn btn-sm btn-outline-secondary rounded-pill">
+                                      Low
+                                    </button>
+                                  </div>
+                                  <div class="ms-1">
+                                    <button type="button" id="salt-high" class="btn btn-sm btn-secondary rounded-pill">
+                                      High
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                          <button type="button" id="pbkdf2-save" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in">
+                            <i id="saveOptionsSuccess" class="mdi mdi-check-all d-none"></i> 
+                            <i id="saveOptionsFail" class="mdi mdi-close-circle-multiple d-none"></i> 
+                            <span id="saveOptionsText">Save Settings</span> 
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div id="renameSlotsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="renameSlots" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Rename Slots</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <form role="form" id="newSlotForm">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="input-group mb-2">
+                                                <b class="mb-1">Change the name for each slot:</b>
+                                                <div class="d-flex flex-row align-items-center w-100">
+                                                    <div class="me-auto">
+                                                        <select class="form-select border border-secondary" name="keySlotChange">
+                                                            <option value="1">Slot 1</option>
+                                                            <option value="2">Slot 2</option>
+                                                            <option value="3">Slot 3</option>
+                                                            <option value="4">Slot 4</option>
+                                                            <option value="5">Slot 5</option>
+                                                            <option value="6">Slot 6</option>
+                                                            <option value="7">Slot 7</option>
+                                                            <option value="8">Slot 8</option>
+                                                            <option value="9">Slot 9</option>
+                                                            <option value="10">Slot 10</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="flex-grow-1 ms-1">
+                                                        <input type="text" name="slotName" id="slotName" class="form-control border border-secondary" placeholder="New name">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" id="decryptApplication" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
-                                    <span class="ladda-label">
-                                        Decrypt!
+                                <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                                <button type="button" id="renameSlotAction" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                    <span id="renameSlotActionText">
+                                        Save Slot Name
                                     </span>
-                                    <span class="ladda-spinner"></span>
+                                    <i id="renameSlotActionSuccess" class="mdi mdi-check-all d-none"></i>
+                                    <i id="renameSlotActionFail" class="mdi mdi-close-circle-multiple d-none"></i>
                                 </button>
                             </div>
                         </div>
@@ -746,7 +841,15 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-6">
-                                <div><script>document.write(new Date().getFullYear())</script> © Encrypti0n.com - No cookies. No tracking. Version <b id="version"></b></div>
+                                <div><script>document.write(new Date().getFullYear())</script> © Encrypti0n.com Version <b class="version"></b></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="footer-links d-flex flex-column flex-md-row gap-2 gap-md-4 align-items-start align-items-md-center justify-content-start justify-content-md-end">
+                                    <a href="/about.html">About</a>
+                                    <a href="/privacy-policy.html">Privacy Policy</a>
+                                    <a href="/download-app.html">Download Project</a>
+                                    <a href="/contact.html">Contact</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -763,7 +866,7 @@
         <!-- Toast-->
         <script src="assets/libs/jquery-toast-plugin/jquery.toast.min.js" defer></script>
 
-       <!-- Sweet Alerts js -->
+        <!-- Sweet Alerts js -->
         <script src="assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
 
 
@@ -772,9 +875,6 @@
         <script src="assets/libs/ladda/ladda.min.js" defer></script>
 
         <!-- App JS-->
-        <script src="app/crypto.js" defer></script>
-        <script src="app/lib.js" defer></script>
-        <script src="app/main.js" defer></script>
-
+        <script type="module" src="app/index.js" defer></script>
     </body>
 </html>

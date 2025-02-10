@@ -7,106 +7,92 @@ import { EncryptionService } from '../services/EncryptionService.js';
 import { pbkdf2Service } from '../services/pbkdf2Service.js';
 import { ConfigManager } from '../services/configManagement/ConfigManager.js';
 
-
-/**
- * Binds to UI elements and orchestrates:
- * - text encryption/decryption
- * - file encryption/decryption
- * - saving/loading keys
- * - renaming slots
- * - saving settings
- * - clearing local data
- */
 export class MainController {
+  /**
+   * @param {string} formId - The id of the main form.
+   */
   constructor(formId) {
-    // Dependencies
     this.formHandler = new FormHandler(formId);
     this.storageService = new StorageService();
     this.encryptionService = new EncryptionService();
-    this.confManager = new ConfigManager();
-    this.pbkdf2Service = new pbkdf2Service('pbkdf2-modal',this.confManager);
-
-    this.appVersion = "3.0.0a4";
-    this.doFiles = false;
+    this.configManager = new ConfigManager();
+    this.pbkdf2Service = new pbkdf2Service('pbkdf2-modal', this.configManager);
     
-    this.bindButtons();
+    // Application state and version
+    this.appVersion = "3.0.0a5";
+    this.doFiles = false;
+    this.actionInProgress = false;
+    this.actionInProgressCopy = false;
+  }
+
+  /**
+   * Initialize the controller
+   */
+  init() {
+    this.bindUIEvents();
     this.initUI();
   }
 
-  // Example of your original "bindInputs" approach:
-  bindButtons() {
-   
-    document.querySelectorAll('.action-button').forEach(button => {
-      button.addEventListener('click', () => {
-          this.handleAction(); 
-        });
-    });
+  /**
+   * Bind all DOM events using jQuery.
+   */
+  bindUIEvents() {
+    // General actions
+    $('.action-button').on('click', () => this.handleAction());
+    $('#inputText').on('input', (event) => this.handleDataChange(event));
+    $('#showTextEncryption').on('click', () => this.showTextInput());
+    $('#showFilesEncryption').on('click', () => this.showFileInput());
+    $('#PBKDF2Options').on('click', () => $('#pbkdf2-modal').modal('show'));
+    $('#renameSlots').on('click', () => $('#renameSlotsModal').modal('show'));
 
-    document.getElementById('inputText').addEventListener('input', (event) => this.handleDataChange(event));
-    document.getElementById('showTextEncryption').addEventListener('click', () => this.showTextInput());
-    document.getElementById('showFilesEncryption').addEventListener('click', () => this.showFileInput());
-    document.getElementById('PBKDF2Options').addEventListener('click', () => $('#pbkdf2-modal').modal('show'));
-    document.getElementById('renameSlots').addEventListener('click', () => $('#renameSlotsModal').modal('show'));
-    /*
-    // Master password encryption of the application:
-    */
-    
-    document.getElementById('encryptApplication').addEventListener('click', () => this.handleAppEncrypt());
-    document.getElementById('decryptApplication').addEventListener('click', () => this.handleAppDecrypt());
-    document.getElementById('removeApplicationEncryption').addEventListener('click', () => this.handleAppEncryptionRemove());
-    document.getElementById('encryptApplicationModal').addEventListener('click', () => this.handleAppEncryptModal());
-    // document.getElementById('removeApplicationEncryption').addEventListener('click', () => this.handleAppEncryptionRemove());
-    
-    // Clear text / copy output:
-    document.getElementById('clearInput').addEventListener('click', () => this.clearInput());
-    document.getElementById('copyOutput').addEventListener('click', () => this.copyOutput());
-    
-    document.getElementById('renameSlotAction').addEventListener('click', () => this.changeSlotName());
-    /*
-    // File input:
-    document.getElementById('inputFiles').addEventListener('change', () => this.updateFileList());
-    //document.getElementById('fileEncrypt').addEventListener('click', () => this.handleFileEncrypt());
-    //document.getElementById('fileDecrypt').addEventListener('click', () => this.handleFileDecrypt());
+    // Master password actions
+    $('#encryptApplication').on('click', () => this.handleAppEncrypt());
+    $('#decryptApplication').on('click', () => this.handleAppDecrypt());
+    $('#removeApplicationEncryption').on('click', () => this.handleAppEncryptionRemove());
+    $('#encryptApplicationModal').on('click', () => this.handleAppEncryptModal());
 
-    // Manage keys:
-    */
-    document.getElementById('keyGenerate').addEventListener('click', () => this.keyGenerate());
-    document.getElementById('keyCopy').addEventListener('click', () => this.keyCopy());
-    document.getElementById('hideKey').addEventListener('change', () => this.toggleKey());
-    document.getElementById('loadKey').addEventListener('click', () => this.loadKey());
-    document.getElementById('saveKey').addEventListener('click', () => this.saveKey());
+    // Text and output actions
+    $('#clearInput').on('click', () => this.clearInput());
+    $('#copyOutput').on('click', () => this.copyOutput());
 
-    document.getElementById('removeAllData').addEventListener('click', () => this.removeAllData());
-    document.getElementById('removeLocalDataDecryptionModal').addEventListener('click', () => this.removeAllData());
-    
+    // Key management
+    $('#renameSlotAction').on('click', () => this.changeSlotName());
+    $('#keyGenerate').on('click', () => this.keyGenerate());
+    $('#keyCopy').on('click', () => this.keyCopy());
+    $('#hideKey').on('change', () => this.toggleKey());
+    $('#loadKey').on('click', () => this.loadKey());
+    $('#saveKey').on('click', () => this.saveKey());
+
+    // Local data clearing
+    $('#removeAllData').on('click', () => this.removeAllData());
+    $('#removeLocalDataDecryptionModal').on('click', () => this.removeAllData());
+
+    // File input and file operations
+    $('#inputFiles').on('change', () => this.updateFileList());
   }
 
+  /**
+   * Initialize the UI with default values and perform compatibility checks.
+   */
   async initUI() {
     $(".version").text(this.appVersion);
-
-    if (this.confManager.isUsingMasterPassword()) {
+    if (this.configManager.isUsingMasterPassword()) {
       ElementHandler.disable('encryptApplicationModal');
       $(document).off('click', '#encryptApplicationModal');
       $('#do-application-decryption').modal('show');
     } else {
-      const slotNames = await this.confManager.readSlotNames();
+      const slotNames = await this.configManager.readSlotNames();
       ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
       await this.pbkdf2Service.loadOptions();
+      const randomKey = Math.random().toString(36).substring(2) + Date.now().toString(36);
+      this.formHandler.setFormValue('keyBlank', randomKey);
+      this.formHandler.setFormValue('keyPassword', randomKey);
     }
-    // no crypto api error message
-    if (!window.crypto || !window.crypto.subtle) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Your browser does not support this application.',
-        text: "Please update your browser or system.",
-        showCancelButton: false,
-        confirmButtonText: "Ok"
-      })
-    }
-    //this.updateFileList();
   }
 
-  showFileInput () {
+  // ––––––– UI Toggle Methods –––––––
+
+  showFileInput() {
     ElementHandler.fillButtonGray('showFilesEncryption');
     ElementHandler.emptyButtonGray('showTextEncryption');
     ElementHandler.show('fileEncryptionInput');
@@ -116,7 +102,7 @@ export class MainController {
     this.doFiles = true;
   }
 
-  showTextInput () {
+  showTextInput() {
     ElementHandler.emptyButtonGray('showFilesEncryption');
     ElementHandler.fillButtonGray('showTextEncryption');
     ElementHandler.hide('fileEncryptionInput');
@@ -126,39 +112,36 @@ export class MainController {
     this.doFiles = false;
   }
 
-  async handleAction() {
-    const { inputText } = this.formHandler.formValues;
-  
-    if (this.actionInProgress) return;
-  
-    this.actionInProgress = true;
+  // ––––––– Action Orchestration –––––––
 
+  async handleAction() {
+    if (this.actionInProgress) return;
+    this.actionInProgress = true;
+    const { inputText } = this.formHandler.formValues;
     const laddaManager = new LaddaButtonManager('.action-button');
     laddaManager.startAll();
     laddaManager.setProgressAll(0.75);
-  
+
     try {
       const isEncrypted = await this.encryptionService.isEncrypted(inputText);
       let result = false;
-  
       if (isEncrypted) {
-        ElementHandler.fillButtonClassBlue('action-button');
         result = await this.handleDecrypt();
         laddaManager.setProgressAll(1);
         if (!result) {
           ElementHandler.arrowsToCross();
+          this.formHandler.setFormValue('outputText', null);
+          ElementHandler.setPlaceholderById('outputText', 'Decryption failed. Please check data or password.');
         }
-        ElementHandler.emptyButtonClassBlue('action-button');
       } else {
-        ElementHandler.fillButtonClassPink('action-button');
         result = await this.handleEncrypt();
         laddaManager.setProgressAll(1);
         if (!result) {
           ElementHandler.arrowsToCross();
+          this.formHandler.setFormValue('outputText', null);
+          ElementHandler.setPlaceholderById('outputText', 'Encryption failed. Please check data or password.');
         }
-        ElementHandler.emptyButtonClassPink('action-button');
       }
-  
       await this.postActionHandling(result, laddaManager);
     } catch (error) {
       console.error('Action handling failed:', error);
@@ -168,7 +151,7 @@ export class MainController {
       this.actionInProgress = false;
     }
   }
-  
+
   async postActionHandling(result, laddaManager) {
     if (result) {
       laddaManager.stopAll();
@@ -181,28 +164,31 @@ export class MainController {
       ElementHandler.crossToArrows();
     }
   }
-  
+
   delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  /**********************************
-   * Simple text encryption/decryption
-   **********************************/
+  // ––––––– Encryption/Decryption Methods –––––––
+
   async handleEncrypt() {
     const { inputText, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     const passphrase = hideKey ? keyPassword : keyBlank;
-    if (!inputText || !passphrase) {
-      return false;
-    }
+    if (!inputText || !passphrase) return false;
     const algo = 'aesgcm';
-   
     try {
-      const usedOptions = await pbkdf2Service.getCurrentOptions(this.confManager);
-      const encryptedB64 = await this.encryptionService.encryptData(inputText, passphrase, algo, usedOptions.roundDifficulty, usedOptions.saltDifficulty);
+      const usedOptions = await pbkdf2Service.getCurrentOptions(this.configManager);
+      const encryptedB64 = await this.encryptionService.encryptData(
+        inputText,
+        passphrase,
+        algo,
+        usedOptions.roundDifficulty,
+        usedOptions.saltDifficulty
+      );
       this.formHandler.setFormValue('outputText', encryptedB64);
       return true;
     } catch (err) {
+      console.log(err);
       return false;
     }
   }
@@ -210,9 +196,7 @@ export class MainController {
   async handleDecrypt() {
     const { inputText, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     const passphrase = hideKey ? keyPassword : keyBlank;
-    if (!inputText || !passphrase) {
-      return false;
-    }
+    if (!inputText || !passphrase) return false;
     try {
       const decrypted = await this.encryptionService.decryptData(inputText, passphrase);
       this.formHandler.setFormValue('outputText', decrypted);
@@ -222,9 +206,8 @@ export class MainController {
     }
   }
 
-  async handleDataChange (event) {
+  async handleDataChange(event) {
     const inputText = event.target.value;
-
     const isEncrypted = await this.encryptionService.isEncrypted(inputText.trim());
 
     if (isEncrypted) {
@@ -232,41 +215,31 @@ export class MainController {
       ElementHandler.pinkToBlueBorder("outputText");
       ElementHandler.emptyPillBlue("notEncryptedPill");
       ElementHandler.fillPillPink("encryptedPill");
-      ElementHandler.buttonClassPinkToBlueOutline("action-button");
-      document.getElementById('outputText').setAttribute('placeholder', 'The decryption result appears here');
-      document.querySelectorAll('.action-explanation').forEach(span => {
-        span.textContent = 'decryption';
-     });
-        document.querySelectorAll('.action-button').forEach(button => {
-          button.setAttribute('data-bs-original-title', 'Decrypt with AES-GCM-256');
-      });
-      document.getElementById('outputFooter').textContent = "Decrypted output is UTF-8 formatted.";
+      ElementHandler.buttonClassPinkToBlue("action-button");
+      $('#outputText').attr('placeholder', 'The decryption result appears here');
+      $('.action-explanation').text('decryption');
+      $('.action-button').attr('data-bs-original-title', 'Decrypt with AES-GCM-256');
+      $('#outputFooter').text("Decrypted output is UTF-8 formatted.");
     } else {
       ElementHandler.pinkToBlueBorder("inputText");
       ElementHandler.blueToPinkBorder("outputText");
       ElementHandler.fillPillBlue("notEncryptedPill");
       ElementHandler.emptyPillPink("encryptedPill");
-      ElementHandler.buttonClassBlueToPinkOutline("action-button");
-      document.getElementById('outputText').setAttribute('placeholder', 'The encryption result appears here');
-      document.querySelectorAll('.action-explanation').forEach(span => {
-        span.textContent = 'encryption';
-      });
-      document.querySelectorAll('.action-button').forEach(button => {
-          button.setAttribute('data-bs-original-title', 'Encrypt with AES-GCM-256');
-      });
-      document.getElementById('outputFooter').textContent = "Encrypted output is base64 formatted.";
+      ElementHandler.buttonClassBlueToPink("action-button");
+      $('#outputText').attr('placeholder', 'The encryption result appears here');
+      $('.action-explanation').text('encryption');
+      $('.action-button').attr('data-bs-original-title', 'Encrypt with AES-GCM-256');
+      $('#outputFooter').text("Encrypted output is base64 formatted.");
     }
   }
 
-  /**********************************
-   * Master Password encryption (application-level)
-   **********************************/
+  // ––––––– Master Password & Application Encryption Methods –––––––
+
   async handleAppEncrypt() {
-    
     ElementHandler.hide('encryptApplicationMissingPw');
     ElementHandler.hide('encryptApplicationMatchFail');
-    
-    const { encryptApplicationMPw, encryptApplicationMPwConfirmation } = new FormHandler("encryptApplicationForm").getFormValues();
+    const formHandlerLocal = new FormHandler("encryptApplicationForm");
+    const { encryptApplicationMPw, encryptApplicationMPwConfirmation } = formHandlerLocal.getFormValues();
     if (!encryptApplicationMPw || !encryptApplicationMPwConfirmation) {
       ElementHandler.show('encryptApplicationMissingPw');
       return;
@@ -275,12 +248,12 @@ export class MainController {
       ElementHandler.show('encryptApplicationMatchFail');
       return;
     }
-    const laddaEncryptApplication = Ladda.create(document.getElementById('encryptApplication'));
-
+    const laddaEncryptApplication = Ladda.create($('#encryptApplication')[0]);
     try {
       laddaEncryptApplication.start();
       laddaEncryptApplication.setProgress(0.7);
-      await this.confManager.setMasterPassword(encryptApplicationMPw);
+      await this.configManager.setMasterPassword(encryptApplicationMPw);
+      $('#do-application-encryption').modal('hide');
       Swal.fire({
         icon: 'success',
         title: 'The application is encrypted!',
@@ -289,35 +262,32 @@ export class MainController {
         showCancelButton: false,
         confirmButtonText: "Ok",
       });
-      
     } catch (err) {
-      
+      console.error(err);
     } finally {
       laddaEncryptApplication.stop();
-    }   
+    }
   }
 
   async handleAppDecrypt() {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
-
-    const { decryptApplicationMPw } = new FormHandler('applicationDecryptionForm').getFormValues();
+    const formHandlerLocal = new FormHandler('applicationDecryptionForm');
+    const { decryptApplicationMPw } = formHandlerLocal.getFormValues();
     if (!decryptApplicationMPw) {
-      ElementHandler.buttonRemoveTextAddFail('decryptApplication');
+      ElementHandler.buttonRemoveTextAddFail("decryptApplication");
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('decryptApplication');
+      ElementHandler.buttonRemoveStatusAddText("decryptApplication");
       this.actionInProgress = false;
       return;
     }
-    const laddaDecryptApplication = Ladda.create(document.getElementById('decryptApplication'));
-
+    const laddaDecryptApplication = Ladda.create($('#decryptApplication')[0]);
     try {
       laddaDecryptApplication.start();
       laddaDecryptApplication.setProgress(0.7);
-
-      await this.confManager.unlockSession(decryptApplicationMPw);
+      await this.configManager.unlockSession(decryptApplicationMPw);
       $('#do-application-decryption').modal('hide');
-      const slotNames = await this.confManager.readSlotNames();
+      const slotNames = await this.configManager.readSlotNames();
       ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
       ElementHandler.show('removeApplicationEncryption');
       ElementHandler.hide('encryptApplicationModal');
@@ -332,13 +302,14 @@ export class MainController {
       });
       this.actionInProgress = false;
     } catch (err) {
-      ElementHandler.buttonRemoveTextAddFail('decryptApplication');
-      await this.delay(500);
-      ElementHandler.buttonRemoveStatusAddText('decryptApplication');
+      laddaDecryptApplication.stop();
+      ElementHandler.buttonRemoveTextAddFail("decryptApplication");
+      await this.delay(1000);
+      ElementHandler.buttonRemoveStatusAddText("decryptApplication");
       this.actionInProgress = false;
     } finally {
       laddaDecryptApplication.stop();
-    }   
+    }
   }
 
   handleAppEncryptionRemove() {
@@ -350,83 +321,70 @@ export class MainController {
       confirmButtonText: "Remove",
       cancelButtonText: 'Cancel'
     }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            await this.confManager.removeMasterPassword();
-            ElementHandler.hide('removeApplicationEncryption');
-            ElementHandler.show('encryptApplicationModal');
-            Swal.fire({
-              icon: 'success',
-              title: 'The encryption is removed',
-              //text: "Remember your password",
-              timer: 2500,
-              showCancelButton: false,
-              confirmButtonText: "Ok",
-            });
-            
-          } catch (err) {
-            
-            
-          }
-        } 
+      if (result.isConfirmed) {
+        try {
+          await this.configManager.removeMasterPassword();
+          ElementHandler.hide('removeApplicationEncryption');
+          ElementHandler.show('encryptApplicationModal');
+          Swal.fire({
+            icon: 'success',
+            title: 'The encryption is removed',
+            timer: 2500,
+            showCancelButton: false,
+            confirmButtonText: "Ok",
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
     });
-    
   }
 
-  handleAppEncryptModal () {
-    if (this.confManager.isUsingMasterPassword()) {
-      return;
-    }
-    $('#do-application-encryption').modal('show')
+  handleAppEncryptModal() {
+    if (this.configManager.isUsingMasterPassword()) return;
+    $('#do-application-encryption').modal('show');
   }
 
-  /**********************************
-   * File-based encryption/decryption
-   **********************************/
+  // ––––––– File Operations –––––––
+
   updateFileList() {
-    const fileListElem = document.getElementById('fileList');
-    const inputFilesElem = document.getElementById('inputFiles');
+    const fileListElem = $('#fileList');
+    const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length) {
-      fileListElem.textContent = "No files selected.";
+      fileListElem.text("No files selected.");
       return;
     }
-    fileListElem.textContent = "";
+    fileListElem.empty();
     Array.from(inputFilesElem.files).forEach(file => {
-      const li = document.createElement('li');
-      li.textContent = `${file.name} (${file.size} bytes)`;
-      fileListElem.appendChild(li);
+      const li = $('<li>').text(`${file.name} (${file.size} bytes)`);
+      fileListElem.append(li);
     });
   }
 
   async handleFileEncrypt() {
     const { keyBlank, keyPassword, hideKey, algorithmChoice } = this.formHandler.formValues;
     const passphrase = hideKey ? keyPassword : keyBlank;
-    const inputFilesElem = document.getElementById('inputFiles');
+    const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length || !passphrase) {
       alert("Please select files and provide passphrase.");
       return;
     }
-
     const algo = algorithmChoice || 'aesgcm';
-    const outputFilesDiv = document.getElementById('outputFiles');
-    outputFilesDiv.innerHTML = "Encrypted files (download links):<br/>";
+    const outputFilesDiv = $('#outputFiles');
+    outputFilesDiv.html("Encrypted files (download links):<br/>");
 
     for (let file of inputFilesElem.files) {
       const arrayBuf = await file.arrayBuffer();
       const fileBytes = new Uint8Array(arrayBuf);
-
       try {
         const encryptedB64 = await this.encryptionService.encryptData(fileBytes, passphrase, algo);
-        // Offer download
         const blob = new Blob([encryptedB64], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = file.name + ".encrypted.txt";
-        link.textContent = `Download Encrypted ${file.name}`;
-        outputFilesDiv.appendChild(link);
-        outputFilesDiv.appendChild(document.createElement('br'));
+        const link = $('<a>')
+          .attr('href', url)
+          .attr('download', file.name + ".encrypted.txt")
+          .text(`Download Encrypted ${file.name}`);
+        outputFilesDiv.append(link).append('<br/>');
       } catch (err) {
         console.error(err);
         alert(`File encryption failed for ${file.name}: ${err.message}`);
@@ -437,32 +395,27 @@ export class MainController {
   async handleFileDecrypt() {
     const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     const passphrase = hideKey ? keyPassword : keyBlank;
-    const inputFilesElem = document.getElementById('inputFiles');
+    const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length || !passphrase) {
       alert("Please select files and provide passphrase.");
       return;
     }
-
-    const outputFilesDiv = document.getElementById('outputFiles');
-    outputFilesDiv.innerHTML = "Decrypted files (download links):<br/>";
+    const outputFilesDiv = $('#outputFiles');
+    outputFilesDiv.html("Decrypted files (download links):<br/>");
 
     for (let file of inputFilesElem.files) {
       const arrayBuf = await file.arrayBuffer();
-      // We assume it’s a text file containing base64 with header + ciphertext
       const fileText = new TextDecoder().decode(new Uint8Array(arrayBuf));
-
       try {
         const decryptedBytes = await this.encryptionService.decryptData(fileText, passphrase);
-        // Convert decryptedBytes (string) back to Blob for download
         const blob = new Blob([decryptedBytes], { type: 'application/octet-stream' });
         const url = URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = file.name.replace(".encrypted.txt", "") + ".decrypted";
-        link.textContent = `Download Decrypted ${file.name}`;
-        outputFilesDiv.appendChild(link);
-        outputFilesDiv.appendChild(document.createElement('br'));
+        const downloadName = file.name.replace(".encrypted.txt", "") + ".decrypted";
+        const link = $('<a>')
+          .attr('href', url)
+          .attr('download', downloadName)
+          .text(`Download Decrypted ${file.name}`);
+        outputFilesDiv.append(link).append('<br/>');
       } catch (err) {
         console.error(err);
         alert(`File decryption failed for ${file.name}: ${err.message}`);
@@ -470,13 +423,11 @@ export class MainController {
     }
   }
 
-  /**********************************
-   * Key management (slots)
-   **********************************/
+  // ––––––– Key Management Methods –––––––
+
   async keyGenerate() {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
-
     const randomKey = Math.random().toString(36).substring(2) + Date.now().toString(36);
     this.formHandler.setFormValue('keyBlank', randomKey);
     this.formHandler.setFormValue('keyPassword', randomKey);
@@ -489,7 +440,6 @@ export class MainController {
   async keyCopy() {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
-
     const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     const keyToCopy = hideKey ? keyPassword : keyBlank;
     if (!keyToCopy) {
@@ -499,18 +449,16 @@ export class MainController {
       this.actionInProgress = false;
       return;
     }
-    navigator.clipboard.writeText(keyToCopy).then(async () => {
+    try {
+      await navigator.clipboard.writeText(keyToCopy);
       ElementHandler.buttonRemoveTextAddSuccess("keyCopy");
-      await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("keyCopy");
-      this.actionInProgress = false;
-    }, async err => {
+    } catch (err) {
       ElementHandler.buttonRemoveTextAddFail("keyCopy");
+    } finally {
       await this.delay(1000);
       ElementHandler.buttonRemoveStatusAddText("keyCopy");
       this.actionInProgress = false;
-      return;
-    });
+    }
   }
 
   toggleKey() {
@@ -522,16 +470,14 @@ export class MainController {
     } else {
       ElementHandler.hide("keyPassword");
       ElementHandler.show("keyBlank");
-      this.formHandler.setFormValue("keyPassword", this.formHandler.formValues.keyBlankkeyPassword);
+      this.formHandler.setFormValue("keyPassword", this.formHandler.formValues.keyBlank);
       console.log("Show password");
     }
-
   }
 
   async loadKey() {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
-
     const { keySlot } = this.formHandler.formValues;
     if (!keySlot) {
       ElementHandler.buttonRemoveTextAddFail("loadKey");
@@ -541,7 +487,7 @@ export class MainController {
       return;
     }
     try {
-      const storedKey = await this.confManager.readSlotValue(keySlot);
+      const storedKey = await this.configManager.readSlotValue(keySlot);
       if (!storedKey) {
         ElementHandler.buttonRemoveTextAddFail("loadKey");
         await this.delay(1000);
@@ -559,14 +505,12 @@ export class MainController {
       await this.delay(1000);
       ElementHandler.buttonRemoveStatusAddText("loadKey");
     }
-    
     this.actionInProgress = false;
   }
 
   async saveKey() {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
-
     const { keySlot, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     if (!keySlot) {
       ElementHandler.buttonRemoveTextAddFail("saveKey");
@@ -584,8 +528,7 @@ export class MainController {
       return;
     }
     try {
-      // If app is encrypted, you’d encrypt it with the master password
-      await this.confManager.setSlotValue(keySlot, keyToSave);
+      await this.configManager.setSlotValue(keySlot, keyToSave);
       ElementHandler.buttonRemoveTextAddSuccess("saveKey");
       await this.delay(1000);
       ElementHandler.buttonRemoveStatusAddText("saveKey");
@@ -600,8 +543,8 @@ export class MainController {
   async changeSlotName() {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
-
-    const { keySlotChange, slotName } = new FormHandler("newSlotForm").getFormValues();
+    const formHandlerLocal = new FormHandler("newSlotForm");
+    const { keySlotChange, slotName } = formHandlerLocal.getFormValues();
     if (!keySlotChange || !slotName) {
       ElementHandler.buttonRemoveTextAddFail("renameSlotAction");
       await this.delay(1000);
@@ -610,70 +553,73 @@ export class MainController {
       return;
     }
     try {
-      await this.confManager.setSlotName(keySlotChange, slotName);
-
-      const slotNames = await this.confManager.readSlotNames();
+      await this.configManager.setSlotName(keySlotChange, slotName);
+      const slotNames = await this.configManager.readSlotNames();
       ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
       ElementHandler.buttonRemoveTextAddSuccess("renameSlotAction");
       await this.delay(1000);
       ElementHandler.buttonRemoveStatusAddText("renameSlotAction");
       $('#slotName').val('');
-      this.actionInProgress = false;
     } catch (error) {
       ElementHandler.buttonRemoveTextAddFail("renameSlotAction");
       await this.delay(1000);
       ElementHandler.buttonRemoveStatusAddText("renameSlotAction");
-      this.actionInProgress = false;
     }
+    this.actionInProgress = false;
   }
 
-  /**********************************
-   * Clearing local data
-   **********************************/
+  // ––––––– Data Clearing and Utility –––––––
 
   removeAllData() {
     Swal.fire({
       icon: 'error',
       title: 'Clear all data?',
-      text: "This action can't be undone.",
+      text: "All local data will be rewritten with default values. This action can't be undone.",
       showCancelButton: true,
       confirmButtonText: "Clear",
       cancelButtonText: 'Cancel'
     }).then(async (result) => {
-        if (result.isConfirmed) {
-          await this.confManager.deleteAllConfigData();
-          await this.initUI();
-          $('#do-application-decryption').modal('hide');
-          Swal.fire({
-            icon: 'success',
-            title: 'All data deleted!',
-            text: "The application is cleared.",
-            timer: 2500,
-            showCancelButton: false,
-            confirmButtonText: "Ok",
-          });
-        } 
+      if (result.isConfirmed) {
+        await this.configManager.deleteAllConfigData();
+        await this.initUI();
+        $('#do-application-decryption').modal('hide');
+        Swal.fire({
+          icon: 'success',
+          title: 'All data deleted!',
+          text: "The application is cleared.",
+          timer: 2500,
+          showCancelButton: false,
+          confirmButtonText: "Ok",
+        });
+      }
     });
-    
   }
 
-  /**********************************
-   * Utility
-   **********************************/
   clearInput() {
     this.formHandler.setFormValue("inputText", "");
-    let event = { target: { value : ""},};
-    this.handleDataChange(event);
+    this.handleDataChange({ target: { value: "" } });
   }
 
-  copyOutput() {
+  async copyOutput() {
     const { outputText } = this.formHandler.formValues;
+    if (this.actionInProgressCopy) return;
+    this.actionInProgressCopy = true;
     if (!outputText) {
+      ElementHandler.buttonRemoveTextAddFail("copyOutput");
+      await this.delay(1000);
+      ElementHandler.buttonRemoveStatusAddText("copyOutput");
+      this.actionInProgressCopy = false;
       return;
     }
-    navigator.clipboard.writeText(outputText).then(() => {;
-    }, err => {
-      console.error(err);
-    });
+    try {
+      await navigator.clipboard.writeText(outputText);
+      ElementHandler.buttonRemoveTextAddSuccess("copyOutput");
+    } catch (err) {
+      ElementHandler.buttonRemoveTextAddFail("copyOutput");
+    } finally {
+      await this.delay(1000);
+      ElementHandler.buttonRemoveStatusAddText("copyOutput");
+      this.actionInProgressCopy = false;
+    }
   }
 }
