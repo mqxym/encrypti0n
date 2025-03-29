@@ -37,9 +37,15 @@ export class EncryptTransform {
     const self = this;
     return new TransformStream({
       async transform(chunk, controller) {
-        const arrayBuffer = chunk instanceof ArrayBuffer
-          ? chunk
-          : chunk.buffer.slice(chunk.byteOffset, chunk.byteOffset + chunk.byteLength);
+        let arrayBuffer;
+        if (chunk instanceof ArrayBuffer) {
+          arrayBuffer = chunk;
+        } else if (chunk instanceof Blob) {
+          arrayBuffer = await chunk.arrayBuffer();
+        } else {
+          // Assuming it's a typed array like Uint8Array.
+          arrayBuffer = chunk.buffer.slice(chunk.byteOffset, chunk.byteOffset + chunk.byteLength);
+        }
         await self.transform(arrayBuffer, controller);
       },
       async flush(controller) {

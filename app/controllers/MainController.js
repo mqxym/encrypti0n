@@ -172,7 +172,7 @@ export class MainController {
       const inputFilesElem = $('#inputFiles')[0];
       const fileLength = inputFilesElem.files.length
       let result = false;
-      let fileCounter = 1;
+      let fileCounter = 0;
       $("#outputFiles").empty();
       for (let file of inputFilesElem.files) {
         const isEncrypted = await this.encryptionService.isEncryptedFile(file);
