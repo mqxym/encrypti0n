@@ -312,12 +312,12 @@
                                                 
                                             </div>
                                             <div class="d-grid">
-                                                <button type="button" class="mb-2 btn  btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
+                                                <button type="button" class="mb-2 btn btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
                                                     <span><i class="mdi mdi-file-upload mr-5"></i>Select Files</span>
                                                 </button>
                                             </div>
-                                            
-                                            <div class="form-control border border-secondary rounded" style="height: 120px;" id="fileList" name="fileList">Selected files appear here...</div>
+                                            <input style="display: none;" id="inputFiles" name="inputFiles" type="file" class="upload" multiple />
+                                            <div class="form-control border border-secondary rounded scrollable" style=" overflow-y: auto; height: 120px;" id="fileList" name="fileList">Selected files appear here...</div>
                                             <p class="card-text text-muted">The site detects if your files are <span class="badge badge-outline-pink rounded-pill" id="encryptedFilesPill">encrypted</span> or <span id="notEncryptedFilesPill" class="badge bg-blue rounded-pill">not encrypted</span>.</p>
                                         </div>
                                         
@@ -418,7 +418,7 @@
                                                 </div>
                                             </div>
                                             <p class="card-text position-absolute bottom-0 end-0 m-2">
-                                                <u id="PBKDF2Options">Open PBKDF2 Options</u>
+                                                <u class="PBKDF2-Options">Open PBKDF2 Options</u>
                                             </p>
                                         </div>
                                     </div>
@@ -491,7 +491,7 @@
                                         
                                             <div class="input-group mb-2" >
                                                 <div class="col-12">
-                                                    <div class="form-control border border-secondary rounded" style="height: 120px;"id="outputFiles" name="outputFiles">The encrypted files appears here</div>
+                                                    <div class="form-control border border-secondary rounded scrollable" style="overflow-y: auto; height: 150px;" id="outputFiles" name="outputFiles">The encrypted files appears here</div>
                                                     <span class="help-block">
                                                         <small id="outputFooter">
                                                             Encrypted files are in raw binary format.
@@ -567,7 +567,7 @@
                                         </p>
                                                 
                                         <p>
-                                          You can customize the rounds and salt by opening the <u>PBKDF2 Options</u> (if you know what you are doing).
+                                          You can customize the rounds and salt by opening the <u class="PBKDF2-Options">PBKDF2 Options</u> (if you know what you are doing).
                                         </p>
                                         <p>
                                           <i>By default, the site uses a random, secure 16-byte salt and 5M SHA-256 rounds on every action.</i>

@@ -1,55 +1,48 @@
 import { IEncryptionAlgorithm } from '../interfaces/IEncryptionAlgorithm.js';
 
+/**
+ * AESGCMEncryption implements the AES-GCM encryption/decryption algorithm.
+ * It extends the IEncryptionAlgorithm interface with concrete implementations.
+ */
 export class AESGCMEncryption extends IEncryptionAlgorithm {
+  /**
+   * Constructs an instance of AESGCMEncryption.
+   * Sets key length, IV length, and hash algorithm.
+   */
   constructor() {
     super();
-    this.keyLengthBits = 256;
-    this.ivLengthBytes = 12;
-    this.hashAlgo = 'SHA-256';
-    // Default difficulties: “middle” rounds (5M) and “high” salt (16 bytes)
-    this.setRoundDifficulty("middle");
-    this.setSaltDifficulty("high");
+    this.KEY_LENGTH_BITS = 256;
+    this.IV_LENGTH_BYTES = 12;
+    this.HASH_ALGORITHM = 'SHA-256';
   }
 
   /**
-   * Set the number of PBKDF2 iterations based on a difficulty string.
-   * @param {"low"|"middle"|"high"} difficulty - 'low' (100k), 'middle' (5M), or 'high' (10M)
+   * Initializes the AES-GCM encryption instance by deriving the encryption key.
+   * @param {Uint8Array} keyMaterial - The passphrase or key material.
+   * @param {number} saltLength - The length of the salt in bytes.
+   * @param {number} iterations - Number of PBKDF2 iterations.
+   * @param {Uint8Array} [providedSalt] - Optional salt (used during decryption).
+   * @returns {Promise<Uint8Array>} The salt used in key derivation.
    */
-  setRoundDifficulty(difficulty) {
-    const mapping = { low: 100010, middle: 5000042, high: 10000666 };
-    if (!(difficulty in mapping)) {
-      throw new Error("Invalid round difficulty. Choose 'low', 'middle', or 'high'.");
-    }
-    this.iterations = mapping[difficulty];
-    this.roundDifficulty = difficulty;
+  async initialize(keyMaterial, saltLength, iterations, providedSalt) {
+    const salt = typeof providedSalt !== 'undefined'
+      ? providedSalt
+      : crypto.getRandomValues(new Uint8Array(saltLength));
+    this.key = await this.deriveKey(keyMaterial, salt, iterations);
+    return salt;
   }
 
   /**
-   * Set the salt length based on a difficulty string.
-   * @param {"low"|"high"} difficulty - 'low' for 12 bytes, 'high' for 16 bytes.
+   * Derives an AES-GCM key using PBKDF2.
+   * @param {Uint8Array} keyMaterial - The passphrase bytes.
+   * @param {Uint8Array} salt - The salt bytes.
+   * @param {number} iterations - The number of PBKDF2 iterations.
+   * @returns {Promise<CryptoKey>} The derived CryptoKey.
    */
-  setSaltDifficulty(difficulty) {
-    const mapping = { low: 12, high: 16 };
-    if (!(difficulty in mapping)) {
-      throw new Error("Invalid salt difficulty. Choose 'low' or 'high'.");
-    }
-    this.saltLengthBytes = mapping[difficulty];
-    this.saltDifficulty = difficulty;
-  }
-
-  /**
-   * Derives a key using PBKDF2.
-   * An optional iterationsOverride can be provided (used during decryption).
-   *
-   * @param {Uint8Array} passphraseBytes
-   * @param {Uint8Array} saltBytes
-   * @param {number} [iterationsOverride]
-   * @returns {Promise<CryptoKey>}
-   */
-  async deriveKey(passphraseBytes, saltBytes, iterationsOverride) {
+  async deriveKey(keyMaterial, salt, iterations) {
     const baseKey = await crypto.subtle.importKey(
       'raw',
-      passphraseBytes,
+      keyMaterial,
       { name: 'PBKDF2' },
       false,
       ['deriveKey']
@@ -57,111 +50,70 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
     return crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
-        salt: saltBytes,
-        iterations: iterationsOverride !== undefined ? iterationsOverride : this.iterations,
-        hash: this.hashAlgo
+        salt: salt,
+        iterations: iterations,
+        hash: this.HASH_ALGORITHM
       },
       baseKey,
-      { name: 'AES-GCM', length: this.keyLengthBits },
+      { name: 'AES-GCM', length: this.KEY_LENGTH_BITS },
       false,
       ['encrypt', 'decrypt']
     );
   }
 
   /**
-   * Encrypts the provided plain data.
-   *
-   * The header is built as:
-   *   [0]      : Algorithm identifier (0x01)
-   *   [1]      : Difficulty header byte (encodes round and salt difficulty)
-   *   [2..N]   : Salt bytes (length depends on saltDifficulty)
-   *   [N+1..]  : IV bytes (always 12 bytes)
-   *
-   * @param {Uint8Array|string} plainData
-   * @param {Uint8Array} keyMaterial
-   * @returns {Promise<{headerBytes: Uint8Array, ciphertextBytes: Uint8Array}>}
+   * Encrypts the provided plaintext data.
+   * @param {Uint8Array|string} plaintext - The data to encrypt.
+   * @returns {Promise<Uint8Array>} The IV concatenated with the ciphertext.
    */
-  async encrypt(plainData, keyMaterial) {
-    const plainBytes = plainData instanceof Uint8Array
-      ? plainData
-      : new TextEncoder().encode(plainData);
-
-    // Generate a salt with the length determined by saltDifficulty.
-    const saltBytes = crypto.getRandomValues(new Uint8Array(this.saltLengthBytes));
-    const derivedKey = await this.deriveKey(keyMaterial, saltBytes);
-    const ivBytes = crypto.getRandomValues(new Uint8Array(this.ivLengthBytes));
-    const ciphertext = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: ivBytes },
-      derivedKey,
-      plainBytes
-    );
-    const ciphertextBytes = new Uint8Array(ciphertext);
-
-    // Build header:
-    // - 1st byte: Fixed identifier (0x01)
-    // - 2nd byte: Difficulty header byte (bits layout below)
-    //   * Bits 0-1: Round difficulty (00: low, 01: middle, 10: high)
-    //   * Bit 2   : Salt difficulty (0: low (12 bytes), 1: high (16 bytes))
-    // - Followed by salt and IV.
-    const headerLength = 1 + 1 + this.saltLengthBytes + this.ivLengthBytes;
-    const headerBytes = new Uint8Array(headerLength);
-    headerBytes[0] = 0x01; // AES-GCM identifier
-
-    const roundMapping = { low: 0b00, middle: 0b01, high: 0b10 };
-    const saltMapping = { low: 0b0, high: 0b1 };
-    const diffByte = (saltMapping[this.saltDifficulty] << 2) | roundMapping[this.roundDifficulty];
-    headerBytes[1] = diffByte;
-
-    headerBytes.set(saltBytes, 2);
-    headerBytes.set(ivBytes, 2 + this.saltLengthBytes);
-
-    return { headerBytes, ciphertextBytes };
+  async encryptData(plaintext) {
+    const plainBytes = plaintext instanceof Uint8Array
+      ? plaintext
+      : new TextEncoder().encode(plaintext);
+    return this.encryptChunk(plainBytes);
   }
 
   /**
-   * Decrypts the ciphertext using the provided key material and header.
-   *
-   * The header is parsed to extract:
-   *   - The salt length (from the salt difficulty bit).
-   *   - The round difficulty (which determines the iteration count).
-   *
-   * @param {Uint8Array} ciphertextBytes
-   * @param {Uint8Array} keyMaterial
-   * @param {Uint8Array} headerBytes
+   * Encrypts a data chunk by generating a fresh IV and encrypting with AES-GCM.
+   * @param {Uint8Array} dataChunk - The data chunk to encrypt.
+   * @returns {Promise<Uint8Array>} The concatenation of the IV and the ciphertext.
+   */
+  async encryptChunk(dataChunk) {
+    const iv = crypto.getRandomValues(new Uint8Array(this.IV_LENGTH_BYTES));
+    const cipherBuffer = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: iv },
+      this.key,
+      dataChunk
+    );
+    const ivAndCipher = new Uint8Array(iv.byteLength + cipherBuffer.byteLength);
+    ivAndCipher.set(iv, 0);
+    ivAndCipher.set(new Uint8Array(cipherBuffer), iv.byteLength);
+    return ivAndCipher;
+  }
+
+  /**
+   * Decrypts the ciphertext (which includes the IV) and returns the plaintext bytes.
+   * @param {Uint8Array} cipherWithIv - The data containing the IV and ciphertext.
    * @returns {Promise<Uint8Array>} The decrypted plaintext bytes.
    */
-  async decrypt(ciphertextBytes, keyMaterial, headerBytes) {
-    if (headerBytes[0] !== 0x01) {
-      throw new Error("Invalid header: unrecognized encryption algorithm identifier.");
-    }
-
-    const diffByte = headerBytes[1];
-    const saltBit = (diffByte >> 2) & 0x01;
-    const roundCode = diffByte & 0x03;
-
-    // Determine salt length: 0 -> low (12 bytes), 1 -> high (16 bytes)
-    const saltLength = saltBit === 0 ? 12 : 16;
-
-    // Map round difficulty bits to iteration count.
-    const roundMapping = {
-      0b00: 100010,
-      0b01: 5000042,
-      0b10: 10000666
-    };
-    if (!(roundCode in roundMapping)) {
-      throw new Error("Invalid round difficulty code in header.");
-    }
-    const iterationsFromHeader = roundMapping[roundCode];
-
-    const saltBytes = headerBytes.slice(2, 2 + saltLength);
-    const ivBytes = headerBytes.slice(2 + saltLength);
-
-    const derivedKey = await this.deriveKey(keyMaterial, saltBytes, iterationsFromHeader);
-    const plainBuffer = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: ivBytes },
-      derivedKey,
-      ciphertextBytes
-    );
+  async decryptData(cipherWithIv) {
+    const plainBuffer = await this.decryptChunk(cipherWithIv);
     return new Uint8Array(plainBuffer);
+  }
+
+  /**
+   * Decrypts a data chunk by extracting the IV and decrypting the ciphertext.
+   * @param {Uint8Array} dataChunk - The data chunk containing the IV and ciphertext.
+   * @returns {Promise<ArrayBuffer>} The decrypted data.
+   */
+  async decryptChunk(dataChunk) {
+    const data = new Uint8Array(dataChunk);
+    const iv = data.slice(0, this.IV_LENGTH_BYTES);
+    const ciphertext = data.slice(this.IV_LENGTH_BYTES);
+    return crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: iv },
+      this.key,
+      ciphertext
+    );
   }
 }

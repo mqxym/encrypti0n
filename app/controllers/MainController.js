@@ -42,7 +42,7 @@ export class MainController {
     $('#inputText').on('input', (event) => this.handleDataChange(event));
     $('#showTextEncryption').on('click', () => this.showTextInput());
     $('#showFilesEncryption').on('click', () => this.showFileInput());
-    $('#PBKDF2Options').on('click', () => $('#pbkdf2-modal').modal('show'));
+    $('.PBKDF2-Options').on('click', () => $('#pbkdf2-modal').modal('show'));
     $('#renameSlots').on('click', () => $('#renameSlotsModal').modal('show'));
 
     // Master password actions
@@ -99,6 +99,7 @@ export class MainController {
     ElementHandler.hide('textEncryptionInput');
     ElementHandler.show('fileEncryptionOutput');
     ElementHandler.hide('textEncryptionOutput');
+    this.updateFileList();
     this.doFiles = true;
   }
 
@@ -117,6 +118,16 @@ export class MainController {
   async handleAction() {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
+
+    if (!this.doFiles) {
+      await this.handleActionText();
+    } else {
+      await this.handleActionFiles();
+    }
+    
+  }
+
+  async handleActionText () {
     const { inputText } = this.formHandler.formValues;
     const laddaManager = new LaddaButtonManager('.action-button');
     laddaManager.startAll();
@@ -141,6 +152,47 @@ export class MainController {
           this.formHandler.setFormValue('outputText', null);
           ElementHandler.setPlaceholderById('outputText', 'Encryption failed. Please check data or password.');
         }
+      }
+      await this.postActionHandling(result, laddaManager);
+    } catch (error) {
+      console.error('Action handling failed:', error);
+      laddaManager.stopAll();
+      ElementHandler.arrowsToCross();
+    } finally {
+      this.actionInProgress = false;
+    }
+  }
+
+  async handleActionFiles () {
+    const laddaManager = new LaddaButtonManager('.action-button');
+    laddaManager.startAll();
+    
+    try {
+
+      const inputFilesElem = $('#inputFiles')[0];
+      const fileLength = inputFilesElem.files.length
+      let result = false;
+      let fileCounter = 1;
+      $("#outputFiles").empty();
+      for (let file of inputFilesElem.files) {
+        const isEncrypted = await this.encryptionService.isEncryptedFile(file);
+        laddaManager.setProgressAll(fileCounter / fileLength );
+        if (isEncrypted) {
+          result = await this.handleFileDecrypt(file);
+          if (!result) {
+            ElementHandler.arrowsToCross();
+            this.formHandler.setFormValue('outputText', null);
+            ElementHandler.setPlaceholderById('outputText', 'Decryption failed. Please check data or password.');
+          }
+        } else {
+          result = await this.handleFileEncrypt(file);
+          if (!result) {
+            ElementHandler.arrowsToCross();
+            this.formHandler.setFormValue('outputText', null);
+            ElementHandler.setPlaceholderById('outputText', 'Encryption failed. Please check data or password.');
+          }
+        }
+        ++fileCounter;
       }
       await this.postActionHandling(result, laddaManager);
     } catch (error) {
@@ -178,17 +230,16 @@ export class MainController {
     const algo = 'aesgcm';
     try {
       const usedOptions = await pbkdf2Service.getCurrentOptions(this.configManager);
-      const encryptedB64 = await this.encryptionService.encryptData(
+      this.encryptionService.setPBKDF2Difficulty(usedOptions.roundDifficulty);
+      this.encryptionService.setSaltLengthDifficulty( usedOptions.saltDifficulty);
+      const encryptedB64 = await this.encryptionService.encryptText(
         inputText,
         passphrase,
-        algo,
-        usedOptions.roundDifficulty,
-        usedOptions.saltDifficulty
+        algo
       );
       this.formHandler.setFormValue('outputText', encryptedB64);
       return true;
     } catch (err) {
-      console.log(err);
       return false;
     }
   }
@@ -198,10 +249,14 @@ export class MainController {
     const passphrase = hideKey ? keyPassword : keyBlank;
     if (!inputText || !passphrase) return false;
     try {
-      const decrypted = await this.encryptionService.decryptData(inputText, passphrase);
+      const decrypted = await this.encryptionService.decryptText(inputText, passphrase);
       this.formHandler.setFormValue('outputText', decrypted);
       return true;
-    } catch (err) {
+    } catch (error) {
+      console.error("Error Message:", error.message);
+    console.error("Error Name:", error.name);
+    console.error("Stack Trace:", error.stack);
+    console.error("Full Error Object:", error);
       return false;
     }
   }
@@ -210,11 +265,17 @@ export class MainController {
     const inputText = event.target.value;
     const isEncrypted = await this.encryptionService.isEncrypted(inputText.trim());
 
+    this.changeOperationVisuals(isEncrypted);
+  }
+
+  changeOperationVisuals (isEncrypted = false) {
     if (isEncrypted) {
       ElementHandler.blueToPinkBorder("inputText");
       ElementHandler.pinkToBlueBorder("outputText");
       ElementHandler.emptyPillBlue("notEncryptedPill");
+      ElementHandler.emptyPillBlue("notEncryptedFilesPill");
       ElementHandler.fillPillPink("encryptedPill");
+      ElementHandler.fillPillPink("encryptedFilesPill");
       ElementHandler.buttonClassPinkToBlue("action-button");
       $('#outputText').attr('placeholder', 'The decryption result appears here');
       $('.action-explanation').text('decryption');
@@ -224,7 +285,9 @@ export class MainController {
       ElementHandler.pinkToBlueBorder("inputText");
       ElementHandler.blueToPinkBorder("outputText");
       ElementHandler.fillPillBlue("notEncryptedPill");
+      ElementHandler.fillPillBlue("notEncryptedFilesPill");
       ElementHandler.emptyPillPink("encryptedPill");
+      ElementHandler.emptyPillPink("encryptedFilesPill");
       ElementHandler.buttonClassBlueToPink("action-button");
       $('#outputText').attr('placeholder', 'The encryption result appears here');
       $('.action-explanation').text('encryption');
@@ -347,7 +410,7 @@ export class MainController {
 
   // ––––––– File Operations –––––––
 
-  updateFileList() {
+  async updateFileList() {
     const fileListElem = $('#fileList');
     const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length) {
@@ -355,71 +418,88 @@ export class MainController {
       return;
     }
     fileListElem.empty();
-    Array.from(inputFilesElem.files).forEach(file => {
-      const li = $('<li>').text(`${file.name} (${file.size} bytes)`);
+    const files = Array.from(inputFilesElem.files);
+    const encryptionChecks = files.map(async file => {
+      const isEncrypted = await this.encryptionService.isEncryptedFile(file);
+      const li = isEncrypted 
+        ? $('<span class="badge bg-pink rounded-pill me-1">').text(`${file.name} | ${this.formatBytes(file.size)}`)
+        : $('<span class="badge bg-blue rounded-pill me-1">').text(`${file.name} | ${this.formatBytes(file.size)}`);
       fileListElem.append(li);
+      return isEncrypted;
     });
+
+    const results = await Promise.all(encryptionChecks);
+    if (results.every(isEncrypted => isEncrypted)) {
+      this.changeOperationVisuals(true);
+    }
   }
 
-  async handleFileEncrypt() {
-    const { keyBlank, keyPassword, hideKey, algorithmChoice } = this.formHandler.formValues;
+  formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+  
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+  
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  async handleFileEncrypt(file) {
+    const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     const passphrase = hideKey ? keyPassword : keyBlank;
-    const inputFilesElem = $('#inputFiles')[0];
-    if (!inputFilesElem.files.length || !passphrase) {
-      alert("Please select files and provide passphrase.");
+    if (!passphrase) {
       return;
     }
-    const algo = algorithmChoice || 'aesgcm';
+    const algo = 'aesgcm';
     const outputFilesDiv = $('#outputFiles');
-    outputFilesDiv.html("Encrypted files (download links):<br/>");
-
-    for (let file of inputFilesElem.files) {
-      const arrayBuf = await file.arrayBuffer();
-      const fileBytes = new Uint8Array(arrayBuf);
-      try {
-        const encryptedB64 = await this.encryptionService.encryptData(fileBytes, passphrase, algo);
-        const blob = new Blob([encryptedB64], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const link = $('<a>')
-          .attr('href', url)
-          .attr('download', file.name + ".encrypted.txt")
-          .text(`Download Encrypted ${file.name}`);
-        outputFilesDiv.append(link).append('<br/>');
-      } catch (err) {
-        console.error(err);
-        alert(`File encryption failed for ${file.name}: ${err.message}`);
-      }
+    try {
+      const usedOptions = await pbkdf2Service.getCurrentOptions(this.configManager);
+      this.encryptionService.setPBKDF2Difficulty(usedOptions.roundDifficulty);
+      this.encryptionService.setSaltLengthDifficulty( usedOptions.saltDifficulty);
+      const blob = await this.encryptionService.encryptFile(file, passphrase, algo);
+      const size = this.formatBytes(blob.size)
+      const url = URL.createObjectURL(blob);
+      const link = $('<a class="btn mb-1 btn-sm bg-pink text-white rounded-pill me-1">')
+        .attr('href', url)
+        .attr('download', file.name + ".enc")
+        .text(`${file.name}.enc | ${size}`);
+      outputFilesDiv.append(link)//.append('<br/>');
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
     }
   }
 
-  async handleFileDecrypt() {
+  async handleFileDecrypt(file) {
     const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     const passphrase = hideKey ? keyPassword : keyBlank;
     const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length || !passphrase) {
-      alert("Please select files and provide passphrase.");
       return;
     }
     const outputFilesDiv = $('#outputFiles');
-    outputFilesDiv.html("Decrypted files (download links):<br/>");
-
-    for (let file of inputFilesElem.files) {
-      const arrayBuf = await file.arrayBuffer();
-      const fileText = new TextDecoder().decode(new Uint8Array(arrayBuf));
-      try {
-        const decryptedBytes = await this.encryptionService.decryptData(fileText, passphrase);
-        const blob = new Blob([decryptedBytes], { type: 'application/octet-stream' });
-        const url = URL.createObjectURL(blob);
-        const downloadName = file.name.replace(".encrypted.txt", "") + ".decrypted";
-        const link = $('<a>')
-          .attr('href', url)
-          .attr('download', downloadName)
-          .text(`Download Decrypted ${file.name}`);
-        outputFilesDiv.append(link).append('<br/>');
-      } catch (err) {
-        console.error(err);
-        alert(`File decryption failed for ${file.name}: ${err.message}`);
+    
+    try {
+      const decryptedBytes = await this.encryptionService.decryptFile(file, passphrase);
+      const blob = new Blob([decryptedBytes], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const size = this.formatBytes(blob.size)
+      if (blob.size === 0) {
+        return false;
       }
+      const downloadName = file.name.replace(".enc", "");
+      const link = $('<a class="btn mb-1 btn-sm bg-blue text-white rounded-pill me-1">')
+        .attr('href', url)
+        .attr('download', downloadName)
+        .text(`${downloadName} | ${size}`);
+      outputFilesDiv.append(link)//.append('<br/>');
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
     }
   }
 
@@ -466,12 +546,10 @@ export class MainController {
       ElementHandler.hide("keyBlank");
       ElementHandler.show("keyPassword");
       this.formHandler.setFormValue("keyPassword", this.formHandler.formValues.keyBlank);
-      console.log("Hide password");
     } else {
       ElementHandler.hide("keyPassword");
       ElementHandler.show("keyBlank");
       this.formHandler.setFormValue("keyPassword", this.formHandler.formValues.keyBlank);
-      console.log("Show password");
     }
   }
 
