@@ -1,45 +1,77 @@
 // DecryptTransform.js
 export class DecryptTransform {
-  constructor(cryptoEngine, chunkSize = 1024 * 1024) {
+  constructor(cryptoEngine, chunkSize = 512 * 1024) {
     this.cryptoEngine = cryptoEngine;
     this.chunkSize = chunkSize;
     this.buffer = new Uint8Array(0);
   }
 
   async transform(chunk, controller) {
+    // 1. Accumulate new data in the buffer
     const newData = new Uint8Array(chunk);
     const combined = new Uint8Array(this.buffer.length + newData.length);
     combined.set(this.buffer);
     combined.set(newData, this.buffer.length);
 
     let offset = 0;
-    // Process available data as an encrypted chunk.
-    // (In this design each transform call should deliver complete encrypted chunks.)
-    if (combined.length - offset > 0) {
-      const encryptedChunk = combined.slice(offset).buffer;
-      try {
-        const decryptedBuffer = await this.cryptoEngine.decryptChunk(encryptedChunk);
-        controller.enqueue(decryptedBuffer);
-        offset = combined.length;
-      } catch (e) {
-        // Incomplete chunk – buffer and wait for more data.
-        this.buffer = combined.slice(offset);
-        return;
+
+    // 2. Process any complete "header + ciphertext" blocks
+    while (true) {
+      // We need at least 4 bytes for the length header
+      if (combined.length - offset < 4) {
+        break;
       }
+
+      // Read the ciphertext length from the 4-byte header
+      const cipherLength = new DataView(combined.buffer, offset, 4).getUint32(0, false);
+      offset += 4;
+
+      // If we don't have the full ciphertext yet, roll back offset by 4 and wait
+      if (combined.length - offset < cipherLength) {
+        offset -= 4;
+        break;
+      }
+
+      // 3. Extract the encrypted chunk
+      const encryptedChunk = combined.slice(offset, offset + cipherLength);
+      offset += cipherLength;
+
+      // 4. Decrypt
+      const decrypted = await this.cryptoEngine.decryptChunk(encryptedChunk);
+
+      // 5. Output plaintext
+      controller.enqueue(decrypted);
     }
-    this.buffer = offset < combined.length ? combined.slice(offset) : new Uint8Array(0);
+
+    // 6. Keep leftover unprocessed data for next transform call
+    this.buffer = combined.slice(offset);
   }
 
   async flush(controller) {
-    if (this.buffer.length > 0) {
-      try {
-        const decryptedBuffer = await this.cryptoEngine.decryptChunk(this.buffer.buffer);
-        controller.enqueue(decryptedBuffer);
-      } catch (e) {
-        
+    // On flush, try to consume any leftover
+    let offset = 0;
+    while (true) {
+      if (this.buffer.length - offset < 4) {
+        break;
       }
-      this.buffer = new Uint8Array(0);
+
+      const cipherLength = new DataView(this.buffer.buffer, offset, 4).getUint32(0, false);
+      offset += 4;
+
+      if (this.buffer.length - offset < cipherLength) {
+        offset -= 4;
+        break;
+      }
+
+      const encryptedChunk = this.buffer.slice(offset, offset + cipherLength);
+      offset += cipherLength;
+
+      const decrypted = await this.cryptoEngine.decryptChunk(encryptedChunk);
+      controller.enqueue(decrypted);
     }
+
+    // If something remains that can't form a full block, you could handle it or ignore.
+    this.buffer = this.buffer.slice(offset);
   }
 
   getTransformStream() {
@@ -52,7 +84,6 @@ export class DecryptTransform {
         } else if (chunk instanceof Blob) {
           arrayBuffer = await chunk.arrayBuffer();
         } else {
-          // Assuming it's a typed array like Uint8Array.
           arrayBuffer = chunk.buffer.slice(chunk.byteOffset, chunk.byteOffset + chunk.byteLength);
         }
         await self.transform(arrayBuffer, controller);

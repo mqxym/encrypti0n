@@ -19,7 +19,7 @@ export class MainController {
     this.pbkdf2Service = new pbkdf2Service('pbkdf2-modal', this.configManager);
     
     // Application state and version
-    this.appVersion = "3.0.0a5";
+    this.appVersion = "3.0.0a6";
     this.doFiles = false;
     this.actionInProgress = false;
     this.actionInProgressCopy = false;

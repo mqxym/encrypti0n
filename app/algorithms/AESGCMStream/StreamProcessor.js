@@ -3,9 +3,9 @@ import { EncryptTransform } from "./EncryptTransform.js";
 import { DecryptTransform } from "./DecryptTransform.js";
 
 export class StreamProcessor {
-  constructor(cryptoEngine, headerBytes, chunkSize = 1024 * 1024) {
+  constructor(cryptoEngine, headerBytes, chunkSize = 512 * 1024) {
     this.cryptoEngine = cryptoEngine;
-    this.chunkSize = chunkSize;
+    this.chunkSize = chunkSize;   // default 512 KiB
     this.headerBytes = headerBytes;
   }
 
@@ -18,7 +18,7 @@ export class StreamProcessor {
       if (done) break;
       chunks.push(new Uint8Array(value));
     }
-    // Spread chunks so that each is added as a separate Blob part.
+    // Build a Blob that starts with the (custom) headerBytes, then all encrypted/decrypted data
     return new Blob([this.headerBytes, ...chunks], { type: "application/octet-stream" });
   }
 
