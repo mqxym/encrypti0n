@@ -3,9 +3,10 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Privacy Policy - Encrypti0n.com</title>
+        <title>About Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Encrypti0n.com Privacy Policy" />
+        <meta name="description" content="All in one encryption/decryption tool for text and files. Encrypt to base64. Highly customizable. Reliable and secure." />
+        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,base64,AES256,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
@@ -20,6 +21,14 @@
         <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#000000">
+
+
+        <!-- Jquery Toast css -->
+        <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Loading button css -->
+        <link href="assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/libs/ladda/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
 
 		<!-- Theme Config Js -->
 		<script src="assets/js/head.js"></script>
@@ -86,6 +95,7 @@
                         </li>
 
                         <li class="menu-title">App Information</li>
+
                         <li class="menu-item">
                             <a href="/faq.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
@@ -108,6 +118,12 @@
                             <a href="/developer-documentation-technical-information.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-source-branch"></i></span>
                                 <span class="menu-text"> More Information </span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/encryption-glossary.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-globe-model"></i></span>
+                                <span class="menu-text">Glossary</span>
                             </a>
                         </li>
                         <li class="menu-item">
@@ -184,6 +200,7 @@
                     <div class="clearfix"></div>
                 </div>
             </div>
+
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
@@ -214,7 +231,7 @@
                                     <i class="fe-maximize font-22"></i>
                                 </a>
                             </li>
-                            <li class="d-none d-sm-inline-block">
+                            <li class="">
                                 <div class="nav-link waves-effect waves-light" id="light-dark-mode">
                                     <i class="ri-moon-line font-22"></i>
                                 </div>
@@ -228,57 +245,88 @@
                             <div class="page-title-box">
                                 <div class="page-title-right">
                                     <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a>Encrypti0n.com</a></li>
-                                        <li class="breadcrumb-item active"><a href="/privacy-policy.html">Privacy Policy</a></li>
+                                        <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
+                                        <li class="breadcrumb-item active"><a href="/how-it-works.html">About</a></li>
                                     </ol>
-                                </div>
-                                <h4 class="page-title">Privacy Policy</h4>
-                            </div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-12 my-4">
-                                <div class="card border rounded border-secondary">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Privacy Policy for Encrypti0n.com</h5>
-                                        <p class="card-text">
-                                          <strong>Effective Date:</strong> 2025/01/01
-                                        </p>
-                                        <p class="card-text">
-                                          <strong>Introduction:</strong> At Encrypti0n.com (accessible from <a href="https://encrypti0n.com">https://encrypti0n.com</a>), we prioritize your privacy and are committed to providing a secure experience. This Privacy Policy outlines the practices regarding data collection, usage, and protection. Please read this policy carefully.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Collection:</strong>  Encrypti0n.com  does not collect, store, or process any personal information, including but not limited to IP addresses, names, addresses, or contact details. We strive to ensure complete user anonymity.
-                                        </p>
-                                    
-                                        <p class="card-text">
-                                          <strong>Cookies:</strong>  Encrypti0n.com  does not use cookies to track or monitor user behavior.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Third Parties:</strong> No third parties are involved in the operation of this website. Encrypti0n.com functions independently and does not share or disclose user information with any external entities.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Processing:</strong> All data entered on Encrypti0n.com is processed locally on your device. No data is transmitted from your device to any server, ensuring complete privacy and control over your input.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Changes to This Privacy Policy:</strong> Encrypti0n.com reserves the right to update this Privacy Policy as necessary. We encourage you to review this policy periodically to stay informed of any changes.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Contact Us:</strong> For any questions or concerns regarding this Privacy Policy, please contact us at <a href="mailto:maxim@omg.lol">maxim@omg.lol</a>.
-                                        </p>
-                                    </div>
-                                    <div class="card-footer text-muted">
-                                        By using Encrypti0n.com, you acknowledge and agree to the terms outlined in this Privacy Policy.
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="container my-5">
+                        <!-- Hero Section -->
+                        <section class="text-center mb-5">
+                          <h1 class="display-4">About Encrypti0n.com</h1>
+                          <p class="lead">Your secure and user-centric platform designed to empower you to protect your data through robust, customizable, local-first encryption.</p>
+                        </section>
+                      
+                        <!-- Mission & Vision Section -->
+                        <div class="row mb-4">
+                          <div class="col-md-6">
+                            <div class="card h-100 shadow-sm">
+                              <div class="card-body">
+                                <h2 class="card-title">Our Mission</h2>
+                                <p class="card-text">At Encrypti0n.com, we firmly believe that privacy is not merely an option—it's a fundamental right. Our mission is to equip everyday users, developers, and privacy enthusiasts with simple, reliable, and transparent encryption tools that operate entirely within the browser. We champion user autonomy, digital minimalism, and informational self-determination, ensuring you retain complete control over your sensitive information.</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6 mt-4 mt-md-0">
+                            <div class="card h-100 shadow-sm">
+                              <div class="card-body">
+                                <h2 class="card-title">Vision</h2>
+                                <p class="card-text">Our vision is to create a digital environment where privacy isn't a privilege but the standard. By utilizing state-of-the-art encryption methods, openly sharing our source code, and strictly adhering to local-only data storage principles, Encrypti0n.com is committed to standards in data protection and privacy-centric software.</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      
+                        <!-- Why Local-First Encryption Section -->
+                        <div class="row mb-4">
+                          <div class="col-12">
+                            <div class="card shadow-sm">
+                              <div class="card-body">
+                                <h2 class="card-title">Why Local-First Encryption?</h2>
+                                <p class="card-text">Encrypti0n.com is built upon the principles of digital minimalism and data sovereignty. We choose a strictly local-first approach because:</p>
+                                <ul>
+                                  <li><strong>Security:</strong> Encrypting and storing data locally eliminates risks associated with data breaches, unauthorized access, or external surveillance.</li>
+                                  <li><strong>Autonomy:</strong> You remain the sole custodian of your data—we never store or transmit your information online.</li>
+                                  <li><strong>Transparency:</strong> Our open-source approach ensures full transparency, allowing anyone to verify our cryptographic processes.</li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      
+                        <!-- Commitment to Privacy & Transparency Section -->
+                        <div class="row mb-4">
+                          <div class="col-12">
+                            <div class="card shadow-sm">
+                              <div class="card-body">
+                                <h2 class="card-title">Commitment to Privacy and Transparency</h2>
+                                <p class="card-text">We proudly embrace transparency, making our entire platform open-source and available for scrutiny and collaboration. You can review our cryptographic standards, implementation details, and even contribute to our ongoing development on our <a href="https://github.com/mqxym/encrypti0n" target="_blank">GitHub repository</a>.</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      
+                        <!-- Join Us Section -->
+                        <div class="row mb-4">
+                          <div class="col-12">
+                            <div class="card shadow-sm">
+                              <div class="card-body">
+                                <h2 class="card-title">Join Us</h2>
+                                <p class="card-text">Whether you're a developer, privacy advocate, or someone seeking reliable encryption tools, Encrypti0n.com is here to serve your needs securely and transparently. Join us in advancing digital privacy and ensure that your data remains truly yours.</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      
+                        <!-- Footer Statement -->
+                        <footer class="text-center mt-5">
+                          <p class="small mb-0">Encrypti0n.com – Empowering Privacy, One Local Encryption at a Time.</p>
+                        </footer>
+                      </div>
                 </div> 
+                
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">
@@ -305,7 +353,18 @@
         <!-- Theme App js -->
         <script src="assets/js/app.js" defer></script>
 
+        <!-- Toast-->
+        <script src="assets/libs/jquery-toast-plugin/jquery.toast.min.js" defer></script>
+
+        <!-- Sweet Alerts js -->
+        <script src="assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
+
+
+        <!-- Loading buttons js -->
+        <script src="assets/libs/ladda/spin.min.js" defer></script>
+        <script src="assets/libs/ladda/ladda.min.js" defer></script>
+
         <!-- App JS-->
-        <script src="app/insertVersion.js" defer></script>
+ <script src="app/insertVersion.js" defer></script>
     </body>
 </html>

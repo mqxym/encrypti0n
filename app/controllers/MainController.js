@@ -1,6 +1,6 @@
 import { FormHandler } from '../helpers/FormHandler.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
-import { ShowNotification } from '../helpers/ShowNotification.js';
+//import { ShowNotification } from '../helpers/ShowNotification.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { StorageService } from '../services/StorageService.js';
 import { EncryptionService } from '../services/EncryptionService.js';
@@ -13,13 +13,7 @@ export class MainController {
    */
   constructor(formId) {
     this.formHandler = new FormHandler(formId);
-    this.storageService = new StorageService();
-    this.encryptionService = new EncryptionService();
-    this.configManager = new ConfigManager();
-    this.pbkdf2Service = new pbkdf2Service('pbkdf2-modal', this.configManager);
-    
     // Application state and version
-    this.appVersion = "3.0.0a6";
     this.doFiles = false;
     this.actionInProgress = false;
     this.actionInProgressCopy = false;
@@ -28,13 +22,17 @@ export class MainController {
   /**
    * Initialize the controller
    */
-  init() {
+  async init() {
+    this.configManager = await ConfigManager.create();
+    this.storageService = new StorageService();
+    this.encryptionService = new EncryptionService();
+    this.pbkdf2Service = new pbkdf2Service('pbkdf2-modal', this.configManager);
     this.bindUIEvents();
     this.initUI();
   }
 
   /**
-   * Bind all DOM events using jQuery.
+   * Bind all App DOM events.
    */
   bindUIEvents() {
     // General actions
@@ -75,7 +73,6 @@ export class MainController {
    * Initialize the UI with default values and perform compatibility checks.
    */
   async initUI() {
-    $(".version").text(this.appVersion);
     if (this.configManager.isUsingMasterPassword()) {
       ElementHandler.disable('encryptApplicationModal');
       $(document).off('click', '#encryptApplicationModal');
@@ -320,7 +317,7 @@ export class MainController {
       Swal.fire({
         icon: 'success',
         title: 'The application is encrypted!',
-        text: "Remember your password",
+        text: "Remember your password.",
         timer: 2500,
         showCancelButton: false,
         confirmButtonText: "Ok",

@@ -3,9 +3,10 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Privacy Policy - Encrypti0n.com</title>
+        <title>AES Text And File Encryption Tool Online - Secure and Reliable - Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Encrypti0n.com Privacy Policy" />
+        <meta name="description" content="All in one encryption/decryption tool for text and files. Encrypt to base64. Highly customizable. Reliable and secure." />
+        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,base64,AES256,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
@@ -20,6 +21,14 @@
         <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#000000">
+
+
+        <!-- Jquery Toast css -->
+        <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Loading button css -->
+        <link href="assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/libs/ladda/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
 
 		<!-- Theme Config Js -->
 		<script src="assets/js/head.js"></script>
@@ -86,6 +95,7 @@
                         </li>
 
                         <li class="menu-title">App Information</li>
+
                         <li class="menu-item">
                             <a href="/faq.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
@@ -184,6 +194,7 @@
                     <div class="clearfix"></div>
                 </div>
             </div>
+
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
@@ -214,7 +225,7 @@
                                     <i class="fe-maximize font-22"></i>
                                 </a>
                             </li>
-                            <li class="d-none d-sm-inline-block">
+                            <li class="">
                                 <div class="nav-link waves-effect waves-light" id="light-dark-mode">
                                     <i class="ri-moon-line font-22"></i>
                                 </div>
@@ -228,57 +239,90 @@
                             <div class="page-title-box">
                                 <div class="page-title-right">
                                     <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a>Encrypti0n.com</a></li>
-                                        <li class="breadcrumb-item active"><a href="/privacy-policy.html">Privacy Policy</a></li>
+                                        <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
+                                        <li class="breadcrumb-item active"><a href="/security-and-privacy.html">Security &amp; Privacy</a></li>
                                     </ol>
-                                </div>
-                                <h4 class="page-title">Privacy Policy</h4>
-                            </div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-12 my-4">
-                                <div class="card border rounded border-secondary">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Privacy Policy for Encrypti0n.com</h5>
-                                        <p class="card-text">
-                                          <strong>Effective Date:</strong> 2025/01/01
-                                        </p>
-                                        <p class="card-text">
-                                          <strong>Introduction:</strong> At Encrypti0n.com (accessible from <a href="https://encrypti0n.com">https://encrypti0n.com</a>), we prioritize your privacy and are committed to providing a secure experience. This Privacy Policy outlines the practices regarding data collection, usage, and protection. Please read this policy carefully.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Collection:</strong>  Encrypti0n.com  does not collect, store, or process any personal information, including but not limited to IP addresses, names, addresses, or contact details. We strive to ensure complete user anonymity.
-                                        </p>
-                                    
-                                        <p class="card-text">
-                                          <strong>Cookies:</strong>  Encrypti0n.com  does not use cookies to track or monitor user behavior.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Third Parties:</strong> No third parties are involved in the operation of this website. Encrypti0n.com functions independently and does not share or disclose user information with any external entities.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Processing:</strong> All data entered on Encrypti0n.com is processed locally on your device. No data is transmitted from your device to any server, ensuring complete privacy and control over your input.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Changes to This Privacy Policy:</strong> Encrypti0n.com reserves the right to update this Privacy Policy as necessary. We encourage you to review this policy periodically to stay informed of any changes.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Contact Us:</strong> For any questions or concerns regarding this Privacy Policy, please contact us at <a href="mailto:maxim@omg.lol">maxim@omg.lol</a>.
-                                        </p>
-                                    </div>
-                                    <div class="card-footer text-muted">
-                                        By using Encrypti0n.com, you acknowledge and agree to the terms outlined in this Privacy Policy.
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="container my-5">
+                        <!-- Page Title -->
+                        <div class="row">
+                          <div class="col-12">
+                            <h1 class="mb-4">Security &amp; Privacy at Encrypti0n.com</h1>
+                            <p>Encrypti0n.com places your privacy and data security at the heart of its design. Below, we transparently outline exactly how your data is handled, stored, and protected when using our platform.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- What Data is Stored Locally Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>What Data is Stored Locally?</h2>
+                            <p>Encrypti0n.com stores a minimal amount of data, strictly locally within your browser. Here's a clear breakdown:</p>
+                      
+                            <!-- Unsecured Data -->
+                            <h3>Unsecured Data</h3>
+                            <ul>
+                              <li><strong>UI Settings:</strong> User interface preferences such as dark mode settings are saved locally without encryption, allowing quick retrieval for your convenience.</li>
+                            </ul>
+                      
+                            <!-- Secured Data -->
+                            <h3>Secured Data</h3>
+                            <p>When the "Encrypt Application" feature is activated using a master password, the following data is securely encrypted and stored locally:</p>
+                            <ul>
+                              <li><strong>Saved Passwords:</strong> Any passwords saved within your password manager.</li>
+                              <li><strong>Slot Names:</strong> Custom names assigned to password slots.</li>
+                              <li><strong>PBKDF2 Settings:</strong> User-selected cryptographic difficulty settings, including salt length and PBKDF2 hashing rounds.</li>
+                            </ul>
+                            <p>Secured data is encrypted using AES-GCM encryption combined with PBKDF2 key derivation, ensuring robust protection.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Use of Cookies Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Use of Cookies</h2>
+                            <p>Encrypti0n.com respects your privacy and does <strong>not</strong> utilize cookies for any purpose. Your browsing and usage remain entirely anonymous and untracked.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Why No Online Data Storage Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Why No Online Data Storage?</h2>
+                            <p>Encrypti0n.com's commitment to digital minimalism and ethical data practices shapes its strict no-online-storage policy. We believe deeply in:</p>
+                            <ul>
+                              <li><strong>Data Sovereignty:</strong> Users should maintain complete ownership and control over their data.</li>
+                              <li><strong>Privacy by Design:</strong> Products should protect user privacy inherently, rather than through additional privacy policies or compliance measures.</li>
+                              <li><strong>Informational Self-determination:</strong> Individuals must freely decide what data they wish to store or share without external influence or control.</li>
+                            </ul>
+                            <p>By eliminating online data storage entirely, we avoid potential misuse, unauthorized access, or unnecessary vulnerability, empowering you to retain absolute control over your personal information.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Losing Your Master Password Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Losing Your Master Password: Security Implications</h2>
+                            <p>Your master password is the core key for encrypting and decrypting your secured local data. If you lose or forget this master password:</p>
+                            <ul>
+                              <li><strong>Complete Data Reset:</strong> All secured data (including saved passwords, slot names, and PBKDF2 difficulty settings) becomes irretrievable.</li>
+                              <li><strong>Fresh Application Start:</strong> You'll need to reset the application to its initial state, effectively deleting all secured information and configurations.</li>
+                            </ul>
+                            <p>While this approach might seem rigorous, it ensures no one—not even Encrypti0n.com—can access your encrypted data without your explicit consent.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Closing Statement -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <p>Encrypti0n.com's foundational principles and robust encryption methods work together to guarantee that your privacy is always prioritized, placing you in complete control of your data.</p>
+                          </div>
+                        </div>
+                      </div>
                 </div> 
+                
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">
@@ -304,6 +348,17 @@
 
         <!-- Theme App js -->
         <script src="assets/js/app.js" defer></script>
+
+        <!-- Toast-->
+        <script src="assets/libs/jquery-toast-plugin/jquery.toast.min.js" defer></script>
+
+        <!-- Sweet Alerts js -->
+        <script src="assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
+
+
+        <!-- Loading buttons js -->
+        <script src="assets/libs/ladda/spin.min.js" defer></script>
+        <script src="assets/libs/ladda/ladda.min.js" defer></script>
 
         <!-- App JS-->
         <script src="app/insertVersion.js" defer></script>

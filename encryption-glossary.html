@@ -3,9 +3,10 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Privacy Policy - Encrypti0n.com</title>
+        <title>Encryption Glossary - Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Encrypti0n.com Privacy Policy" />
+        <meta name="description" content="All in one encryption/decryption tool for text and files. Encrypt to base64. Highly customizable. Reliable and secure." />
+        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,base64,AES256,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
@@ -20,6 +21,14 @@
         <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#000000">
+
+
+        <!-- Jquery Toast css -->
+        <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Loading button css -->
+        <link href="assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/libs/ladda/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
 
 		<!-- Theme Config Js -->
 		<script src="assets/js/head.js"></script>
@@ -86,6 +95,7 @@
                         </li>
 
                         <li class="menu-title">App Information</li>
+
                         <li class="menu-item">
                             <a href="/faq.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
@@ -184,6 +194,7 @@
                     <div class="clearfix"></div>
                 </div>
             </div>
+
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
@@ -214,7 +225,7 @@
                                     <i class="fe-maximize font-22"></i>
                                 </a>
                             </li>
-                            <li class="d-none d-sm-inline-block">
+                            <li class="">
                                 <div class="nav-link waves-effect waves-light" id="light-dark-mode">
                                     <i class="ri-moon-line font-22"></i>
                                 </div>
@@ -228,57 +239,136 @@
                             <div class="page-title-box">
                                 <div class="page-title-right">
                                     <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a>Encrypti0n.com</a></li>
-                                        <li class="breadcrumb-item active"><a href="/privacy-policy.html">Privacy Policy</a></li>
+                                        <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
+                                        <li class="breadcrumb-item active"><a href="/encryption-glossary.html">Encryption Glossary</a></li>
                                     </ol>
-                                </div>
-                                <h4 class="page-title">Privacy Policy</h4>
-                            </div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-12 my-4">
-                                <div class="card border rounded border-secondary">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Privacy Policy for Encrypti0n.com</h5>
-                                        <p class="card-text">
-                                          <strong>Effective Date:</strong> 2025/01/01
-                                        </p>
-                                        <p class="card-text">
-                                          <strong>Introduction:</strong> At Encrypti0n.com (accessible from <a href="https://encrypti0n.com">https://encrypti0n.com</a>), we prioritize your privacy and are committed to providing a secure experience. This Privacy Policy outlines the practices regarding data collection, usage, and protection. Please read this policy carefully.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Collection:</strong>  Encrypti0n.com  does not collect, store, or process any personal information, including but not limited to IP addresses, names, addresses, or contact details. We strive to ensure complete user anonymity.
-                                        </p>
-                                    
-                                        <p class="card-text">
-                                          <strong>Cookies:</strong>  Encrypti0n.com  does not use cookies to track or monitor user behavior.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Third Parties:</strong> No third parties are involved in the operation of this website. Encrypti0n.com functions independently and does not share or disclose user information with any external entities.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Processing:</strong> All data entered on Encrypti0n.com is processed locally on your device. No data is transmitted from your device to any server, ensuring complete privacy and control over your input.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Changes to This Privacy Policy:</strong> Encrypti0n.com reserves the right to update this Privacy Policy as necessary. We encourage you to review this policy periodically to stay informed of any changes.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Contact Us:</strong> For any questions or concerns regarding this Privacy Policy, please contact us at <a href="mailto:maxim@omg.lol">maxim@omg.lol</a>.
-                                        </p>
-                                    </div>
-                                    <div class="card-footer text-muted">
-                                        By using Encrypti0n.com, you acknowledge and agree to the terms outlined in this Privacy Policy.
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="container my-5">
+                        <!-- Page Title -->
+                        <div class="row">
+                          <div class="col-12">
+                            <h1 class="mb-4">Glossary of Encryption Terminology</h1>
+                            <p>Welcome to the Encrypti0n.com glossary: Your quick, concise reference to essential cryptographic and encryption terms clearly explained for easy understanding.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- AES (Advanced Encryption Standard) -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>AES (Advanced Encryption Standard)</h3>
+                            <p>A widely adopted symmetric encryption algorithm used globally to securely encrypt data. Encrypti0n.com specifically uses AES-GCM.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- AES-GCM (Galois/Counter Mode) -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>AES-GCM (Galois/Counter Mode)</h3>
+                            <p>An advanced encryption mode of AES providing both confidentiality and built-in authentication, protecting against data tampering.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Base64 -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>Base64</h3>
+                            <p>A method for encoding binary data into ASCII text, commonly used to safely transmit encrypted data.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Ciphertext -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>Ciphertext</h3>
+                            <p>Data that has been transformed from readable plaintext into encrypted form, unreadable without the correct decryption key.</p>
+                          </div>
+                        </div>
+
+                        <!-- Encryption -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                              <h3>Encryption</h3>
+                              <p>The secure transformation of readable data (plaintext) into an unreadable format (ciphertext) to prevent unauthorized access.</p>
+                            </div>
+                        </div>
+                      
+                        <!-- Decryption -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>Decryption</h3>
+                            <p>The process of converting encrypted data (ciphertext) back into its original readable form (plaintext).</p>
+                          </div>
+                        </div>
+                      
+                        <!-- IV (Initialization Vector) -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>IV (Initialization Vector)</h3>
+                            <p>A random, unique value used during encryption to ensure that identical plaintext encrypted multiple times yields different ciphertext.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Nonce -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>Nonce</h3>
+                            <p>Short for "number used once," a unique, random value used to protect encryption against replay attacks and ensure security in AES-GCM encryption.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- PBKDF2 (Password-Based Key Derivation Function 2) -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>PBKDF2 (Password-Based Key Derivation Function 2)</h3>
+                            <p>A cryptographic method that securely generates encryption keys from user passwords by using salt and multiple hashing rounds, making keys resistant to brute-force attacks.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Plaintext -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>Plaintext</h3>
+                            <p>Unencrypted data in its original, readable format before undergoing encryption.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Salt -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>Salt</h3>
+                            <p>Random data added during key derivation processes (like PBKDF2) to protect against precomputed attacks and ensure each encryption key is unique.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Symmetric Encryption -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>Symmetric Encryption</h3>
+                            <p>A type of encryption where the same cryptographic key is used for both encrypting and decrypting data.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Tamper-proof -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>Tamper-proof</h3>
+                            <p>Characteristic of encrypted data (like AES-GCM) that ensures any alteration or corruption during storage or transmission can be immediately detected upon decryption.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Web Crypto API -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h3>Web Crypto API</h3>
+                            <p>A secure browser-based JavaScript API providing robust cryptographic operations, such as AES-GCM encryption and PBKDF2 key derivation, used extensively by Encrypti0n.com.</p>
+                          </div>
+                        </div>
+                      </div>
                 </div> 
+                
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">
@@ -306,6 +396,6 @@
         <script src="assets/js/app.js" defer></script>
 
         <!-- App JS-->
-        <script src="app/insertVersion.js" defer></script>
+ <script src="app/insertVersion.js" defer></script>
     </body>
 </html>

@@ -3,9 +3,10 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Privacy Policy - Encrypti0n.com</title>
+        <title>How the site works - Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Encrypti0n.com Privacy Policy" />
+        <meta name="description" content="All in one encryption/decryption tool for text and files. Encrypt to base64. Highly customizable. Reliable and secure." />
+        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,base64,AES256,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
@@ -20,6 +21,14 @@
         <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#000000">
+
+
+        <!-- Jquery Toast css -->
+        <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Loading button css -->
+        <link href="assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/libs/ladda/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
 
 		<!-- Theme Config Js -->
 		<script src="assets/js/head.js"></script>
@@ -86,6 +95,7 @@
                         </li>
 
                         <li class="menu-title">App Information</li>
+
                         <li class="menu-item">
                             <a href="/faq.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
@@ -184,6 +194,7 @@
                     <div class="clearfix"></div>
                 </div>
             </div>
+
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
@@ -214,7 +225,7 @@
                                     <i class="fe-maximize font-22"></i>
                                 </a>
                             </li>
-                            <li class="d-none d-sm-inline-block">
+                            <li class="">
                                 <div class="nav-link waves-effect waves-light" id="light-dark-mode">
                                     <i class="ri-moon-line font-22"></i>
                                 </div>
@@ -228,57 +239,138 @@
                             <div class="page-title-box">
                                 <div class="page-title-right">
                                     <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a>Encrypti0n.com</a></li>
-                                        <li class="breadcrumb-item active"><a href="/privacy-policy.html">Privacy Policy</a></li>
+                                        <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
+                                        <li class="breadcrumb-item active"><a href="/how-it-works.html">How it works</a></li>
                                     </ol>
-                                </div>
-                                <h4 class="page-title">Privacy Policy</h4>
-                            </div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-12 my-4">
-                                <div class="card border rounded border-secondary">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Privacy Policy for Encrypti0n.com</h5>
-                                        <p class="card-text">
-                                          <strong>Effective Date:</strong> 2025/01/01
-                                        </p>
-                                        <p class="card-text">
-                                          <strong>Introduction:</strong> At Encrypti0n.com (accessible from <a href="https://encrypti0n.com">https://encrypti0n.com</a>), we prioritize your privacy and are committed to providing a secure experience. This Privacy Policy outlines the practices regarding data collection, usage, and protection. Please read this policy carefully.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Collection:</strong>  Encrypti0n.com  does not collect, store, or process any personal information, including but not limited to IP addresses, names, addresses, or contact details. We strive to ensure complete user anonymity.
-                                        </p>
-                                    
-                                        <p class="card-text">
-                                          <strong>Cookies:</strong>  Encrypti0n.com  does not use cookies to track or monitor user behavior.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Third Parties:</strong> No third parties are involved in the operation of this website. Encrypti0n.com functions independently and does not share or disclose user information with any external entities.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Processing:</strong> All data entered on Encrypti0n.com is processed locally on your device. No data is transmitted from your device to any server, ensuring complete privacy and control over your input.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Changes to This Privacy Policy:</strong> Encrypti0n.com reserves the right to update this Privacy Policy as necessary. We encourage you to review this policy periodically to stay informed of any changes.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Contact Us:</strong> For any questions or concerns regarding this Privacy Policy, please contact us at <a href="mailto:maxim@omg.lol">maxim@omg.lol</a>.
-                                        </p>
-                                    </div>
-                                    <div class="card-footer text-muted">
-                                        By using Encrypti0n.com, you acknowledge and agree to the terms outlined in this Privacy Policy.
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="container my-5">
+                        <!-- Page Title -->
+                        <div class="row">
+                          <div class="col-12">
+                            <h1 class="mb-4">How Encrypti0n.com Works</h1>
+                            <p>Encrypti0n.com offers robust encryption directly in your browser, prioritizing your privacy and security. Below, we outline clearly and technically how our encryption processes function internally.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Text Encryption Process Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Text Encryption Process</h2>
+                            <p>Encrypting text securely involves the following precise steps:</p>
+                            <ol>
+                              <li><strong>Retrieve Settings</strong>: The app fetches cryptographic settings (rounds, salt length) from encrypted local storage.</li>
+                              <li><strong>Encode Inputs</strong>: Both your text and password are encoded into binary format (UTF-8).</li>
+                              <li><strong>Generate Salt and Key</strong>: A random salt is generated. Using PBKDF2 (Password-Based Key Derivation Function 2) and the configured number of rounds, a secure 256-bit key is derived from your password.</li>
+                              <li><strong>Encrypt with AES-GCM</strong>: The binary text data is encrypted using AES-GCM with the derived key and a securely generated 12-byte nonce (<code>crypto.getRandomValues</code>).</li>
+                              <li><strong>Output Encrypted Data</strong>: The encrypted data is encoded in base64 format for easy copying or storage.</li>
+                            </ol>
+                            <p><strong>Technical Summary:</strong></p>
+                            <pre class="bg-light p-1 rounded"><code class="language-javascript">
+settings = getEncryptedStorageSettings();
+encodedText = utf8Encode(text);
+encodedPassword = utf8Encode(password);
+salt = crypto.getRandomValues();
+key = derivePBKDF2Key(encodedPassword, salt, settings.rounds);
+iv = crypto.getRandomValues(12);
+ciphertext = AES_GCM_Encrypt(encodedText, key, iv);
+outputBase64(ciphertext);
+                            </code></pre>
+                          </div>
+                        </div>
+                      
+                        <!-- File Encryption Process Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>File Encryption Process</h2>
+                            <p>Encrypting files follows a similar core logic with additional file-specific enhancements for improved security and manageability:</p>
+                            <ol>
+                              <li><strong>Initial Steps</strong>: Retrieve settings and encode the password as above, deriving a 256-bit key.</li>
+                              <li><strong>Chunk Splitting</strong>: The file is split into 64 KiB chunks, each encrypted individually to ensure efficiency and security.</li>
+                              <li><strong>Individual Chunk Encryption</strong>: Each chunk receives a newly generated 12-byte nonce for AES-GCM encryption.</li>
+                              <li><strong>File Header Creation</strong>: Each chunk’s length information and encryption metadata (such as nonce and salt) are included in the file header.</li>
+                              <li><strong>Blob Generation and Download</strong>: The encrypted chunks are combined into a Blob object, and a secure download link is generated for the user.</li>
+                            </ol>
+                            <p><strong>Technical Summary:</strong></p>
+                            <pre class="bg-light p-1 rounded"><code class="language-javascript">
+settings = getEncryptedStorageSettings();
+encodedPassword = utf8Encode(password);
+salt = crypto.getRandomValues();
+key = derivePBKDF2Key(encodedPassword, salt, settings.rounds);
+chunks = splitFileIntoChunks(file, 65536);
+for each chunk:
+    iv = crypto.getRandomValues(12);
+    encryptedChunk = AES_GCM_Encrypt(chunk, key, iv);
+    storeInBlob(encryptedChunk, iv, chunk.length);
+createDownloadLink(blob);
+                            </code></pre>
+                          </div>
+                        </div>
+                      
+                        <!-- Decryption Process Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Decryption Process</h2>
+                            <p>Decryption meticulously reverses the encryption, ensuring data integrity:</p>
+                            <ol>
+                              <li><strong>Header Verification</strong>: Check that the file or text header begins with the identifier byte <code>0x01</code> to confirm it was encrypted with Encrypti0n.com.</li>
+                              <li><strong>Retrieve Encryption Parameters</strong>: Extract the salt and the PBKDF2 round count from the header.</li>
+                              <li><strong>Key Derivation</strong>: Using extracted parameters, derive the correct 256-bit key.</li>
+                              <li><strong>AES-GCM Decryption</strong>: Perform decryption using AES-GCM with the derived key and nonce included within each chunk or encrypted text segment.</li>
+                            </ol>
+                            <p><strong>Technical Summary</strong></p>
+                            <pre class="bg-light p-1 rounded"><code class="language-javascript">
+header = readFileHeader(encryptedData);
+verify(header.startsWith(0x01));
+salt, rounds = extractHeaderParameters(header);
+key = derivePBKDF2Key(encodedPassword, salt, rounds);
+decryptedData = AES_GCM_Decrypt(encryptedChunks, key, iv);
+outputOriginalData(decryptedData);
+                            </code></pre>
+                          </div>
+                        </div>
+                      
+                        <!-- Encrypt Application (App Data Protection) Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Encrypt Application (App Data Protection)</h2>
+                            <p>Encrypti0n.com allows users to secure all locally stored application data with a master password:</p>
+                            <ul>
+                              <li><strong>Secure Data Handling</strong>: Except for essential UI settings, all data is encrypted using AES-GCM with PBKDF2 key derivation.</li>
+                              <li><strong>On-the-fly Decryption</strong>: Data is decrypted dynamically upon request; no decrypted keys remain persistently readable or outputtable due to JavaScript security limitations.</li>
+                              <li><strong>Key Management</strong>: The master password is never stored—it's only used to derive the encryption key. Without a user-defined master password, a default (insecure) key is used.</li>
+                              <li><strong>Data Structure (Example)</strong>:</li>
+                            </ul>
+                            <pre class="bg-light p-1 rounded"><code class="language-json">
+{
+"isUsingMasterPassword": false,
+"PKDF2Rounds": 1196,
+"PKDF2Salt": "ECPlvmyu3dv++nhzwXBu7g==",
+"default": "2o2tKUOZ1Sk8bu4MTu0wxTLt",
+"data": {
+        "iv": "Zhg/WsALMJYanZsW",
+        "ciphertext": "xxxxxxx"
+    }
+}
+                            </code></pre>
+                            <p><strong>Technical Summary</strong></p>
+                            <pre class="bg-light p-1 rounded"><code class="language-javascript">
+if (masterPassword):
+    key = derivePBKDF2Key(masterPassword, PKDF2Salt, PKDF2Rounds);
+else:
+    key = defaultKey;
+
+iv = crypto.getRandomValues(12);
+ciphertext = AES_GCM_Encrypt(appData, key, iv);
+storeEncryptedData(ciphertext, iv);
+                            </code></pre>
+                          </div>
+                        </div>
+                    </div>
                 </div> 
+                
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">

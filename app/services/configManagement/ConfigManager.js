@@ -11,18 +11,19 @@ export class ConfigManager {
   constructor() {
     this.storageService = new StorageService();
     this.encryptionManager = new ApplicationEncryptionManager();
+  }
 
-    this.config = this.storageService.getConf();
-    if (!this.config) {
-      this._initNewConfig();
-      this._saveConfig();
+  static async create() {
+    const instance = new ConfigManager();
+    instance.config = instance.storageService.getConf();
+    if (!instance.config) {
+      await instance._initNewConfig();
+      instance._saveConfig();
     }
-
-    // If no master password is used, we can derive the default key right away for faster usage
-    if (!this.config.isUsingMasterPassword) {
-      // Derive the default key once. 
-      this._deriveDefaultKeyOnStartup().catch(console.error);
+    if (!instance.config.isUsingMasterPassword) {
+      await instance._deriveDefaultKeyOnStartup().catch(console.error);
     }
+    return instance;
   }
 
   isUsingMasterPassword () {
@@ -229,7 +230,7 @@ export class ConfigManager {
    * then re-encrypts with new PBKDF2 parameters.
    */
   async setMasterPassword(newMasterPassword) {
-    // 1. Decrypt current data with the existing session key
+    // Decrypt current data with the existing session key
     const oldKey = await this._getSessionKeyOrThrow(); // If previously default or old master
     const plainData = await this.encryptionManager.decryptData(
       oldKey,
@@ -237,7 +238,7 @@ export class ConfigManager {
       this.config.data.ciphertext
     );
 
-    // 2. Update config with new salt & rounds
+    // Update config with new salt & rounds
     const newSalt = this.encryptionManager.generateRandomSalt();
     const newRounds = this._getRandomInt(5000000, 5001000);
     this.config.isUsingMasterPassword = true;
@@ -245,7 +246,7 @@ export class ConfigManager {
     this.config.PKDF2Rounds = newRounds;
     this.config.default = '';
 
-    // 3. Derive new key from the new master password, re-encrypt
+    // Derive new key from the new master password, re-encrypt
     this.encryptionManager.sessionKeyManager.clearSessionKey();
     const newKey = await this.encryptionManager.sessionKeyManager.deriveAndCacheKey(
       newMasterPassword,
@@ -264,7 +265,7 @@ export class ConfigManager {
    * Removes the master password, reverting to a default password scenario.
    */
   async removeMasterPassword() {
-    // 1. Decrypt with the current session key
+    // Decrypt with the current session key
     const oldKey = await this._getSessionKeyOrThrow();
     const plainData = await this.encryptionManager.decryptData(
       oldKey,
@@ -272,13 +273,13 @@ export class ConfigManager {
       this.config.data.ciphertext
     );
 
-    // 2. Switch to default-based encryption
+    // Switch to default-based encryption
     this.config.isUsingMasterPassword = false;
     this.config.PKDF2Salt = this.encryptionManager.generateRandomSalt();
     this.config.PKDF2Rounds = this._getRandomInt(1000, 2000);
     this.config.default = this.encryptionManager.generateRandomDefaultKey();
 
-    // 3. Clear old session key, derive new default key, re-encrypt
+    // Clear old session key, derive new default key, re-encrypt
     this.encryptionManager.sessionKeyManager.clearSessionKey();
     const newKey = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(
       this.config.default,

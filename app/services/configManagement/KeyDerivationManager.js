@@ -13,7 +13,7 @@ export class KeyDerivationManager {
     async deriveKey(password, saltBytes, iterations) {
       const encoder = new TextEncoder();
   
-      // 1. Import the raw password
+      // Import the raw password
       const baseKey = await crypto.subtle.importKey(
         'raw',
         encoder.encode(password),
@@ -22,7 +22,7 @@ export class KeyDerivationManager {
         ['deriveBits', 'deriveKey']
       );
   
-      // 2. Derive a 256-bit AES-GCM key (non-extractable)
+      // Derive a 256-bit AES-GCM key (non-extractable)
       return crypto.subtle.deriveKey(
         {
           name: 'PBKDF2',

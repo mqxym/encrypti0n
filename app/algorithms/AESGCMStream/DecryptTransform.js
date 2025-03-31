@@ -7,7 +7,7 @@ export class DecryptTransform {
   }
 
   async transform(chunk, controller) {
-    // 1. Accumulate new data in the buffer
+    //  Accumulate new data in the buffer
     const newData = new Uint8Array(chunk);
     const combined = new Uint8Array(this.buffer.length + newData.length);
     combined.set(this.buffer);
@@ -15,7 +15,7 @@ export class DecryptTransform {
 
     let offset = 0;
 
-    // 2. Process any complete "header + ciphertext" blocks
+    // Process any complete "header + ciphertext" blocks
     while (true) {
       // We need at least 4 bytes for the length header
       if (combined.length - offset < 4) {
@@ -32,18 +32,18 @@ export class DecryptTransform {
         break;
       }
 
-      // 3. Extract the encrypted chunk
+      // Extract the encrypted chunk
       const encryptedChunk = combined.slice(offset, offset + cipherLength);
       offset += cipherLength;
 
-      // 4. Decrypt
+      // Decrypt
       const decrypted = await this.cryptoEngine.decryptChunk(encryptedChunk);
 
-      // 5. Output plaintext
+      // Output plaintext
       controller.enqueue(decrypted);
     }
 
-    // 6. Keep leftover unprocessed data for next transform call
+    // Keep leftover unprocessed data for next transform call
     this.buffer = combined.slice(offset);
   }
 

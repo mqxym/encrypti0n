@@ -51,14 +51,14 @@ export class EncryptionService {
    * The output includes a header with metadata and the ciphertext.
    * @param {string | Uint8Array} plaintext - Data to encrypt.
    * @param {string} passphrase - Passphrase for key derivation.
-   * @param {string} algorithmName - Algorithm to use ('aesgcm', 'aesctr', or 'xor').
+   * @param {string} algorithmName - Algorithm to use ('aesgcm')
    * @returns {Promise<string>} Base64 encoded encrypted string.
    */
   async encryptText(plaintext, passphrase, algorithmName) {
     const passphraseBytes = new TextEncoder().encode(passphrase);
     const algo = this.getAlgorithm(algorithmName);
 
-    // Initialize the algorithm, which derives the key and returns salt (if applicable).
+    // Initialize the algorithm, which derives the key and returns salt
     const saltBytes = await algo.initialize(
       passphraseBytes,
       this.saltLength,
@@ -111,12 +111,12 @@ export class EncryptionService {
       return false;
     }
   }
-
+  
   async encryptFile(file, passphrase, algorithmName) {
     const passphraseBytes = new TextEncoder().encode(passphrase);
     const algo = this.getAlgorithm(algorithmName);
 
-    // Initialize the algorithm, which derives the key and returns salt (if applicable).
+    // Initialize the algorithm, which derives the key and returns salt.
     const saltBytes = await algo.initialize(
       passphraseBytes,
       this.saltLength,
@@ -144,6 +144,12 @@ export class EncryptionService {
     const blob = processor.decryptFile(file.slice(headerLength));
     return blob;
   }
+
+  /**
+   * Checks if the provided file appears to be encrypted based on its header.
+   * @param {string} file - file handle.
+   * @returns {Promise<boolean>} True if data is encrypted; otherwise, false.
+   */
 
   async isEncryptedFile(file) {
     try {
@@ -194,8 +200,6 @@ export class EncryptionService {
   _encodeHeader(algorithmName, saltBytes) {
     const algorithmIdentifiers = {
       aesgcm: 0x01,
-      aesctr: 0x02,
-      xor: 0x03
     };
     const algoId = algorithmIdentifiers[algorithmName];
     if (algorithmName === 'aesgcm') {

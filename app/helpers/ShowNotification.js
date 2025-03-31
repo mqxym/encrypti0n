@@ -1,3 +1,5 @@
+// Currently not used by the main app
+
 export class ShowNotification {
     static success (title, content) {
       $.toast({

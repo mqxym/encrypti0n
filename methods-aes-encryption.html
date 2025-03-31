@@ -88,9 +88,33 @@
                         <li class="menu-title">App Information</li>
 
                         <li class="menu-item">
-                            <a href="/index.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-help"></i></span>
+                            <a href="/faq.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
                                 <span class="menu-text"> FAQ </span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/how-it-works.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-file-document"></i></span>
+                                <span class="menu-text"> How it works </span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/security-and-privacy.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-upload-lock"></i></span>
+                                <span class="menu-text"> Security & Privacy </span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/developer-documentation-technical-information.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-source-branch"></i></span>
+                                <span class="menu-text"> More Information </span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/encryption-glossary.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-globe-model"></i></span>
+                                <span class="menu-text">Glossary</span>
                             </a>
                         </li>
 
@@ -241,7 +265,15 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-6">
-                                <div><script>document.write(new Date().getFullYear())</script> © Encrypti0n.com - No cookies. No tracking.</div>
+                                <div><script>document.write(new Date().getFullYear())</script> © Encrypti0n.com Version <b class="version"></b></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="footer-links d-flex flex-column flex-md-row gap-2 gap-md-4 align-items-start align-items-md-center justify-content-start justify-content-md-end">
+                                    <a href="/about.html">About</a>
+                                    <a href="/privacy-policy.html">Privacy Policy</a>
+                                    <a href="/download-app.html">Download Project</a>
+                                    <a href="/contact.html">Contact</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -254,6 +286,7 @@
 
         <!-- Theme App js -->
         <script src="assets/js/app.js" defer></script>
+        <script src="app/insertVersion.js" defer></script>
 
     </body>
 </html>

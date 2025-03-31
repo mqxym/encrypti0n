@@ -3,9 +3,10 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Privacy Policy - Encrypti0n.com</title>
+        <title>Developer Documentation &amp; Technical Information - Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Encrypti0n.com Privacy Policy" />
+        <meta name="description" content="All in one encryption/decryption tool for text and files. Encrypt to base64. Highly customizable. Reliable and secure." />
+        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,base64,AES256,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
@@ -20,6 +21,14 @@
         <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#000000">
+
+
+        <!-- Jquery Toast css -->
+        <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Loading button css -->
+        <link href="assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/libs/ladda/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
 
 		<!-- Theme Config Js -->
 		<script src="assets/js/head.js"></script>
@@ -86,6 +95,7 @@
                         </li>
 
                         <li class="menu-title">App Information</li>
+
                         <li class="menu-item">
                             <a href="/faq.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
@@ -184,6 +194,7 @@
                     <div class="clearfix"></div>
                 </div>
             </div>
+
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
@@ -214,7 +225,7 @@
                                     <i class="fe-maximize font-22"></i>
                                 </a>
                             </li>
-                            <li class="d-none d-sm-inline-block">
+                            <li class="">
                                 <div class="nav-link waves-effect waves-light" id="light-dark-mode">
                                     <i class="ri-moon-line font-22"></i>
                                 </div>
@@ -228,57 +239,95 @@
                             <div class="page-title-box">
                                 <div class="page-title-right">
                                     <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a>Encrypti0n.com</a></li>
-                                        <li class="breadcrumb-item active"><a href="/privacy-policy.html">Privacy Policy</a></li>
+                                        <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
+                                        <li class="breadcrumb-item active"><a href="/developer-documentation-technical-information.html">Documentation &amp; Technical Information</a></li>
                                     </ol>
-                                </div>
-                                <h4 class="page-title">Privacy Policy</h4>
-                            </div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-12 my-4">
-                                <div class="card border rounded border-secondary">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Privacy Policy for Encrypti0n.com</h5>
-                                        <p class="card-text">
-                                          <strong>Effective Date:</strong> 2025/01/01
-                                        </p>
-                                        <p class="card-text">
-                                          <strong>Introduction:</strong> At Encrypti0n.com (accessible from <a href="https://encrypti0n.com">https://encrypti0n.com</a>), we prioritize your privacy and are committed to providing a secure experience. This Privacy Policy outlines the practices regarding data collection, usage, and protection. Please read this policy carefully.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Collection:</strong>  Encrypti0n.com  does not collect, store, or process any personal information, including but not limited to IP addresses, names, addresses, or contact details. We strive to ensure complete user anonymity.
-                                        </p>
-                                    
-                                        <p class="card-text">
-                                          <strong>Cookies:</strong>  Encrypti0n.com  does not use cookies to track or monitor user behavior.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Third Parties:</strong> No third parties are involved in the operation of this website. Encrypti0n.com functions independently and does not share or disclose user information with any external entities.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Data Processing:</strong> All data entered on Encrypti0n.com is processed locally on your device. No data is transmitted from your device to any server, ensuring complete privacy and control over your input.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Changes to This Privacy Policy:</strong> Encrypti0n.com reserves the right to update this Privacy Policy as necessary. We encourage you to review this policy periodically to stay informed of any changes.
-                                        </p>
-                                        
-                                        <p class="card-text">
-                                          <strong>Contact Us:</strong> For any questions or concerns regarding this Privacy Policy, please contact us at <a href="mailto:maxim@omg.lol">maxim@omg.lol</a>.
-                                        </p>
-                                    </div>
-                                    <div class="card-footer text-muted">
-                                        By using Encrypti0n.com, you acknowledge and agree to the terms outlined in this Privacy Policy.
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="container my-5">
+                        <!-- Page Title -->
+                        <div class="row">
+                          <div class="col-12">
+                            <h1 class="mb-4">Developer Documentation &amp; Technical Information</h1>
+                            <p>This page offers detailed insights into the technical implementation, cryptographic methods, and development aspects of Encrypti0n.com, supporting transparency and encouraging open collaboration.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Cryptographic Libraries & APIs Used Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Cryptographic Libraries &amp; APIs Used</h2>
+                            <p>Encrypti0n.com leverages modern browser-native cryptographic libraries:</p>
+                            <ul>
+                              <li><strong><code>window.crypto</code></strong>: Secure random number generation and cryptographic operations.</li>
+                              <li><strong><code>window.crypto.subtle</code></strong>: Provides essential cryptographic primitives like AES-GCM encryption/decryption and PBKDF2 key derivation.</li>
+                            </ul>
+                            <p>These APIs are part of the Web Crypto API specification, offering robust, secure cryptographic functions directly within supported browsers.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Open Source Code Availability Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Open Source Code Availability</h2>
+                            <p>Encrypti0n.com strongly believes in transparency, which is why the complete source code is openly available on GitHub:</p>
+                            <p><a href="https://github.com/mqxym/encrypti0n" target="_blank">Encrypti0n.com GitHub Repository</a></p>
+                            <p>Developers, researchers, and privacy enthusiasts are encouraged to inspect, review, and contribute to enhance the project's reliability and security.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Internal Error Handling Mechanism Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Internal Error Handling Mechanism</h2>
+                            <p>Encrypti0n.com employs precise and secure error handling aligned with the tamper-proof nature of AES-GCM encryption:</p>
+                            <ul>
+                              <li><strong>AES-GCM Decryption Errors:</strong> When decrypting data, the Web Crypto API returns explicit errors if the provided key, nonce, or ciphertext is incorrect, indicating potential tampering or incorrect passwords.</li>
+                              <li><strong>Tamper-proof Encryption:</strong> AES-GCM inherently provides authentication, meaning any alteration to the encrypted data will result in failed decryption, immediately alerting the user.</li>
+                            </ul>
+                            <p>This ensures reliable security by clearly distinguishing between legitimate errors (e.g., wrong passwords) and potential data corruption or attacks.</p>
+                            <p><strong>Pseudo-Code:</strong></p>
+                            <pre class="bg-light p-3 rounded"><code class="language-javascript">
+try {
+    decryptedData = await window.crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: iv },
+        derivedKey,
+        encryptedData
+    );
+} catch (error) {
+    displayError("Decryption failed: Incorrect password or data integrity compromised.");
+}
+                            </code></pre>
+                          </div>
+                        </div>
+                      
+                        <!-- Browser Compatibility Notes Section -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <h2>Browser Compatibility Notes</h2>
+                            <p>Encrypti0n.com depends on the Web Crypto API, widely supported by modern browsers. The following browsers are confirmed to support necessary cryptographic APIs:</p>
+                            <ul>
+                              <li><strong>Google Chrome:</strong> Supported since version 37 (August 2014)</li>
+                              <li><strong>Mozilla Firefox:</strong> Supported since version 34 (December 2014)</li>
+                              <li><strong>Microsoft Edge:</strong> Supported since initial release (EdgeHTML) and fully in Edge Chromium (January 2020)</li>
+                              <li><strong>Apple Safari:</strong> Supported since version 11 (September 2017)</li>
+                              <li><strong>Opera:</strong> Supported since version 24 (September 2014)</li>
+                            </ul>
+                            <p>Older or legacy browsers (such as Internet Explorer or significantly outdated browser versions) might lack proper Web Crypto API implementation, causing compatibility issues. Users are advised to update their browsers for full functionality and security.</p>
+                          </div>
+                        </div>
+                      
+                        <!-- Closing Statement -->
+                        <div class="row my-4">
+                          <div class="col-12">
+                            <p>Encrypti0n.com continues to embrace open standards and transparency, fostering a secure and reliable encryption solution available directly in your browser.</p>
+                          </div>
+                        </div>
+                      </div>
                 </div> 
+                
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">

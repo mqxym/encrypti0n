@@ -7,7 +7,7 @@ export class EncryptTransform {
   }
 
   async transform(chunk, controller) {
-    // 1. Combine leftover buffer with new incoming data
+    // Combine leftover buffer with new incoming data
     const newData = new Uint8Array(chunk);
     const combined = new Uint8Array(this.buffer.length + newData.length);
     combined.set(this.buffer);
@@ -15,7 +15,7 @@ export class EncryptTransform {
 
     let offset = 0;
 
-    // 2. Process as many full 512 KiB blocks as possible
+    // Process as many full 512 KiB blocks as possible
     while (combined.length - offset >= this.chunkSize) {
       // Extract one plaintext block
       const plaintextBlock = combined.slice(offset, offset + this.chunkSize);
@@ -24,11 +24,11 @@ export class EncryptTransform {
       // Encrypt that block (includes IV internally)
       const encryptedBlock = await this.cryptoEngine.encryptChunk(plaintextBlock);
 
-      // 3. Create a 4-byte header that holds the length of encryptedBlock
+      // Create a 4-byte header that holds the length of encryptedBlock
       const header = new Uint8Array(4);
       new DataView(header.buffer).setUint32(0, encryptedBlock.length, false); // big-endian
 
-      // 4. Combine header + ciphertext
+      // Combine header + ciphertext
       const output = new Uint8Array(4 + encryptedBlock.length);
       output.set(header, 0);
       output.set(encryptedBlock, 4);
@@ -36,7 +36,7 @@ export class EncryptTransform {
       controller.enqueue(output);
     }
 
-    // 5. Save leftover bytes in this.buffer
+    // Save leftover bytes in this.buffer
     this.buffer = combined.slice(offset);
   }
 

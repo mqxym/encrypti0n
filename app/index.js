@@ -1,6 +1,6 @@
 import { MainController } from './controllers/MainController.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   if (!window.crypto || !window.crypto.subtle) {
       Swal.fire({
         icon: 'error',
@@ -11,5 +11,5 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   const mainController = new MainController('mainForm');
-  mainController.init();
+  await mainController.init();
 });

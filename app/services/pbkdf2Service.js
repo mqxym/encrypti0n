@@ -113,7 +113,7 @@ export class pbkdf2Service {
     }
   }
 
-  // External API: Retrieve the current saved options using a given configManager.
+  // Retrieve the current saved options using a given configManager.
   static async getCurrentOptions(configManager) {
     try {
       return await configManager.readOptions();
