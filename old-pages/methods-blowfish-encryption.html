@@ -3,51 +3,44 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Download App - Encrypti0n.com</title>
+        <title>About Blowfish Encryption - Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="All in one encryption/decryption tool for text and files. Encrypt to base64. Highly customizable. Reliable and secure." />
-        <meta name="keywords" content="Encrypt,Decrypt,Encryption,Decryption,File,Multiple,AES,base64,AES256,Online,HTML,Javascript,Offline,Download,Privacy,Sourcecode" />
+        <meta name="description" content="What is Blowfish encryption and what use cases does it have?" />
+        <meta name="keywords" content="Encryption,Decryption,File,Multiple,Blowfish" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
         <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/icons/favicon.ico">
+        <link rel="shortcut icon" href="../assets/icons/favicon.ico">
 
-        <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
         <link rel="manifest" href="/site.webmanifest">
-        <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="mask-icon" href="../assets/icons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#000000">
 
-
-        <!-- Jquery Toast css -->
-        <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
-
-        <!-- Loading button css -->
-        <link href="assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
-        <link href="assets/libs/ladda/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
-
 		<!-- Theme Config Js -->
-		<script src="assets/js/head.js"></script>
+		<script src="../assets/js/head.js"></script>
 
 		<!-- Bootstrap css -->
-		<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
+		<link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
 
 		<!-- App css -->
-		<link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+		<link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
 
 		<!-- Icons css -->
-		<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-
+		<link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     </head>
 
     <body>
 
         <!-- Begin page -->
         <div id="wrapper">
+
+            
             <div id="preloader">
                 <div id="status">
                     <div class="spinner">Loading...</div>
@@ -62,14 +55,14 @@
                 <div class="logo-box">
                     <!-- Brand Logo Light -->
                     <a href="/" class="logo-light">
-                        <img src="assets/images/logo-dark.png" alt="logo" class="logo-lg">
-                        <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                        <img src="../assets/images/logo-dark.png" alt="logo" class="logo-lg">
+                        <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm">
                     </a>
 
                     <!-- Brand Logo Dark -->
                     <a href="/" class="logo-dark">
-                        <img src="assets/images/logo.png" alt="dark logo" class="logo-lg">
-                        <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                        <img src="../assets/images/logo.png" alt="dark logo" class="logo-lg">
+                        <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm">
                     </a>
                 </div>
 
@@ -78,50 +71,45 @@
                     <!--- Menu -->
                     <ul class="menu">
 
-                        <li class="menu-title">Apps</li>
-
-                       
-                        <li class="menu-item">
-                            <a href="/index.html" class="spinner-link menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-new-box"></i></span>
-                                <span class="menu-text">Main App</span>
+                        <li class="p-2 menu-item text-white">
+                            <a href="/index.html" class="spinner-link menu-link btn btn-primary">
+                                <span class="menu-icon text-white"><i class="mdi mdi-application-import"></i></span>
+                                <span class="menu-text text-white">Open App</span>
+                                <span class="badge bg-light text-dark ms-auto">New</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="/web-crypto-api-playground.html" class="spinner-link menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-view-dashboard-outline"></i></span>
-                                <span class="menu-text">Crypto Playground</span>
-                            </a>
+                        
+                         <li class="menu-title">
+                            App Information
+                             <span class="badge bg-primary ms-auto">New</span>
                         </li>
 
-                        <li class="menu-title">App Information</li>
-
                         <li class="menu-item">
-                            <a href="/faq.html" class="menu-link spinner-link">
+                            <a href="/pages/faq.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
                                 <span class="menu-text"> FAQ </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/how-it-works.html" class="menu-link spinner-link">
+                            <a href="/pages/how-it-works.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-file-document"></i></span>
                                 <span class="menu-text"> How it works </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/security-and-privacy.html" class="menu-link spinner-link">
+                            <a href="/pages/security-and-privacy.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-upload-lock"></i></span>
                                 <span class="menu-text"> Security & Privacy </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/developer-documentation-technical-information.html" class="menu-link spinner-link">
+                            <a href="/pages/developer-documentation-technical-information.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-source-branch"></i></span>
-                                <span class="menu-text"> More Information </span>
+                                <span class="menu-text"> Dev Information </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/encryption-glossary.html" class="menu-link spinner-link">
+                            <a href="/pages/encryption-glossary.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-globe-model"></i></span>
                                 <span class="menu-text">Glossary</span>
                             </a>
@@ -135,6 +123,14 @@
                                 <span class="menu-text"> Sourcecode </span>
                             </a>
                         </li>
+                        <li class="menu-title">Coming soon</li>
+
+                        <li class="menu-item">
+                            <a href="/web-crypto-api-playground.html" class="spinner-link menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-gamepad-variant-outline"></i></span>
+                                <span class="menu-text">Crypto Playground</span>
+                            </a>
+                        </li>
                         
 
                         <li class="menu-title">Deprecated Sites</li>
@@ -143,6 +139,7 @@
                             <a href="/index-old.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class=" mdi mdi-view-dashboard-outline"></i></span>
                                 <span class="menu-text">Previous App</span>
+                                <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
 
@@ -155,22 +152,22 @@
                             <div class="collapse" id="methods">
                                 <ul class="sub-menu">
                                     <li class="menu-item spinner-link">
-                                        <a href="methods-aes-encryption.html" class="menu-link">
+                                        <a href="/old-pages/methods-aes-encryption.html" class="menu-link">
                                             <span class="menu-text">AES</span>
                                         </a>
                                     </li>
                                     <li class="menu-item spinner-link">
-                                        <a href="methods-blowfish-encryption.html" class="menu-link">
+                                        <a href="/old-pages/methods-blowfish-encryption.html" class="menu-link">
                                             <span class="menu-text">Blowfish</span>
                                         </a>
                                     </li>
                                     <li class="menu-item spinner-link">
-                                        <a href="methods-xor-encryption.html" class="menu-link">
+                                        <a href="/old-pages/methods-xor-encryption.html" class="menu-link">
                                             <span class="menu-text">XOR</span>
                                         </a>
                                     </li>
                                     <li class="menu-item spinner-link">
-                                        <a href="methods-password-hashing.html" class="menu-link">
+                                        <a href="/old-pages/methods-aes-encryption.html" class="menu-link">
                                             <span class="menu-text">Hashing</span>
                                         </a>
                                     </li>
@@ -179,22 +176,24 @@
                         </li>
 
                         <li class="menu-item">
-                            <a href="faq-old.html" class="menu-link spinner-link">
+                            <a href="/old-pages/faq-old.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-help"></i></span>
                                 <span class="menu-text"> FAQ </span>
+                                <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="security-setups.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-lightning-bolt"></i></span>
                                 <span class="menu-text"> Setups </span>
+                                <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
+                    </ul>
                     <!--- End Menu -->
                     <div class="clearfix"></div>
                 </div>
             </div>
-
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
@@ -202,14 +201,14 @@
                             <div class="logo-box">
                                 <!-- Brand Logo Light -->
                                 <a href="/" class="logo-light">
-                                    <img src="assets/images/logo-dark.png" alt="logo" class="logo-lg">
-                                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                                    <img src="../assets/images/logo-dark.png" alt="logo" class="logo-lg">
+                                    <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm">
                                 </a>
 
                                 <!-- Brand Logo Dark -->
                                 <a href="/" class="logo-dark">
-                                    <img src="assets/images/logo.png" alt="dark logo" class="logo-lg">
-                                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                                    <img src="../assets/images/logo.png" alt="dark logo" class="logo-lg">
+                                    <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm">
                                 </a>
                             </div>
 
@@ -220,12 +219,16 @@
                         </div>
 
                         <ul class="topbar-menu d-flex align-items-center">
+
+                            <!-- Fullscreen Button -->
                             <li class="d-none d-md-inline-block">
                                 <a class="nav-link waves-effect waves-light" href="" data-toggle="fullscreen">
                                     <i class="fe-maximize font-22"></i>
                                 </a>
                             </li>
-                            <li class="">
+
+                            <!-- Light/Darj Mode Toggle Button -->
+                            <li class="d-none d-sm-inline-block">
                                 <div class="nav-link waves-effect waves-light" id="light-dark-mode">
                                     <i class="ri-moon-line font-22"></i>
                                 </div>
@@ -234,54 +237,38 @@
                     </div>
                 </div>
                 <div class="content">
-                    <div class="container-fluid px-2">
-                        <div class="col-12 mb-1">
-                            <div class="page-title-box">
-                                <div class="page-title-right">
-                                    <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
-                                        <li class="breadcrumb-item active"><a href="/encryption-glossary.html">Download App</a></li>
-                                    </ol>
+
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <h2 class="page-title text-break">About Blowfish Encryption (This page is deprecated)</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                              <div class="card-body">
+                                <div class="mb-4">
+
+                                    <h4>Invention and Overview</h4>
+                                    Blowfish encryption, a symmetric key block cipher, was created by the renowned computer scientist Bruce Schneier in 1993. Schneier designed Blowfish as a response to the growing concern over the security of data in the digital age. The cipher gained significant popularity due to its simplicity, speed, and adaptability. Blowfish uses a variable key length, making it versatile and efficient for a wide range of applications. It operates on 64-bit blocks of data and supports key sizes from 32 to 448 bits, making it one of the first cryptographic algorithms to provide such flexibility.
+
+                                    <h4>Comparison with AES Encryption</h4>
+                                    Blowfish encryption, while innovative and robust in its own right, differs from the Advanced Encryption Standard (AES) in several ways. AES, a symmetric key block cipher adopted by the U.S. government, employs fixed block sizes and key lengths of 128, 192, or 256 bits. In contrast, Blowfish offers more key size options and uses 64-bit block sizes. While AES is considered highly secure and is the standard choice for sensitive applications, Blowfish remains an excellent option when efficiency and adaptability are paramount. It's worth noting that Blowfish has a larger footprint, making it slightly less efficient in hardware implementations compared to AES.
+
+                                    <h4>Use Cases for Blowfish Encryption</h4>
+                                    Blowfish encryption has found its niche in various use cases due to its unique characteristics. One of its primary applications is in secure data storage, particularly when a variable-length key is needed. It has been utilized in securing passwords, file encryption, and protecting data in network communications. Blowfish is well-suited for securing data in systems where hardware resources are limited, as its compact code size and straightforward implementation make it efficient for embedded systems and older hardware. Its adaptability and relatively lightweight nature make it a viable option for many real-world scenarios where security and performance need to be balanced.
+
+                                    <h4>Conclusion</h4>
+                                    In conclusion, Blowfish encryption, conceived by Bruce Schneier, has earned its place in the realm of cryptography by offering a versatile and efficient alternative to traditional ciphers like AES. While AES remains the go-to choice for highly sensitive data, Blowfish has carved out its own niche in applications that require adaptability and efficiency. Its variable key length and compact code size make it an attractive option for secure data storage, password protection, and resource-constrained systems. In the ever-evolving landscape of data security, Blowfish continues to play a valuable role in protecting digital information.
+                                    <br><br>
+                                    <em>This text was provided by GPT-3.5</em>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="container my-5">
-                        <!-- Hero Section -->
-                        <section class="text-center mb-5">
-                          <h1 class="display-4">Download App &amp; Changelog</h1>
-                          <p class="lead">Get the latest version of Encrypti0n.com and review our changelog for updates and fixes.</p>
-                        </section>
-                      
-                        <!-- Download Release Section -->
-                        <div class="row mb-4">
-                          <div class="col-12">
-                            <div class="card shadow-sm">
-                              <div class="card-body text-center">
-                                <h2 class="card-title">Download Latest Release</h2>
-                                <p class="card-text">Download the most recent release of Encrypti0n.com from our GitHub repository.</p>
-                                <a href="https://github.com/mqxym/encrypti0n/releases" target="_blank" class="btn btn-pink">
-                                    <i class="mdi mdi-progress-download me-1"></i>
-                                    View Releases on GitHub</a>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      
-                        <!-- Zipped Source Code Instructions -->
-                        <div class="row mb-4">
-                          <div class="col-12">
-                            <div class="card shadow-sm">
-                              <div class="card-body">
-                                <h3 class="card-title">Working with the Zipped HTML Source Code</h3>
-                                <p class="card-text">After downloading the zipped source code, simply extract the contents to your desired location and open <code>index.html</code> in your browser to launch the app. For more details, refer to the README.md included in the archive.</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                 </div> 
-                
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">
@@ -290,9 +277,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="footer-links d-flex flex-column flex-md-row gap-2 gap-md-4 align-items-start align-items-md-center justify-content-start justify-content-md-end">
-                                    <a href="/about.html">About</a>
-                                    <a href="/privacy-policy.html">Privacy Policy</a>
-                                    <a href="/download-app.html">Download Project</a>
+                                    <a href="/pages/about.html">About</a>
+                                    <a href="/pages/privacy-policy.html">Privacy Policy</a>
+                                    <a href="/pages/download-app.html">Download Project</a>
                                     <a href="/contact.html">Contact</a>
                                 </div>
                             </div>
@@ -303,12 +290,10 @@
         </div>
         
         <!-- Vendor js -->
-        <script src="assets/js/vendor.min.js" defer></script>
+        <script src="../assets/js/vendor.min.js" defer></script>
 
         <!-- Theme App js -->
-        <script src="assets/js/app.js" defer></script>
+        <script src="../assets/js/app.js" defer></script>
 
-        <!-- App JS-->
- <script src="app/insertVersion.js" defer></script>
     </body>
 </html>

@@ -3,44 +3,42 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>About Password Hashing - Encrypti0n.com</title>
+        <title>About AES Encryption - Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="What is XOR encryption?" />
-        <meta name="keywords" content="Encryption,Decryption,File,Multiple,XOR" />
+        <meta name="description" content="What is AES encryption and how can it protect your files?" />
+        <meta name="keywords" content="Encryption,Decryption,File,Multiple,AES,AES256" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
         <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/icons/favicon.ico">
+        <link rel="shortcut icon" href="../assets/icons/favicon.ico">
 
-        <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
         <link rel="manifest" href="/site.webmanifest">
-        <link rel="mask-icon" href="assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="mask-icon" href="../assets/icons/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#000000">
 
 		<!-- Theme Config Js -->
-		<script src="assets/js/head.js"></script>
+		<script src="../assets/js/head.js"></script>
 
 		<!-- Bootstrap css -->
-		<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
+		<link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
 
 		<!-- App css -->
-		<link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+		<link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
 
 		<!-- Icons css -->
-		<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+		<link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     </head>
 
     <body>
 
         <!-- Begin page -->
         <div id="wrapper">
-
-            
             <div id="preloader">
                 <div id="status">
                     <div class="spinner">Loading...</div>
@@ -55,14 +53,14 @@
                 <div class="logo-box">
                     <!-- Brand Logo Light -->
                     <a href="/" class="logo-light">
-                        <img src="assets/images/logo-dark.png" alt="logo" class="logo-lg">
-                        <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                        <img src="../assets/images/logo-dark.png" alt="logo" class="logo-lg">
+                        <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm">
                     </a>
 
                     <!-- Brand Logo Dark -->
                     <a href="/" class="logo-dark">
-                        <img src="assets/images/logo.png" alt="dark logo" class="logo-lg">
-                        <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                        <img src="../assets/images/logo.png" alt="dark logo" class="logo-lg">
+                        <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm">
                     </a>
                 </div>
 
@@ -71,50 +69,45 @@
                     <!--- Menu -->
                     <ul class="menu">
 
-                        <li class="menu-title">Apps</li>
-
-                       
-                        <li class="menu-item">
-                            <a href="/index.html" class="spinner-link menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-new-box"></i></span>
-                                <span class="menu-text">Main App</span>
+                        <li class="p-2 menu-item text-white">
+                            <a href="/index.html" class="spinner-link menu-link btn btn-primary">
+                                <span class="menu-icon text-white"><i class="mdi mdi-application-import"></i></span>
+                                <span class="menu-text text-white">Open App</span>
+                                <span class="badge bg-light text-dark ms-auto">New</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="/web-crypto-api-playground.html" class="spinner-link menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-view-dashboard-outline"></i></span>
-                                <span class="menu-text">Crypto Playground</span>
-                            </a>
-                        </li>
-
-                        <li class="menu-title">App Information</li>
                         
+                         <li class="menu-title">
+                            App Information
+                             <span class="badge bg-primary ms-auto">New</span>
+                        </li>
+
                         <li class="menu-item">
-                            <a href="/faq.html" class="menu-link spinner-link">
+                            <a href="/pages/faq.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
                                 <span class="menu-text"> FAQ </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/how-it-works.html" class="menu-link spinner-link">
+                            <a href="/pages/how-it-works.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-file-document"></i></span>
                                 <span class="menu-text"> How it works </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/security-and-privacy.html" class="menu-link spinner-link">
+                            <a href="/pages/security-and-privacy.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-upload-lock"></i></span>
                                 <span class="menu-text"> Security & Privacy </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/developer-documentation-technical-information.html" class="menu-link spinner-link">
+                            <a href="/pages/developer-documentation-technical-information.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-source-branch"></i></span>
-                                <span class="menu-text"> More Information </span>
+                                <span class="menu-text"> Dev Information </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/encryption-glossary.html" class="menu-link spinner-link">
+                            <a href="/pages/encryption-glossary.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-globe-model"></i></span>
                                 <span class="menu-text">Glossary</span>
                             </a>
@@ -128,6 +121,14 @@
                                 <span class="menu-text"> Sourcecode </span>
                             </a>
                         </li>
+                        <li class="menu-title">Coming soon</li>
+
+                        <li class="menu-item">
+                            <a href="/web-crypto-api-playground.html" class="spinner-link menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-gamepad-variant-outline"></i></span>
+                                <span class="menu-text">Crypto Playground</span>
+                            </a>
+                        </li>
                         
 
                         <li class="menu-title">Deprecated Sites</li>
@@ -136,6 +137,7 @@
                             <a href="/index-old.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class=" mdi mdi-view-dashboard-outline"></i></span>
                                 <span class="menu-text">Previous App</span>
+                                <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
 
@@ -148,22 +150,22 @@
                             <div class="collapse" id="methods">
                                 <ul class="sub-menu">
                                     <li class="menu-item spinner-link">
-                                        <a href="methods-aes-encryption.html" class="menu-link">
+                                        <a href="/old-pages/methods-aes-encryption.html" class="menu-link">
                                             <span class="menu-text">AES</span>
                                         </a>
                                     </li>
                                     <li class="menu-item spinner-link">
-                                        <a href="methods-blowfish-encryption.html" class="menu-link">
+                                        <a href="/old-pages/methods-blowfish-encryption.html" class="menu-link">
                                             <span class="menu-text">Blowfish</span>
                                         </a>
                                     </li>
                                     <li class="menu-item spinner-link">
-                                        <a href="methods-xor-encryption.html" class="menu-link">
+                                        <a href="/old-pages/methods-xor-encryption.html" class="menu-link">
                                             <span class="menu-text">XOR</span>
                                         </a>
                                     </li>
                                     <li class="menu-item spinner-link">
-                                        <a href="methods-password-hashing.html" class="menu-link">
+                                        <a href="/old-pages/methods-aes-encryption.html" class="menu-link">
                                             <span class="menu-text">Hashing</span>
                                         </a>
                                     </li>
@@ -172,17 +174,20 @@
                         </li>
 
                         <li class="menu-item">
-                            <a href="faq-old.html" class="menu-link spinner-link">
+                            <a href="/old-pages/faq-old.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-help"></i></span>
                                 <span class="menu-text"> FAQ </span>
+                                <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="security-setups.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-lightning-bolt"></i></span>
                                 <span class="menu-text"> Setups </span>
+                                <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
+                    </ul>
                     <!--- End Menu -->
                     <div class="clearfix"></div>
                 </div>
@@ -195,14 +200,14 @@
                             <div class="logo-box">
                                 <!-- Brand Logo Light -->
                                 <a href="/" class="logo-light">
-                                    <img src="assets/images/logo-dark.png" alt="logo" class="logo-lg">
-                                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                                    <img src="../assets/images/logo-dark.png" alt="logo" class="logo-lg">
+                                    <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm">
                                 </a>
 
                                 <!-- Brand Logo Dark -->
                                 <a href="/" class="logo-dark">
-                                    <img src="assets/images/logo.png" alt="dark logo" class="logo-lg">
-                                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm">
+                                    <img src="../assets/images/logo.png" alt="dark logo" class="logo-lg">
+                                    <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm">
                                 </a>
                             </div>
 
@@ -236,7 +241,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="mb-3">
-                                    <h2 class="page-title text-break">About Hashing (This page is deprecated)</h2>
+                                    <h2 class="page-title text-break">About AES Encryption (This page is deprecated)</h2>
                                 </div>
                             </div>
                         </div>
@@ -244,19 +249,18 @@
                             <div class="col-lg-12">
                               <div class="card-body">
                                 <div class="mb-4">
+                               
+                                    <h4>Invention of AES Encryption</h4>
+                                    The Advanced Encryption Standard (AES) is a symmetric encryption algorithm that was established as a federal standard in the United States in 2001. AES is a product of the National Institute of Standards and Technology (NIST) and emerged from a global competition to find a replacement for the aging Data Encryption Standard (DES). Belgian cryptographers Vincent Rijmen and Joan Daemen developed the core structure of AES. Their algorithm, named Rijndael, became the basis for AES after it was selected by NIST for its exceptional security and efficiency.
 
-                                    <h3>Advanced Data Encryption Methods: Salting, Variable Hash Rounds, and Multi-Algorithm Hashing</h3>
-                                    <h4>Enhancing Security </h4>
-                                    In the ever-evolving realm of data security, safeguarding sensitive information remains an ongoing challenge. Data encryption is a crucial element of this endeavor, and this site offers a comprehensive approach by supporting salting, variable hash rounds, and the distinctive feature of utilizing multiple hash algorithms during each round. These state-of-the-art methods are designed to fortify data security and protect valuable information.
+                                    <h4>Security of AES Encryption</h4>
+                                    AES encryption is highly regarded for its robust security features. It employs a block cipher that operates on fixed-size blocks of data (128 bits), which means that the encryption and decryption processes are highly efficient. AES is resistant to various cryptographic attacks, including brute force attacks, due to its variable key sizes – 128, 192, or 256 bits – which significantly increase the computational complexity for attackers. AES also employs various cryptographic techniques, including substitution-permutation networks and key expansion, to ensure the confidentiality and integrity of data. These features make AES a dependable choice for securing sensitive information.
 
-                                    <h4>Salting</h4>
-                                    Salting, the initial layer of defense, involves appending a randomly generated value to each password before applying the chosen hashing algorithm. This unique "salt" ensures that even users with identical passwords produce distinct hashed values, rendering precomputed attack tables virtually useless. This straightforward yet highly effective measure significantly enhances data security.
+                                    <h4>Beneficiaries of AES Encryption</h4>
+                                    The beneficiaries of AES encryption are vast and diverse. Individuals can use AES to protect personal data, such as documents, photos, and communication, from unauthorized access. Businesses rely on AES to safeguard sensitive financial information, client data, and trade secrets. Government agencies, particularly in national security and defense sectors, employ AES to protect classified information from espionage and cyberattacks. Additionally, AES is fundamental in securing online transactions, communications, and cloud storage services. Essentially, anyone who values privacy and the security of their digital assets can benefit from AES encryption.
 
-                                    <h4>Optimizing Security with Variable Hash Rounds</h4>
-                                    Variable hash rounds, the second pillar of protection, offers flexibility in selecting the number of iterations for password hashing. Increasing the number of iterations makes it computationally challenging for potential attackers to guess the password. This site provides customizable settings that enable users to strike a balance between security and performance. Starting with a low number of rounds and incrementing it over time makes it increasingly difficult for malicious entities to gain unauthorized access.
-
-                                    <h4>Unveiling Multi-Algorithm Hashing</h4>
-                                    What distinguishes this platform is the unique capability to employ multiple hash algorithms in each round of encryption. By selecting from six different hash algorithms for each iteration, this site offers a diversified approach to password hashing. This added layer of complexity not only bolsters security but also mitigates risks associated with vulnerabilities in a single algorithm. Your data remains securely protected against brute force attacks, with an additional layer of resilience provided by the variation of hash algorithms.
+                                    <h4>Conclusion</h4>
+                                    AES encryption, born from a competitive process to find a successor to DES, has proven to be a secure and versatile cryptographic standard. Its inventors, Rijmen and Daemen, have contributed a fundamental tool for protecting sensitive information from unauthorized access. The security features, including variable key sizes and cryptographic techniques, make AES highly resilient to various attacks. The broad range of beneficiaries spans from individuals seeking personal privacy to governments and businesses safeguarding critical data, cementing AES's role as a cornerstone in the world of data security.
                                     <br><br>
                                     <em>This text was provided by GPT-3.5</em>
                                 </div>
@@ -272,9 +276,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="footer-links d-flex flex-column flex-md-row gap-2 gap-md-4 align-items-start align-items-md-center justify-content-start justify-content-md-end">
-                                    <a href="/about.html">About</a>
-                                    <a href="/privacy-policy.html">Privacy Policy</a>
-                                    <a href="/download-app.html">Download Project</a>
+                                    <a href="/pages/about.html">About</a>
+                                    <a href="/pages/privacy-policy.html">Privacy Policy</a>
+                                    <a href="/pages/download-app.html">Download Project</a>
                                     <a href="/contact.html">Contact</a>
                                 </div>
                             </div>
@@ -285,10 +289,11 @@
         </div>
         
         <!-- Vendor js -->
-        <script src="assets/js/vendor.min.js" defer></script>
+        <script src="../assets/js/vendor.min.js" defer></script>
 
         <!-- Theme App js -->
-        <script src="assets/js/app.js" defer></script>
+        <script src="../assets/js/app.js" defer></script>
+        <script src="../app/insertVersion.js" defer></script>
 
     </body>
 </html>

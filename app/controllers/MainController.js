@@ -37,6 +37,7 @@ export class MainController {
   bindUIEvents() {
     // General actions
     $('.action-button').on('click', () => this.handleAction());
+    $('#hideInformation').on('click', () => this.setInformationTab());
     $('#inputText').on('input', (event) => this.handleDataChange(event));
     $('#showTextEncryption').on('click', () => this.showTextInput());
     $('#showFilesEncryption').on('click', () => this.showFileInput());
@@ -70,7 +71,7 @@ export class MainController {
   }
 
   /**
-   * Initialize the UI with default values and perform compatibility checks.
+   * Initialize the UI and check for app encryption
    */
   async initUI() {
     if (this.configManager.isUsingMasterPassword()) {
@@ -81,10 +82,10 @@ export class MainController {
       const slotNames = await this.configManager.readSlotNames();
       ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
       await this.pbkdf2Service.loadOptions();
-      const randomKey = Math.random().toString(36).substring(2) + Date.now().toString(36);
-      this.formHandler.setFormValue('keyBlank', randomKey);
-      this.formHandler.setFormValue('keyPassword', randomKey);
+      this.keyGenerate();
+      this.toggleKey();
     }
+    this.setInformationTab(false);
   }
 
   // ––––––– UI Toggle Methods –––––––
@@ -108,6 +109,29 @@ export class MainController {
     ElementHandler.show('textEncryptionOutput');
     ElementHandler.hide('fileEncryptionOutput');
     this.doFiles = false;
+  }
+
+  setInformationTab (toggle = true) {
+    if (toggle === true) {
+      if (this.storageService.getItem("encInfoHidden") === null || this.storageService.getItem("encInfoHidden") === "false" ) {
+        this.storageService.setItem("encInfoHidden", "true");
+        $(".informationRow").hide();
+        $("#appRow").addClass("mb-5");
+      } else if (this.storageService.getItem("encInfoHidden") === "true") {
+        this.storageService.setItem("encInfoHidden", "false");
+        $(".informationRow").show();
+        $("#appRow").removeClass("mb-5");
+      } 
+    } else {
+      if (this.storageService.getItem("encInfoHidden") === null || this.storageService.getItem("encInfoHidden") === "false" ) {
+        $(".informationRow").show();
+        $("#appRow").addClass("mb-5")
+      } else if (this.storageService.getItem("encInfoHidden") === "true") {
+        $(".informationRow").hide();
+        $("#appRow").removeClass("mb-5");
+      } 
+    }
+    
   }
 
   // ––––––– Action Orchestration –––––––
@@ -218,7 +242,7 @@ export class MainController {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // ––––––– Encryption/Decryption Methods –––––––
+  // ––––––– Text Encryption/Decryption Methods –––––––
 
   async handleEncrypt() {
     const { inputText, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
@@ -405,7 +429,7 @@ export class MainController {
     $('#do-application-encryption').modal('show');
   }
 
-  // ––––––– File Operations –––––––
+  // ––––––– File Operations, Encryption & Decryption –––––––
 
   async updateFileList() {
     const fileListElem = $('#fileList');
@@ -505,13 +529,35 @@ export class MainController {
   async keyGenerate() {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
-    const randomKey = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    const randomKey = generateSecureRandomString(24);
     this.formHandler.setFormValue('keyBlank', randomKey);
     this.formHandler.setFormValue('keyPassword', randomKey);
     ElementHandler.buttonRemoveTextAddSuccess("keyGenerate");
     await this.delay(1000);
     ElementHandler.buttonRemoveStatusAddText("keyGenerate");
     this.actionInProgress = false;
+
+    function generateSecureRandomString(length) {
+      const allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_+.,()[]*#?=&%$§€@";
+      const allowedLength = allowed.length; // 67 characters
+      const result = [];
+      const cryptoObj = window.crypto || window.msCrypto;
+      // We can only safely use bytes < maxMultiple without bias.
+      const maxMultiple = Math.floor(256 / allowedLength) * allowedLength; // 256 % 67 = 55, so maxMultiple = 201
+    
+      while (result.length < length) {
+        // Request enough random bytes. This may yield extra bytes that we might not use.
+        const randomBytes = new Uint8Array(length - result.length);
+        cryptoObj.getRandomValues(randomBytes);
+        for (let i = 0; i < randomBytes.length && result.length < length; i++) {
+          if (randomBytes[i] < maxMultiple) {
+            result.push(allowed[randomBytes[i] % allowedLength]);
+          }
+        }
+      }
+      return result.join('');
+    }
+    
   }
 
   async keyCopy() {
