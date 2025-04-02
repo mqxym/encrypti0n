@@ -6,7 +6,7 @@ is simple a web application to encrypt and decrypt text and files locally within
   
 ## App Features
 
-The main feature is encryption and decryption of text and (soon) files with standard cryptographic algorithms.
+The main feature is encryption and decryption of text and files with standard cryptographic algorithms.
 
 - Intuitive UI with password generator and a simple local password manager
 - The password managers' data can be locally encrypted with the same standard algorithms

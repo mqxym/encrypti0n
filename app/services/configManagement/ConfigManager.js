@@ -40,8 +40,8 @@ export class ConfigManager {
 
     this.config = {
       isUsingMasterPassword: false,
-      PKDF2Rounds: rounds,
-      PKDF2Salt: salt,
+      PBKDF2Rounds: rounds,
+      PBKDF2Salt: salt,
       default: defaultKey,
       data: { iv: '', ciphertext: '' }
     };
@@ -76,8 +76,8 @@ export class ConfigManager {
     if (!this.config.isUsingMasterPassword) {
       await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(
         this.config.default,
-        this.config.PKDF2Salt,
-        this.config.PKDF2Rounds
+        this.config.PBKDF2Salt,
+        this.config.PBKDF2Rounds
       );
     }
   }
@@ -97,8 +97,8 @@ export class ConfigManager {
     // Derive the key once, store in session manager
     await this.encryptionManager.sessionKeyManager.deriveAndCacheKey(
       masterPassword,
-      this.config.PKDF2Salt,
-      this.config.PKDF2Rounds
+      this.config.PBKDF2Salt,
+      this.config.PBKDF2Rounds
     );
 
     try {
@@ -242,8 +242,8 @@ export class ConfigManager {
     const newSalt = this.encryptionManager.generateRandomSalt();
     const newRounds = this._getRandomInt(5000000, 5001000);
     this.config.isUsingMasterPassword = true;
-    this.config.PKDF2Salt = newSalt;
-    this.config.PKDF2Rounds = newRounds;
+    this.config.PBKDF2Salt = newSalt;
+    this.config.PBKDF2Rounds = newRounds;
     this.config.default = '';
 
     // Derive new key from the new master password, re-encrypt
@@ -275,16 +275,16 @@ export class ConfigManager {
 
     // Switch to default-based encryption
     this.config.isUsingMasterPassword = false;
-    this.config.PKDF2Salt = this.encryptionManager.generateRandomSalt();
-    this.config.PKDF2Rounds = this._getRandomInt(1000, 2000);
+    this.config.PBKDF2Salt = this.encryptionManager.generateRandomSalt();
+    this.config.PBKDF2Rounds = this._getRandomInt(1000, 2000);
     this.config.default = this.encryptionManager.generateRandomDefaultKey();
 
     // Clear old session key, derive new default key, re-encrypt
     this.encryptionManager.sessionKeyManager.clearSessionKey();
     const newKey = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(
       this.config.default,
-      this.config.PKDF2Salt,
-      this.config.PKDF2Rounds
+      this.config.PBKDF2Salt,
+      this.config.PBKDF2Rounds
     );
     const encrypted = await this.encryptionManager.encryptData(newKey, plainData);
     this.config.data.iv = encrypted.iv;
@@ -320,15 +320,15 @@ export class ConfigManager {
   }
 
   async _getSessionKeyOrThrow() {
-    const { PKDF2Salt, PKDF2Rounds } = this.config;
-    let key = this.encryptionManager.sessionKeyManager.getSessionKey(PKDF2Salt, PKDF2Rounds);
+    const { PBKDF2Salt, PBKDF2Rounds } = this.config;
+    let key = this.encryptionManager.sessionKeyManager.getSessionKey(PBKDF2Salt, PBKDF2Rounds);
 
     if (!key) {
       if (this.config.isUsingMasterPassword) {
         throw new Error('Session is locked. Call unlockSession(masterPassword) first.');
       } else {
         // If no master password, we might try to auto-derive once
-        key = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(this.config.default, PKDF2Salt, PKDF2Rounds);
+        key = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(this.config.default, PBKDF2Salt, PBKDF2Rounds);
       }
     }
     return key;

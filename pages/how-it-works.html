@@ -115,10 +115,18 @@
                                 <span class="menu-text"> Dev Information </span>
                             </a>
                         </li>
-                        <li class="menu-item">
+                         <li class="menu-item">
                             <a href="/pages/encryption-glossary.html" class="menu-link spinner-link">
                                 <span class="menu-icon"><i class="mdi mdi-globe-model"></i></span>
                                 <span class="menu-text">Glossary</span>
+                            </a>
+                        </li>
+
+                        <li class="menu-title">Tools</li>
+                        <li class="menu-item">
+                            <a href="/pages/password-generator.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-form-textbox-password"></i></span>
+                                <span class="menu-text">Password Generator</span>
                             </a>
                         </li>
 
@@ -275,16 +283,14 @@
                               <li><strong>Output Encrypted Data</strong>: The encrypted data is encoded in base64 format for easy copying or storage.</li>
                             </ol>
                             <p><strong>Technical Summary:</strong></p>
-                            <pre class="bg-light p-1 rounded"><code class="language-javascript">
-settings = getEncryptedStorageSettings();
+                            <pre class="bg-light p-1 rounded"><code class="language-javascript">settings = getEncryptedStorageSettings();
 encodedText = utf8Encode(text);
 encodedPassword = utf8Encode(password);
-salt = crypto.getRandomValues();
+salt = crypto.getRandomValues(settings.saltLength);
 key = derivePBKDF2Key(encodedPassword, salt, settings.rounds);
 iv = crypto.getRandomValues(12);
 ciphertext = AES_GCM_Encrypt(encodedText, key, iv);
-outputBase64(ciphertext);
-                            </code></pre>
+outputBase64(ciphertext);</code></pre>
                           </div>
                         </div>
                       
@@ -301,18 +307,16 @@ outputBase64(ciphertext);
                               <li><strong>Blob Generation and Download</strong>: The encrypted chunks are combined into a Blob object, and a secure download link is generated for the user.</li>
                             </ol>
                             <p><strong>Technical Summary:</strong></p>
-                            <pre class="bg-light p-1 rounded"><code class="language-javascript">
-settings = getEncryptedStorageSettings();
+                            <pre class="bg-light p-1 rounded"><code class="language-javascript">settings = getEncryptedStorageSettings();
 encodedPassword = utf8Encode(password);
-salt = crypto.getRandomValues();
+salt = crypto.getRandomValues(settings.saltLenght);
 key = derivePBKDF2Key(encodedPassword, salt, settings.rounds);
 chunks = splitFileIntoChunks(file, 65536);
 for each chunk:
     iv = crypto.getRandomValues(12);
     encryptedChunk = AES_GCM_Encrypt(chunk, key, iv);
     storeInBlob(encryptedChunk, iv, chunk.length);
-createDownloadLink(blob);
-                            </code></pre>
+createDownloadLink(blob);</code></pre>
                           </div>
                         </div>
                       
@@ -328,14 +332,12 @@ createDownloadLink(blob);
                               <li><strong>AES-GCM Decryption</strong>: Perform decryption using AES-GCM with the derived key and nonce included within each chunk or encrypted text segment.</li>
                             </ol>
                             <p><strong>Technical Summary</strong></p>
-                            <pre class="bg-light p-1 rounded"><code class="language-javascript">
-header = readFileHeader(encryptedData);
+                            <pre class="bg-light p-1 rounded"><code class="language-javascript">header = readFileHeader(encryptedData);
 verify(header.startsWith(0x01));
 salt, rounds = extractHeaderParameters(header);
 key = derivePBKDF2Key(encodedPassword, salt, rounds);
 decryptedData = AES_GCM_Decrypt(encryptedChunks, key, iv);
-outputOriginalData(decryptedData);
-                            </code></pre>
+outputOriginalData(decryptedData);</code></pre>
                           </div>
                         </div>
                       
@@ -347,32 +349,29 @@ outputOriginalData(decryptedData);
                             <ul>
                               <li><strong>Secure Data Handling</strong>: Except for essential UI settings, all data is encrypted using AES-GCM with PBKDF2 key derivation.</li>
                               <li><strong>On-the-fly Decryption</strong>: Data is decrypted dynamically upon request; no decrypted keys remain persistently readable or outputtable due to JavaScript security limitations.</li>
-                              <li><strong>Key Management</strong>: The master password is never stored—it's only used to derive the encryption key. Without a user-defined master password, a default (insecure) key is used.</li>
-                              <li><strong>Data Structure (Example)</strong>:</li>
+                              <li><strong>Key Management</strong>: The master password is never stored—it's only used to derive the encryption key. <strong>Without a user-defined master password, a default (insecure) key is used.</strong></li>
                             </ul>
-                            <pre class="bg-light p-1 rounded"><code class="language-json">
-{
+                            <p><strong>Local Data Structure</strong></p>
+                            <pre class="bg-light p-1 rounded"><code class="language-json">{
 "isUsingMasterPassword": false,
-"PKDF2Rounds": 1196,
-"PKDF2Salt": "ECPlvmyu3dv++nhzwXBu7g==",
+"PBKDF2Rounds": 1196,
+"PBKDF2Salt": "ECPlvmyu3dv++nhzwXBu7g==",
 "default": "2o2tKUOZ1Sk8bu4MTu0wxTLt",
 "data": {
         "iv": "Zhg/WsALMJYanZsW",
         "ciphertext": "xxxxxxx"
     }
-}
-                            </code></pre>
+}</code></pre>
                             <p><strong>Technical Summary</strong></p>
-                            <pre class="bg-light p-1 rounded"><code class="language-javascript">
+                            <pre class="bg-light p-1 rounded"><code class="language-javascript">PBKDF2Salt, PBKDF2Rounds = getLocalSettings();
 if (masterPassword):
-    key = derivePBKDF2Key(masterPassword, PKDF2Salt, PKDF2Rounds);
+    key = derivePBKDF2Key(masterPassword, PBKDF2Salt, PBKDF2Rounds);
 else:
-    key = defaultKey;
+    key = derivePBKDF2Key(defaultKey, PBKDF2Salt, PBKDF2Rounds);
 
 iv = crypto.getRandomValues(12);
 ciphertext = AES_GCM_Encrypt(appData, key, iv);
-storeEncryptedData(ciphertext, iv);
-                            </code></pre>
+storeEncryptedData(ciphertext, iv);</code></pre>
                           </div>
                         </div>
                     </div>
@@ -389,7 +388,7 @@ storeEncryptedData(ciphertext, iv);
                                     <a href="/pages/about.html">About</a>
                                     <a href="/pages/privacy-policy.html">Privacy Policy</a>
                                     <a href="/pages/download-app.html">Download Project</a>
-                                    <a href="/contact.html">Contact</a>
+                                    <a href="/pages/contact.html">Contact</a>
                                 </div>
                             </div>
                         </div>
