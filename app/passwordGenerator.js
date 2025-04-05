@@ -59,8 +59,9 @@ export class PasswordGenerator {
       // Ensure the DOM is ready before binding events
       $(document).ready(() => {
         // Optional: Update slider value display if an element with id 'sliderValue' exists.
-        $('#lengthSlider').on('input', function() {
-          $('#sliderValue').text($(this).val());
+        $('#lengthSlider').on('input', () => {
+          $('#sliderValue').text($("#lengthSlider").val());
+          this.handleGenerate();
         });
   
         // Bind click event to the generate button.
@@ -76,6 +77,7 @@ export class PasswordGenerator {
   
     // Handler to generate and display the password.
     handleGenerate() {
+    console.log("Test");
       const length = parseInt($('#lengthSlider').val(), 10);
       const specialChars = $('#specialChars').val();
       const password = this.generator.generate(length, specialChars);
