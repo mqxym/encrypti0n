@@ -8,9 +8,9 @@ import { KeyDerivationManager } from './KeyDerivationManager.js';
  */
 export class SessionKeyManager {
   constructor() {
-    this.cachedKey = null;       // Stores the derived CryptoKey
-    this.cachedSalt = null;      // Base64-encoded salt
-    this.cachedRounds = null;    // PBKDF2 iteration count
+    this.cachedKey = null; // Stores the derived CryptoKey
+    this.cachedSalt = null; // Base64-encoded salt
+    this.cachedRounds = null; // argon2 iteration count
     this.derivationManager = new KeyDerivationManager();
   }
 
@@ -26,7 +26,7 @@ export class SessionKeyManager {
   async deriveAndCacheKey(password, saltBase64, rounds) {
     const saltBytes = this._base64ToUint8Array(saltBase64);
 
-    // Derive the key (expensive PBKDF2)
+    // Derive the key (expensive argon2)
     const derivedKey = await this.derivationManager.deriveKey(password, saltBytes, rounds);
 
     // Cache the result
@@ -55,11 +55,7 @@ export class SessionKeyManager {
    * If there's no key or mismatch, it indicates we must re-derive or "unlock."
    */
   getSessionKey(saltBase64, rounds) {
-    if (
-      this.cachedKey &&
-      this.cachedSalt === saltBase64 &&
-      this.cachedRounds === rounds
-    ) {
+    if (this.cachedKey && this.cachedSalt === saltBase64 && this.cachedRounds === rounds) {
       return this.cachedKey;
     }
     // If mismatch or no key, we have no valid session key for this config

@@ -1,10 +1,9 @@
 import { FormHandler } from '../helpers/FormHandler.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
-//import { ShowNotification } from '../helpers/ShowNotification.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { StorageService } from '../services/StorageService.js';
 import { EncryptionService } from '../services/EncryptionService.js';
-import { pbkdf2Service } from '../services/pbkdf2Service.js';
+import { argon2Service } from '../services/argon2Service.js';
 import { ConfigManager } from '../services/configManagement/ConfigManager.js';
 
 export class MainController {
@@ -26,7 +25,7 @@ export class MainController {
     this.configManager = await ConfigManager.create();
     this.storageService = new StorageService();
     this.encryptionService = new EncryptionService();
-    this.pbkdf2Service = new pbkdf2Service('pbkdf2-modal', this.configManager);
+    this.argon2Service = new argon2Service('argon2-modal', this.configManager);
     this.bindUIEvents();
     this.initUI();
   }
@@ -41,7 +40,7 @@ export class MainController {
     $('#inputText').on('input', (event) => this.handleDataChange(event));
     $('#showTextEncryption').on('click', () => this.showTextInput());
     $('#showFilesEncryption').on('click', () => this.showFileInput());
-    $('.PBKDF2-Options').on('click', () => $('#pbkdf2-modal').modal('show'));
+    $('.Argon2-Options').on('click', () => $('#argon2-modal').modal('show'));
     $('#renameSlots').on('click', () => $('#renameSlotsModal').modal('show'));
 
     // Master password actions
@@ -80,8 +79,8 @@ export class MainController {
       $('#do-application-decryption').modal('show');
     } else {
       const slotNames = await this.configManager.readSlotNames();
-      ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
-      await this.pbkdf2Service.loadOptions();
+      ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
+      await this.argon2Service.loadOptions();
       this.keyGenerate();
       this.toggleKey();
     }
@@ -111,27 +110,32 @@ export class MainController {
     this.doFiles = false;
   }
 
-  setInformationTab (toggle = true) {
+  setInformationTab(toggle = true) {
     if (toggle === true) {
-      if (this.storageService.getItem("encInfoHidden") === null || this.storageService.getItem("encInfoHidden") === "false" ) {
-        this.storageService.setItem("encInfoHidden", "true");
-        $(".informationRow").hide();
-        $("#appRow").addClass("mb-5");
-      } else if (this.storageService.getItem("encInfoHidden") === "true") {
-        this.storageService.setItem("encInfoHidden", "false");
-        $(".informationRow").show();
-        $("#appRow").removeClass("mb-5");
-      } 
+      if (
+        this.storageService.getItem('encInfoHidden') === null ||
+        this.storageService.getItem('encInfoHidden') === 'false'
+      ) {
+        this.storageService.setItem('encInfoHidden', 'true');
+        $('.informationRow').hide();
+        $('#appRow').addClass('mb-5');
+      } else if (this.storageService.getItem('encInfoHidden') === 'true') {
+        this.storageService.setItem('encInfoHidden', 'false');
+        $('.informationRow').show();
+        $('#appRow').removeClass('mb-5');
+      }
     } else {
-      if (this.storageService.getItem("encInfoHidden") === null || this.storageService.getItem("encInfoHidden") === "false" ) {
-        $(".informationRow").show();
-        $("#appRow").addClass("mb-5")
-      } else if (this.storageService.getItem("encInfoHidden") === "true") {
-        $(".informationRow").hide();
-        $("#appRow").removeClass("mb-5");
-      } 
+      if (
+        this.storageService.getItem('encInfoHidden') === null ||
+        this.storageService.getItem('encInfoHidden') === 'false'
+      ) {
+        $('.informationRow').show();
+        $('#appRow').addClass('mb-5');
+      } else if (this.storageService.getItem('encInfoHidden') === 'true') {
+        $('.informationRow').hide();
+        $('#appRow').removeClass('mb-5');
+      }
     }
-    
   }
 
   // ––––––– Action Orchestration –––––––
@@ -145,10 +149,9 @@ export class MainController {
     } else {
       await this.handleActionFiles();
     }
-    
   }
 
-  async handleActionText () {
+  async handleActionText() {
     const { inputText } = this.formHandler.formValues;
     const laddaManager = new LaddaButtonManager('.action-button');
     laddaManager.startAll();
@@ -184,20 +187,19 @@ export class MainController {
     }
   }
 
-  async handleActionFiles () {
+  async handleActionFiles() {
     const laddaManager = new LaddaButtonManager('.action-button');
     laddaManager.startAll();
-    
-    try {
 
+    try {
       const inputFilesElem = $('#inputFiles')[0];
-      const fileLength = inputFilesElem.files.length
+      const fileLength = inputFilesElem.files.length;
       let result = false;
       let fileCounter = 0;
-      $("#outputFiles").empty();
+      $('#outputFiles').empty();
       for (let file of inputFilesElem.files) {
         const isEncrypted = await this.encryptionService.isEncryptedFile(file);
-        laddaManager.setProgressAll(fileCounter / fileLength );
+        laddaManager.setProgressAll(fileCounter / fileLength);
         if (isEncrypted) {
           result = await this.handleFileDecrypt(file);
           if (!result) {
@@ -239,7 +241,7 @@ export class MainController {
   }
 
   delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   // ––––––– Text Encryption/Decryption Methods –––––––
@@ -250,14 +252,10 @@ export class MainController {
     if (!inputText || !passphrase) return false;
     const algo = 'aesgcm';
     try {
-      const usedOptions = await pbkdf2Service.getCurrentOptions(this.configManager);
-      this.encryptionService.setPBKDF2Difficulty(usedOptions.roundDifficulty);
-      this.encryptionService.setSaltLengthDifficulty( usedOptions.saltDifficulty);
-      const encryptedB64 = await this.encryptionService.encryptText(
-        inputText,
-        passphrase,
-        algo
-      );
+      const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
+      this.encryptionService.setargon2Difficulty(usedOptions.roundDifficulty);
+      this.encryptionService.setSaltLengthDifficulty(usedOptions.saltDifficulty);
+      const encryptedB64 = await this.encryptionService.encryptText(inputText, passphrase, algo);
       this.formHandler.setFormValue('outputText', encryptedB64);
       return true;
     } catch (err) {
@@ -274,10 +272,10 @@ export class MainController {
       this.formHandler.setFormValue('outputText', decrypted);
       return true;
     } catch (error) {
-      console.error("Error Message:", error.message);
-    console.error("Error Name:", error.name);
-    console.error("Stack Trace:", error.stack);
-    console.error("Full Error Object:", error);
+      console.error('Error Message:', error.message);
+      console.error('Error Name:', error.name);
+      console.error('Stack Trace:', error.stack);
+      console.error('Full Error Object:', error);
       return false;
     }
   }
@@ -289,31 +287,31 @@ export class MainController {
     this.changeOperationVisuals(isEncrypted);
   }
 
-  changeOperationVisuals (isEncrypted = false) {
+  changeOperationVisuals(isEncrypted = false) {
     if (isEncrypted) {
-      ElementHandler.blueToPinkBorder("inputText");
-      ElementHandler.pinkToBlueBorder("outputText");
-      ElementHandler.emptyPillBlue("notEncryptedPill");
-      ElementHandler.emptyPillBlue("notEncryptedFilesPill");
-      ElementHandler.fillPillPink("encryptedPill");
-      ElementHandler.fillPillPink("encryptedFilesPill");
-      ElementHandler.buttonClassPinkToBlue("action-button");
+      ElementHandler.blueToPinkBorder('inputText');
+      ElementHandler.pinkToBlueBorder('outputText');
+      ElementHandler.emptyPillBlue('notEncryptedPill');
+      ElementHandler.emptyPillBlue('notEncryptedFilesPill');
+      ElementHandler.fillPillPink('encryptedPill');
+      ElementHandler.fillPillPink('encryptedFilesPill');
+      ElementHandler.buttonClassPinkToBlue('action-button');
       $('#outputText').attr('placeholder', 'The decryption result appears here');
       $('.action-explanation').text('decryption');
       $('.action-button').attr('data-bs-original-title', 'Decrypt with AES-GCM-256');
-      $('#outputFooter').text("Decrypted output is UTF-8 formatted.");
+      $('#outputFooter').text('Decrypted output is UTF-8 formatted.');
     } else {
-      ElementHandler.pinkToBlueBorder("inputText");
-      ElementHandler.blueToPinkBorder("outputText");
-      ElementHandler.fillPillBlue("notEncryptedPill");
-      ElementHandler.fillPillBlue("notEncryptedFilesPill");
-      ElementHandler.emptyPillPink("encryptedPill");
-      ElementHandler.emptyPillPink("encryptedFilesPill");
-      ElementHandler.buttonClassBlueToPink("action-button");
+      ElementHandler.pinkToBlueBorder('inputText');
+      ElementHandler.blueToPinkBorder('outputText');
+      ElementHandler.fillPillBlue('notEncryptedPill');
+      ElementHandler.fillPillBlue('notEncryptedFilesPill');
+      ElementHandler.emptyPillPink('encryptedPill');
+      ElementHandler.emptyPillPink('encryptedFilesPill');
+      ElementHandler.buttonClassBlueToPink('action-button');
       $('#outputText').attr('placeholder', 'The encryption result appears here');
       $('.action-explanation').text('encryption');
       $('.action-button').attr('data-bs-original-title', 'Encrypt with AES-GCM-256');
-      $('#outputFooter').text("Encrypted output is base64 formatted.");
+      $('#outputFooter').text('Encrypted output is base64 formatted.');
     }
   }
 
@@ -322,7 +320,7 @@ export class MainController {
   async handleAppEncrypt() {
     ElementHandler.hide('encryptApplicationMissingPw');
     ElementHandler.hide('encryptApplicationMatchFail');
-    const formHandlerLocal = new FormHandler("encryptApplicationForm");
+    const formHandlerLocal = new FormHandler('encryptApplicationForm');
     const { encryptApplicationMPw, encryptApplicationMPwConfirmation } = formHandlerLocal.getFormValues();
     if (!encryptApplicationMPw || !encryptApplicationMPwConfirmation) {
       ElementHandler.show('encryptApplicationMissingPw');
@@ -341,10 +339,10 @@ export class MainController {
       Swal.fire({
         icon: 'success',
         title: 'The application is encrypted!',
-        text: "Remember your password.",
+        text: 'Remember your password.',
         timer: 2500,
         showCancelButton: false,
-        confirmButtonText: "Ok",
+        confirmButtonText: 'Ok',
       });
     } catch (err) {
       console.error(err);
@@ -359,9 +357,9 @@ export class MainController {
     const formHandlerLocal = new FormHandler('applicationDecryptionForm');
     const { decryptApplicationMPw } = formHandlerLocal.getFormValues();
     if (!decryptApplicationMPw) {
-      ElementHandler.buttonRemoveTextAddFail("decryptApplication");
+      ElementHandler.buttonRemoveTextAddFail('decryptApplication');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("decryptApplication");
+      ElementHandler.buttonRemoveStatusAddText('decryptApplication');
       this.actionInProgress = false;
       return;
     }
@@ -372,24 +370,24 @@ export class MainController {
       await this.configManager.unlockSession(decryptApplicationMPw);
       $('#do-application-decryption').modal('hide');
       const slotNames = await this.configManager.readSlotNames();
-      ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
+      ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
       ElementHandler.show('removeApplicationEncryption');
       ElementHandler.hide('encryptApplicationModal');
-      await this.pbkdf2Service.loadOptions();
+      await this.argon2Service.loadOptions();
       Swal.fire({
         icon: 'success',
         title: 'The application is decrypted!',
-        text: "You can now use your saved data.",
+        text: 'You can now use your saved data.',
         timer: 2500,
         showCancelButton: false,
-        confirmButtonText: "Ok",
+        confirmButtonText: 'Ok',
       });
       this.actionInProgress = false;
     } catch (err) {
       laddaDecryptApplication.stop();
-      ElementHandler.buttonRemoveTextAddFail("decryptApplication");
+      ElementHandler.buttonRemoveTextAddFail('decryptApplication');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("decryptApplication");
+      ElementHandler.buttonRemoveStatusAddText('decryptApplication');
       this.actionInProgress = false;
     } finally {
       laddaDecryptApplication.stop();
@@ -400,10 +398,10 @@ export class MainController {
     Swal.fire({
       icon: 'warning',
       title: 'Remove app encryption?',
-      text: "You risk data exposure.",
+      text: 'You risk data exposure.',
       showCancelButton: true,
-      confirmButtonText: "Remove",
-      cancelButtonText: 'Cancel'
+      confirmButtonText: 'Remove',
+      cancelButtonText: 'Cancel',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -415,7 +413,7 @@ export class MainController {
             title: 'The encryption is removed',
             timer: 2500,
             showCancelButton: false,
-            confirmButtonText: "Ok",
+            confirmButtonText: 'Ok',
           });
         } catch (err) {
           console.error(err);
@@ -435,14 +433,14 @@ export class MainController {
     const fileListElem = $('#fileList');
     const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length) {
-      fileListElem.text("No files selected.");
+      fileListElem.text('No files selected.');
       return;
     }
     fileListElem.empty();
     const files = Array.from(inputFilesElem.files);
-    const encryptionChecks = files.map(async file => {
+    const encryptionChecks = files.map(async (file) => {
       const isEncrypted = await this.encryptionService.isEncryptedFile(file);
-      const li = isEncrypted 
+      const li = isEncrypted
         ? $('<span class="badge bg-pink rounded-pill me-1">').text(`${file.name} | ${this.formatBytes(file.size)}`)
         : $('<span class="badge bg-blue rounded-pill me-1">').text(`${file.name} | ${this.formatBytes(file.size)}`);
       fileListElem.append(li);
@@ -450,20 +448,20 @@ export class MainController {
     });
 
     const results = await Promise.all(encryptionChecks);
-    if (results.every(isEncrypted => isEncrypted)) {
+    if (results.every((isEncrypted) => isEncrypted)) {
       this.changeOperationVisuals(true);
     }
   }
 
   formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
-  
+
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  
+
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
@@ -476,17 +474,17 @@ export class MainController {
     const algo = 'aesgcm';
     const outputFilesDiv = $('#outputFiles');
     try {
-      const usedOptions = await pbkdf2Service.getCurrentOptions(this.configManager);
-      this.encryptionService.setPBKDF2Difficulty(usedOptions.roundDifficulty);
-      this.encryptionService.setSaltLengthDifficulty( usedOptions.saltDifficulty);
+      const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
+      this.encryptionService.setargon2Difficulty(usedOptions.roundDifficulty);
+      this.encryptionService.setSaltLengthDifficulty(usedOptions.saltDifficulty);
       const blob = await this.encryptionService.encryptFile(file, passphrase, algo);
-      const size = this.formatBytes(blob.size)
+      const size = this.formatBytes(blob.size);
       const url = URL.createObjectURL(blob);
       const link = $('<a class="btn mb-1 btn-sm bg-pink text-white rounded-pill me-1">')
         .attr('href', url)
-        .attr('download', file.name + ".enc")
+        .attr('download', file.name + '.enc')
         .text(`${file.name}.enc | ${size}`);
-      outputFilesDiv.append(link)//.append('<br/>');
+      outputFilesDiv.append(link); //.append('<br/>');
       return true;
     } catch (err) {
       console.error(err);
@@ -502,21 +500,21 @@ export class MainController {
       return;
     }
     const outputFilesDiv = $('#outputFiles');
-    
+
     try {
       const decryptedBytes = await this.encryptionService.decryptFile(file, passphrase);
       const blob = new Blob([decryptedBytes], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(blob);
-      const size = this.formatBytes(blob.size)
+      const size = this.formatBytes(blob.size);
       if (blob.size === 0) {
         return false;
       }
-      const downloadName = file.name.replace(".enc", "");
+      const downloadName = file.name.replace('.enc', '');
       const link = $('<a class="btn mb-1 btn-sm bg-blue text-white rounded-pill me-1">')
         .attr('href', url)
         .attr('download', downloadName)
         .text(`${downloadName} | ${size}`);
-      outputFilesDiv.append(link)//.append('<br/>');
+      outputFilesDiv.append(link); //.append('<br/>');
       return true;
     } catch (err) {
       console.error(err);
@@ -532,19 +530,19 @@ export class MainController {
     const randomKey = generateSecureRandomString(24);
     this.formHandler.setFormValue('keyBlank', randomKey);
     this.formHandler.setFormValue('keyPassword', randomKey);
-    ElementHandler.buttonRemoveTextAddSuccess("keyGenerate");
+    ElementHandler.buttonRemoveTextAddSuccess('keyGenerate');
     await this.delay(1000);
-    ElementHandler.buttonRemoveStatusAddText("keyGenerate");
+    ElementHandler.buttonRemoveStatusAddText('keyGenerate');
     this.actionInProgress = false;
 
     function generateSecureRandomString(length) {
-      const allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_+.,()[]*#?=&%$§€@";
+      const allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_+.,()[]*#?=&%$§€@!%^{}|;':/<>?";
       const allowedLength = allowed.length; // 67 characters
       const result = [];
       const cryptoObj = window.crypto || window.msCrypto;
       // We can only safely use bytes < maxMultiple without bias.
       const maxMultiple = Math.floor(256 / allowedLength) * allowedLength; // 256 % 67 = 55, so maxMultiple = 201
-    
+
       while (result.length < length) {
         // Request enough random bytes. This may yield extra bytes that we might not use.
         const randomBytes = new Uint8Array(length - result.length);
@@ -557,7 +555,6 @@ export class MainController {
       }
       return result.join('');
     }
-    
   }
 
   async keyCopy() {
@@ -566,33 +563,33 @@ export class MainController {
     const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     const keyToCopy = hideKey ? keyPassword : keyBlank;
     if (!keyToCopy) {
-      ElementHandler.buttonRemoveTextAddFail("keyCopy");
+      ElementHandler.buttonRemoveTextAddFail('keyCopy');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("keyCopy");
+      ElementHandler.buttonRemoveStatusAddText('keyCopy');
       this.actionInProgress = false;
       return;
     }
     try {
       await navigator.clipboard.writeText(keyToCopy);
-      ElementHandler.buttonRemoveTextAddSuccess("keyCopy");
+      ElementHandler.buttonRemoveTextAddSuccess('keyCopy');
     } catch (err) {
-      ElementHandler.buttonRemoveTextAddFail("keyCopy");
+      ElementHandler.buttonRemoveTextAddFail('keyCopy');
     } finally {
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("keyCopy");
+      ElementHandler.buttonRemoveStatusAddText('keyCopy');
       this.actionInProgress = false;
     }
   }
 
   toggleKey() {
-    if ($("#hideKey").is(":checked")) {
-      ElementHandler.hide("keyBlank");
-      ElementHandler.show("keyPassword");
-      this.formHandler.setFormValue("keyPassword", this.formHandler.formValues.keyBlank);
+    if ($('#hideKey').is(':checked')) {
+      ElementHandler.hide('keyBlank');
+      ElementHandler.show('keyPassword');
+      this.formHandler.setFormValue('keyPassword', this.formHandler.formValues.keyBlank);
     } else {
-      ElementHandler.hide("keyPassword");
-      ElementHandler.show("keyBlank");
-      this.formHandler.setFormValue("keyPassword", this.formHandler.formValues.keyBlank);
+      ElementHandler.hide('keyPassword');
+      ElementHandler.show('keyBlank');
+      this.formHandler.setFormValue('keyPassword', this.formHandler.formValues.keyBlank);
     }
   }
 
@@ -601,30 +598,30 @@ export class MainController {
     this.actionInProgress = true;
     const { keySlot } = this.formHandler.formValues;
     if (!keySlot) {
-      ElementHandler.buttonRemoveTextAddFail("loadKey");
+      ElementHandler.buttonRemoveTextAddFail('loadKey');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("loadKey");
+      ElementHandler.buttonRemoveStatusAddText('loadKey');
       this.actionInProgress = false;
       return;
     }
     try {
       const storedKey = await this.configManager.readSlotValue(keySlot);
       if (!storedKey) {
-        ElementHandler.buttonRemoveTextAddFail("loadKey");
+        ElementHandler.buttonRemoveTextAddFail('loadKey');
         await this.delay(1000);
-        ElementHandler.buttonRemoveStatusAddText("loadKey");
+        ElementHandler.buttonRemoveStatusAddText('loadKey');
         this.actionInProgress = false;
         return;
       }
       this.formHandler.setFormValue('keyBlank', storedKey);
       this.formHandler.setFormValue('keyPassword', storedKey);
-      ElementHandler.buttonRemoveTextAddSuccess("loadKey");
+      ElementHandler.buttonRemoveTextAddSuccess('loadKey');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("loadKey");
+      ElementHandler.buttonRemoveStatusAddText('loadKey');
     } catch (error) {
-      ElementHandler.buttonRemoveTextAddFail("loadKey");
+      ElementHandler.buttonRemoveTextAddFail('loadKey');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("loadKey");
+      ElementHandler.buttonRemoveStatusAddText('loadKey');
     }
     this.actionInProgress = false;
   }
@@ -634,29 +631,29 @@ export class MainController {
     this.actionInProgress = true;
     const { keySlot, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     if (!keySlot) {
-      ElementHandler.buttonRemoveTextAddFail("saveKey");
+      ElementHandler.buttonRemoveTextAddFail('saveKey');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("saveKey");
+      ElementHandler.buttonRemoveStatusAddText('saveKey');
       this.actionInProgress = false;
       return;
     }
     const keyToSave = hideKey ? keyPassword : keyBlank;
     if (!keyToSave) {
-      ElementHandler.buttonRemoveTextAddFail("saveKey");
+      ElementHandler.buttonRemoveTextAddFail('saveKey');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("saveKey");
+      ElementHandler.buttonRemoveStatusAddText('saveKey');
       this.actionInProgress = false;
       return;
     }
     try {
       await this.configManager.setSlotValue(keySlot, keyToSave);
-      ElementHandler.buttonRemoveTextAddSuccess("saveKey");
+      ElementHandler.buttonRemoveTextAddSuccess('saveKey');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("saveKey");
+      ElementHandler.buttonRemoveStatusAddText('saveKey');
     } catch (err) {
-      ElementHandler.buttonRemoveTextAddFail("saveKey");
+      ElementHandler.buttonRemoveTextAddFail('saveKey');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("saveKey");
+      ElementHandler.buttonRemoveStatusAddText('saveKey');
     }
     this.actionInProgress = false;
   }
@@ -664,27 +661,27 @@ export class MainController {
   async changeSlotName() {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
-    const formHandlerLocal = new FormHandler("newSlotForm");
+    const formHandlerLocal = new FormHandler('newSlotForm');
     const { keySlotChange, slotName } = formHandlerLocal.getFormValues();
     if (!keySlotChange || !slotName) {
-      ElementHandler.buttonRemoveTextAddFail("renameSlotAction");
+      ElementHandler.buttonRemoveTextAddFail('renameSlotAction');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("renameSlotAction");
+      ElementHandler.buttonRemoveStatusAddText('renameSlotAction');
       this.actionInProgress = false;
       return;
     }
     try {
       await this.configManager.setSlotName(keySlotChange, slotName);
       const slotNames = await this.configManager.readSlotNames();
-      ElementHandler.populateSelectWithSlotNames(slotNames, "keySlot");
-      ElementHandler.buttonRemoveTextAddSuccess("renameSlotAction");
+      ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
+      ElementHandler.buttonRemoveTextAddSuccess('renameSlotAction');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("renameSlotAction");
+      ElementHandler.buttonRemoveStatusAddText('renameSlotAction');
       $('#slotName').val('');
     } catch (error) {
-      ElementHandler.buttonRemoveTextAddFail("renameSlotAction");
+      ElementHandler.buttonRemoveTextAddFail('renameSlotAction');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("renameSlotAction");
+      ElementHandler.buttonRemoveStatusAddText('renameSlotAction');
     }
     this.actionInProgress = false;
   }
@@ -697,8 +694,8 @@ export class MainController {
       title: 'Clear all data?',
       text: "All local data will be rewritten with default values. This action can't be undone.",
       showCancelButton: true,
-      confirmButtonText: "Clear",
-      cancelButtonText: 'Cancel'
+      confirmButtonText: 'Clear',
+      cancelButtonText: 'Cancel',
     }).then(async (result) => {
       if (result.isConfirmed) {
         await this.configManager.deleteAllConfigData();
@@ -707,18 +704,18 @@ export class MainController {
         Swal.fire({
           icon: 'success',
           title: 'All data deleted!',
-          text: "The application is cleared.",
+          text: 'The application is cleared.',
           timer: 2500,
           showCancelButton: false,
-          confirmButtonText: "Ok",
+          confirmButtonText: 'Ok',
         });
       }
     });
   }
 
   clearInput() {
-    this.formHandler.setFormValue("inputText", "");
-    this.handleDataChange({ target: { value: "" } });
+    this.formHandler.setFormValue('inputText', '');
+    this.handleDataChange({ target: { value: '' } });
   }
 
   async copyOutput() {
@@ -726,20 +723,20 @@ export class MainController {
     if (this.actionInProgressCopy) return;
     this.actionInProgressCopy = true;
     if (!outputText) {
-      ElementHandler.buttonRemoveTextAddFail("copyOutput");
+      ElementHandler.buttonRemoveTextAddFail('copyOutput');
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("copyOutput");
+      ElementHandler.buttonRemoveStatusAddText('copyOutput');
       this.actionInProgressCopy = false;
       return;
     }
     try {
       await navigator.clipboard.writeText(outputText);
-      ElementHandler.buttonRemoveTextAddSuccess("copyOutput");
+      ElementHandler.buttonRemoveTextAddSuccess('copyOutput');
     } catch (err) {
-      ElementHandler.buttonRemoveTextAddFail("copyOutput");
+      ElementHandler.buttonRemoveTextAddFail('copyOutput');
     } finally {
       await this.delay(1000);
-      ElementHandler.buttonRemoveStatusAddText("copyOutput");
+      ElementHandler.buttonRemoveStatusAddText('copyOutput');
       this.actionInProgressCopy = false;
     }
   }

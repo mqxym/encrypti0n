@@ -36,12 +36,12 @@ export class ConfigManager {
   async _initNewConfig() {
     const salt = this.encryptionManager.generateRandomSalt();
     const defaultKey = this.encryptionManager.generateRandomDefaultKey();
-    const rounds = this._getRandomInt(1000, 2000);
+    const rounds = 10;
 
     this.config = {
       isUsingMasterPassword: false,
-      PBKDF2Rounds: rounds,
-      PBKDF2Salt: salt,
+      argon2Rounds: rounds,
+      argon2Salt: salt,
       default: defaultKey,
       data: { iv: '', ciphertext: '' }
     };
@@ -76,8 +76,8 @@ export class ConfigManager {
     if (!this.config.isUsingMasterPassword) {
       await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(
         this.config.default,
-        this.config.PBKDF2Salt,
-        this.config.PBKDF2Rounds
+        this.config.argon2Salt,
+        this.config.argon2Rounds
       );
     }
   }
@@ -97,8 +97,8 @@ export class ConfigManager {
     // Derive the key once, store in session manager
     await this.encryptionManager.sessionKeyManager.deriveAndCacheKey(
       masterPassword,
-      this.config.PBKDF2Salt,
-      this.config.PBKDF2Rounds
+      this.config.argon2Salt,
+      this.config.argon2Rounds
     );
 
     try {
@@ -227,7 +227,7 @@ export class ConfigManager {
   // -----------------------------
   /**
    * Sets a master password. This re-derives from the old key (whether default or old master),
-   * then re-encrypts with new PBKDF2 parameters.
+   * then re-encrypts with new argon2 parameters.
    */
   async setMasterPassword(newMasterPassword) {
     // Decrypt current data with the existing session key
@@ -240,10 +240,10 @@ export class ConfigManager {
 
     // Update config with new salt & rounds
     const newSalt = this.encryptionManager.generateRandomSalt();
-    const newRounds = this._getRandomInt(5000000, 5001000);
+    const newRounds = this._getRandomInt(400, 450);
     this.config.isUsingMasterPassword = true;
-    this.config.PBKDF2Salt = newSalt;
-    this.config.PBKDF2Rounds = newRounds;
+    this.config.argon2Salt = newSalt;
+    this.config.argon2Rounds = newRounds;
     this.config.default = '';
 
     // Derive new key from the new master password, re-encrypt
@@ -275,16 +275,16 @@ export class ConfigManager {
 
     // Switch to default-based encryption
     this.config.isUsingMasterPassword = false;
-    this.config.PBKDF2Salt = this.encryptionManager.generateRandomSalt();
-    this.config.PBKDF2Rounds = this._getRandomInt(1000, 2000);
+    this.config.argon2Salt = this.encryptionManager.generateRandomSalt();
+    this.config.argon2Rounds = 10;
     this.config.default = this.encryptionManager.generateRandomDefaultKey();
 
     // Clear old session key, derive new default key, re-encrypt
     this.encryptionManager.sessionKeyManager.clearSessionKey();
     const newKey = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(
       this.config.default,
-      this.config.PBKDF2Salt,
-      this.config.PBKDF2Rounds
+      this.config.argon2Salt,
+      this.config.argon2Rounds
     );
     const encrypted = await this.encryptionManager.encryptData(newKey, plainData);
     this.config.data.iv = encrypted.iv;
@@ -320,15 +320,15 @@ export class ConfigManager {
   }
 
   async _getSessionKeyOrThrow() {
-    const { PBKDF2Salt, PBKDF2Rounds } = this.config;
-    let key = this.encryptionManager.sessionKeyManager.getSessionKey(PBKDF2Salt, PBKDF2Rounds);
+    const { argon2Salt, argon2Rounds } = this.config;
+    let key = this.encryptionManager.sessionKeyManager.getSessionKey(argon2Salt, argon2Rounds);
 
     if (!key) {
       if (this.config.isUsingMasterPassword) {
         throw new Error('Session is locked. Call unlockSession(masterPassword) first.');
       } else {
         // If no master password, we might try to auto-derive once
-        key = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(this.config.default, PBKDF2Salt, PBKDF2Rounds);
+        key = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(this.config.default, argon2Salt, argon2Rounds);
       }
     }
     return key;

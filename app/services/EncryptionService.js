@@ -14,11 +14,11 @@ export class EncryptionService {
       aesgcm: new AESGCMEncryption(),
     };
 
-    // Mapping for PBKDF2 iterations based on difficulty.
-    this.pbkdf2IterationMapping = {
-      low: 100010,
-      middle: 5000042,
-      high: 10000666
+    // Mapping for argon2 iterations based on difficulty.
+    this.argon2IterationMapping = {
+      low: 100,
+      middle: 400,
+      high: 800
     };
 
     // Mapping for salt lengths based on difficulty.
@@ -28,7 +28,7 @@ export class EncryptionService {
     };
 
     // Set default difficulty settings.
-    this.setPBKDF2Difficulty('middle');
+    this.setargon2Difficulty('middle');
     this.setSaltLengthDifficulty('high');
   }
 
@@ -62,7 +62,7 @@ export class EncryptionService {
     const saltBytes = await algo.initialize(
       passphraseBytes,
       this.saltLength,
-      this.pbkdf2Iterations
+      this.argon2Iterations
     );
 
     // Encrypt the plaintext data.
@@ -92,7 +92,7 @@ export class EncryptionService {
     const passphraseBytes = new TextEncoder().encode(passphrase);
 
     // Initialize algorithm with key derivation parameters from header.
-    await algo.initialize(passphraseBytes, this.saltLength, header.pbkdf2Iterations, saltBytes);
+    await algo.initialize(passphraseBytes, this.saltLength, header.argon2Iterations, saltBytes);
     const plaintextBytes = await algo.decryptData(combined.slice(header.length));
     return new TextDecoder().decode(plaintextBytes);
   }
@@ -120,7 +120,7 @@ export class EncryptionService {
     const saltBytes = await algo.initialize(
       passphraseBytes,
       this.saltLength,
-      this.pbkdf2Iterations
+      this.argon2Iterations
     );
     const headerBytes = this._encodeHeader(algorithmName, saltBytes);
     const processor = new StreamProcessor(algo, headerBytes);
@@ -139,7 +139,7 @@ export class EncryptionService {
     const passphraseBytes = new TextEncoder().encode(passphrase);
 
     // Initialize algorithm with key derivation parameters from header.
-    await algo.initialize(passphraseBytes, this.saltLength, header.pbkdf2Iterations, saltBytes);
+    await algo.initialize(passphraseBytes, this.saltLength, header.argon2Iterations, saltBytes);
     const processor = new StreamProcessor(algo, []);
     const blob = processor.decryptFile(file.slice(headerLength));
     return blob;
@@ -162,16 +162,16 @@ export class EncryptionService {
   }
 
   /**
-   * Sets the PBKDF2 iteration count based on difficulty.
+   * Sets the argon2 iteration count based on difficulty.
    * @param {"low"|"medium"|"high"} difficulty - Difficulty level.
    * @throws Will throw an error if an invalid difficulty is provided.
    */
-  setPBKDF2Difficulty(difficulty) {
-    if (!(difficulty in this.pbkdf2IterationMapping)) {
-      throw new Error("Invalid PBKDF2 difficulty. Choose 'low', 'middle', or 'high'.");
+  setargon2Difficulty(difficulty) {
+    if (!(difficulty in this.argon2IterationMapping)) {
+      throw new Error("Invalid argon2 difficulty. Choose 'low', 'middle', or 'high'.");
     }
-    this.pbkdf2Iterations = this.pbkdf2IterationMapping[difficulty];
-    this.pbkdf2Difficulty = difficulty;
+    this.argon2Iterations = this.argon2IterationMapping[difficulty];
+    this.argon2Difficulty = difficulty;
   }
 
   /**
@@ -191,7 +191,7 @@ export class EncryptionService {
    * Encodes a header based on the algorithm and provided salt.
    * For AES-GCM, the header structure is:
    *   Byte 0: Algorithm identifier.
-   *   Byte 1: Difficulty byte (bits 0-1: PBKDF2 difficulty, bit 2: salt length flag).
+   *   Byte 1: Difficulty byte (bits 0-1: argon2 difficulty, bit 2: salt length flag).
    *   Bytes 2..: Salt bytes.
    * @param {string} algorithmName - The algorithm name.
    * @param {Uint8Array} saltBytes - Salt bytes used in key derivation.
@@ -203,10 +203,10 @@ export class EncryptionService {
     };
     const algoId = algorithmIdentifiers[algorithmName];
     if (algorithmName === 'aesgcm') {
-      // Determine PBKDF2 difficulty code.
-      const pbkdf2Codes = { low: 0b00, middle: 0b01, high: 0b10 };
+      // Determine argon2 difficulty code.
+      const argon2Codes = { low: 0b00, middle: 0b01, high: 0b10 };
       const saltFlag = this.saltDifficulty === 'high' ? 1 : 0;
-      const difficultyByte = (saltFlag << 2) | pbkdf2Codes[this.pbkdf2Difficulty];
+      const difficultyByte = (saltFlag << 2) | argon2Codes[this.argon2Difficulty];
       const header = new Uint8Array(1 + 1 + saltBytes.length);
       header[0] = algoId;
       header[1] = difficultyByte;
@@ -240,9 +240,9 @@ export class EncryptionService {
       const headerLength = 1 + 1 + saltLength;
       const header = combinedData.slice(0, headerLength);
       const saltBytes = header.slice(2, 2 + saltLength);
-      const pbkdf2Codes = { 0b00: this.pbkdf2IterationMapping.low, 0b01: this.pbkdf2IterationMapping.middle, 0b10: this.pbkdf2IterationMapping.high };
-      const pbkdf2Code = difficultyByte & 0x03;
-      header.pbkdf2Iterations = pbkdf2Codes[pbkdf2Code];
+      const argon2Codes = { 0b00: this.argon2IterationMapping.low, 0b01: this.argon2IterationMapping.middle, 0b10: this.argon2IterationMapping.high };
+      const argon2Code = difficultyByte & 0x03;
+      header.argon2Iterations = argon2Codes[argon2Code];
       return { algorithmName, header, saltBytes, headerLength};
     }
     throw new Error(`Header decoding not implemented for algorithm: ${algorithmName}`);

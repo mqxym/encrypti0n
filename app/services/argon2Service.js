@@ -1,6 +1,6 @@
 import { ElementHandler } from '../helpers/ElementHandler.js';
 
-export class pbkdf2Service {
+export class argon2Service {
   constructor(modalId, configManager) {
     // Store the jQuery-wrapped modal element.
     this.$modal = $('#' + modalId);
@@ -10,22 +10,22 @@ export class pbkdf2Service {
     // Default options (will be overwritten if saved options are loaded).
     this.options = {
       roundDifficulty: 'middle', // possible values: 'low', 'middle', 'high'
-      saltDifficulty: 'high'     // possible values: 'low', 'high'
+      saltDifficulty: 'high', // possible values: 'low', 'high'
     };
 
     // Cache references to the interactive buttons.
     this.$roundButtons = {
       low: this.$modal.find('#round-low'),
       middle: this.$modal.find('#round-middle'),
-      high: this.$modal.find('#round-high')
+      high: this.$modal.find('#round-high'),
     };
 
     this.$saltButtons = {
       low: this.$modal.find('#salt-low'),
-      high: this.$modal.find('#salt-high')
+      high: this.$modal.find('#salt-high'),
     };
 
-    this.$saveButton = this.$modal.find('#pbkdf2-save');
+    this.$saveButton = this.$modal.find('#argon2-save');
 
     // Bind events and load any saved options.
     this.bindEvents();
@@ -36,27 +36,27 @@ export class pbkdf2Service {
       this.options.roundDifficulty = 'low';
       this.updateRoundButtons();
     });
-  
+
     this.$roundButtons.middle.on('click', () => {
       this.options.roundDifficulty = 'middle';
       this.updateRoundButtons();
     });
-  
+
     this.$roundButtons.high.on('click', () => {
       this.options.roundDifficulty = 'high';
       this.updateRoundButtons();
     });
-  
+
     this.$saltButtons.low.on('click', () => {
       this.options.saltDifficulty = 'low';
       this.updateSaltButtons();
     });
-  
+
     this.$saltButtons.high.on('click', () => {
       this.options.saltDifficulty = 'high';
       this.updateSaltButtons();
     });
-  
+
     this.$saveButton.on('click', () => {
       this.saveOptions();
     });
@@ -88,7 +88,7 @@ export class pbkdf2Service {
       }
     });
   }
-  
+
   updateSaltButtons() {
     $.each(this.$saltButtons, (level, $btn) => {
       if (level === this.options.saltDifficulty) {
@@ -122,6 +122,6 @@ export class pbkdf2Service {
     }
   }
   delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
