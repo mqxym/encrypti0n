@@ -56,6 +56,7 @@ export class MainController {
     // Key management
     $('#renameSlotAction').on('click', () => this.changeSlotName());
     $('#keyGenerate').on('click', () => this.keyGenerate());
+    $('#clearPassword').on('click', () => this.clearPassword());
     $('#keyCopy').on('click', () => this.keyCopy());
     $('#hideKey').on('change', () => this.toggleKey());
     $('#loadKey').on('click', () => this.loadKey());
@@ -589,7 +590,7 @@ export class MainController {
     } else {
       ElementHandler.hide('keyPassword');
       ElementHandler.show('keyBlank');
-      this.formHandler.setFormValue('keyPassword', this.formHandler.formValues.keyBlank);
+      this.formHandler.setFormValue('keyBlank', this.formHandler.formValues.keyPassword);
     }
   }
 
@@ -692,7 +693,7 @@ export class MainController {
     Swal.fire({
       icon: 'error',
       title: 'Clear all data?',
-      text: "All local data will be rewritten with default values. This action can't be undone.",
+      text: "All local data from main app v3 will be rewritten with default values. This action can't be undone.",
       showCancelButton: true,
       confirmButtonText: 'Clear',
       cancelButtonText: 'Cancel',
@@ -716,6 +717,11 @@ export class MainController {
   clearInput() {
     this.formHandler.setFormValue('inputText', '');
     this.handleDataChange({ target: { value: '' } });
+  }
+
+  clearPassword() {
+    this.formHandler.setFormValue('keyBlank', '');
+    this.formHandler.setFormValue('keyPassword', '');
   }
 
   async copyOutput() {

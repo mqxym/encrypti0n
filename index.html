@@ -265,7 +265,7 @@
 
                                     <!-- item-->
                                     <div class="dropdown-header noti-title">
-                                        <h6 class="text-overflow m-0">Clear all saved local data</h6>
+                                        <h6 class="text-overflow m-0">Reset all saved local data</h6>
                                     </div>
 
                                     <a id="removeAllData" class="dropdown-item notify-item btn btn-outline-secondary d-block waves-effect waves-light mt-auto mb-2">
@@ -390,10 +390,7 @@
                                     <div class="card border-secondary border shadow-lg mb-3 w-100 h-100">
                                         <div class="card-header" style="height: 60px">
                                             <div class="d-flex flex-row align-items-center">
-                                                <!-- Left content -->
                                                 <div class="me-auto"><h2>Password</h2></div>
-
-                                                <!-- Right content -->
                                                 <div>
                                                     <a href="#Argon2Info" class="btn btn-xs btn-outline-secondary rounded-pill">Salted Argon2</a>
                                                 </div>
@@ -401,10 +398,11 @@
                                         </div>
 
                                         <div class="card-body">
-                                            <div class="d-flex flex-row align-items-center">
+                                            <div class="d-flex flex-row align-items-center" id="clearPasswordContainer">
                                                 <span class="help-block me-auto">
                                                     <small id="helpOutput">Enter or generate the encryption password:</small>
                                                 </span>
+                                                <i class="fs-4 mdi mdi-delete-circle-outline" id="clearPassword" data-bs-container="#clearPasswordContainer" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Clear Password"></i>
                                             </div>
                                             <div class="d-flex flex-row align-items-center mb-1">
                                                 <div class="input-group" id="tooltip-copy">
@@ -622,7 +620,7 @@
                                         </div>
                                         <div class="card-body">
                                             <blockquote class="blockquote mb-2">
-                                                <p>Argon2 is explicitly designed for password-based key derivation. It mitigates the risks of using a weak password by introducing computational cost and salting to resist brute-force and rainbow table attacks.</p>
+                                                <p>Argon2 is among other things designed for password-based key derivation. It mitigates the risks of using a weak password by introducing computational cost and salting to resist brute-force and rainbow table attacks.</p>
 
                                                 <p>
                                                     You can customize the rounds and salt by opening the
@@ -630,7 +628,7 @@
                                                     (if you know what you are doing).
                                                 </p>
                                                 <p>
-                                                    <i>By default, the site uses a random, secure 16-byte salt and 5M SHA-256 rounds on every action.</i>
+                                                    <i>By default, the site uses a random, secure 16-byte salt, 400 rounds and 2048KiB of algorithm memory on every encrypt action.</i>
                                                 </p>
                                             </blockquote>
                                         </div>

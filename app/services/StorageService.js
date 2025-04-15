@@ -21,5 +21,7 @@ export class StorageService {
 
   deleteAllData() {
     localStorage.removeItem('encMainConf');
+    localStorage.removeItem('encInfoHidden');
+    localStorage.removeItem('__UBOLD_CONFIG__');
   }
 }
