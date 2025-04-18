@@ -828,8 +828,8 @@ class ThemeCustomizer {
 
     setSwitchFromConfig() {
 
-        //sessionStorage.setItem('__UBOLD_CONFIG__', JSON.stringify(this.config));
-        localStorage.setItem('__UBOLD_CONFIG__', JSON.stringify(this.config));
+        //sessionStorage.setItem('__ENC_UI_CONFIG__', JSON.stringify(this.config));
+        localStorage.setItem('__ENC_UI_CONFIG__', JSON.stringify(this.config));
 
         document.querySelectorAll('.right-bar input[type=checkbox]').forEach(function (checkbox) {
             checkbox.checked = false;

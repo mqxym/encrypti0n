@@ -1994,7 +1994,7 @@ class StorageHandler {
     StorageHandler.deleteSlotNames();
     StorageHandler.deleteConfigs();
     StorageHandler.getAndRemove("copyAlert");
-    StorageHandler.getAndRemove("__UBOLD_CONFIG__");
+    StorageHandler.getAndRemove("__ENC_UI_CONFIG__");
     StorageHandler.getAndRemove("isEncrypted");
     StorageHandler.getAndRemove("version");
     StorageHandler.getAndRemove("pwCheck");
