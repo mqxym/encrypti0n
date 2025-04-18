@@ -53,4 +53,10 @@ export class FormHandler {
         this.setFormValue(k, obj[k]);
       }
     }
+
+    preventSubmitAction () {
+      this.$form.addEventListener("submit", function (e) {
+        e.preventDefault();
+      });
+    }
   }

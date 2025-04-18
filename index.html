@@ -325,7 +325,7 @@
                                 </ol>
                             </div>
                         </div>
-                        <form id="mainForm" role="form">
+                        <form id="mainForm" role="form" autocomplete="off">
                             <div class="row" id="appRow">
                                 <div class="col-xxl-3 col-lg-5 col-12 mb-3 mb-xxl-0">
                                     <div class="card border-secondary border shadow-lg h-100 w-100">
@@ -411,8 +411,8 @@
                                             </div>
                                             <div class="d-flex flex-row align-items-center mb-1">
                                                 <div class="input-group" id="tooltip-copy">
-                                                    <input type="text" class="border border-secondary rounded-start form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password" />
-                                                    <input type="password" class="border border-secondary rounded-start form-control" id="keyPassword" name="keyPassword" placeholder="Password" />
+                                                    <input type="text" class="border border-secondary rounded-start form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password" autocomplete="off"/>
+                                                    <input type="password" class="border border-secondary rounded-start form-control" id="keyPassword" name="keyPassword" placeholder="Password" autocomplete="off"/>
                                                     <button id="keyCopy" type="button" class="rounded-end btn input-group-text btn-outline-warning waves-effect" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Copy Password">
                                                         <i id="keyCopyText" class="mdi mdi-content-copy me-1"></i>
                                                         <i id="keyCopySuccess" class="mdi mdi-check-all d-none"></i>
@@ -476,10 +476,10 @@
                                     </div>
                                 </div>
                                 <div class="col-xxl-1 col-lg-12 d-flex justify-content-center align-items-center mb-3 pe-xxl-4" id="tooltip-encrypt">
-                                    <button type="button" id="actionRight" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-none d-xxl-block" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
+                                    <button type="submit" id="actionRight" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-none d-xxl-block" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
                                         <i class="mdi mdi-arrow-right-thick ladda-label"></i>
                                     </button>
-                                    <button type="button" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-xxl-none" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
+                                    <button type="submit" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-xxl-none" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
                                         <i class="mdi mdi-arrow-down-bold ladda-label"></i>
                                     </button>
                                 </div>
@@ -687,13 +687,14 @@
                 </div>
                 <div id="do-application-encryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="encryptApplication-Modal" aria-hidden="true">
                     <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Encrypt Application Data</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                                <form role="form" id="encryptApplicationForm">
+                        <form role="form" id="encryptApplicationForm" autocomplete="on">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Encrypt Application Data</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    
                                     <div class="row">
                                         <div class="col-md-12">
                                             <p>
@@ -706,29 +707,30 @@
                                                 <b>Attention:</b>
                                                 If you forget your master password, you can't decrypt your app data anymore.
                                             </p>
+                                            <input type="text" autocomplete="username" style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
                                             <div class="mb-3">
-                                                <label for="field-2" class="form-label">Master Password</label>
-                                                <input name="encryptApplicationMPw" type="password" class="form-control border border-secondary" id="encryptApplicationPw" placeholder="Secure Password" />
+                                                <label for="encryptApplicationPw" class="form-label">Master Password</label>
+                                                <input name="encryptApplicationMPw" type="password" class="form-control border border-secondary" id="encryptApplicationPw" placeholder="Secure Password" autocomplete="new-password" required />
                                             </div>
                                             <div class="mb-3">
-                                                <label for="field-3" class="form-label">Confirm Password</label>
-                                                <input name="encryptApplicationMPwConfirmation" type="password" class="form-control border border-secondary" id="encryptApplicationPwConfirmation" />
+                                                <label for="encryptApplicationPwConfirmation" class="form-label">Confirm Password</label>
+                                                <input name="encryptApplicationMPwConfirmation" type="password" class="form-control border border-secondary" id="encryptApplicationPwConfirmation" autocomplete="new-password" required />
                                             </div>
                                             <p class="text-pink d-none" id="encryptApplicationMatchFail">The two entered passwords don't match.</p>
                                             <p class="text-pink d-none" id="encryptApplicationMissingPw">You have to enter your secure master password two times to encrypt the applications data.</p>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" id="encryptApplication" class="ladda-button btn btn-pink waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                        <span class="ladda-label" id="encryptApplicationText">Encrypt!</span>
+                                        <i id="loadKeySuccess" class="mdi mdi-check-all d-none"></i>
+                                        <span class="ladda-spinner"></span>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                                <button type="button" id="encryptApplication" class="ladda-button btn btn-pink waves-effect waves-light" data-style="zoom-in" dir="ltr">
-                                    <span class="ladda-label" id="encryptApplicationText">Encrypt!</span>
-                                    <i id="loadKeySuccess" class="mdi mdi-check-all d-none"></i>
-                                    <span class="ladda-spinner"></span>
-                                </button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 <div id="do-application-decryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="do-application-decryption" aria-hidden="true" style="display: none">
@@ -738,15 +740,15 @@
                                 <h4 class="modal-title">The Application is Encrypted</h4>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form role="form" id="applicationDecryptionForm">
+                            <form role="form" id="applicationDecryptionForm" autocomplete="on">
                                 <div class="modal-body p-4">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <p>To use saved data, please decrypt with your master password:</p>
-
+                                            <input type="text" autocomplete="username" style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
                                             <div class="mb-3">
-                                                <label for="field-3" class="form-label">Master Password</label>
-                                                <input name="decryptApplicationMPw" type="password" class="form-control border border-secondary" id="field-3" />
+                                                <label for="decryptApplicationMPw" class="form-label">Master Password</label>
+                                                <input name="decryptApplicationMPw" type="password" class="form-control border border-secondary" id="decryptApplicationMPw" autocomplete="current-password" required />
                                             </div>
                                             <p>If you don't remember your master password, deleting data is the only option.</p>
                                         </div>
@@ -756,7 +758,7 @@
                                     <button type="button" id="removeLocalDataDecryptionModal" class="btn btn-outline-danger waves-effect waves-light" data-style="zoom-in" dir="ltr">
                                         <span>Delete all data</span>
                                     </button>
-                                    <button type="button" id="decryptApplication" class="ladda-button btn btn-blue waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                    <button type="submit" id="decryptApplication" class="ladda-button btn btn-blue waves-effect waves-light" data-style="zoom-in" dir="ltr">
                                         <span class="ladda-label" id="decryptApplicationText">Decrypt!</span>
                                         <i id="decryptApplicationFail" class="mdi mdi-close-circle-multiple d-none"></i>
                                         <span class="ladda-spinner"></span>
@@ -838,13 +840,13 @@
                 </div>
                 <div id="renameSlotsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="renameSlots" aria-hidden="true">
                     <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Rename Slots</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                                <form role="form" id="newSlotForm">
+                        <form id="newSlotForm" autocomplete="off">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Rename Slots</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="input-group mb-2">
@@ -871,17 +873,17 @@
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" id="renameSlotAction" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                        <span id="renameSlotActionText">Save Slot Name</span>
+                                        <i id="renameSlotActionSuccess" class="mdi mdi-check-all d-none"></i>
+                                        <i id="renameSlotActionFail" class="mdi mdi-close-circle-multiple d-none"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                                <button type="button" id="renameSlotAction" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
-                                    <span id="renameSlotActionText">Save Slot Name</span>
-                                    <i id="renameSlotActionSuccess" class="mdi mdi-check-all d-none"></i>
-                                    <i id="renameSlotActionFail" class="mdi mdi-close-circle-multiple d-none"></i>
-                                </button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 <footer class="footer">

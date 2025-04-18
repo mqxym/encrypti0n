@@ -13,6 +13,7 @@ export class MainController {
    */
   constructor(formId) {
     this.formHandler = new FormHandler(formId);
+    this.formHandler.preventSubmitAction();
     // Application state and version
     this.doFiles = false;
     this.actionInProgress = false;
@@ -358,6 +359,7 @@ export class MainController {
     ElementHandler.hide('encryptApplicationMissingPw');
     ElementHandler.hide('encryptApplicationMatchFail');
     const formHandlerLocal = new FormHandler('encryptApplicationForm');
+    formHandlerLocal.preventSubmitAction();
     const { encryptApplicationMPw, encryptApplicationMPwConfirmation } = formHandlerLocal.getFormValues();
     if (!encryptApplicationMPw || !encryptApplicationMPwConfirmation) {
       ElementHandler.show('encryptApplicationMissingPw');
@@ -403,6 +405,7 @@ export class MainController {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
     const formHandlerLocal = new FormHandler('applicationDecryptionForm');
+    formHandlerLocal.preventSubmitAction();
     const { decryptApplicationMPw } = formHandlerLocal.getFormValues();
     if (!decryptApplicationMPw) {
       ElementHandler.buttonRemoveTextAddFail('decryptApplication');
@@ -731,6 +734,7 @@ export class MainController {
     if (this.actionInProgress) return;
     this.actionInProgress = true;
     const formHandlerLocal = new FormHandler('newSlotForm');
+    formHandlerLocal.preventSubmitAction();
     const { keySlotChange, slotName } = formHandlerLocal.getFormValues();
     if (!keySlotChange || !slotName) {
       ElementHandler.buttonRemoveTextAddFail('renameSlotAction');
