@@ -77,7 +77,6 @@ export class PasswordGenerator {
   
     // Handler to generate and display the password.
     handleGenerate() {
-    console.log("Test");
       const length = parseInt($('#lengthSlider').val(), 10);
       const specialChars = $('#specialChars').val();
       const password = this.generator.generate(length, specialChars);

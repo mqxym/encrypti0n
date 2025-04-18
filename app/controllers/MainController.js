@@ -4,6 +4,7 @@ import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { StorageService } from '../services/StorageService.js';
 import { EncryptionService } from '../services/EncryptionService.js';
 import { argon2Service } from '../services/argon2Service.js';
+import { ActivityService } from '../services/ActivityService.js';
 import { ConfigManager } from '../services/configManagement/ConfigManager.js';
 
 export class MainController {
@@ -79,13 +80,53 @@ export class MainController {
       $(document).off('click', '#encryptApplicationModal');
       $('#do-application-decryption').modal('show');
     } else {
-      const slotNames = await this.configManager.readSlotNames();
+      let slotNames;
+      let failure = false;
+      try {
+        slotNames = await this.configManager.readSlotNames();
+      } catch (err) {
+        failure = true;
+      }
+      
       ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
-      await this.argon2Service.loadOptions();
+      try {
+        await this.argon2Service.loadOptions();
+      } catch (err) {
+        failure = true;
+      }
+
+      if (failure) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to decrypt local data!',
+          text: 'The data could be corrupted. Please try clearing all data.',
+          showCancelButton: false,
+          confirmButtonText: 'Ok',
+        });
+      }
+      
       this.keyGenerate();
       this.toggleKey();
     }
+    // clear input data
     this.setInformationTab(false);
+    this.formHandler.setFormValue('outputText', '');
+    this.formHandler.setFormValue('inputText', '');
+    this.formHandler.setFormValue('outputText', '');
+    this.clearFiles();
+  }
+
+  initActivityService() {
+    // Create the activity service to detect inactivity
+    if (typeof this.activityService !== 'undefined') return;
+    this.activityService = new ActivityService(300, this.lockApplicationAfterInactivity.bind(this));
+    this.activityService.startCountdown("#inactivityCountdown");
+    this.activityService.start();
+  }
+
+  stopActivityService() {
+    if (typeof this.activityService === 'undefined') return;
+    this.activityService.stop();
   }
 
   // ––––––– UI Toggle Methods –––––––
@@ -112,29 +153,26 @@ export class MainController {
   }
 
   setInformationTab(toggle = true) {
-    if (toggle === true) {
-      if (
-        this.storageService.getItem('encInfoHidden') === null ||
-        this.storageService.getItem('encInfoHidden') === 'false'
-      ) {
-        this.storageService.setItem('encInfoHidden', 'true');
+    const isCurrentlyHidden = this.storageService.getItem('encInfoHidden') === 'true';
+    
+    if (toggle) {
+      const newHiddenState = !isCurrentlyHidden;
+      this.storageService.setItem('encInfoHidden', newHiddenState.toString());
+      
+      if (newHiddenState) {
         $('.informationRow').hide();
-        $('#appRow').addClass('mb-5');
-      } else if (this.storageService.getItem('encInfoHidden') === 'true') {
-        this.storageService.setItem('encInfoHidden', 'false');
-        $('.informationRow').show();
         $('#appRow').removeClass('mb-5');
+      } else {
+        $('.informationRow').show();
+        $('#appRow').addClass('mb-5');
       }
     } else {
-      if (
-        this.storageService.getItem('encInfoHidden') === null ||
-        this.storageService.getItem('encInfoHidden') === 'false'
-      ) {
-        $('.informationRow').show();
-        $('#appRow').addClass('mb-5');
-      } else if (this.storageService.getItem('encInfoHidden') === 'true') {
+      if (isCurrentlyHidden) {
         $('.informationRow').hide();
         $('#appRow').removeClass('mb-5');
+      } else {
+        $('.informationRow').show();
+        $('#appRow').addClass('mb-5');
       }
     }
   }
@@ -180,7 +218,6 @@ export class MainController {
       }
       await this.postActionHandling(result, laddaManager);
     } catch (error) {
-      console.error('Action handling failed:', error);
       laddaManager.stopAll();
       ElementHandler.arrowsToCross();
     } finally {
@@ -198,6 +235,14 @@ export class MainController {
       let result = false;
       let fileCounter = 0;
       $('#outputFiles').empty();
+      
+      if (fileLength === 0) {
+        ElementHandler.arrowsToCross();
+        $('#outputFiles').html('Encryption / Decryption failed. Please check data or password.')
+        await this.postActionHandling(false, laddaManager);
+        return;
+      }
+
       for (let file of inputFilesElem.files) {
         const isEncrypted = await this.encryptionService.isEncryptedFile(file);
         laddaManager.setProgressAll(fileCounter / fileLength);
@@ -205,22 +250,17 @@ export class MainController {
           result = await this.handleFileDecrypt(file);
           if (!result) {
             ElementHandler.arrowsToCross();
-            this.formHandler.setFormValue('outputText', null);
-            ElementHandler.setPlaceholderById('outputText', 'Decryption failed. Please check data or password.');
           }
         } else {
           result = await this.handleFileEncrypt(file);
           if (!result) {
             ElementHandler.arrowsToCross();
-            this.formHandler.setFormValue('outputText', null);
-            ElementHandler.setPlaceholderById('outputText', 'Encryption failed. Please check data or password.');
           }
         }
         ++fileCounter;
       }
       await this.postActionHandling(result, laddaManager);
     } catch (error) {
-      console.error('Action handling failed:', error);
       laddaManager.stopAll();
       ElementHandler.arrowsToCross();
     } finally {
@@ -273,10 +313,6 @@ export class MainController {
       this.formHandler.setFormValue('outputText', decrypted);
       return true;
     } catch (error) {
-      console.error('Error Message:', error.message);
-      console.error('Error Name:', error.name);
-      console.error('Stack Trace:', error.stack);
-      console.error('Full Error Object:', error);
       return false;
     }
   }
@@ -331,12 +367,16 @@ export class MainController {
       ElementHandler.show('encryptApplicationMatchFail');
       return;
     }
+    formHandlerLocal.setFormValue('encryptApplicationMPw', '');
+    formHandlerLocal.setFormValue('encryptApplicationMPwConfirmation', '');
+
     const laddaEncryptApplication = Ladda.create($('#encryptApplication')[0]);
     try {
       laddaEncryptApplication.start();
       laddaEncryptApplication.setProgress(0.7);
       await this.configManager.setMasterPassword(encryptApplicationMPw);
       $('#do-application-encryption').modal('hide');
+      this.initActivityService();
       Swal.fire({
         icon: 'success',
         title: 'The application is encrypted!',
@@ -346,7 +386,14 @@ export class MainController {
         confirmButtonText: 'Ok',
       });
     } catch (err) {
-      console.error(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to encrypt the application!',
+        text: 'Please try again or report the bug.',
+        timer: 2500,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
     } finally {
       laddaEncryptApplication.stop();
     }
@@ -364,6 +411,7 @@ export class MainController {
       this.actionInProgress = false;
       return;
     }
+    formHandlerLocal.setFormValue('decryptApplicationMPw', '');
     const laddaDecryptApplication = Ladda.create($('#decryptApplication')[0]);
     try {
       laddaDecryptApplication.start();
@@ -375,6 +423,8 @@ export class MainController {
       ElementHandler.show('removeApplicationEncryption');
       ElementHandler.hide('encryptApplicationModal');
       await this.argon2Service.loadOptions();
+      this.initActivityService();
+
       Swal.fire({
         icon: 'success',
         title: 'The application is decrypted!',
@@ -395,6 +445,14 @@ export class MainController {
     }
   }
 
+  lockApplicationAfterInactivity () {
+    this.configManager.lockSession();
+    this.clearUI();
+    this.stopActivityService();
+    this.formHandler.setFormValue('outputText', ''); 
+    $('#do-application-decryption').modal('show');
+  }
+
   handleAppEncryptionRemove() {
     Swal.fire({
       icon: 'warning',
@@ -406,18 +464,24 @@ export class MainController {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          this.stopActivityService();
           await this.configManager.removeMasterPassword();
           ElementHandler.hide('removeApplicationEncryption');
           ElementHandler.show('encryptApplicationModal');
           Swal.fire({
             icon: 'success',
-            title: 'The encryption is removed',
+            title: 'The encryption is removed.',
             timer: 2500,
             showCancelButton: false,
             confirmButtonText: 'Ok',
           });
         } catch (err) {
-          console.error(err);
+          Swal.fire({
+            icon: 'error',
+            title: 'The removal of app encryption failed.',
+            showCancelButton: false,
+            confirmButtonText: 'Ok',
+          });
         }
       }
     });
@@ -470,7 +534,7 @@ export class MainController {
     const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     const passphrase = hideKey ? keyPassword : keyBlank;
     if (!passphrase) {
-      return;
+      return false;
     }
     const algo = 'aesgcm';
     const outputFilesDiv = $('#outputFiles');
@@ -488,7 +552,9 @@ export class MainController {
       outputFilesDiv.append(link); //.append('<br/>');
       return true;
     } catch (err) {
-      console.error(err);
+      const link = $('<a class="btn mb-1 btn-sm bg-secondary text-white rounded-pill me-1">')
+        .text(`FAILED: ${file.name}`);
+      outputFilesDiv.append(link);
       return false;
     }
   }
@@ -498,7 +564,7 @@ export class MainController {
     const passphrase = hideKey ? keyPassword : keyBlank;
     const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length || !passphrase) {
-      return;
+      return false;
     }
     const outputFilesDiv = $('#outputFiles');
 
@@ -518,7 +584,9 @@ export class MainController {
       outputFilesDiv.append(link); //.append('<br/>');
       return true;
     } catch (err) {
-      console.error(err);
+      const link = $('<a class="btn mb-1 btn-sm bg-secondary text-white rounded-pill me-1">')
+        .text(`FAILED: ${file.name}`);
+      outputFilesDiv.append(link);
       return false;
     }
   }
@@ -691,14 +759,22 @@ export class MainController {
 
   removeAllData() {
     Swal.fire({
-      icon: 'error',
+      icon: 'warning',
       title: 'Clear all data?',
       text: "All local data from main app v3 will be rewritten with default values. This action can't be undone.",
       showCancelButton: true,
-      confirmButtonText: 'Clear',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: '<i class="mdi mdi-delete me-1"></i> Clear',
+      cancelButtonText: '<i class="mdi mdi-cancel me-1"></i>Cancel',
+      customClass: {
+        popup: 'rounded-3',
+        confirmButton: 'btn btn-primary',
+        cancelButton: 'btn btn-outline-secondary'
+      },
+      buttonsStyling: false
     }).then(async (result) => {
       if (result.isConfirmed) {
+        this.stopActivityService();
+        this.clearUI();
         await this.configManager.deleteAllConfigData();
         await this.initUI();
         $('#do-application-decryption').modal('hide');
@@ -709,6 +785,11 @@ export class MainController {
           timer: 2500,
           showCancelButton: false,
           confirmButtonText: 'Ok',
+          customClass: {
+            popup: 'rounded-3',
+            confirmButton: 'btn btn-primary'
+          },
+          buttonsStyling: false
         });
       }
     });
@@ -722,6 +803,24 @@ export class MainController {
   clearPassword() {
     this.formHandler.setFormValue('keyBlank', '');
     this.formHandler.setFormValue('keyPassword', '');
+  }
+
+  clearFiles() {
+    this.formHandler.setFormValue('inputFiles', '');
+    $('#fileList').html('');
+    $('#outputFiles').html('The encrypted files appears here');
+  }
+
+  clearSlotNames() {
+    const obj = { 1: "Slot 1", 2: "Slot 2", 3: "Slot 3", 4: "Slot 4", 5: "Slot 5", 6: "Slot 6", 7: "Slot 7", 8: "Slot 8", 9: "Slot 9", 10: "Slot 10" };
+    ElementHandler.populateSelectWithSlotNames(obj, 'keySlot');
+  }
+
+  clearUI () {
+    this.clearFiles();
+    this.clearInput();
+    this.clearPassword();
+    this.clearSlotNames();
   }
 
   async copyOutput() {

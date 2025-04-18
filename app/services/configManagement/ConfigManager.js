@@ -21,7 +21,7 @@ export class ConfigManager {
       instance._saveConfig();
     }
     if (!instance.config.isUsingMasterPassword) {
-      await instance._deriveDefaultKeyOnStartup().catch(console.error);
+      await instance._deriveDefaultKeyOnStartup().catch(() => {});
     }
     return instance;
   }
@@ -328,7 +328,12 @@ export class ConfigManager {
         throw new Error('Session is locked. Call unlockSession(masterPassword) first.');
       } else {
         // If no master password, we might try to auto-derive once
-        key = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(this.config.default, argon2Salt, argon2Rounds);
+        try {
+          key = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(this.config.default, argon2Salt, argon2Rounds);
+        } catch (err) {
+          throw new Error('Failed to derive default key.');
+        }
+        
       }
     }
     return key;

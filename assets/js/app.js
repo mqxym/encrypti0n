@@ -86,8 +86,7 @@
                 time: time
             });
         });
-
-        // console.log($('[data-plugin="tippy"]').length);
+        
         if ($('[data-plugin="tippy"]').length > 0) {
             tippy('[data-plugin="tippy"]');
         }

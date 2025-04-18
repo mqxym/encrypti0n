@@ -63,13 +63,9 @@ export class argon2Service {
   }
 
   async loadOptions() {
-    try {
-      const savedOptions = await this.configManager.readOptions();
-      if (savedOptions) {
-        this.options = savedOptions;
-      }
-    } catch (error) {
-      console.error('Error reading options:', error);
+    const savedOptions = await this.configManager.readOptions();
+    if (savedOptions) {
+      this.options = savedOptions;
     }
     this.updateUI();
   }
