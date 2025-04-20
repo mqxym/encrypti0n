@@ -1,4 +1,5 @@
 import { IEncryptionAlgorithm } from '../interfaces/IEncryptionAlgorithm.js';
+import { deriveKey } from './Argon2Key/Argon2KeyDerivation.js';
 
 /**
  * AESGCMEncryption implements the AES-GCM encryption/decryption algorithm.
@@ -11,7 +12,6 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
    */
   constructor() {
     super();
-    this.KEY_LENGTH_BITS = 256;
     this.IV_LENGTH_BYTES = 12;
     this.HASH_ALGORITHM = 'SHA-256';
   }
@@ -28,95 +28,9 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
     const salt = typeof providedSalt !== 'undefined'
       ? providedSalt
       : crypto.getRandomValues(new Uint8Array(saltLength));
-    this.key = await this.deriveKey(keyMaterial, salt, iterations);
+    this.key = await deriveKey(keyMaterial, salt, iterations);
     return salt;
   }
-
-  /**
-   * Derives an AES-GCM key using argon2.
-   * @param {Uint8Array} keyMaterial - The passphrase bytes.
-   * @param {Uint8Array} salt - The salt bytes.
-   * @param {number} iterations - The number of argon2 iterations.
-   * @returns {Promise<CryptoKey>} The derived CryptoKey.
-   
-  async deriveKey(keyMaterial, salt, iterations) {
-    const baseKey = await crypto.subtle.importKey(
-      'raw',
-      keyMaterial,
-      { name: 'argon2' },
-      false,
-      ['deriveKey']
-    );
-    return crypto.subtle.deriveKey(
-      {
-        name: 'argon2',
-        salt: salt,
-        iterations: iterations,
-        hash: this.HASH_ALGORITHM
-      },
-      baseKey,
-      { name: 'AES-GCM', length: this.KEY_LENGTH_BITS },
-      false,
-      ['encrypt', 'decrypt']
-    );
-  }
-    */
-  async deriveKey(password, salt, iterations) {
-    // Argon2 parameters:
-    // - timeCost: the number of iterations
-    // - memoryCost: memory usage in KiB
-    // - parallelism: degree of parallelism (controls parallel thread use)
-    // - hashLen: desired key length in bytes (32 bytes = 256 bits)
-    const timeCost = iterations;      // You can adjust for increased security.
-    const memoryCost = 2048; // Memory in KiB
-    const parallelism = 1;   // Parallelism factor
-    const hashLen = 32;      // 32 bytes (256 bits) for the AES key
-  
-    /* Derive the raw key using Argon2 (using the Argon2id variant for security)
-    const argon2Result = await argon2.hash({
-      pass: password,
-      salt: salt,             
-      time: timeCost,
-      mem: memoryCost,
-      hashLen: hashLen,
-      parallelism: parallelism,
-      type: argon2.ArgonType.Argon2id
-    });
-    */
-    const argon2Result = await new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          const result = await argon2.hash({
-            pass: password,
-            salt: salt,
-            time: timeCost,
-            mem: memoryCost,
-            hashLen: hashLen,
-            parallelism: parallelism,
-            type: argon2.ArgonType.Argon2id
-          });
-          resolve(result);
-        } catch (err) {
-          reject(err);
-        }
-      }, 20);
-    });
-  
-    // Import the raw key into a CryptoKey object for AES-GCM.
-    const cryptoKey = await crypto.subtle.importKey(
-      "raw", 
-      argon2Result.hash,
-      {
-        name: "AES-GCM",
-        length: 256 
-      },
-      false,
-      ["encrypt", "decrypt"]  
-    );
-  
-    return cryptoKey;
-  }
-
   /**
    * Encrypts the provided plaintext data.
    * @param {Uint8Array|string} plaintext - The data to encrypt.

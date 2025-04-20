@@ -1,6 +1,7 @@
 // passwordGenerator.js
 
 import { ElementHandler } from './helpers/ElementHandler.js';
+import { delay } from './utils/misc.js';
 
 export class PasswordGenerator {
     constructor(defaultAllowed) {
@@ -48,7 +49,6 @@ export class PasswordGenerator {
     }
   }
   
-  // Controller Class
   export class PasswordGeneratorController {
     constructor(generator) {
       this.generator = generator;
@@ -91,12 +91,8 @@ export class PasswordGenerator {
         } catch (err) {
             ElementHandler.buttonRemoveTextAddFail("keyCopy");
         } finally {
-            await this.delay(1000);
+            await delay(1000);
             ElementHandler.buttonRemoveStatusAddText("keyCopy");
         }
-    }
-
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
   }

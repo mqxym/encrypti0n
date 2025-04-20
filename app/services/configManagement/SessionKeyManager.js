@@ -1,4 +1,5 @@
-import { KeyDerivationManager } from './KeyDerivationManager.js';
+import { deriveKey } from "../../algorithms/Argon2Key/Argon2KeyDerivation.js";
+import { base64ToUint8Array } from "../../utils/base64.js";
 
 /**
  * SessionKeyManager
@@ -11,7 +12,6 @@ export class SessionKeyManager {
     this.cachedKey = null; // Stores the derived CryptoKey
     this.cachedSalt = null; // Base64-encoded salt
     this.cachedRounds = null; // argon2 iteration count
-    this.derivationManager = new KeyDerivationManager();
   }
 
   /**
@@ -24,10 +24,10 @@ export class SessionKeyManager {
    * @returns {Promise<CryptoKey>}
    */
   async deriveAndCacheKey(password, saltBase64, rounds) {
-    const saltBytes = this._base64ToUint8Array(saltBase64);
+    const saltBytes = base64ToUint8Array(saltBase64);
 
     // Derive the key (expensive argon2)
-    const derivedKey = await this.derivationManager.deriveKey(password, saltBytes, rounds);
+    const derivedKey = await deriveKey(password, saltBytes, rounds);
 
     // Cache the result
     this.cachedKey = derivedKey;
@@ -69,16 +69,5 @@ export class SessionKeyManager {
     this.cachedKey = null;
     this.cachedSalt = null;
     this.cachedRounds = null;
-  }
-
-  // ------- Helpers --------
-  _base64ToUint8Array(base64) {
-    const binary = atob(base64);
-    const len = binary.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binary.charCodeAt(i);
-    }
-    return bytes;
   }
 }

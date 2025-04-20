@@ -1,4 +1,5 @@
 import { SessionKeyManager } from './SessionKeyManager.js';
+import { base64ToUint8Array, arrayBufferToBase64 } from '../../utils/base64.js';
 
 /**
  * ApplicationEncryptionManager
@@ -27,8 +28,8 @@ export class ApplicationEncryptionManager {
       );
 
       return {
-        iv: this._arrayBufferToBase64(iv),
-        ciphertext: this._arrayBufferToBase64(ciphertext)
+        iv: arrayBufferToBase64(iv),
+        ciphertext: arrayBufferToBase64(ciphertext)
       };
     } catch (err) {
       throw new Error(`encryptData failed: ${err.message}`);
@@ -40,8 +41,8 @@ export class ApplicationEncryptionManager {
    */
   async decryptData(key, ivBase64, ciphertextBase64) {
     try {
-      const iv = this._base64ToUint8Array(ivBase64);
-      const ciphertext = this._base64ToUint8Array(ciphertextBase64);
+      const iv = base64ToUint8Array(ivBase64);
+      const ciphertext = base64ToUint8Array(ciphertextBase64);
 
       const decryptedBuffer = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv },
@@ -59,36 +60,6 @@ export class ApplicationEncryptionManager {
   generateRandomSalt() {
     const salt = new Uint8Array(16);
     crypto.getRandomValues(salt);
-    return this._arrayBufferToBase64(salt);
-  }
-
-  generateRandomDefaultKey(length = 24) {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-';
-    const randomBytes = new Uint8Array(length);
-    crypto.getRandomValues(randomBytes);
-
-    return Array.from(randomBytes)
-      .map(byte => chars[byte % chars.length])
-      .join('');
-  }
-
-  // ------ Internal Helpers ------
-  _arrayBufferToBase64(buffer) {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
-  }
-
-  _base64ToUint8Array(base64) {
-    const binary = atob(base64);
-    const len = binary.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binary.charCodeAt(i);
-    }
-    return bytes;
+    return arrayBufferToBase64(salt);
   }
 }

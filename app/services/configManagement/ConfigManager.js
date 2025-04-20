@@ -1,5 +1,6 @@
 import { StorageService } from '../StorageService.js';
 import { ApplicationEncryptionManager } from './ApplicationEncryptionManager.js';
+import { PasswordGenerator } from '../../passwordGenerator.js';
 
 /**
  * ConfigManager
@@ -34,8 +35,9 @@ export class ConfigManager {
   // Initial Configuration
   // -----------------------------
   async _initNewConfig() {
+    const pwGen = new PasswordGenerator();
     const salt = this.encryptionManager.generateRandomSalt();
-    const defaultKey = this.encryptionManager.generateRandomDefaultKey();
+    const defaultKey = pwGen.generate(24);
     const rounds = 10;
 
     this.config = {

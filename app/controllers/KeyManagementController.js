@@ -2,6 +2,7 @@ import { ElementHandler } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { delay } from '../utils/misc.js';
 import appState from '../state/AppState.js';
+import { PasswordGenerator } from '../passwordGenerator.js';
 
 export class KeyManagementController {
     constructor(services) {
@@ -29,34 +30,14 @@ export class KeyManagementController {
       async keyGenerate() {
         if (appState.state.actionInProgress) return;
         appState.setState({actionInProgress : true});;
-        const randomKey = generateSecureRandomString(24);
+        const pwGenerator = new PasswordGenerator();
+        const randomKey = pwGenerator.generate(24, "-_+.,()[]*#?=&%$§€@!%^{}|;':/<>?");
         this.formHandler.setFormValue('keyBlank', randomKey);
         this.formHandler.setFormValue('keyPassword', randomKey);
         ElementHandler.buttonRemoveTextAddSuccess('keyGenerate');
         await delay(1000);
         ElementHandler.buttonRemoveStatusAddText('keyGenerate');
         appState.setState({actionInProgress : false});
-    
-        function generateSecureRandomString(length) {
-          const allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_+.,()[]*#?=&%$§€@!%^{}|;':/<>?";
-          const allowedLength = allowed.length; // 67 characters
-          const result = [];
-          const cryptoObj = window.crypto || window.msCrypto;
-          // We can only safely use bytes < maxMultiple without bias.
-          const maxMultiple = Math.floor(256 / allowedLength) * allowedLength; // 256 % 67 = 55, so maxMultiple = 201
-    
-          while (result.length < length) {
-            // Request enough random bytes. This may yield extra bytes that we might not use.
-            const randomBytes = new Uint8Array(length - result.length);
-            cryptoObj.getRandomValues(randomBytes);
-            for (let i = 0; i < randomBytes.length && result.length < length; i++) {
-              if (randomBytes[i] < maxMultiple) {
-                result.push(allowed[randomBytes[i] % allowedLength]);
-              }
-            }
-          }
-          return result.join('');
-        }
       }
     
       async keyCopy() {
