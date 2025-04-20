@@ -35,9 +35,8 @@ export class ConfigManager {
   // Initial Configuration
   // -----------------------------
   async _initNewConfig() {
-    const pwGen = new PasswordGenerator();
     const salt = this.encryptionManager.generateRandomSalt();
-    const defaultKey = pwGen.generate(24);
+    const defaultKey = this._getRandomPassword();
     const rounds = 10;
 
     this.config = {
@@ -279,8 +278,7 @@ export class ConfigManager {
     this.config.isUsingMasterPassword = false;
     this.config.argon2Salt = this.encryptionManager.generateRandomSalt();
     this.config.argon2Rounds = 10;
-    this.config.default = this.encryptionManager.generateRandomDefaultKey();
-
+    this.config.default = this._getRandomPassword();
     // Clear old session key, derive new default key, re-encrypt
     this.encryptionManager.sessionKeyManager.clearSessionKey();
     const newKey = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(
@@ -361,5 +359,10 @@ export class ConfigManager {
         obj[key] = null;
       }
     }
+  }
+
+  _getRandomPassword () {
+    const pwGen = new PasswordGenerator();
+    return pwGen.generate(24);
   }
 }

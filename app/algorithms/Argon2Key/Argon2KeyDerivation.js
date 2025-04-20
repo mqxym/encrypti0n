@@ -35,7 +35,7 @@ export async function deriveKey(password, salt, iterations) {
           reject(err);
         }
       },
-      timeCost === 10 ? 0 : 20
+      timeCost === 10 ? 0 : 150 // Timeout for every action accept default local encryption (10 rounds) for animation load
     );
   });
 
