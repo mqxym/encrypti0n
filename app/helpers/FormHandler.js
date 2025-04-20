@@ -58,5 +58,6 @@ export class FormHandler {
       this.$form.addEventListener("submit", function (e) {
         e.preventDefault();
       });
+      return this;
     }
   }
