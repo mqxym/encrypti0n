@@ -1,3 +1,5 @@
+import { Argon2Constants } from "../../constants/constants.js";
+
 /**
  * Derives a non-extractable AES-GCM key via argon2.
  * @param {string} password - The user-supplied or default password
@@ -6,17 +8,10 @@
  * @returns {Promise<CryptoKey>} Non-extractable AES-GCM key
  */
 export async function deriveKey(password, salt, iterations) {
-  // Argon2 parameters:
-  // - timeCost: the number of iterations
-  // - memoryCost: memory usage in KiB
-  // - parallelism: degree of parallelism (controls parallel thread use)
-  // - hashLen: desired key length in bytes (32 bytes = 256 bits)
-  const timeCost = iterations; // You can adjust for increased security.
-  const memoryCost = 2048; // Memory in KiB
-  const parallelism = 1; // Parallelism factor
-  const hashLen = 32; // 32 bytes (256 bits) for the AES key
 
-  // Derive the raw key using Argon2 (using the Argon2id variant for security)
+  const timeCost = iterations; 
+
+  // Derive the raw key using Argon2id
   const argon2Result = await new Promise((resolve, reject) => {
     setTimeout(
       async () => {
@@ -25,9 +20,9 @@ export async function deriveKey(password, salt, iterations) {
             pass: password,
             salt: salt,
             time: timeCost,
-            mem: memoryCost,
-            hashLen: hashLen,
-            parallelism: parallelism,
+            mem: Argon2Constants.MEMORY_COST,
+            hashLen: Argon2Constants.HASH_LEN,
+            parallelism: Argon2Constants.PARALLELISM,
             type: argon2.ArgonType.Argon2id,
           });
           resolve(result);
@@ -45,7 +40,7 @@ export async function deriveKey(password, salt, iterations) {
     argon2Result.hash,
     {
       name: 'AES-GCM',
-      length: 256,
+      length: Argon2Constants.KEY_LEN,
     },
     false,
     ['encrypt', 'decrypt']

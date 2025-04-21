@@ -1,5 +1,6 @@
 import { SessionKeyManager } from './SessionKeyManager.js';
 import { base64ToUint8Array, arrayBufferToBase64 } from '../../utils/base64.js';
+import { ConfigManagerConstants } from '../../constants/constants.js';
 
 /**
  * ApplicationEncryptionManager
@@ -58,7 +59,7 @@ export class ApplicationEncryptionManager {
   }
 
   generateRandomSalt() {
-    const salt = new Uint8Array(16);
+    const salt = new Uint8Array(ConfigManagerConstants.ARGON2_SALT_LENGTH);
     crypto.getRandomValues(salt);
     return arrayBufferToBase64(salt);
   }

@@ -1,15 +1,13 @@
+import { EncryptionController } from './EncryptionController.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { formatBytes } from '../utils/fileUtils.js';
-import { delay } from '../utils/misc.js';
 import { argon2Service } from '../services/argon2Service.js';
 import appState from '../state/AppState.js';
 
-export class FileEncryptionController {
+export class FileEncryptionController extends EncryptionController {
   constructor(services) {
-    this.encryptionService = services.encryption;
-    this.formHandler = services.form;
-    this.configManager = services.config;
+    super(services);
   }
 
   async handleAction() {
@@ -56,9 +54,8 @@ export class FileEncryptionController {
   }
 
   async handleEncryption(file) {
-    const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
-    const passphrase = hideKey ? keyPassword : keyBlank;
-    if (!passphrase) {
+    const { key } = this.getKeyData();
+    if (!key) {
       return false;
     }
     const algo = 'aesgcm';
@@ -67,7 +64,7 @@ export class FileEncryptionController {
       const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
       this.encryptionService.setargon2Difficulty(usedOptions.roundDifficulty);
       this.encryptionService.setSaltLengthDifficulty(usedOptions.saltDifficulty);
-      const blob = await this.encryptionService.encryptFile(file, passphrase, algo);
+      const blob = await this.encryptionService.encryptFile(file, key, algo);
       const size = formatBytes(blob.size);
       const url = URL.createObjectURL(blob);
       const link = $('<a class="btn mb-1 btn-sm bg-pink text-white rounded-pill me-1">')
@@ -86,16 +83,15 @@ export class FileEncryptionController {
   }
 
   async handleDecryption(file) {
-    const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
-    const passphrase = hideKey ? keyPassword : keyBlank;
+    const { key } = this.getKeyData();
     const inputFilesElem = $('#inputFiles')[0];
-    if (!inputFilesElem.files.length || !passphrase) {
+    if (!inputFilesElem.files.length || !key) {
       return false;
     }
     const outputFilesDiv = $('#outputFiles');
 
     try {
-      const decryptedBytes = await this.encryptionService.decryptFile(file, passphrase);
+      const decryptedBytes = await this.encryptionService.decryptFile(file, key);
       const blob = new Blob([decryptedBytes], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(blob);
       const size = formatBytes(blob.size);
@@ -115,19 +111,6 @@ export class FileEncryptionController {
       );
       outputFilesDiv.append(link);
       return false;
-    }
-  }
-
-  async postActionHandling(result, laddaManager) {
-    if (result) {
-      laddaManager.stopAll();
-      ElementHandler.arrowsToCheck();
-      await delay(2500);
-      ElementHandler.checkToArrows();
-    } else {
-      laddaManager.stopAll();
-      await delay(2500);
-      ElementHandler.crossToArrows();
     }
   }
 }

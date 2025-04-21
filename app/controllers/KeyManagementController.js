@@ -1,8 +1,8 @@
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
-import { delay } from '../utils/misc.js';
-import appState from '../state/AppState.js';
+import { handleActionError, handleActionSuccess, wrapAction } from '../utils/controller.js';
 import { PasswordGenerator } from '../passwordGenerator.js';
+import { KeyManagemenConstants } from '../constants/constants.js';
 
 export class KeyManagementController {
   constructor(services) {
@@ -28,40 +28,25 @@ export class KeyManagementController {
   // ––––––– Key Management Methods –––––––
 
   async keyGenerate() {
-    if (appState.state.actionInProgress) return;
-    appState.setState({ actionInProgress: true });
-    const pwGenerator = new PasswordGenerator();
-    const randomKey = pwGenerator.generate(24, "-_+.,()[]*#?=&%$§€@!%^{}|;':/<>?");
-    this.formHandler.setFormValue('keyBlank', randomKey);
-    this.formHandler.setFormValue('keyPassword', randomKey);
-    ElementHandler.buttonRemoveTextAddSuccess('keyGenerate');
-    await delay(1000);
-    ElementHandler.buttonRemoveStatusAddText('keyGenerate');
-    appState.setState({ actionInProgress: false });
+    await wrapAction(async () => {
+      const randomKey = this.generateKey();
+      this.formHandler.setFormValue('keyBlank', randomKey);
+      this.formHandler.setFormValue('keyPassword', randomKey);
+      await handleActionSuccess('keyGenerate');
+    });
   }
 
   async keyCopy() {
-    if (appState.state.actionInProgress) return;
-    appState.setState({ actionInProgress: true });
-    const { keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
-    const keyToCopy = hideKey ? keyPassword : keyBlank;
-    if (!keyToCopy) {
-      ElementHandler.buttonRemoveTextAddFail('keyCopy');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('keyCopy');
-      appState.setState({ actionInProgress: false });
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(keyToCopy);
-      ElementHandler.buttonRemoveTextAddSuccess('keyCopy');
-    } catch (err) {
-      ElementHandler.buttonRemoveTextAddFail('keyCopy');
-    } finally {
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('keyCopy');
-      appState.setState({ actionInProgress: false });
-    }
+    await wrapAction(async () => {
+      const { key } = this.getKeyData();
+      try {
+        this.validateKey(key);
+        await navigator.clipboard.writeText(key);
+        await handleActionSuccess('keyCopy');
+      } catch (err) {
+        await handleActionError('keyCopy');
+      }
+    });
   }
 
   toggleKey() {
@@ -77,101 +62,108 @@ export class KeyManagementController {
   }
 
   async loadKey() {
-    if (appState.state.actionInProgress) return;
-    appState.setState({ actionInProgress: true });
-    const { keySlot } = this.formHandler.formValues;
-    if (!keySlot) {
-      ElementHandler.buttonRemoveTextAddFail('loadKey');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('loadKey');
-      appState.setState({ actionInProgress: false });
-      return;
-    }
-    try {
-      const storedKey = await this.configManager.readSlotValue(keySlot);
-      if (!storedKey) {
-        ElementHandler.buttonRemoveTextAddFail('loadKey');
-        await delay(1000);
-        ElementHandler.buttonRemoveStatusAddText('loadKey');
-        appState.setState({ actionInProgress: false });
-        return;
+    await wrapAction(async () => {
+      const { slot } = this.getKeyData();
+      try {
+        this.validateSlot(slot);
+        const storedKey = await this.configManager.readSlotValue(slot);
+        this.validateKey(storedKey);
+        this.formHandler.setFormValue('keyBlank', storedKey);
+        this.formHandler.setFormValue('keyPassword', storedKey);
+        await handleActionSuccess('loadKey');
+      } catch (error) {
+        await handleActionError('loadKey');
       }
-      this.formHandler.setFormValue('keyBlank', storedKey);
-      this.formHandler.setFormValue('keyPassword', storedKey);
-      ElementHandler.buttonRemoveTextAddSuccess('loadKey');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('loadKey');
-    } catch (error) {
-      ElementHandler.buttonRemoveTextAddFail('loadKey');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('loadKey');
-    }
-    appState.setState({ actionInProgress: false });
+    });
   }
 
   async saveKey() {
-    if (appState.state.actionInProgress) return;
-    appState.setState({ actionInProgress: true });
-    const { keySlot, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
-    if (!keySlot) {
-      ElementHandler.buttonRemoveTextAddFail('saveKey');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('saveKey');
-      appState.setState({ actionInProgress: false });
-      return;
-    }
-    const keyToSave = hideKey ? keyPassword : keyBlank;
-    if (!keyToSave) {
-      ElementHandler.buttonRemoveTextAddFail('saveKey');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('saveKey');
-      appState.setState({ actionInProgress: false });
-      return;
-    }
-    try {
-      await this.configManager.setSlotValue(keySlot, keyToSave);
-      ElementHandler.buttonRemoveTextAddSuccess('saveKey');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('saveKey');
-    } catch (err) {
-      ElementHandler.buttonRemoveTextAddFail('saveKey');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('saveKey');
-    }
-    appState.setState({ actionInProgress: false });
+    await wrapAction(async () => {
+      const { key, slot } = this.getKeyData();
+      try {
+        this.validateKeyInput(key, slot);
+        await this.configManager.setSlotValue(slot, key);
+        await handleActionSuccess('saveKey');
+      } catch (err) {
+        await handleActionError('saveKey');
+      }
+    });
   }
 
   async changeSlotName() {
-    if (appState.state.actionInProgress) return;
-    appState.setState({ actionInProgress: true });
-    const formHandlerLocal = new FormHandler('newSlotForm');
-    formHandlerLocal.preventSubmitAction();
-    const { keySlotChange, slotName } = formHandlerLocal.getFormValues();
-    if (!keySlotChange || !slotName) {
-      ElementHandler.buttonRemoveTextAddFail('renameSlotAction');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('renameSlotAction');
-      appState.setState({ actionInProgress: false });
-      return;
-    }
-    try {
-      await this.configManager.setSlotName(keySlotChange, slotName);
-      const slotNames = await this.configManager.readSlotNames();
-      ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
-      ElementHandler.buttonRemoveTextAddSuccess('renameSlotAction');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('renameSlotAction');
-      $('#slotName').val('');
-    } catch (error) {
-      ElementHandler.buttonRemoveTextAddFail('renameSlotAction');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('renameSlotAction');
-    }
-    appState.setState({ actionInProgress: false });
+    await wrapAction(async () => {
+      const formHandlerLocal = new FormHandler('newSlotForm');
+      formHandlerLocal.preventSubmitAction();
+      const { keySlotChange, slotName } = formHandlerLocal.getFormValues();
+      try {
+        this.validateSlotName(keySlotChange, slotName);
+        await this.configManager.setSlotName(keySlotChange, slotName);
+        const slotNames = await this.configManager.readSlotNames();
+        ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
+        await handleActionSuccess('removeSlotAction');
+        $('#slotName').val('');
+      } catch (error) {
+        await handleActionError('removeSlotAction');
+      }
+    });
   }
 
   clearPassword() {
     this.formHandler.setFormValue('keyBlank', '');
     this.formHandler.setFormValue('keyPassword', '');
+  }
+
+  // ––––––– Validation Methods –––––––
+
+  validateKey(key) {
+    if (!key) {
+      throw new Error('Key cannot be empty');
+    }
+    if (typeof key !== 'string') {
+      throw new Error('Key must be a string');
+    }
+  }
+
+  validateSlot(slot) {
+    if (!slot) {
+      throw new Error('Slot cannot be empty');
+    }
+    if (typeof slot !== 'string') {
+      throw new Error('Slot must be a string');
+    }
+  }
+
+  validateKeyInput(key, slot) {
+    this.validateKey(key);
+    this.validateSlot(slot);
+  }
+
+  validateSlotName(slot, name) {
+    if (!name) {
+      throw new Error('Slot name cannot be empty');
+    }
+    if (typeof name !== 'string') {
+      throw new Error('Slot name must be a string');
+    }
+    if (name.length > KeyManagemenConstants.MAX_SLOT_NAME_LENGTH) {
+      throw new Error(`Slot name cannot exceed ${KeyManagemenConstants.MAX_SLOT_NAME_LENGTH} characters`);
+    }
+    this.validateSlot(slot);
+  }
+
+  // ––––––– Helper Methods –––––––
+
+  getKeyData() {
+    const { keySlot, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
+    return {
+      slot: keySlot,
+      key: hideKey ? keyPassword : keyBlank,
+      hideKey,
+    };
+  }
+
+  generateKey() {
+    const pwGenerator = new PasswordGenerator();
+    return pwGenerator.generate(KeyManagemenConstants.KEY_LENGTH, KeyManagemenConstants.ALLOWED_CHARACTERS);
   }
 }

@@ -1,5 +1,6 @@
 import { IEncryptionAlgorithm } from '../interfaces/IEncryptionAlgorithm.js';
 import { deriveKey } from './Argon2Key/Argon2KeyDerivation.js';
+import { AESGCMConstants } from '../constants/constants.js';
 
 /**
  * AESGCMEncryption implements the AES-GCM encryption/decryption algorithm.
@@ -12,8 +13,6 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
    */
   constructor() {
     super();
-    this.IV_LENGTH_BYTES = 12;
-    this.HASH_ALGORITHM = 'SHA-256';
   }
 
   /**
@@ -49,7 +48,7 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
    * @returns {Promise<Uint8Array>} The concatenation of the IV and the ciphertext.
    */
   async encryptChunk(dataChunk) {
-    const iv = crypto.getRandomValues(new Uint8Array(this.IV_LENGTH_BYTES));
+    const iv = crypto.getRandomValues(new Uint8Array(AESGCMConstants.IV_LENGTH));
     const cipherBuffer = await crypto.subtle.encrypt(
       { name: "AES-GCM", iv: iv },
       this.key,
@@ -78,8 +77,8 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
    */
   async decryptChunk(dataChunk) {
     const data = new Uint8Array(dataChunk);
-    const iv = data.slice(0, this.IV_LENGTH_BYTES);
-    const ciphertext = data.slice(this.IV_LENGTH_BYTES);
+    const iv = data.slice(0, AESGCMConstants.IV_LENGTH);
+    const ciphertext = data.slice(AESGCMConstants.IV_LENGTH);
     return crypto.subtle.decrypt(
       { name: "AES-GCM", iv: iv },
       this.key,

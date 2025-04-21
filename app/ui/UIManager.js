@@ -1,6 +1,7 @@
 import { formatBytes } from '../utils/fileUtils.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import appState from '../state/AppState.js';
+import { handleActionSuccess, handleActionError, wrapAction } from '../utils/controller.js';
 
 export class UIManager {
   constructor(services, keyManagementController) {
@@ -26,44 +27,62 @@ export class UIManager {
   }
 
   async initUI() {
+    this.resetUIState();
     if (this.configManager.isUsingMasterPassword()) {
-      ElementHandler.disable('encryptApplicationModal');
-      $(document).off('click', '#encryptApplicationModal');
-      $('#do-application-decryption').modal('show');
-    } else {
-      let slotNames;
-      let failure = false;
-      try {
-        slotNames = await this.configManager.readSlotNames();
-      } catch (err) {
-        failure = true;
-      }
-
-      ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
-      try {
-        await this.argon2Service.loadOptions();
-      } catch (err) {
-        failure = true;
-      }
-
-      if (failure) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Failed to decrypt local data!',
-          text: 'The data could be corrupted. Please try clearing all data.',
-          showCancelButton: false,
-          confirmButtonText: 'Ok',
-        });
-      }
-
-      this.keyManagementController.keyGenerate();
-      this.keyManagementController.toggleKey();
+      this.handleMasterPasswordCase();
+      return;
     }
-    // clear input data
+
+    await this.initializeApplication();
+  }
+
+  handleMasterPasswordCase() {
+    ElementHandler.disable('encryptApplicationModal');
+    $(document).off('click', '#encryptApplicationModal');
+    $('#do-application-decryption').modal('show');
+  }
+
+  async initializeApplication() {
+    const initializationFailed = await this.loadApplicationData();
+    
+    if (initializationFailed) {
+      await this.showInitializationError();
+      return;
+    }
+
+    this.initializeKeyManagement();
+  }
+
+  async loadApplicationData() {
+    try {
+      const slotNames = await this.configManager.readSlotNames();
+      ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
+      await this.argon2Service.loadOptions();
+      return false;
+    } catch (err) {
+      return true;
+    }
+  }
+
+  async showInitializationError() {
+    await Swal.fire({
+      icon: 'error',
+      title: 'Failed to decrypt local data!',
+      text: 'The data could be corrupted. Please try clearing all data.',
+      showCancelButton: false,
+      confirmButtonText: 'Ok',
+    });
+  }
+
+  initializeKeyManagement() {
+    this.keyManagementController.keyGenerate();
+    this.keyManagementController.toggleKey();
+  }
+
+  resetUIState() {
     this.setInformationTab(false);
     this.formHandler.setFormValue('outputText', '');
     this.formHandler.setFormValue('inputText', '');
-    this.formHandler.setFormValue('outputText', '');
     this.clearFiles();
   }
 
@@ -212,25 +231,24 @@ export class UIManager {
   }
 
   async copyOutput() {
-    const { outputText } = this.formHandler.formValues;
-    if (this.actionInProgressCopy) return;
-    this.actionInProgressCopy = true;
-    if (!outputText) {
-      ElementHandler.buttonRemoveTextAddFail('copyOutput');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('copyOutput');
-      this.actionInProgressCopy = false;
-      return;
+    await wrapAction(async () => {
+      const { outputText } = this.formHandler.formValues;
+      try {
+        this.validateOutput(outputText);
+        await navigator.clipboard.writeText(outputText);
+        await handleActionSuccess('copyOutput');
+      } catch (err) {
+        await handleActionError('copyOutput');
+      }
+    });
+  }
+
+  validateOutput(output) {
+    if (!output) {
+      throw new Error('Output cannot be empty');
     }
-    try {
-      await navigator.clipboard.writeText(outputText);
-      ElementHandler.buttonRemoveTextAddSuccess('copyOutput');
-    } catch (err) {
-      ElementHandler.buttonRemoveTextAddFail('copyOutput');
-    } finally {
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('copyOutput');
-      this.actionInProgressCopy = false;
+    if (typeof output !== 'string') {
+      throw new Error('Output must be a string');
     }
   }
 }

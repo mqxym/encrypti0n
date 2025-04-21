@@ -1,6 +1,7 @@
 import { StorageService } from '../StorageService.js';
 import { ApplicationEncryptionManager } from './ApplicationEncryptionManager.js';
 import { PasswordGenerator } from '../../passwordGenerator.js';
+import { ConfigManagerConstants } from '../../constants/constants.js';
 
 /**
  * ConfigManager
@@ -14,6 +15,7 @@ export class ConfigManager {
     this.encryptionManager = new ApplicationEncryptionManager();
   }
 
+  // Factory
   static async create() {
     const instance = new ConfigManager();
     instance.config = instance.storageService.getConf();
@@ -37,13 +39,14 @@ export class ConfigManager {
   async _initNewConfig() {
     const salt = this.encryptionManager.generateRandomSalt();
     const defaultKey = this._getRandomPassword();
-    const rounds = 10;
+    const rounds = ConfigManagerConstants.ARGON2_ROUNDS_NO_PW;
 
     this.config = {
       isUsingMasterPassword: false,
       argon2Rounds: rounds,
       argon2Salt: salt,
       default: defaultKey,
+      dataVersion: ConfigManagerConstants.CURRENT_DATA_VERSION,
       data: { iv: '', ciphertext: '' }
     };
 
@@ -241,7 +244,7 @@ export class ConfigManager {
 
     // Update config with new salt & rounds
     const newSalt = this.encryptionManager.generateRandomSalt();
-    const newRounds = this._getRandomInt(400, 450);
+    const newRounds = this._getRandomInt(ConfigManagerConstants.ARGON2_ROUNDS_MIN, ConfigManagerConstants.ARGON2_ROUNDS_MAX);
     this.config.isUsingMasterPassword = true;
     this.config.argon2Salt = newSalt;
     this.config.argon2Rounds = newRounds;
@@ -277,7 +280,7 @@ export class ConfigManager {
     // Switch to default-based encryption
     this.config.isUsingMasterPassword = false;
     this.config.argon2Salt = this.encryptionManager.generateRandomSalt();
-    this.config.argon2Rounds = 10;
+    this.config.argon2Rounds = ConfigManagerConstants.ARGON2_ROUNDS_NO_PW;
     this.config.default = this._getRandomPassword();
     // Clear old session key, derive new default key, re-encrypt
     this.encryptionManager.sessionKeyManager.clearSessionKey();

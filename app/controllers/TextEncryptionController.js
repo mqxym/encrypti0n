@@ -1,14 +1,12 @@
+import { EncryptionController } from './EncryptionController.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { argon2Service } from '../services/argon2Service.js';
-import { delay } from '../utils/misc.js';
 import appState from '../state/AppState.js';
 
-export class TextEncryptionController {
+export class TextEncryptionController extends EncryptionController {
   constructor(services) {
-    this.encryptionService = services.encryption;
-    this.formHandler = services.form;
-    this.configManager = services.config;
+    super(services);
   }
 
   async handleAction() {
@@ -47,15 +45,15 @@ export class TextEncryptionController {
   }
 
   async handleEncryption() {
-    const { inputText, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
-    const passphrase = hideKey ? keyPassword : keyBlank;
-    if (!inputText || !passphrase) return false;
+    const { inputText } = this.formHandler.formValues;
+    const { key } = this.getKeyData();
+    if (!inputText || !key) return false;
     const algo = 'aesgcm';
     try {
       const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
       this.encryptionService.setargon2Difficulty(usedOptions.roundDifficulty);
       this.encryptionService.setSaltLengthDifficulty(usedOptions.saltDifficulty);
-      const encryptedB64 = await this.encryptionService.encryptText(inputText, passphrase, algo);
+      const encryptedB64 = await this.encryptionService.encryptText(inputText, key, algo);
       this.formHandler.setFormValue('outputText', encryptedB64);
       return true;
     } catch (err) {
@@ -64,28 +62,15 @@ export class TextEncryptionController {
   }
 
   async handleDecryption() {
-    const { inputText, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
-    const passphrase = hideKey ? keyPassword : keyBlank;
-    if (!inputText || !passphrase) return false;
+    const { inputText } = this.formHandler.formValues;
+    const { key } = this.getKeyData();
+    if (!inputText || !key) return false;
     try {
-      const decrypted = await this.encryptionService.decryptText(inputText, passphrase);
+      const decrypted = await this.encryptionService.decryptText(inputText, key);
       this.formHandler.setFormValue('outputText', decrypted);
       return true;
     } catch (error) {
       return false;
-    }
-  }
-
-  async postActionHandling(result, laddaManager) {
-    if (result) {
-      laddaManager.stopAll();
-      ElementHandler.arrowsToCheck();
-      await delay(2500);
-      ElementHandler.checkToArrows();
-    } else {
-      laddaManager.stopAll();
-      await delay(2500);
-      ElementHandler.crossToArrows();
     }
   }
 }

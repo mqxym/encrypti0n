@@ -2,6 +2,8 @@ import { ElementHandler } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { ActivityService } from '../services/ActivityService.js';
 import { delay } from '../utils/misc.js';
+import { handleActionError } from '../utils/controller.js';
+import { AppDataConstants } from '../constants/constants.js';
 import appState from '../state/AppState.js';
 
 export class AppDataController {
@@ -29,7 +31,7 @@ export class AppDataController {
   initActivityService() {
     // Create the activity service to detect inactivity
     if (typeof this.activityService !== 'undefined') return;
-    this.activityService = new ActivityService(300, this.lockApplicationAfterInactivity.bind(this));
+    this.activityService = new ActivityService(AppDataConstants.APP_DATA_LOCK_TIMEOUT, this.lockApplicationAfterInactivity.bind(this));
     this.activityService.startCountdown('#inactivityCountdown');
     this.activityService.start();
   }
@@ -127,9 +129,7 @@ export class AppDataController {
       appState.setState({ isEncrypting: false });
     } catch (err) {
       laddaDecryptApplication.stop();
-      ElementHandler.buttonRemoveTextAddFail('decryptApplication');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('decryptApplication');
+      await handleActionError('decryptApplication');
       appState.setState({ isEncrypting: false });
     } finally {
       laddaDecryptApplication.stop();
