@@ -1,4 +1,4 @@
-export const KeyManagemenConstants = {
+export const KeyManagementConstants = {
     KEY_LENGTH: 24,
     ALLOWED_CHARACTERS: "-_+.,()[]*#?=&%$§€@!%^{}|;':/<>?",
     MAX_SLOT_NAME_LENGTH: 15

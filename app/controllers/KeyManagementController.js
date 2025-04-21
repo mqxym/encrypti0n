@@ -2,7 +2,7 @@ import { ElementHandler } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { handleActionError, handleActionSuccess, wrapAction } from '../utils/controller.js';
 import { PasswordGenerator } from '../passwordGenerator.js';
-import { KeyManagemenConstants } from '../constants/constants.js';
+import { KeyManagementConstants } from '../constants/constants.js';
 
 export class KeyManagementController {
   constructor(services) {
@@ -145,8 +145,8 @@ export class KeyManagementController {
     if (typeof name !== 'string') {
       throw new Error('Slot name must be a string');
     }
-    if (name.length > KeyManagemenConstants.MAX_SLOT_NAME_LENGTH) {
-      throw new Error(`Slot name cannot exceed ${KeyManagemenConstants.MAX_SLOT_NAME_LENGTH} characters`);
+    if (name.length > KeyManagementConstants.MAX_SLOT_NAME_LENGTH) {
+      throw new Error(`Slot name cannot exceed ${KeyManagementConstants.MAX_SLOT_NAME_LENGTH} characters`);
     }
     this.validateSlot(slot);
   }
@@ -164,6 +164,6 @@ export class KeyManagementController {
 
   generateKey() {
     const pwGenerator = new PasswordGenerator();
-    return pwGenerator.generate(KeyManagemenConstants.KEY_LENGTH, KeyManagemenConstants.ALLOWED_CHARACTERS);
+    return pwGenerator.generate(KeyManagementConstants.KEY_LENGTH, KeyManagementConstants.ALLOWED_CHARACTERS);
   }
 }
