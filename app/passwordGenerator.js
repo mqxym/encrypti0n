@@ -3,6 +3,11 @@
 import { ElementHandler } from './helpers/ElementHandler.js';
 import { delay } from './utils/misc.js';
 
+export function  pwGenWrapper (length, allowed_characters = '') {
+  const pwGenerator = new PasswordGenerator();
+  return pwGenerator.generate(length, allowed_characters);
+} 
+
 export class PasswordGenerator {
   constructor(defaultAllowed) {
     this.defaultAllowed = defaultAllowed || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

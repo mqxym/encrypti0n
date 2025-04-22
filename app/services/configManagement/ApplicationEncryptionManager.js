@@ -1,6 +1,7 @@
 import { SessionKeyManager } from './SessionKeyManager.js';
+import { pwGenWrapper } from '../../passwordGenerator.js';
 import { base64ToUint8Array, arrayBufferToBase64 } from '../../utils/base64.js';
-import { ConfigManagerConstants } from '../../constants/constants.js';
+import { ConfigManagerConstants, AESGCMConstants } from '../../constants/constants.js';
 
 /**
  * ApplicationEncryptionManager
@@ -18,7 +19,7 @@ export class ApplicationEncryptionManager {
    */
   async encryptData(key, plainData) {
     try {
-      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const iv = crypto.getRandomValues(new Uint8Array(AESGCMConstants.IV_LENGTH));
       const encoder = new TextEncoder();
       const dataBytes = encoder.encode(JSON.stringify(plainData));
 
@@ -62,5 +63,10 @@ export class ApplicationEncryptionManager {
     const salt = new Uint8Array(ConfigManagerConstants.ARGON2_SALT_LENGTH);
     crypto.getRandomValues(salt);
     return arrayBufferToBase64(salt);
+  }
+
+
+  getRandomPassword () {
+    return pwGenWrapper(24);
   }
 }

@@ -30,7 +30,7 @@ export async function deriveKey(password, salt, iterations) {
           reject(err);
         }
       },
-      timeCost === 10 ? 0 : 150 // Timeout for every action accept default local encryption (10 rounds) for animation load
+      timeCost === 10 ? 0 : Argon2Constants.ANIMATION_WAIT_MS // Timeout for every action accept default local encryption (10 rounds) for animation load
     );
   });
 

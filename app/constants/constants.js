@@ -25,6 +25,7 @@ export const Argon2Constants = {
     PARALLELISM: 1,  // parallelism: degree of parallelism (controls parallel thread use)
     HASH_LEN: 32,  // hashLen: desired key length in bytes (32 bytes = 256 bits)
     KEY_LEN: 256,  // 256 bits
+    ANIMATION_WAIT_MS: 150 // timeout before algorithm starts
 };
 
 export const AESGCMConstants = {

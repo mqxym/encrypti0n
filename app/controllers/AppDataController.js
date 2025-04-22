@@ -16,7 +16,7 @@ export class AppDataController {
   }
 
   setUIManager(uiManager) {
-    this.UIManager = uiManager;
+    this.UIManager = uiManager; // is set later by main controller
   }
 
   bindEvents() {
@@ -66,7 +66,9 @@ export class AppDataController {
       laddaEncryptApplication.start();
       laddaEncryptApplication.setProgress(0.7);
       await this.configManager.setMasterPassword(encryptApplicationMPw);
-      $('#do-application-encryption').modal('hide');
+      ElementHandler.hideModal('do-application-encryption')
+      ElementHandler.show('removeApplicationEncryption');
+      ElementHandler.hide('encryptApplicationModal');
       this.initActivityService();
       Swal.fire({
         icon: 'success',
@@ -97,20 +99,14 @@ export class AppDataController {
     const formHandlerLocal = new FormHandler('applicationDecryptionForm');
     formHandlerLocal.preventSubmitAction();
     const { decryptApplicationMPw } = formHandlerLocal.getFormValues();
-    if (!decryptApplicationMPw) {
-      ElementHandler.buttonRemoveTextAddFail('decryptApplication');
-      await delay(1000);
-      ElementHandler.buttonRemoveStatusAddText('decryptApplication');
-      appState.setState({ actionInProgress: false });
-      return;
-    }
     formHandlerLocal.setFormValue('decryptApplicationMPw', '');
     const laddaDecryptApplication = Ladda.create($('#decryptApplication')[0]);
     try {
+      this.validatePassword(decryptApplicationMPw);
       laddaDecryptApplication.start();
       laddaDecryptApplication.setProgress(0.7);
       await this.configManager.unlockSession(decryptApplicationMPw);
-      $('#do-application-decryption').modal('hide');
+      ElementHandler.hideModal('do-application-decryption');
       const slotNames = await this.configManager.readSlotNames();
       ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
       ElementHandler.show('removeApplicationEncryption');
@@ -126,13 +122,12 @@ export class AppDataController {
         showCancelButton: false,
         confirmButtonText: 'Ok',
       });
-      appState.setState({ isEncrypting: false });
     } catch (err) {
       laddaDecryptApplication.stop();
       await handleActionError('decryptApplication');
-      appState.setState({ isEncrypting: false });
     } finally {
       laddaDecryptApplication.stop();
+      appState.setState({ isEncrypting: false });
     }
   }
 
@@ -141,7 +136,7 @@ export class AppDataController {
     this.UIManager.clearUI();
     this.stopActivityService();
     this.formHandler.setFormValue('outputText', '');
-    $('#do-application-decryption').modal('show');
+    ElementHandler.showModal('do-application-decryption');
   }
 
   handleAppEncryptionRemove() {
@@ -180,7 +175,7 @@ export class AppDataController {
 
   handleAppEncryptModal() {
     if (this.configManager.isUsingMasterPassword()) return;
-    $('#do-application-encryption').modal('show');
+    ElementHandler.showModal('do-application-encryption');
   }
 
   removeAllData() {
@@ -203,7 +198,7 @@ export class AppDataController {
         this.UIManager.clearUI();
         await this.configManager.deleteAllConfigData();
         await this.UIManager.initUI();
-        $('#do-application-decryption').modal('hide');
+        ElementHandler.hideModal('do-application-decryption');
         Swal.fire({
           icon: 'success',
           title: 'All data deleted!',
@@ -219,5 +214,14 @@ export class AppDataController {
         });
       }
     });
+  }
+
+  validatePassword(password) {
+    if (!password) {
+      throw new Error('Key cannot be empty');
+    }
+    if (typeof password !== 'string') {
+      throw new Error('Key must be a string');
+    }
   }
 }

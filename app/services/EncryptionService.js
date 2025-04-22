@@ -141,7 +141,7 @@ export class EncryptionService {
     // Initialize algorithm with key derivation parameters from header.
     await algo.initialize(passphraseBytes, this.saltLength, header.argon2Iterations, saltBytes);
     const processor = new StreamProcessor(algo, []);
-    const blob = processor.decryptFile(file.slice(headerLength));
+    const blob = await processor.decryptFile(file.slice(headerLength));
     return blob;
   }
 

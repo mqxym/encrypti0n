@@ -1,7 +1,7 @@
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { handleActionError, handleActionSuccess, wrapAction } from '../utils/controller.js';
-import { PasswordGenerator } from '../passwordGenerator.js';
+import { pwGenWrapper } from '../passwordGenerator.js';
 import { KeyManagementConstants } from '../constants/constants.js';
 
 export class KeyManagementController {
@@ -29,7 +29,7 @@ export class KeyManagementController {
 
   async keyGenerate() {
     await wrapAction(async () => {
-      const randomKey = this.generateKey();
+      const randomKey = pwGenWrapper(KeyManagementConstants.KEY_LENGTH, KeyManagementConstants.ALLOWED_CHARACTERS);
       this.formHandler.setFormValue('keyBlank', randomKey);
       this.formHandler.setFormValue('keyPassword', randomKey);
       await handleActionSuccess('keyGenerate');
@@ -160,10 +160,5 @@ export class KeyManagementController {
       key: hideKey ? keyPassword : keyBlank,
       hideKey,
     };
-  }
-
-  generateKey() {
-    const pwGenerator = new PasswordGenerator();
-    return pwGenerator.generate(KeyManagementConstants.KEY_LENGTH, KeyManagementConstants.ALLOWED_CHARACTERS);
   }
 }

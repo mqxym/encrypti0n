@@ -8,6 +8,14 @@ export class ElementHandler {
   static show(element) {
     $('#' + element).removeClass('d-none');
   }
+
+  static showModal(modalId) {
+    $(`#${modalId}`).modal('show');
+  }
+  
+  static hideModal(modalId) {
+    $(`#${modalId}`).modal('hide');
+  }
   static blueToPinkBorder(element) {
     $('#' + element)
       .removeClass('border-blue')
