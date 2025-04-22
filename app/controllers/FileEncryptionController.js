@@ -69,9 +69,9 @@ export class FileEncryptionController extends EncryptionController {
       const url = URL.createObjectURL(blob);
       const link = $('<a class="btn mb-1 btn-sm bg-pink text-white rounded-pill me-1">')
         .attr('href', url)
-        .attr('download', file.name + '.enc')
-        .text(`${file.name}.enc | ${size}`);
-      outputFilesDiv.append(link); //.append('<br/>');
+        .attr('download', file.name + '.bin')
+        .text(`${file.name}.bin | ${size}`);
+      outputFilesDiv.append(link);
       return true;
     } catch (err) {
       const link = $('<a class="btn mb-1 btn-sm bg-secondary text-white rounded-pill me-1">').text(
