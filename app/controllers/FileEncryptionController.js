@@ -98,7 +98,7 @@ export class FileEncryptionController extends EncryptionController {
       if (blob.size === 0) {
         return false;
       }
-      const downloadName = file.name.replace('.enc', '');
+      const downloadName = file.name.replace('.bin', '');
       const link = $('<a class="btn mb-1 btn-sm bg-blue text-white rounded-pill me-1">')
         .attr('href', url)
         .attr('download', downloadName)
