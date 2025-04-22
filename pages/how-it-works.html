@@ -39,6 +39,9 @@
 
         <!-- Icons css -->
         <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+        
+        <link href="../assets/libs/highlightjs/highlightjs.min.css" rel="stylesheet" type="text/css" />
     </head>
 
     <body>
@@ -501,5 +504,14 @@ storeEncryptedData(ciphertext, iv);</code></pre>
 
         <!-- App JS-->
         <script src="../app/insertVersion.js" defer></script>
+
+        <!-- Highlight.js -->
+        <script src="../assets/libs/highlightjs/highlightjs.min.js" defer></script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                hljs.highlightAll();
+            });
+        </script>
     </body>
 </html>
