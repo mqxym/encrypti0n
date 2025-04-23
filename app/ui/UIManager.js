@@ -130,18 +130,14 @@ export class UIManager {
 
       if (newHiddenState) {
         $('.informationRow').hide();
-        $('#appRow').removeClass('mb-5');
       } else {
         $('.informationRow').show();
-        $('#appRow').addClass('mb-5');
       }
     } else {
       if (isCurrentlyHidden) {
         $('.informationRow').hide();
-        $('#appRow').removeClass('mb-5');
       } else {
         $('.informationRow').show();
-        $('#appRow').addClass('mb-5');
       }
     }
   }
