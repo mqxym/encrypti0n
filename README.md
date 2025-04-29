@@ -2,7 +2,7 @@
 
 is simple a web application to encrypt and decrypt text and files locally within the browser using standard cryptographic algorithms provided by every modern browser.
 
-> The app uses customizable SHA-256 based key derivation algorithm Argon2 (salted) for the 256-bit AES-GCM encryption.
+> The app uses customizable key derivation algorithm Argon2id (salted) for the 256-bit AES-GCM encryption.
   
 ## App Features
 
