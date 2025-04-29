@@ -1,4 +1,5 @@
-assets/images/.DS_Store
-assets/.DS_Store
-assets/libs/.DS_Store
 .DS_Store
+.prettierrc.json
+node_modules/
+*package*.json
+build/

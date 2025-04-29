@@ -18,6 +18,11 @@
             $('#preloader').delay(350).fadeOut('slow');
         });
 
+        $(document).on('click', '.spinner-link', function() {
+            $('#status').show();
+            $('#preloader').show();
+          });
+
         // Popovers
         const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
         const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
@@ -81,8 +86,7 @@
                 time: time
             });
         });
-
-        // console.log($('[data-plugin="tippy"]').length);
+        
         if ($('[data-plugin="tippy"]').length > 0) {
             tippy('[data-plugin="tippy"]');
         }
@@ -824,8 +828,8 @@ class ThemeCustomizer {
 
     setSwitchFromConfig() {
 
-        //sessionStorage.setItem('__UBOLD_CONFIG__', JSON.stringify(this.config));
-        localStorage.setItem('__UBOLD_CONFIG__', JSON.stringify(this.config));
+        //sessionStorage.setItem('__ENC_UI_CONFIG__', JSON.stringify(this.config));
+        localStorage.setItem('__ENC_UI_CONFIG__', JSON.stringify(this.config));
 
         document.querySelectorAll('.right-bar input[type=checkbox]').forEach(function (checkbox) {
             checkbox.checked = false;

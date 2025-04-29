@@ -5,8 +5,8 @@
 */
 
 (function () {
-    //var savedConfig = sessionStorage.getItem("__UBOLD_CONFIG__");
-    var savedConfig = localStorage.getItem("__UBOLD_CONFIG__");
+    //var savedConfig = sessionStorage.getItem("__ENC_UI_CONFIG__");
+    var savedConfig = localStorage.getItem("__ENC_UI_CONFIG__");
 
     var html = document.getElementsByTagName("html")[0];
 

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Encryption Terminology Glossary | Encrypti0n.com</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Understand essential encryption and cryptography terms with Encrypti0n.com's glossary. Clear explanations of AES, AES-GCM, Argon2, ciphertext, Web Crypto API, and more." />
+        <meta name="keywords" content="Encrypti0n.com,encryption glossary,cryptographic terms,AES,AES-GCM,ciphertext,plaintext,Argon2,symmetric encryption,Web Crypto API" />
+        <meta name="author" content="Marques Xiaomi" />
+        <meta name="page-topic" content="Computer" />
+        <meta http-equiv="Reply-to" content="maxim@omg.lol" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="../assets/icons/favicon.ico" />
+
+        <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="mask-icon" href="../assets/icons/safari-pinned-tab.svg" color="#5bbad5" />
+        <meta name="msapplication-TileColor" content="#da532c" />
+        <meta name="theme-color" content="#38414A" />
+
+        <!-- Jquery Toast css -->
+        <link href="../assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Loading button css -->
+        <link href="../assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/libs/ladda/ladda-themeless.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Theme Config Js -->
+        <script src="../assets/js/head.js"></script>
+
+        <!-- Bootstrap css -->
+        <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+        <!-- App css -->
+        <link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Icons css -->
+        <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body>
+        <!-- Begin page -->
+        <div id="wrapper">
+            <div id="preloader">
+                <div id="status">
+                    <div class="spinner">Loading...</div>
+                </div>
+            </div>
+
+            <!-- ========== Menu ========== -->
+            <div class="app-menu">
+                <!-- Brand Logo -->
+                <div class="logo-box">
+                    <!-- Brand Logo Light -->
+                    <a href="/" class="logo-light">
+                        <img src="../assets/images/logo-dark.png" alt="logo" class="logo-lg" />
+                        <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm" />
+                    </a>
+
+                    <!-- Brand Logo Dark -->
+                    <a href="/" class="logo-dark">
+                        <img src="../assets/images/logo.png" alt="dark logo" class="logo-lg" />
+                        <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm" />
+                    </a>
+                </div>
+
+                <!-- menu-left -->
+                <div class="scrollbar">
+                    <!--- Menu -->
+                    <ul class="menu">
+                        <li class="p-2 menu-item text-white">
+                            <a href="/index.html" class="spinner-link menu-link btn btn-primary">
+                                <span class="menu-icon text-white"><i class="mdi mdi-application-import"></i></span>
+                                <span class="menu-text text-white">Open App</span>
+                                <span class="badge bg-light text-dark ms-auto">New</span>
+                            </a>
+                        </li>
+
+                        <li class="menu-title">
+                            App Information
+                            <span class="badge bg-primary ms-auto">New</span>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="/pages/faq.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
+                                <span class="menu-text">FAQ</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/pages/how-it-works.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-file-document"></i></span>
+                                <span class="menu-text">How it works</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/pages/security-and-privacy.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-upload-lock"></i></span>
+                                <span class="menu-text">Security & Privacy</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/pages/developer-documentation-technical-information.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-source-branch"></i></span>
+                                <span class="menu-text">Dev Information</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/pages/encryption-glossary.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-globe-model"></i></span>
+                                <span class="menu-text">Glossary</span>
+                            </a>
+                        </li>
+
+                        <li class="menu-title">Tools</li>
+                        <li class="menu-item">
+                            <a href="/pages/password-generator.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-form-textbox-password"></i></span>
+                                <span class="menu-text">Password Generator</span>
+                            </a>
+                        </li>
+
+                        <li class="menu-title">Links</li>
+
+                        <li class="menu-item">
+                            <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-code-braces"></i></span>
+                                <span class="menu-text">Sourcecode</span>
+                            </a>
+                        </li>
+                        <li class="menu-title">Coming soon</li>
+
+                        <li class="menu-item">
+                            <a href="/web-crypto-api-playground.html" class="spinner-link menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-gamepad-variant-outline"></i></span>
+                                <span class="menu-text">Crypto Playground</span>
+                            </a>
+                        </li>
+
+                        <li class="menu-title">Deprecated Sites</li>
+
+                        <li class="menu-item">
+                            <a href="/index-deprecated.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-view-dashboard-outline"></i></span>
+                                <span class="menu-text">Previous App</span>
+                                <span class="badge bg-warning ms-auto">obs.</span>
+                            </a>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="#methods" data-bs-toggle="collapse" class="menu-link">
+                                <span class="menu-icon"><i class="mdi mdi-video-input-component"></i></span>
+                                <span class="menu-text">Methods</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="methods">
+                                <ul class="sub-menu">
+                                    <li class="menu-item spinner-link">
+                                        <a href="/deprecated/pages/methods-aes-encryption.html" class="menu-link">
+                                            <span class="menu-text">AES</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item spinner-link">
+                                        <a href="/deprecated/pages/methods-blowfish-encryption.html" class="menu-link">
+                                            <span class="menu-text">Blowfish</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item spinner-link">
+                                        <a href="/deprecated/pages/methods-xor-encryption.html" class="menu-link">
+                                            <span class="menu-text">XOR</span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item spinner-link">
+                                        <a href="/deprecated/pages/methods-password-hashing.html" class="menu-link">
+                                            <span class="menu-text">Hashing</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="/deprecated/pages/faq-old.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-help"></i></span>
+                                <span class="menu-text">FAQ</span>
+                                <span class="badge bg-warning ms-auto">obs.</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="security-setups.html" class="menu-link spinner-link">
+                                <span class="menu-icon"><i class="mdi mdi-lightning-bolt"></i></span>
+                                <span class="menu-text">Setups</span>
+                                <span class="badge bg-warning ms-auto">obs.</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!--- End Menu -->
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+            <div class="content-page">
+                <div class="navbar-custom">
+                    <div class="topbar">
+                        <div class="topbar-menu d-flex align-items-center gap-1">
+                            <div class="logo-box">
+                                <!-- Brand Logo Light -->
+                                <a href="/" class="logo-light">
+                                    <img src="../assets/images/logo-dark.png" alt="logo" class="logo-lg" />
+                                    <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm" />
+                                </a>
+
+                                <!-- Brand Logo Dark -->
+                                <a href="/" class="logo-dark">
+                                    <img src="../assets/images/logo.png" alt="dark logo" class="logo-lg" />
+                                    <img src="../assets/images/logo-sm.png" alt="small logo" class="logo-sm" />
+                                </a>
+                            </div>
+
+                            <!-- Sidebar Menu Toggle Button -->
+                            <button class="button-toggle-menu">
+                                <i class="mdi mdi-menu"></i>
+                            </button>
+                        </div>
+
+                        <ul class="topbar-menu d-flex align-items-center">
+                            <li class="d-none d-md-inline-block">
+                                <a class="nav-link waves-effect waves-light" href="" data-toggle="fullscreen">
+                                    <i class="fe-maximize font-22"></i>
+                                </a>
+                            </li>
+                            <li class="">
+                                <div class="nav-link waves-effect waves-light" id="light-dark-mode">
+                                    <i class="ri-moon-line font-22"></i>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="container-fluid px-2">
+                        <div class="col-12 mb-1">
+                            <div class="page-title-box">
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
+                                        <li class="breadcrumb-item"><a href="http://app.encrypti0n.com">App</a></li>
+                                        <li class="breadcrumb-item active"><a href="/pages/encryption-glossary.html">Encryption Glossary</a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container my-5">
+                        <!-- Page Title -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h1 class="mb-4">Glossary of Encryption Terminology</h1>
+                                <p>Welcome to the Encrypti0n.com glossary: Your quick, concise reference to essential cryptographic and encryption terms clearly explained for easy understanding.</p>
+                            </div>
+                        </div>
+
+                        <!-- Table of Contents -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h2>Table of Contents</h2>
+                                <ul class="list-unstyled">
+                                    <li><a href="#aes">AES (Advanced Encryption Standard)</a></li>
+                                    <li><a href="#aes-gcm">AES-GCM (Galois/Counter Mode)</a></li>
+                                    <li><a href="#base64">Base64</a></li>
+                                    <li><a href="#ciphertext">Ciphertext</a></li>
+                                    <li><a href="#encryption">Encryption</a></li>
+                                    <li><a href="#decryption">Decryption</a></li>
+                                    <li><a href="#iv">IV (Initialization Vector)</a></li>
+                                    <li><a href="#nonce">Nonce</a></li>
+                                    <li><a href="#argon2">Argon2 (Password-Based Key Derivation)</a></li>
+                                    <li><a href="#plaintext">Plaintext</a></li>
+                                    <li><a href="#salt">Salt</a></li>
+                                    <li><a href="#symmetric-encryption">Symmetric Encryption</a></li>
+                                    <li><a href="#tamper-proof">Tamper-proof</a></li>
+                                    <li><a href="#web-crypto-api">Web Crypto API</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- AES -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="aes">
+                                    <i class="mdi mdi-key"></i>
+                                    AES (Advanced Encryption Standard)
+                                </h3>
+                                <p>A popular symmetric cipher used worldwide to ensure secure data encryption.</p>
+                            </div>
+                        </div>
+
+                        <!-- AES-GCM -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="aes-gcm">
+                                    <i class="mdi mdi-lock-check-outline"></i>
+                                    AES-GCM (Galois/Counter Mode)
+                                </h3>
+                                <p>An advanced encryption mode of AES providing both confidentiality and built-in authentication, protecting against data tampering.</p>
+                            </div>
+                        </div>
+
+                        <!-- Base64 -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="base64">
+                                    <i class="mdi mdi-code-tags"></i>
+                                    Base64
+                                </h3>
+                                <p>A method of encoding binary data into ASCII text, useful for secure data transmission.</p>
+                            </div>
+                        </div>
+
+                        <!-- Ciphertext -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="ciphertext">
+                                    <i class="mdi mdi-file-lock-outline"></i>
+                                    Ciphertext
+                                </h3>
+                                <p>Encrypted data resulting from transforming plaintext; unreadable without a cryptographic key.</p>
+                            </div>
+                        </div>
+
+                        <!-- Encryption -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="encryption">
+                                    <i class="mdi mdi-lock"></i>
+                                    Encryption
+                                </h3>
+                                <p>The conversion of plaintext into ciphertext to secure data against unauthorized access.</p>
+                            </div>
+                        </div>
+
+                        <!-- Decryption -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="decryption">
+                                    <i class="mdi mdi-lock-open"></i>
+                                    Decryption
+                                </h3>
+                                <p>The reversal of encryption, converting ciphertext back into original plaintext.</p>
+                            </div>
+                        </div>
+
+                        <!-- IV (Initialization Vector) -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="iv">
+                                    <i class="mdi mdi-shuffle"></i>
+                                    IV (Initialization Vector)
+                                </h3>
+                                <p>A unique random value used during encryption to produce distinct ciphertext for identical plaintext.</p>
+                            </div>
+                        </div>
+
+                        <!-- Nonce -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="nonce">
+                                    <i class="mdi mdi-numeric-1-circle-outline"></i>
+                                    Nonce
+                                </h3>
+                                <p>A "number used once" to secure cryptographic processes from replay attacks, essential in AES-GCM.</p>
+                            </div>
+                        </div>
+
+                        <!-- Argon2 -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="argon2">
+                                    <i class="mdi mdi-cog"></i>
+                                    Argon2 (Password-Based Key Derivation)
+                                </h3>
+                                <p>A method for securely deriving encryption keys from passwords using salts and is resistable to specialised hardware attacks.</p>
+                            </div>
+                        </div>
+
+                        <!-- Plaintext -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="plaintext">
+                                    <i class="mdi mdi-file-document-outline"></i>
+                                    Plaintext
+                                </h3>
+                                <p>Original, readable data before encryption, also called cleartext.</p>
+                            </div>
+                        </div>
+
+                        <!-- Salt -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="salt">
+                                    <i class="mdi mdi-snowflake"></i>
+                                    Salt
+                                </h3>
+                                <p>Random data combined with passwords during key derivation to prevent precomputed attacks.</p>
+                            </div>
+                        </div>
+
+                        <!-- Symmetric Encryption -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="symmetric-encryption">
+                                    <i class="mdi mdi-sync"></i>
+                                    Symmetric Encryption
+                                </h3>
+                                <p>Encryption where the same secret key is used for both encrypting and decrypting messages.</p>
+                            </div>
+                        </div>
+
+                        <!-- Tamper-proof -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="tamper-proof">
+                                    <i class="mdi mdi-shield-check"></i>
+                                    Tamper-proof
+                                </h3>
+                                <p>A feature of secure cryptography (like AES-GCM) ensuring alterations in encrypted data are detectable.</p>
+                            </div>
+                        </div>
+
+                        <!-- Web Crypto API -->
+                        <div class="row my-4">
+                            <div class="col-12">
+                                <h3 id="web-crypto-api">
+                                    <i class="mdi mdi-web"></i>
+                                    Web Crypto API
+                                </h3>
+                                <p>A secure JavaScript API offering cryptographic functions, such as AES-GCM encryption and Argon2 key generation, in browsers.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="footer py-2">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <div>
+                                    <script>
+                                        document.write(new Date().getFullYear());
+                                    </script>
+                                    © Encrypti0n.com | Version
+                                    <b class="version"></b>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex footer-links flex-column flex-md-row gap-2 gap-md-4 justify-content-center justify-content-md-end">
+                                    <a href="/pages/about.html">About</a>
+                                    <a href="/pages/privacy-policy.html">Privacy Policy</a>
+                                    <a href="/pages/download-app.html">Download Project</a>
+                                    <a href="/pages/contact.html">Contact</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Vendor js -->
+        <script src="../assets/js/vendor.min.js" defer></script>
+
+        <!-- Theme App js -->
+        <script src="../assets/js/app.js" defer></script>
+
+        <!-- App JS-->
+        <script src="../app/insertVersion.js" defer></script>
+    </body>
+</html>
