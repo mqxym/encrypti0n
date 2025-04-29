@@ -1,2 +1,5 @@
 .DS_Store
 .prettierrc.json
+node_modules/
+*package*.json
+build/
