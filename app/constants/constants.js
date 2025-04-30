@@ -11,9 +11,9 @@ export const UIConstants = {
 export const ConfigManagerConstants = {
     CURRENT_DATA_VERSION: 1,
     ARGON2_SALT_LENGTH: 16,
-    ARGON2_ROUNDS_NO_PW: 10,
-    ARGON2_ROUNDS_MIN: 400,
-    ARGON2_ROUNDS_MAX: 450
+    ARGON2_ROUNDS_NO_PW: 1,
+    ARGON2_ROUNDS_MIN: 20,
+    ARGON2_ROUNDS_MAX: 25
 };
 
 export const AppDataConstants = {
@@ -21,7 +21,7 @@ export const AppDataConstants = {
 }
 
 export const Argon2Constants = {
-    MEMORY_COST: 2048, // memoryCost: memory usage in KiB
+    MEMORY_COST: 65536, // memoryCost: memory usage in KiB
     PARALLELISM: 1,  // parallelism: degree of parallelism (controls parallel thread use)
     HASH_LEN: 32,  // hashLen: desired key length in bytes (32 bytes = 256 bits)
     KEY_LEN: 256,  // 256 bits
