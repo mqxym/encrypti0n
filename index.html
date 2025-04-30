@@ -313,7 +313,7 @@
                                     to protect text, files, and passwords using
                                     <strong>AES-GCM</strong>
                                     and
-                                    <strong>Argon2 key derivation</strong>
+                                    <strong>Argon2id key derivation</strong>
                                     ; all happening securely in your browser.
                                 </p>
                                 <ol class="text-muted informationRow mb-3">
@@ -633,7 +633,7 @@
                                                     (if you know what you are doing).
                                                 </p>
                                                 <p>
-                                                    <i>By default, the site uses a random, secure 16-byte salt, 400 rounds and 2048KiB of algorithm memory on every encrypt action.</i>
+                                                    <i>By default, the site uses a random, secure 16-byte salt, 20 rounds and 64MiB of algorithm memory (Argon2id) on every encrypt action.</i>
                                                 </p>
                                             </blockquote>
                                         </div>
@@ -702,7 +702,7 @@
                                                 <b>all locally saved data (e.g. passwords, names, configs etc.)</b>
                                                 with a master password.
                                             </p>
-                                            <p>The encryption process uses AES-GCM and Argon2 with a random salt and 400+ Argon2 rounds. Don't close the windows while encrypting.</p>
+                                            <p>The encryption process uses AES-GCM and Argon2id with a random salt and 20 Argon2id rounds with 64MiB of memory. Don't close the windows while encrypting.</p>
                                             <p>
                                                 <b>Attention:</b>
                                                 If you forget your master password, you can't decrypt your app data anymore.
@@ -784,11 +784,11 @@
                                                 <br />
                                                 <span class="help-block">
                                                     <small>
-                                                        Low: 100 rounds
+                                                        Low: 5 rounds
                                                         <br />
-                                                        Middle: 400 rounds
+                                                        Middle: 20 rounds
                                                         <br />
-                                                        High: 800 rounds
+                                                        High: 40 rounds
                                                     </small>
                                                 </span>
                                             </p>

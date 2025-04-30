@@ -1,3 +1,3 @@
-appVersion = "3.0.0b0";
+appVersion = "3.0.0b2";
 
 $(".version").text(appVersion);

@@ -716,6 +716,11 @@
                                     <h4 class="faq-question">What are Argon2 rounds and salt, and how do they affect security?</h4>
                                     <p class="faq-answer mb-4">Round difficulty slow down key derivation to resist brute-force attacks, and salts add randomness to prevent the use of precomputed keys.</p>
                                 </div>
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question">What Argon2 settings does the site use?</h4>
+                                    <p class="faq-answer mb-4">The site uses the Argon2id version of the algorithm, 64MiB of algorithm memory for every action and a parallelism of 1 due to JavaScript limitations.</p>
+                                </div>
                             </div>
                             <div class="col-lg-5">
                                 <!-- Q22 -->
@@ -728,13 +733,13 @@
                                 <div>
                                     <div class="faq-question-q-box">Q.</div>
                                     <h4 class="faq-question">What are the default cryptographic settings used?</h4>
-                                    <p class="faq-answer mb-4">By default, the app uses AES-GCM 256-bit encryption, Argon2 with 400 rounds, a 16-byte salt, and a new 12-byte nonce for each encryption.</p>
+                                    <p class="faq-answer mb-4">By default, the app uses AES-GCM 256-bit encryption, Argon2 with 20rounds, a 16-byte salt, and a new 12-byte nonce for each encryption.</p>
                                 </div>
                                 <!-- Q24 (placed in the right column as an extra item) -->
                                 <div>
                                     <div class="faq-question-q-box">Q.</div>
                                     <h4 class="faq-question">Can I customize the Argon2 settings and what do the levels mean?</h4>
-                                    <p class="faq-answer mb-4">Yes, you can choose between Low, Middle, and High presets for both round count (from 100 up to 800) and salt length (12 or 16 bytes), providing control over encryption strength and performance.</p>
+                                    <p class="faq-answer mb-4">Yes, you can choose between Low, Middle, and High presets for both round count (from 5 up to 40) and salt length (12 or 16 bytes), providing control over encryption strength and performance.</p>
                                 </div>
                             </div>
                         </div>

@@ -39,6 +39,8 @@
 
         <!-- Icons css -->
         <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+        <link href="../assets/libs/highlightjs/highlightjs.min.css" rel="stylesheet" type="text/css" />
     </head>
 
     <body>
@@ -294,7 +296,7 @@
                                     </li>
                                     <li>
                                         <strong><code>antelle/argon2-browser</code></strong>
-                                        : Provides the Argon2d key derivation implementation for browsers <a href="https://github.com/antelle/argon2-browser">(GitHub)</a>.
+                                        : Provides the Argon2id key derivation implementation for browsers <a href="https://github.com/antelle/argon2-browser">(GitHub)</a>.
                                     </li>
                                 </ul>
                                 <p>
@@ -457,5 +459,16 @@
 
         <!-- App JS-->
         <script src="../app/insertVersion.js" defer></script>
+
+        <!-- Highlight.js -->
+        <script src="../assets/libs/highlightjs/highlightjs.min.js" defer></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                document.querySelectorAll('.language-javascript').forEach((el) => {
+                    hljs.highlightElement(el);
+                });
+            });
+            </script>
     </body>
 </html>

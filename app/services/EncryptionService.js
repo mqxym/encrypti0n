@@ -16,9 +16,9 @@ export class EncryptionService {
 
     // Mapping for argon2 iterations based on difficulty.
     this.argon2IterationMapping = {
-      low: 100,
-      middle: 400,
-      high: 800
+      low: 5,
+      middle: 20,
+      high: 40
     };
 
     // Mapping for salt lengths based on difficulty.
