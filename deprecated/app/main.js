@@ -2046,7 +2046,7 @@ class VersionManager {
             actions: []
         },
         '3.0.0': {
-            changes: ["<u><a href='https://github.com/mqxym/encrypti0n/releases/tag/3.0.0b1' target='_blank'>Changelog</a></u>","Complete App Rework in beta version released.", "<b>Use New App in the menu from now on and delete / migrate the old apps data.</b>","The deprecated app will be removed soon."],
+            changes: ["<u><a href='https://github.com/mqxym/encrypti0n/releases' target='_blank'>Changelog</a></u>","Complete App Rework in beta version released.", "<b>Use New App in the menu from now on and delete / migrate the old apps data.</b>","The deprecated app will be removed soon."],
             actions: []
         }
 
