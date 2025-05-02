@@ -10,6 +10,9 @@
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
         <!-- App favicon -->
         <link rel="shortcut icon" href="assets/icons/favicon.ico" />
 
@@ -495,7 +498,7 @@
                                             <p class="help-block d-none d-xxl-block mb-0">
                                                 <small>
                                                     Click
-                                                    <i class="mdi mdi-arrow-right-circle-outline"></i>
+                                                    <i class="mdi mdi-arrow-right-circle-outline text-pink"></i>
                                                     to start the
                                                     <span class="action-explanation">encryption</span>
                                                     .
@@ -504,7 +507,7 @@
                                             <p class="help-block d-xxl-none mb-0">
                                                 <small>
                                                     Click
-                                                    <i class="mdi mdi-arrow-down-circle-outline"></i>
+                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink"></i>
                                                     to start
                                                     <span class="action-explanation">encryption</span>
                                                     .
@@ -722,10 +725,14 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">
+                                        <i class="mdi mdi-cancel"></i>
+                                        Close
+                                    </button>
                                     <button type="submit" id="encryptApplication" class="ladda-button btn btn-pink waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                        <i id="encryptApplicationSuccess" class="mdi mdi-check-all d-none"></i>
+                                        <i id="encryptApplicationText" class="mdi mdi-lock-outline"></i>
                                         <span class="ladda-label" id="encryptApplicationText">Encrypt!</span>
-                                        <i id="loadKeySuccess" class="mdi mdi-check-all d-none"></i>
                                         <span class="ladda-spinner"></span>
                                     </button>
                                 </div>
@@ -755,12 +762,14 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer d-flex justify-content-between">
-                                    <button type="button" id="removeLocalDataDecryptionModal" class="btn btn-outline-danger waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                    <button type="button" id="removeLocalDataDecryptionModal" class="btn btn-outline-danger waves-effect waves-light">
+                                        <i class="mdi-delete-circle mdi"></i>
                                         <span>Delete all data</span>
                                     </button>
                                     <button type="submit" id="decryptApplication" class="ladda-button btn btn-blue waves-effect waves-light" data-style="zoom-in" dir="ltr">
-                                        <span class="ladda-label" id="decryptApplicationText">Decrypt!</span>
+                                        <i id="decryptApplicationText" class="mdi mdi-lock-open-variant-outline"></i>
                                         <i id="decryptApplicationFail" class="mdi mdi-close-circle-multiple d-none"></i>
+                                        <span class="ladda-label" id="decryptApplicationText">Decrypt!</span>
                                         <span class="ladda-spinner"></span>
                                     </button>
                                 </div>
@@ -828,11 +837,15 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">
+                                    <i class="mdi mdi-cancel"></i>
+                                    Close
+                                </button>
                                 <button type="button" id="argon2-save" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in">
+                                    <i id="saveOptionsText" class="mdi mdi-content-save-outline"></i>
                                     <i id="saveOptionsSuccess" class="mdi mdi-check-all d-none"></i>
                                     <i id="saveOptionsFail" class="mdi mdi-close-circle-multiple d-none"></i>
-                                    <span id="saveOptionsText">Save Settings</span>
+                                    <span>Save Settings</span>
                                 </button>
                             </div>
                         </div>
@@ -867,7 +880,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="flex-grow-1 ms-1">
-                                                        <input type="text" name="slotName" id="slotName" class="form-control border border-secondary" placeholder="New name" />
+                                                        <input type="text" maxlength="15" name="slotName" id="slotName" class="form-control border border-secondary" placeholder="New name" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -875,11 +888,15 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" id="renameSlotAction" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in" dir="ltr">
-                                        <span id="renameSlotActionText">Save Slot Name</span>
+                                    <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">
+                                        <i class="mdi mdi-cancel"></i>
+                                        Close
+                                    </button>
+                                    <button type="submit" id="renameSlotAction" class="btn btn-outline-success waves-effect waves-light"">
+                                        <i id="renameSlotActionText" class="mdi mdi-content-save-outline"></i>
                                         <i id="renameSlotActionSuccess" class="mdi mdi-check-all d-none"></i>
                                         <i id="renameSlotActionFail" class="mdi mdi-close-circle-multiple d-none"></i>
+                                        <span>Save Slot Name</span>
                                     </button>
                                 </div>
                             </div>
@@ -918,9 +935,6 @@
         <!-- Theme App js -->
         <script src="assets/js/app.js" defer></script>
 
-        <!-- Toast-->
-        <script src="assets/libs/jquery-toast-plugin/jquery.toast.min.js" defer></script>
-
         <!-- Sweet Alerts js -->
         <script src="assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
 
@@ -931,7 +945,6 @@
         <!-- Argos 2 JS -->
         <script src="assets/libs/argon2/argon2-bundled.min.js" defer ></script>
 
-        <!-- App JS <script type="module" src="app/index.js" defer></script>-->
         <script type="module" src="app/index.js" defer></script>
         <script src="app/insertVersion.js" defer></script>
     </body>

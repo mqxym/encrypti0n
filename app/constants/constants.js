@@ -13,7 +13,8 @@ export const ConfigManagerConstants = {
     ARGON2_SALT_LENGTH: 16,
     ARGON2_ROUNDS_NO_PW: 1,
     ARGON2_ROUNDS_MIN: 20,
-    ARGON2_ROUNDS_MAX: 25
+    ARGON2_ROUNDS_MAX: 21,
+    ARGON2_MEM_DEFAULT_KEY: 2048
 };
 
 export const AppDataConstants = {

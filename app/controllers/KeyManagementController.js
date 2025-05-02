@@ -100,10 +100,10 @@ export class KeyManagementController {
         await this.configManager.setSlotName(keySlotChange, slotName);
         const slotNames = await this.configManager.readSlotNames();
         ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
-        await handleActionSuccess('removeSlotAction');
+        await handleActionSuccess('renameSlotAction');
         $('#slotName').val('');
       } catch (error) {
-        await handleActionError('removeSlotAction');
+        await handleActionError('renameSlotAction');
       }
     });
   }

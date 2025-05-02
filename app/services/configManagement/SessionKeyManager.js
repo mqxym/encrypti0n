@@ -23,11 +23,11 @@ export class SessionKeyManager {
    * @param {number} rounds
    * @returns {Promise<CryptoKey>}
    */
-  async deriveAndCacheKey(password, saltBase64, rounds) {
+  async deriveAndCacheKey(password, saltBase64, rounds, mem_cost = null) {
     const saltBytes = base64ToUint8Array(saltBase64);
 
     // Derive the key (expensive argon2)
-    const derivedKey = await deriveKey(password, saltBytes, rounds);
+    const derivedKey = await deriveKey(password, saltBytes, rounds, mem_cost);
 
     // Cache the result
     this.cachedKey = derivedKey;
@@ -46,8 +46,8 @@ export class SessionKeyManager {
    * @param {number} rounds
    * @returns {Promise<CryptoKey>}
    */
-  async deriveAndCacheDefaultKey(defaultPassword, saltBase64, rounds) {
-    return await this.deriveAndCacheKey(defaultPassword, saltBase64, rounds);
+  async deriveAndCacheDefaultKey(defaultPassword, saltBase64, rounds, mem_cost = null) {
+    return await this.deriveAndCacheKey(defaultPassword, saltBase64, rounds, mem_cost);
   }
 
   /**

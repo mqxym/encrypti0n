@@ -10,6 +10,9 @@
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
         <!-- App favicon -->
         <link rel="shortcut icon" href="../assets/icons/favicon.ico" />
 
@@ -20,9 +23,6 @@
         <link rel="mask-icon" href="../assets/icons/safari-pinned-tab.svg" color="#5bbad5" />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#38414A" />
-
-        <!-- Jquery Toast css -->
-        <link href="../assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
 
         <!-- Theme Config Js -->
         <script src="../assets/js/head.js"></script>
@@ -229,7 +229,15 @@
                         "name": "What are Argon2 rounds and salt, and how do they affect security?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": ">Round difficulty slow down key derivation to resist brute-force attacks, and salts add randomness to prevent the use of precomputed keys."
+                            "text": "Round difficulty slow down key derivation to resist brute-force attacks, and salts add randomness to prevent the use of precomputed keys."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What Argon2 settings does the site use?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "The site uses the Argon2id version of the algorithm, 64MiB of algorithm memory for every action and a parallelism of 1 due to JavaScript limitations.."
                         }
                     },
                     {
@@ -245,7 +253,7 @@
                         "name": "What are the default cryptographic settings used?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "By default, the app uses AES-GCM 256-bit encryption, Argon2 with 5 million rounds, a 16-byte salt, and a new 12-byte nonce for each encryption."
+                            "text": "By default, the app uses AES-GCM 256-bit encryption, Argon2id with 20 rounds, a 16-byte salt, and a new 12-byte nonce for each encryption."
                         }
                     },
                     {
@@ -733,7 +741,7 @@
                                 <div>
                                     <div class="faq-question-q-box">Q.</div>
                                     <h4 class="faq-question">What are the default cryptographic settings used?</h4>
-                                    <p class="faq-answer mb-4">By default, the app uses AES-GCM 256-bit encryption, Argon2 with 20rounds, a 16-byte salt, and a new 12-byte nonce for each encryption.</p>
+                                    <p class="faq-answer mb-4">By default, the app uses AES-GCM 256-bit encryption, Argon2id with 20 rounds, a 16-byte salt, and a new 12-byte nonce for each encryption.</p>
                                 </div>
                                 <!-- Q24 (placed in the right column as an extra item) -->
                                 <div>
