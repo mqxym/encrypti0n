@@ -72,11 +72,6 @@
             })
         }
 
-        // RTL Layout
-        if (document.getElementById('app-style').href.includes('rtl.min.css')) {
-            document.getElementsByTagName('html')[0].dir = "rtl";
-        }
-
         // Counterup
         var delay = $(this).attr('data-delay') ? $(this).attr('data-delay') : 100; //default is 100
         var time = $(this).attr('data-time') ? $(this).attr('data-time') : 1200; //default is 1200

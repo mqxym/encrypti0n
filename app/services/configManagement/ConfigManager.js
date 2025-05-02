@@ -1,6 +1,5 @@
 import { StorageService } from '../StorageService.js';
 import { ApplicationEncryptionManager } from './ApplicationEncryptionManager.js';
-import { PasswordGenerator } from '../../passwordGenerator.js';
 import { ConfigManagerConstants } from '../../constants/constants.js';
 
 /**
@@ -81,7 +80,8 @@ export class ConfigManager {
       await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(
         this.config.default,
         this.config.argon2Salt,
-        this.config.argon2Rounds
+        this.config.argon2Rounds,
+        ConfigManagerConstants.ARGON2_MEM_DEFAULT_KEY
       );
     }
   }
@@ -287,7 +287,8 @@ export class ConfigManager {
     const newKey = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(
       this.config.default,
       this.config.argon2Salt,
-      this.config.argon2Rounds
+      this.config.argon2Rounds,
+      ConfigManagerConstants.ARGON2_MEM_DEFAULT_KEY
     );
     const encrypted = await this.encryptionManager.encryptData(newKey, plainData);
     this.config.data.iv = encrypted.iv;
@@ -332,7 +333,7 @@ export class ConfigManager {
       } else {
         // If no master password, we might try to auto-derive once
         try {
-          key = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(this.config.default, argon2Salt, argon2Rounds);
+          key = await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKey(this.config.default, argon2Salt, argon2Rounds, ConfigManagerConstants.ARGON2_MEM_DEFAULT_KEY);
         } catch (err) {
           throw new Error('Failed to derive default key.');
         }

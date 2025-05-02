@@ -7,7 +7,11 @@ import { Argon2Constants } from "../../constants/constants.js";
  * @param {number} iterations - argon2 iteration count
  * @returns {Promise<CryptoKey>} Non-extractable AES-GCM key
  */
-export async function deriveKey(password, salt, iterations) {
+export async function deriveKey(password, salt, iterations, mem_cost = null) {
+
+  if (mem_cost !== null && !Number.isInteger(mem_cost)) {
+    throw new Error('mem_cost must be an integer');
+  }
 
   const timeCost = iterations; 
 
@@ -20,7 +24,7 @@ export async function deriveKey(password, salt, iterations) {
             pass: password,
             salt: salt,
             time: timeCost,
-            mem: Argon2Constants.MEMORY_COST,
+            mem: mem_cost ?? Argon2Constants.MEMORY_COST,
             hashLen: Argon2Constants.HASH_LEN,
             parallelism: Argon2Constants.PARALLELISM,
             type: argon2.ArgonType.Argon2id,
@@ -30,7 +34,7 @@ export async function deriveKey(password, salt, iterations) {
           reject(err);
         }
       },
-      timeCost === 10 ? 0 : Argon2Constants.ANIMATION_WAIT_MS // Timeout for every action accept default local encryption (10 rounds) for animation load
+      timeCost === 1 ? 0 : Argon2Constants.ANIMATION_WAIT_MS // Timeout for every action accept default local encryption (10 rounds) for animation load
     );
   });
 
