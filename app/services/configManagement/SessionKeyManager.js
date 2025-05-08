@@ -1,35 +1,37 @@
-import { deriveKey } from "../../algorithms/Argon2Key/Argon2KeyDerivation.js";
+import { deriveKey, deriveKek } from "../../algorithms/Argon2Key/Argon2KeyDerivation.js";
 import { base64ToUint8Array } from "../../utils/base64.js";
 
 /**
- * SessionKeyManager
- *
- * Holds a single CryptoKey in memory for fast AES-GCM usage.
- * Clears or regenerates that key if the master password changes or is removed.
+ * @class SessionKeyManager
+ * @classdesc
+ * Caches a single CryptoKey in memory for AES-GCM operations.  
+ * Supports deriving from a master or default password and clearing on logout or password change.
  */
 export class SessionKeyManager {
   constructor() {
-    this.cachedKey = null; // Stores the derived CryptoKey
-    this.cachedSalt = null; // Base64-encoded salt
-    this.cachedRounds = null; // argon2 iteration count
+    /** @private @type {CryptoKey|null} */
+    this.cachedKey = null;
+    /** @private @type {string|null} Base64-encoded salt used for derivation */
+    this.cachedSalt = null;
+    /** @private @type {number|null} Argon2 iteration count used for derivation */
+    this.cachedRounds = null;
   }
 
   /**
-   * Derive a new CryptoKey from a password and cache it in memory.
-   * - The raw password is used here and then immediately discarded.
+   * Derives a new CryptoKey from the given password, salt, and rounds,
+   * caches it for future use, and discards the raw password immediately.
    *
-   * @param {string} password
-   * @param {string} saltBase64
-   * @param {number} rounds
-   * @returns {Promise<CryptoKey>}
+   * @async
+   * @param {string} password - The master or default password string.
+   * @param {string} saltBase64 - Salt encoded as a Base64 string.
+   * @param {number} rounds - Argon2 iteration count for key derivation.
+   * @returns {Promise<CryptoKey>} The newly derived non-extractable CryptoKey.
    */
-  async deriveAndCacheKey(password, saltBase64, rounds, mem_cost = null) {
+  async deriveAndCacheKey(password, saltBase64, rounds) {
     const saltBytes = base64ToUint8Array(saltBase64);
 
-    // Derive the key (expensive argon2)
-    const derivedKey = await deriveKey(password, saltBytes, rounds, mem_cost);
+    const derivedKey = await deriveKek(password, saltBytes, rounds);
 
-    // Cache the result
     this.cachedKey = derivedKey;
     this.cachedSalt = saltBase64;
     this.cachedRounds = rounds;
@@ -38,32 +40,64 @@ export class SessionKeyManager {
   }
 
   /**
-   * For a default (non-master) password scenario,
-   * we can call this once at startup or whenever config changes.
+   * Derives a new CryptoKey from the given password, salt, and rounds,
+   * caches it for future use, and discards the raw password immediately.
    *
-   * @param {string} defaultPassword - The random default pass from config
-   * @param {string} saltBase64
-   * @param {number} rounds
-   * @returns {Promise<CryptoKey>}
+   * @async
+   * @param {string} password - The master or default password string.
+   * @param {string} saltBase64 - Salt encoded as a Base64 string.
+   * @param {number} rounds - Argon2 iteration count for key derivation.
+   * @param {number|null} [mem_cost=null] - Optional Argon2 memory cost (kiB).
+   * @returns {Promise<CryptoKey>} The newly derived non-extractable CryptoKey.
    */
-  async deriveAndCacheDefaultKey(defaultPassword, saltBase64, rounds, mem_cost = null) {
-    return await this.deriveAndCacheKey(defaultPassword, saltBase64, rounds, mem_cost);
+    async deriveAndCacheKeyV1(password, saltBase64, rounds, mem_cost = null) {
+      const saltBytes = base64ToUint8Array(saltBase64);
+  
+      const derivedKey = await deriveKey(password, saltBytes, rounds, mem_cost);
+  
+      this.cachedKey = derivedKey;
+      this.cachedSalt = saltBase64;
+      this.cachedRounds = rounds;
+  
+      return derivedKey;
+    }
+
+  /**
+   * Derives and caches a CryptoKey for default (non-master) password scenarios.
+   *
+   * @async
+   * @param {string} defaultPassword - The randomly generated default password.
+   * @param {string} saltBase64 - Salt encoded as a Base64 string.
+   * @param {number} rounds - Argon2 iteration count for key derivation.
+   * @param {number|null} [mem_cost=null] - Optional Argon2 memory cost (kiB).
+   * @returns {Promise<CryptoKey>} The derived default CryptoKey.
+   */
+  async deriveAndCacheDefaultKeyV1(defaultPassword, saltBase64, rounds, mem_cost = null) {
+    return this.deriveAndCacheKeyV1(defaultPassword, saltBase64, rounds, mem_cost);
   }
 
   /**
-   * Retrieve the cached CryptoKey if it matches the config salt & rounds.
-   * If there's no key or mismatch, it indicates we must re-derive or "unlock."
+   * Retrieves the cached CryptoKey if it matches the provided salt and rounds.
+   *
+   * @param {string} saltBase64 - Salt encoded as a Base64 string.
+   * @param {number} rounds - Argon2 iteration count used for derivation.
+   * @returns {CryptoKey|null} The cached CryptoKey, or null if not found or mismatched.
    */
   getSessionKey(saltBase64, rounds) {
-    if (this.cachedKey && this.cachedSalt === saltBase64 && this.cachedRounds === rounds) {
+    if (
+      this.cachedKey &&
+      this.cachedSalt === saltBase64 &&
+      this.cachedRounds === rounds
+    ) {
       return this.cachedKey;
     }
-    // If mismatch or no key, we have no valid session key for this config
     return null;
   }
 
   /**
-   * Clear the key from memory. Called when logging out or changing master password.
+   * Clears any cached CryptoKey and its derivation parameters from memory.
+   *
+   * @returns {void}
    */
   clearSessionKey() {
     this.cachedKey = null;

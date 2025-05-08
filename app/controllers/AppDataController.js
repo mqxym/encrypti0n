@@ -1,24 +1,43 @@
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { ActivityService } from '../services/ActivityService.js';
-import { delay } from '../utils/misc.js';
 import { handleActionError } from '../utils/controller.js';
 import { AppDataConstants } from '../constants/constants.js';
 import appState from '../state/AppState.js';
 
+/**
+ * @class AppDataController
+ * @classdesc
+ * Manages application-level encryption/decryption actions, UI bindings,
+ * inactivity locking, and data removal workflows.
+ */
 export class AppDataController {
+  /**
+   * @param {Object} services
+   * @param {Object} services.config - Configuration manager for master password and session.
+   * @param {Object} services.form - Form handling utilities.
+   * @param {Object} services.argon2 - Argon2-based key handling service.
+   */
   constructor(services) {
-    this.configManager = services.config;
-    this.formHandler = services.form;
-    this.argon2Service = services.argon2;
-    this.UIManager;
+    /** @private */ this.configManager = services.config;
+    /** @private */ this.formHandler = services.form;
+    /** @private */ this.argon2Service = services.argon2;
+    /** @private {Object} UI manager instance, set later */ this.UIManager;
     this.bindEvents();
   }
 
+  /**
+   * Sets the UI manager instance used to manipulate the UI.
+   *
+   * @param {Object} uiManager - The main UI manager controller.
+   */
   setUIManager(uiManager) {
-    this.UIManager = uiManager; // is set later by main controller
+    this.UIManager = uiManager;
   }
 
+  /**
+   * Binds click events on various buttons to their corresponding handlers.
+   */
   bindEvents() {
     $('#encryptApplication').on('click', () => this.handleAppEncrypt());
     $('#decryptApplication').on('click', () => this.handleAppDecrypt());
@@ -28,19 +47,37 @@ export class AppDataController {
     $('#removeLocalDataDecryptionModal').on('click', () => this.removeAllData());
   }
 
+  /**
+   * Initializes the inactivity ActivityService if not already running.
+   * Begins countdown display and starts the inactivity timer.
+   */
   initActivityService() {
-    // Create the activity service to detect inactivity
     if (typeof this.activityService !== 'undefined') return;
-    this.activityService = new ActivityService(AppDataConstants.APP_DATA_LOCK_TIMEOUT, this.lockApplicationAfterInactivity.bind(this));
+    this.activityService = new ActivityService(
+      AppDataConstants.APP_DATA_LOCK_TIMEOUT,
+      this.lockApplicationAfterInactivity.bind(this)
+    );
     this.activityService.startCountdown('#inactivityCountdown');
     this.activityService.start();
   }
 
+  /**
+   * Stops the inactivity ActivityService if it exists.
+   */
   stopActivityService() {
     if (typeof this.activityService === 'undefined') return;
     this.activityService.stop();
   }
 
+  /**
+   * Handles encrypting the entire application:
+   * - Validates and confirms master password input
+   * - Derives and sets the master password
+   * - Updates the UI and starts inactivity locking
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async handleAppEncrypt() {
     ElementHandler.hide('encryptApplicationMissingPw');
     ElementHandler.hide('encryptApplicationMatchFail');
@@ -66,7 +103,7 @@ export class AppDataController {
       laddaEncryptApplication.start();
       laddaEncryptApplication.setProgress(0.7);
       await this.configManager.setMasterPassword(encryptApplicationMPw);
-      ElementHandler.hideModal('do-application-encryption')
+      ElementHandler.hideModal('do-application-encryption');
       ElementHandler.show('removeApplicationEncryption');
       ElementHandler.hide('encryptApplicationModal');
       this.initActivityService();
@@ -93,6 +130,15 @@ export class AppDataController {
     }
   }
 
+  /**
+   * Handles decrypting the entire application:
+   * - Validates master password input
+   * - Unlocks the session and loads slot names & Argon2 options
+   * - Updates the UI and starts inactivity locking
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async handleAppDecrypt() {
     if (appState.state.isEncrypting) return;
     appState.setState({ isEncrypting: true });
@@ -113,7 +159,6 @@ export class AppDataController {
       ElementHandler.hide('encryptApplicationModal');
       await this.argon2Service.loadOptions();
       this.initActivityService();
-
       Swal.fire({
         icon: 'success',
         title: 'The application is decrypted!',
@@ -131,6 +176,11 @@ export class AppDataController {
     }
   }
 
+  /**
+   * Callback invoked when inactivity timeout elapses.
+   * Locks the session, clears UI, stops activity service,
+   * and prompts for re-authentication.
+   */
   lockApplicationAfterInactivity() {
     this.configManager.lockSession();
     this.UIManager.clearUI();
@@ -139,6 +189,10 @@ export class AppDataController {
     ElementHandler.showModal('do-application-decryption');
   }
 
+  /**
+   * Prompts user to confirm removal of application encryption,
+   * and if confirmed, removes the master password and updates UI.
+   */
   handleAppEncryptionRemove() {
     Swal.fire({
       icon: 'warning',
@@ -173,11 +227,18 @@ export class AppDataController {
     });
   }
 
+  /**
+   * Opens the modal to initiate application encryption if not already encrypted.
+   */
   handleAppEncryptModal() {
     if (this.configManager.isUsingMasterPassword()) return;
     ElementHandler.showModal('do-application-encryption');
   }
 
+  /**
+   * Prompts user to confirm clearing all local data, and if confirmed,
+   * deletes all config data, resets UI, and shows success feedback.
+   */
   removeAllData() {
     Swal.fire({
       icon: 'warning',
@@ -216,6 +277,12 @@ export class AppDataController {
     });
   }
 
+  /**
+   * Validates that a provided password is a non-empty string.
+   *
+   * @param {*} password - The password value to validate.
+   * @throws {Error} If the password is empty or not a string.
+   */
   validatePassword(password) {
     if (!password) {
       throw new Error('Key cannot be empty');

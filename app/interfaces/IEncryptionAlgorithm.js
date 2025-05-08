@@ -1,39 +1,72 @@
 /**
- * IEncryptionAlgorithm defines the interface for encryption algorithms.
- * All concrete encryption classes should implement these methods.
+ * @interface IEncryptionAlgorithm
+ * @classdesc
+ * Defines the contract for encryption algorithm implementations.
+ * Implementations must support key derivation, encryption, and decryption
+ * in a way that allows IV and salt handling to be consistent across
+ * different algorithm types (e.g., AES-GCM).
+ *
+ * @example
+ * // AESGCMEncryption extends this interface:
+ * const alg = new AESGCMEncryption();
+ * const salt = await alg.initialize(keyMaterial, 16, 3);
+ * const cipher = await alg.encryptData("hello");
+ * const plain = await alg.decryptData(cipher);
  */
 export class IEncryptionAlgorithm {
   /**
-   * Encrypts the provided plaintext using the encryption key derived from key material.
-   * @param {Uint8Array|string} plaintext - The data to encrypt.
-   * @returns {Promise<{ header: Uint8Array, ciphertext: Uint8Array }>}
-   * @throws Will throw an error if the method is not implemented.
-   */
-  async encrypt(plaintext) {
-    throw new Error("Method 'encrypt' not implemented.");
-  }
-
-  /**
-   * Decrypts the provided ciphertext using the encryption key derived from key material and header metadata.
-   * @param {Uint8Array} ciphertext - The ciphertext to decrypt.
-   * @param {Uint8Array} header - The header containing encryption metadata.
-   * @returns {Promise<Uint8Array>} The decrypted data.
-   * @throws Will throw an error if the method is not implemented.
-   */
-  async decrypt(ciphertext, header) {
-    throw new Error("Method 'decrypt' not implemented.");
-  }
-
-  /**
-   * Initializes the encryption algorithm by deriving the encryption key from the key material.
-   * @param {Uint8Array} keyMaterial - The passphrase or key material.
-   * @param {number} saltLength - The length of the salt in bytes.
-   * @param {number} iterations - The number of argon2 iterations.
-   * @param {Uint8Array} [providedSalt] - Optional salt bytes (used during decryption).
-   * @returns {Promise<Uint8Array>} The salt used for key derivation.
-   * @throws Will throw an error if the method is not implemented.
+   * Derives and sets up the encryption key.
+   *
+   * @async
+   * @abstract
+   * @param {Uint8Array} keyMaterial
+   *   The raw key material or passphrase.
+   * @param {number} saltLength
+   *   Number of bytes for a newly generated salt when none is provided.
+   * @param {number} iterations
+   *   Number of Argon2 iterations (or equivalent) for key derivation.
+   * @param {Uint8Array} [providedSalt]
+   *   Optional salt to use for key derivation (important for decryption).
+   * @returns {Promise<Uint8Array>}
+   *   Resolves to the salt used for key derivation.
+   * @throws {Error}
+   *   If not implemented by subclass.
    */
   async initialize(keyMaterial, saltLength, iterations, providedSalt) {
     throw new Error("Method 'initialize' not implemented.");
+  }
+
+  /**
+   * Encrypts plaintext into a byte array that includes any necessary header
+   * metadata (IV, salt, etc.) for later decryption.
+   *
+   * @async
+   * @abstract
+   * @param {Uint8Array|string} plaintext
+   *   The data to encrypt, either as raw bytes or a UTF-8 string.
+   * @returns {Promise<Uint8Array>}
+   *   Resolves to a concatenation of header metadata and ciphertext.
+   * @throws {Error}
+   *   If not implemented by subclass.
+   */
+  async encryptData(plaintext) {
+    throw new Error("Method 'encryptData' not implemented.");
+  }
+
+  /**
+   * Decrypts a byte array containing header metadata and ciphertext,
+   * returning the original plaintext bytes.
+   *
+   * @async
+   * @abstract
+   * @param {Uint8Array} ciphertextWithIv
+   *   Byte array produced by `encryptData`, containing IV/salt header plus ciphertext.
+   * @returns {Promise<Uint8Array>}
+   *   Resolves to the decrypted plaintext bytes.
+   * @throws {Error}
+   *   If not implemented by subclass.
+   */
+  async decryptData(ciphertextWithIv) {
+    throw new Error("Method 'decryptData' not implemented.");
   }
 }

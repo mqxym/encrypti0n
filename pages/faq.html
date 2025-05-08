@@ -149,7 +149,7 @@
                         "name": "What does the \"Encrypt Application\" option do?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "It encrypts all locally stored data (like the local password manager) with a user-defined master password using AES-GCM and Argon2 making the local password manager secure."
+                            "text": It encrypts all relevant locally stored data (like the local password manager) with a user-defined master password using AES-GCM and Argon2id instead of a device-bound key."
                         }
                     },
                     {
@@ -157,7 +157,7 @@
                         "name": "What does the \"Clear All Data\" option do?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "This action deletes locally saved data, including saved passwords and configuration settings except for UI settings."
+                            "text": "This action deletes locally saved data, including saved passwords and configuration settings and resets them with default values."
                         }
                     },
                     {
@@ -237,7 +237,7 @@
                         "name": "What Argon2 settings does the site use?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "The site uses the Argon2id version of the algorithm, 64MiB of algorithm memory for every action and a parallelism of 1 due to JavaScript limitations.."
+                            "text": "The site uses the Argon2id version of the algorithm, 64MiB of algorithm memory for every action and a parallelism of 1 due to JavaScript limitations."
                         }
                     },
                     {
@@ -638,13 +638,13 @@
                                 <div>
                                     <div class="faq-question-q-box">Q.</div>
                                     <h4 class="faq-question" data-wow-delay=".1s">What does the "Encrypt Application" option do?</h4>
-                                    <p class="faq-answer mb-4">It encrypts all locally stored data (like the local password manager) with a user-defined master password using AES-GCM and Argon2 making the local password manager secure.</p>
+                                    <p class="faq-answer mb-4">It encrypts all relevant locally stored data (like the local password manager) with a user-defined master password using AES-GCM and Argon2id instead of a device-bound key.</p>
                                 </div>
                                 <!-- Q17 -->
                                 <div>
                                     <div class="faq-question-q-box">Q.</div>
                                     <h4 class="faq-question">What does the "Clear All Data" option do?</h4>
-                                    <p class="faq-answer mb-4">This action deletes locally saved data, including saved passwords and configuration settings except for UI settings.</p>
+                                    <p class="faq-answer mb-4">This action deletes locally saved data, including saved passwords and configuration settings and resets them with default values.</p>
                                 </div>
                             </div>
                             <div class="col-lg-5">
