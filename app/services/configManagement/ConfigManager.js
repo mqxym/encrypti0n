@@ -165,7 +165,7 @@ export class ConfigManager {
     Swal.fire({
       icon: 'success',
       title: 'Migrated local data to v2!',
-      text: 'The security of your local data has improved by a lot.',
+      text: 'The security of your local data has improved significantly.',
       showCancelButton: false,
       confirmButtonText: 'Ok'
     });
