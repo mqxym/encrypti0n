@@ -10,8 +10,8 @@
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
         <!-- App favicon -->
         <link rel="shortcut icon" href="../assets/icons/favicon.ico" />
@@ -36,46 +36,33 @@
         <!-- Icons css -->
         <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
 
-        
         <link href="../assets/libs/highlightjs/highlightjs.min.css" rel="stylesheet" type="text/css" />
 
         <script type="application/ld+json">
             {
-              "@context": "https://schema.org",
-              "@type": "TechArticle",
-              "headline": "How Encrypti0n.com Works: A Browser-Based Encryption Platform",
-              "name": "How Encrypti0n.com Works",
-              "description": "An in-depth look at how Encrypti0n.com performs client-side text and file encryption using browser-native cryptographic APIs like AES-GCM and key derivation algorithm Argon2.",
-              "url": "https://encrypti0n.com/pages/how-it-works.html",
-              "author": {
-                "@type": "Organization",
-                "name": "Encrypti0n.com"
-              },
-              "publisher": {
-                "@type": "Organization",
-                "name": "Encrypti0n.com",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": "https://encrypti0n.com/assets/images/logo.webp"
-                }
-              },
-              "datePublished": "2025-04-28",
-              "articleSection": [
-                "Text Encryption Process",
-                "File Encryption Process",
-                "Decryption Process",
-                "Application Encryption"
-              ],
-              "keywords": [
-                "AES-GCM",
-                "Argon2",
-                "client-side encryption",
-                "browser cryptography",
-                "JavaScript encryption",
-                "Web Crypto API"
-              ]
+                "@context": "https://schema.org",
+                "@type": "TechArticle",
+                "headline": "How Encrypti0n.com Works: A Browser-Based Encryption Platform",
+                "name": "How Encrypti0n.com Works",
+                "description": "An in-depth look at how Encrypti0n.com performs client-side text and file encryption using browser-native cryptographic APIs like AES-GCM and key derivation algorithm Argon2.",
+                "url": "https://encrypti0n.com/pages/how-it-works.html",
+                "author": {
+                    "@type": "Organization",
+                    "name": "Encrypti0n.com"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Encrypti0n.com",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://encrypti0n.com/assets/images/logo.webp"
+                    }
+                },
+                "datePublished": "2025-05-28",
+                "articleSection": ["Text Encryption Process", "File Encryption Process", "Decryption Process", "Application Encryption"],
+                "keywords": ["AES-GCM", "Argon2", "client-side encryption", "browser cryptography", "JavaScript encryption", "Web Crypto API"]
             }
-            </script>
+        </script>
     </head>
 
     <body>
@@ -334,8 +321,10 @@
                                         : Both your text and password are encoded into binary format (UTF-8).
                                     </li>
                                     <li>
-                                        <strong>Generate Salt and Key</strong> : A random salt is generated. Using
-                                        <a href="/pages/encryption-glossary.html#argon2>">Argon2</a> and the configured number of rounds, a secure 256-bit key is derived from your password.
+                                        <strong>Generate Salt and Key</strong>
+                                        : A random salt is generated. Using
+                                        <a href="/pages/encryption-glossary.html#argon2>">Argon2</a>
+                                        and the configured number of rounds, a secure 256-bit key is derived from your password.
                                     </li>
                                     <li>
                                         <strong>Encrypt with AES-GCM</strong>
@@ -442,68 +431,79 @@ outputOriginalData(decryptedData);</code></pre>
                         </div>
 
                         <!-- Encrypt Application (App Data Protection) Section -->
-                        <div class="container my-5" id="encrypt-application">
-                            <h2 class="mb-4">Encrypt Application (App Data Protection)</h2>
-                          
-                            <!-- Overview Card -->
-                            <div class="card mb-4">
-                              <div class="card-header">
-                                <h5 class="mb-0">Envelope-Encryption Stack</h5>
-                              </div>
-                              <ul class="list-group list-group-flush">
+                        <div class="row my-4" id="encrypt-application">
+                            <h2 class="">Encrypt Application (App Data Protection)</h2>
+
+                            <h3 class="m-1 mb-0">Envelope-Encryption Stack:</h3>
+                            <ul class="m-2">
                                 <li class="list-group-item">
-                                  <h6>DEK (Data-Encryption-Key)</h6>
-                                  <ul class="mb-1">
-                                    <li>Random 256-bit AES-GCM key</li>
-                                    <li>Generated once per browser profile for encryption/decryption of local data</li>
-                                  </ul>
+                                    <h4>DEK (Data-Encryption-Key)</h4>
+                                    <ul class="mb-1">
+                                        <li>Random 256-bit AES-GCM key</li>
+                                        <li>Generated once per browser profile for encryption/decryption of local data</li>
+                                    </ul>
                                 </li>
                                 <li class="list-group-item">
-                                  <h6>KEK (Key-Encryption-Key)</h6>
-                                  <p class="mb-1">Two modes:</p>
-                                  <ul>
-                                    <li><strong>Password-less:</strong> non-extractable, origin-bound WebCrypto key (<code>DeviceKeyProvider</code>)</li>
-                                    <li><strong>Master-password:</strong> Argon2id-derived key from user password</li>
-                                  </ul>
-                                  <small class="text-muted">Always stays in-browser as non-extractable <code>CryptoKey</code> handle.</small>
+                                    <h4>KEK (Key-Encryption-Key)</h4>
+                                    <p class="mb-1">Two modes:</p>
+                                    <ul>
+                                        <li>
+                                            <strong>Password-less:</strong>
+                                            non-extractable, origin-bound WebCrypto key (
+                                            <code>DeviceKeyProvider</code>
+                                            )
+                                        </li>
+                                        <li>
+                                            <strong>Master-password:</strong>
+                                            Argon2id-derived key from user password
+                                        </li>
+                                    </ul>
+                                    <small class="text-muted">
+                                        Always stays in-browser as non-extractable
+                                        <code>CryptoKey</code>
+                                        handle.
+                                    </small>
                                 </li>
                                 <li class="list-group-item">
-                                  <h6>Authenticated Encryption</h6>
-                                  <p class="mb-0">AES-GCM (96-bit IV, 128-bit tag) with integrity check on every read.</p>
+                                    <h4>Authenticated Encryption</h4>
+                                    <p class="mb-0">AES-GCM (96-bit IV, 128-bit tag) with integrity check on every read.</p>
                                 </li>
                                 <li class="list-group-item">
-                                  <h6>Key Lifetimes</h6>
-                                  <ul class="mb-0">
-                                    <li>Non-exportable DEK (usable just for <code>encrypt/decrypt</code>) in RAM only while unlocked</li>
-                                    <li>KEK handle only during DEK-unwrapping</li>
-                                    <li>No raw key material exportable to JS</li>
-                                  </ul>
+                                    <h4>Key Lifetimes</h4>
+                                    <ul class="mb-0">
+                                        <li>
+                                            Non-exportable DEK (usable just for
+                                            <code>encrypt/decrypt</code>
+                                            ) in RAM only while unlocked
+                                        </li>
+                                        <li>KEK handle only during DEK-unwrapping</li>
+                                        <li>No raw key material exportable to JS</li>
+                                    </ul>
                                 </li>
-                              </ul>
-                            </div>
-                          
+                            </ul>
+
+                            <h3 class="m-1">Code Examples:</h3>
+
                             <!-- Accordion for JSON + Code -->
                             <div class="accordion mb-4" id="encryptAccordion">
-                              <!-- JSON Structures -->
-                              <div class="accordion-item">
-                                <h5 class="accordion-header" id="headingJSON">
-                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJSON" aria-expanded="false" aria-controls="collapseJSON">
-                                    Local JSON Structures
-                                  </button>
-                                </h5>
-                                <div id="collapseJSON" class="accordion-collapse collapse" aria-labelledby="headingJSON" data-bs-parent="#encryptAccordion">
-                                  <div class="accordion-body">
-                                    <ul class="nav nav-tabs mb-3" id="jsonTab" role="tablist">
-                                      <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="passwordless-tab" data-bs-toggle="tab" data-bs-target="#passwordless" type="button" role="tab">Password-less</button>
-                                      </li>
-                                      <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="masterpassword-tab" data-bs-toggle="tab" data-bs-target="#masterpassword" type="button" role="tab">Master-password</button>
-                                      </li>
-                                    </ul>
-                                    <div class="tab-content">
-                                      <div class="tab-pane fade show active" id="passwordless" role="tabpanel">
-                                        <pre class="bg-light p-3 rounded"><code class="language-json">{
+                                <!-- JSON Structures -->
+                                <div class="accordion-item">
+                                    <h5 class="accordion-header" id="headingJSON">
+                                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJSON" aria-expanded="false" aria-controls="collapseJSON">Local JSON Structures</button>
+                                    </h5>
+                                    <div id="collapseJSON" class="accordion-collapse collapse" aria-labelledby="headingJSON" data-bs-parent="#encryptAccordion">
+                                        <div class="accordion-body">
+                                            <ul class="nav nav-tabs mb-3" id="jsonTab" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" id="passwordless-tab" data-bs-toggle="tab" data-bs-target="#passwordless" type="button" role="tab">Password-less</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="masterpassword-tab" data-bs-toggle="tab" data-bs-target="#masterpassword" type="button" role="tab">Master-password</button>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div class="tab-pane fade show active" id="passwordless" role="tabpanel">
+                                                    <pre class="bg-light p-3 rounded"><code class="language-json">{
     "header": {
         "v": 2,
         "salt": "",
@@ -516,9 +516,9 @@ outputOriginalData(decryptedData);</code></pre>
         "ciphertext": "xxxxxx__local_data"
     }
 }</code></pre>
-                                      </div>
-                                      <div class="tab-pane fade" id="masterpassword" role="tabpanel">
-                                        <pre class="bg-light p-3 rounded"><code class="language-json">{
+                                                </div>
+                                                <div class="tab-pane fade" id="masterpassword" role="tabpanel">
+                                                    <pre class="bg-light p-3 rounded"><code class="language-json">{
     "header": {
         "v": 2,
         "salt": "FtBVivCpev4+G0uqAn7Z5w==",
@@ -531,25 +531,23 @@ outputOriginalData(decryptedData);</code></pre>
         "ciphertext": "xxxxxx__secured_data"
     }
 }</code></pre>
-                                      </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
-                              </div>
-                          
-                              <!-- Life-cycle Pseudo-Code -->
-                              <div class="accordion-item">
-                                <h5 class="accordion-header" id="headingCode">
-                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCode" aria-expanded="false" aria-controls="collapseCode">
-                                    Life-Cycle Overview (pseudo-code)
-                                  </button>
-                                </h5>
-                                <div id="collapseCode" class="accordion-collapse collapse" aria-labelledby="headingCode" data-bs-parent="#encryptAccordion">
-                                  <div class="accordion-body">
-                                    <!-- Step 1 -->
-                                    <div class="mb-4">
-                                      <h6 class="fw-bold">1. First run / reset</h6>
-                                      <pre class="bg-light p-3 rounded"><code class="language-javascript">// generate a fresh DEK
+
+                                <!-- Life-cycle Pseudo-Code -->
+                                <div class="accordion-item">
+                                    <h5 class="accordion-header" id="headingCode">
+                                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCode" aria-expanded="false" aria-controls="collapseCode">Life-Cycle Overview (pseudo-code)</button>
+                                    </h5>
+                                    <div id="collapseCode" class="accordion-collapse collapse" aria-labelledby="headingCode" data-bs-parent="#encryptAccordion">
+                                        <div class="accordion-body">
+                                            <!-- Step 1 -->
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold">1. First run / reset</h6>
+                                                <pre class="bg-light p-3 rounded"><code class="language-javascript">// generate a fresh DEK
 dek = crypto.generateAesGcmKey(256);
 
 // pick a KEK
@@ -566,11 +564,11 @@ if (userSetsMasterPassword) {
 ivWrap, wrappedKey = AES_GCM_Wrap(dek, kek);
 storeHeader({ v:2, salt, rounds, iv:ivWrap, wrappedKey });
 storeData({ iv:"", ciphertext:"" });</code></pre>
-                                    </div>
-                                    <!-- Step 2 -->
-                                    <div class="mb-4">
-                                      <h6 class="fw-bold">2. Unlock session</h6>
-                                      <pre class="bg-light p-3 rounded"><code class="language-javascript">header = readHeader();
+                                            </div>
+                                            <!-- Step 2 -->
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold">2. Unlock session</h6>
+                                                <pre class="bg-light p-3 rounded"><code class="language-javascript">header = readHeader();
 if (header.rounds > 1) {
     kek = argon2id(promptPassword(), header.salt, header.rounds);
 } else {
@@ -578,46 +576,43 @@ if (header.rounds > 1) {
 }
 
 dek = AES_GCM_Unwrap(header.wrappedKey, kek, header.iv);</code></pre>
-                                    </div>
-                                    <!-- Step 3 -->
-                                    <div>
-                                      <h6 class="fw-bold">3. Encrypt / decrypt data</h6>
-                                      <pre class="bg-light p-3 rounded"><code class="language-javascript">// save
+                                            </div>
+                                            <!-- Step 3 -->
+                                            <div>
+                                                <h6 class="fw-bold">3. Encrypt / decrypt data</h6>
+                                                <pre class="bg-light p-3 rounded"><code class="language-javascript">// save
 ivData, cipher = AES_GCM_Encrypt(plainData, dek);
 storeData({ iv:ivData, ciphertext:cipher });
 
 // load
 { iv, ciphertext } = readData();
 plainData = AES_GCM_Decrypt(ciphertext, dek, iv);</code></pre>
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
-                              </div>
                             </div>
-                          
+
                             <!-- Key Rotation / Password Mgmt Card -->
-                            <div class="card mb-4">
-                              <div class="card-header">
-                                <h5 class="mb-0">Key Rotation &amp; Password Management</h5>
-                              </div>
-                              <div class="card-body">
-                                <ul class="list-group list-group-flush">
-                                  <li class="list-group-item">
-                                    <strong>Set / Change password</strong><br>
-                                    DEK is temporarily unwrapped (<code>extractable:true</code>), re-wrapped under the new KEK, then re-imported as non-extractable.
-                                  </li>
-                                  <li class="list-group-item">
-                                    <strong>Remove password</strong><br>
+                            <h3 class="mb-0 m-1">Key Rotation &amp; Password Management:</h3>
+
+                            <ul class="m-2">
+                                <li class="list-group-item">
+                                    <strong>Set / Change password:</strong>
+                                    <br />
+                                    DEK is temporarily unwrapped (
+                                    <code>extractable:true</code>
+                                    ), re-wrapped under the new KEK, then re-imported as non-extractable.
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Remove password:</strong>
+                                    <br />
                                     Reverse flow: re-wrap DEK with device key, update header.
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-                          
-                            <p class="text-center text-muted">
-                              With this layered approach, an attacker needs both the encrypted payload AND either your master password or physical access to the device key store.
-                            </p>
-                          </div>
+                                </li>
+                            </ul>
+
+                            <p class="text-muted">With this layered approach, an attacker needs both the encrypted payload AND either your master password or physical access to the device key store.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -660,7 +655,7 @@ plainData = AES_GCM_Decrypt(ciphertext, dek, iv);</code></pre>
         <script src="../assets/libs/highlightjs/highlightjs.min.js" defer></script>
 
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener('DOMContentLoaded', function () {
                 hljs.highlightAll();
             });
         </script>

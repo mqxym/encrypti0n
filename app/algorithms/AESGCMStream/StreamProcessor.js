@@ -1,5 +1,8 @@
 // StreamProcessor.js
 
+import { EncryptTransform } from './EncryptTransform.js';
+import { DecryptTransform } from './DecryptTransform.js';
+
 /**
  * @class StreamProcessor
  * @classdesc

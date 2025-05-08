@@ -43,7 +43,7 @@ export class ConfigManager {
       await instance._initFreshConfig();
       instance._saveConfig();
     } else if (instance.config.header?.v !== ConfigManagerConstants.CURRENT_DATA_VERSION) {
-      await instance._convertFromV1();
+      await instance._convertFromV1().catch(() => {});
     }
 
     await instance._loadDekIntoMemory().catch(() => {});
@@ -70,7 +70,7 @@ export class ConfigManager {
     // wrap DEK with deviceKek using random IV
     const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(this.dek, deviceKek);
 
-    this.dek = await this.encryptionManager.unwrapDek(ivWrap, wrappedKey);
+    this.dek = await this.encryptionManager.unwrapDek(ivWrap, wrappedKey, deviceKek);
 
     // build header + empty data
     this.config = {
@@ -576,6 +576,6 @@ export class ConfigManager {
    * @returns {boolean} true if in master-password mode.
    */
   isUsingMasterPassword() {
-    return this.config.header.rounds > 1;
+    return (this.config?.header?.rounds ?? 0) > 1;
   }
 }
