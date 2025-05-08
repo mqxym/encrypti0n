@@ -1,14 +1,32 @@
+// TextEncryptionController.js
 import { EncryptionController } from './EncryptionController.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { argon2Service } from '../services/argon2Service.js';
 import appState from '../state/AppState.js';
 
+/**
+ * @class TextEncryptionController
+ * @extends EncryptionController
+ * @classdesc
+ * Handles encryption and decryption of text inputs, updating the output field.
+ */
 export class TextEncryptionController extends EncryptionController {
+  /**
+   * @param {Object} services - Shared services (encryption, form, config).
+   */
   constructor(services) {
     super(services);
   }
 
+  /**
+   * Determines if the input text is encrypted or plaintext,
+   * invokes the appropriate handler, and provides UI feedback.
+   *
+   * @async
+   * @override
+   * @returns {Promise<void>}
+   */
   async handleAction() {
     const { inputText } = this.formHandler.formValues;
     const laddaManager = new LaddaButtonManager('.action-button');
@@ -18,6 +36,7 @@ export class TextEncryptionController extends EncryptionController {
     try {
       const isEncrypted = await this.encryptionService.isEncrypted(inputText);
       let result = false;
+
       if (isEncrypted) {
         result = await this.handleDecryption();
         laddaManager.setProgressAll(1);
@@ -35,6 +54,7 @@ export class TextEncryptionController extends EncryptionController {
           ElementHandler.setPlaceholderById('outputText', 'Encryption failed. Please check data or password.');
         }
       }
+
       await this.postActionHandling(result, laddaManager);
     } catch (error) {
       laddaManager.stopAll();
@@ -44,16 +64,23 @@ export class TextEncryptionController extends EncryptionController {
     }
   }
 
+  /**
+   * Encrypts the text from the input field and sets the Base64 output.
+   *
+   * @async
+   * @override
+   * @returns {Promise<boolean>} True on success, false on failure.
+   */
   async handleEncryption() {
     const { inputText } = this.formHandler.formValues;
     const { key } = this.getKeyData();
     if (!inputText || !key) return false;
-    const algo = 'aesgcm';
+
     try {
       const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
       this.encryptionService.setargon2Difficulty(usedOptions.roundDifficulty);
       this.encryptionService.setSaltLengthDifficulty(usedOptions.saltDifficulty);
-      const encryptedB64 = await this.encryptionService.encryptText(inputText, key, algo);
+      const encryptedB64 = await this.encryptionService.encryptText(inputText, key, 'aesgcm');
       this.formHandler.setFormValue('outputText', encryptedB64);
       return true;
     } catch (err) {
@@ -61,10 +88,18 @@ export class TextEncryptionController extends EncryptionController {
     }
   }
 
+  /**
+   * Decrypts the Base64 input and sets the plaintext output.
+   *
+   * @async
+   * @override
+   * @returns {Promise<boolean>} True on success, false on failure.
+   */
   async handleDecryption() {
     const { inputText } = this.formHandler.formValues;
     const { key } = this.getKeyData();
     if (!inputText || !key) return false;
+
     try {
       const decrypted = await this.encryptionService.decryptText(inputText, key);
       this.formHandler.setFormValue('outputText', decrypted);

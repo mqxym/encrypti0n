@@ -38,6 +38,44 @@
 
         
         <link href="../assets/libs/highlightjs/highlightjs.min.css" rel="stylesheet" type="text/css" />
+
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "TechArticle",
+              "headline": "How Encrypti0n.com Works: A Browser-Based Encryption Platform",
+              "name": "How Encrypti0n.com Works",
+              "description": "An in-depth look at how Encrypti0n.com performs client-side text and file encryption using browser-native cryptographic APIs like AES-GCM and key derivation algorithm Argon2.",
+              "url": "https://encrypti0n.com/pages/how-it-works.html",
+              "author": {
+                "@type": "Organization",
+                "name": "Encrypti0n.com"
+              },
+              "publisher": {
+                "@type": "Organization",
+                "name": "Encrypti0n.com",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": "https://encrypti0n.com/assets/images/logo.webp"
+                }
+              },
+              "datePublished": "2025-04-28",
+              "articleSection": [
+                "Text Encryption Process",
+                "File Encryption Process",
+                "Decryption Process",
+                "Application Encryption"
+              ],
+              "keywords": [
+                "AES-GCM",
+                "Argon2",
+                "client-side encryption",
+                "browser cryptography",
+                "JavaScript encryption",
+                "Web Crypto API"
+              ]
+            }
+            </script>
     </head>
 
     <body>
@@ -404,65 +442,182 @@ outputOriginalData(decryptedData);</code></pre>
                         </div>
 
                         <!-- Encrypt Application (App Data Protection) Section -->
-                        <div class="row my-4" id="encrypt-application">
-                            <div class="col-12">
-                                <h2>Encrypt Application (App Data Protection)</h2>
-                                <p>Encrypti0n.com allows users to secure all locally stored application data with a master password:</p>
-                                <ul>
-                                    <li>
-                                        <strong>Secure Data Handling</strong>
-                                        : Except for essential UI settings, all data is encrypted using AES-GCM with Argon2 key derivation.
-                                    </li>
-                                    <li>
-                                        <strong>On-the-fly Decryption</strong>
-                                        : Data is decrypted dynamically upon request; no decrypted keys remain persistently readable or outputtable due to JavaScript security limitations.
-                                    </li>
-                                    <li>
-                                        <strong>Key Management</strong>
-                                        : The master password is never stored—it's only used to derive the encryption key.
-                                        <strong>Without a user-defined master password, a default (insecure) key is used.</strong>
-                                    </li>
-                                </ul>
-                                <p>
-                                    <strong>
-                                        Local Data Structure for
-                                        <span class="fst-italic">no</span>
-                                        set master password
-                                    </strong>
-                                </p>
-                                <pre class="bg-light p-1 rounded"><code class="language-json">{
-"isUsingMasterPassword": false,
-"argon2Rounds": 10,
-"argon2Salt": "ECPlvmyu3dv++nhzwXBu7g==",
-"default": "2o2tKUOZ1Sk8bu4MTu0wxTLt",
-"data": {
+                        <div class="container my-5" id="encrypt-application">
+                            <h2 class="mb-4">Encrypt Application (App Data Protection)</h2>
+                          
+                            <!-- Overview Card -->
+                            <div class="card mb-4">
+                              <div class="card-header">
+                                <h5 class="mb-0">Envelope-Encryption Stack</h5>
+                              </div>
+                              <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                  <h6>DEK (Data-Encryption-Key)</h6>
+                                  <ul class="mb-1">
+                                    <li>Random 256-bit AES-GCM key</li>
+                                    <li>Generated once per browser profile for encryption/decryption of local data</li>
+                                  </ul>
+                                </li>
+                                <li class="list-group-item">
+                                  <h6>KEK (Key-Encryption-Key)</h6>
+                                  <p class="mb-1">Two modes:</p>
+                                  <ul>
+                                    <li><strong>Password-less:</strong> non-extractable, origin-bound WebCrypto key (<code>DeviceKeyProvider</code>)</li>
+                                    <li><strong>Master-password:</strong> Argon2id-derived key from user password</li>
+                                  </ul>
+                                  <small class="text-muted">Always stays in-browser as non-extractable <code>CryptoKey</code> handle.</small>
+                                </li>
+                                <li class="list-group-item">
+                                  <h6>Authenticated Encryption</h6>
+                                  <p class="mb-0">AES-GCM (96-bit IV, 128-bit tag) with integrity check on every read.</p>
+                                </li>
+                                <li class="list-group-item">
+                                  <h6>Key Lifetimes</h6>
+                                  <ul class="mb-0">
+                                    <li>Non-exportable DEK (usable just for <code>encrypt/decrypt</code>) in RAM only while unlocked</li>
+                                    <li>KEK handle only during DEK-unwrapping</li>
+                                    <li>No raw key material exportable to JS</li>
+                                  </ul>
+                                </li>
+                              </ul>
+                            </div>
+                          
+                            <!-- Accordion for JSON + Code -->
+                            <div class="accordion mb-4" id="encryptAccordion">
+                              <!-- JSON Structures -->
+                              <div class="accordion-item">
+                                <h5 class="accordion-header" id="headingJSON">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJSON" aria-expanded="false" aria-controls="collapseJSON">
+                                    Local JSON Structures
+                                  </button>
+                                </h5>
+                                <div id="collapseJSON" class="accordion-collapse collapse" aria-labelledby="headingJSON" data-bs-parent="#encryptAccordion">
+                                  <div class="accordion-body">
+                                    <ul class="nav nav-tabs mb-3" id="jsonTab" role="tablist">
+                                      <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="passwordless-tab" data-bs-toggle="tab" data-bs-target="#passwordless" type="button" role="tab">Password-less</button>
+                                      </li>
+                                      <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="masterpassword-tab" data-bs-toggle="tab" data-bs-target="#masterpassword" type="button" role="tab">Master-password</button>
+                                      </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                      <div class="tab-pane fade show active" id="passwordless" role="tabpanel">
+                                        <pre class="bg-light p-3 rounded"><code class="language-json">{
+    "header": {
+        "v": 2,
+        "salt": "",
+        "rounds": 1,
         "iv": "Zhg/WsALMJYanZsW",
-        "ciphertext": "xxxxxxx__local_data"
+        "wrappedKey": "AAAA…=="
+    },
+    "data": {
+        "iv": "V0hzptZKrwI5wHbJ",
+        "ciphertext": "xxxxxx__local_data"
     }
 }</code></pre>
-                                <p><strong>Local Data Structure for a set master password</strong></p>
-                                <pre class="bg-light p-1 rounded"><code class="language-json">{
-    "isUsingMasterPassword": true,
-    "argon2Rounds": 431,
-    "argon2Salt": "FtBVivCpev4+G0uqAn7Z5w==",
-    "default": "",
-    "data": {
+                                      </div>
+                                      <div class="tab-pane fade" id="masterpassword" role="tabpanel">
+                                        <pre class="bg-light p-3 rounded"><code class="language-json">{
+    "header": {
+        "v": 2,
+        "salt": "FtBVivCpev4+G0uqAn7Z5w==",
+        "rounds": 431,
         "iv": "TQ5fMPx4cx5y5Yoi",
+        "wrappedKey": "BBBB…=="
+    },
+    "data": {
+        "iv": "2E1P2gN9rtRfTmcR",
         "ciphertext": "xxxxxx__secured_data"
     }
 }</code></pre>
-                                <p><strong>Below is a sample code snippet that shows how local data is secured on this site using a javscript-ish pseudo-code:</strong></p>
-                                <pre class="bg-light p-1 rounded"><code class="language-javascript">Argon2Salt, Argon2Rounds = getLocalSettings();
-if (masterPassword):
-    key = deriveArgon2Key(masterPassword, Argon2Salt, Argon2Rounds);
-else:
-    key = deriveArgon2Key(defaultKey, Argon2Salt, Argon2Rounds);
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                          
+                              <!-- Life-cycle Pseudo-Code -->
+                              <div class="accordion-item">
+                                <h5 class="accordion-header" id="headingCode">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCode" aria-expanded="false" aria-controls="collapseCode">
+                                    Life-Cycle Overview (pseudo-code)
+                                  </button>
+                                </h5>
+                                <div id="collapseCode" class="accordion-collapse collapse" aria-labelledby="headingCode" data-bs-parent="#encryptAccordion">
+                                  <div class="accordion-body">
+                                    <!-- Step 1 -->
+                                    <div class="mb-4">
+                                      <h6 class="fw-bold">1. First run / reset</h6>
+                                      <pre class="bg-light p-3 rounded"><code class="language-javascript">// generate a fresh DEK
+dek = crypto.generateAesGcmKey(256);
 
-iv = crypto.getRandomValues(12);
-ciphertext = AES_GCM_Encrypt(appData, key, iv);
-storeEncryptedData(ciphertext, iv);</code></pre>
+// pick a KEK
+if (userSetsMasterPassword) {
+    salt = randomSalt();
+    rounds = randomRounds();
+    kek = argon2id(masterPassword, salt, rounds);
+} else {
+    kek = DeviceKeyProvider.getKey();
+    salt = ""; rounds = 1;
+}
+
+// wrap DEK + store
+ivWrap, wrappedKey = AES_GCM_Wrap(dek, kek);
+storeHeader({ v:2, salt, rounds, iv:ivWrap, wrappedKey });
+storeData({ iv:"", ciphertext:"" });</code></pre>
+                                    </div>
+                                    <!-- Step 2 -->
+                                    <div class="mb-4">
+                                      <h6 class="fw-bold">2. Unlock session</h6>
+                                      <pre class="bg-light p-3 rounded"><code class="language-javascript">header = readHeader();
+if (header.rounds > 1) {
+    kek = argon2id(promptPassword(), header.salt, header.rounds);
+} else {
+    kek = DeviceKeyProvider.getKey();
+}
+
+dek = AES_GCM_Unwrap(header.wrappedKey, kek, header.iv);</code></pre>
+                                    </div>
+                                    <!-- Step 3 -->
+                                    <div>
+                                      <h6 class="fw-bold">3. Encrypt / decrypt data</h6>
+                                      <pre class="bg-light p-3 rounded"><code class="language-javascript">// save
+ivData, cipher = AES_GCM_Encrypt(plainData, dek);
+storeData({ iv:ivData, ciphertext:cipher });
+
+// load
+{ iv, ciphertext } = readData();
+plainData = AES_GCM_Decrypt(ciphertext, dek, iv);</code></pre>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                        </div>
+                          
+                            <!-- Key Rotation / Password Mgmt Card -->
+                            <div class="card mb-4">
+                              <div class="card-header">
+                                <h5 class="mb-0">Key Rotation &amp; Password Management</h5>
+                              </div>
+                              <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                  <li class="list-group-item">
+                                    <strong>Set / Change password</strong><br>
+                                    DEK is temporarily unwrapped (<code>extractable:true</code>), re-wrapped under the new KEK, then re-imported as non-extractable.
+                                  </li>
+                                  <li class="list-group-item">
+                                    <strong>Remove password</strong><br>
+                                    Reverse flow: re-wrap DEK with device key, update header.
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          
+                            <p class="text-center text-muted">
+                              With this layered approach, an attacker needs both the encrypted payload AND either your master password or physical access to the device key store.
+                            </p>
+                          </div>
                     </div>
                 </div>
 

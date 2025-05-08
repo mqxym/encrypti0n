@@ -4,16 +4,29 @@ import { handleActionError, handleActionSuccess, wrapAction } from '../utils/con
 import { pwGenWrapper } from '../passwordGenerator.js';
 import { KeyManagementConstants } from '../constants/constants.js';
 
+/**
+ * @class KeyManagementController
+ * @classdesc
+ * Handles key generation, copying, loading, saving, renaming, and visibility toggling
+ * for encryption keys within the application UI.
+ */
 export class KeyManagementController {
+  /**
+   * @param {Object} services
+   * @param {Object} services.config - Configuration manager for persisting key slots.
+   * @param {FormHandler} services.form - Form handler for reading and setting form values.
+   */
   constructor(services) {
-    this.configManager = services.config;
-    this.formHandler = services.form;
+    /** @private */ this.configManager = services.config;
+    /** @private */ this.formHandler = services.form;
     this.bindKeyManagementEvents();
   }
 
   /**
-   * Bind key management related events.
-   * Includes key generation, storage, and manipulation.
+   * Binds UI events related to key management actions.
+   *
+   * @private
+   * @returns {void}
    */
   bindKeyManagementEvents() {
     $('#renameSlotAction').on('click', () => this.changeSlotName());
@@ -27,15 +40,32 @@ export class KeyManagementController {
 
   // ––––––– Key Management Methods –––––––
 
+  /**
+   * Generates a new random key, populates both blank and hidden key fields,
+   * and displays success feedback.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async keyGenerate() {
     await wrapAction(async () => {
-      const randomKey = pwGenWrapper(KeyManagementConstants.KEY_LENGTH, KeyManagementConstants.ALLOWED_CHARACTERS);
+      const randomKey = pwGenWrapper(
+        KeyManagementConstants.KEY_LENGTH,
+        KeyManagementConstants.ALLOWED_CHARACTERS
+      );
       this.formHandler.setFormValue('keyBlank', randomKey);
       this.formHandler.setFormValue('keyPassword', randomKey);
       await handleActionSuccess('keyGenerate');
     });
   }
 
+  /**
+   * Copies the current key to the clipboard after validation
+   * and displays success or error feedback.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async keyCopy() {
     await wrapAction(async () => {
       const { key } = this.getKeyData();
@@ -49,18 +79,36 @@ export class KeyManagementController {
     });
   }
 
+  /**
+   * Toggles visibility between the masked password field and the plaintext field.
+   *
+   * @returns {void}
+   */
   toggleKey() {
     if ($('#hideKey').is(':checked')) {
       ElementHandler.hide('keyBlank');
       ElementHandler.show('keyPassword');
-      this.formHandler.setFormValue('keyPassword', this.formHandler.formValues.keyBlank);
+      this.formHandler.setFormValue(
+        'keyPassword',
+        this.formHandler.formValues.keyBlank
+      );
     } else {
       ElementHandler.hide('keyPassword');
       ElementHandler.show('keyBlank');
-      this.formHandler.setFormValue('keyBlank', this.formHandler.formValues.keyPassword);
+      this.formHandler.setFormValue(
+        'keyBlank',
+        this.formHandler.formValues.keyPassword
+      );
     }
   }
 
+  /**
+   * Loads a key from the selected slot after validation,
+   * populates form fields, and displays feedback.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async loadKey() {
     await wrapAction(async () => {
       const { slot } = this.getKeyData();
@@ -77,6 +125,13 @@ export class KeyManagementController {
     });
   }
 
+  /**
+   * Saves the current key to the selected slot after validation
+   * and displays success or error feedback.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async saveKey() {
     await wrapAction(async () => {
       const { key, slot } = this.getKeyData();
@@ -90,6 +145,13 @@ export class KeyManagementController {
     });
   }
 
+  /**
+   * Renames an existing key slot based on form input,
+   * refreshes the slot list, and displays feedback.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async changeSlotName() {
     await wrapAction(async () => {
       const formHandlerLocal = new FormHandler('newSlotForm');
@@ -108,6 +170,11 @@ export class KeyManagementController {
     });
   }
 
+  /**
+   * Clears both key input fields.
+   *
+   * @returns {void}
+   */
   clearPassword() {
     this.formHandler.setFormValue('keyBlank', '');
     this.formHandler.setFormValue('keyPassword', '');
@@ -115,6 +182,13 @@ export class KeyManagementController {
 
   // ––––––– Validation Methods –––––––
 
+  /**
+   * Ensures the provided key is a non-empty string.
+   *
+   * @private
+   * @param {*} key - The key value to validate.
+   * @throws {Error} If the key is empty or not a string.
+   */
   validateKey(key) {
     if (!key) {
       throw new Error('Key cannot be empty');
@@ -124,6 +198,13 @@ export class KeyManagementController {
     }
   }
 
+  /**
+   * Ensures the provided slot identifier is a non-empty string.
+   *
+   * @private
+   * @param {*} slot - The slot value to validate.
+   * @throws {Error} If the slot is empty or not a string.
+   */
   validateSlot(slot) {
     if (!slot) {
       throw new Error('Slot cannot be empty');
@@ -133,11 +214,26 @@ export class KeyManagementController {
     }
   }
 
+  /**
+   * Validates both key and slot inputs.
+   *
+   * @private
+   * @param {*} key - The key to validate.
+   * @param {*} slot - The slot to validate.
+   */
   validateKeyInput(key, slot) {
     this.validateKey(key);
     this.validateSlot(slot);
   }
 
+  /**
+   * Validates a slot and its new name against length constraints.
+   *
+   * @private
+   * @param {*} slot - The slot identifier to validate.
+   * @param {*} name - The new slot name to validate.
+   * @throws {Error} If the name is invalid or too long, or the slot is invalid.
+   */
   validateSlotName(slot, name) {
     if (!name) {
       throw new Error('Slot name cannot be empty');
@@ -146,13 +242,22 @@ export class KeyManagementController {
       throw new Error('Slot name must be a string');
     }
     if (name.length > KeyManagementConstants.MAX_SLOT_NAME_LENGTH) {
-      throw new Error(`Slot name cannot exceed ${KeyManagementConstants.MAX_SLOT_NAME_LENGTH} characters`);
+      throw new Error(
+        `Slot name cannot exceed ${KeyManagementConstants.MAX_SLOT_NAME_LENGTH} characters`
+      );
     }
     this.validateSlot(slot);
   }
 
   // ––––––– Helper Methods –––––––
 
+  /**
+   * Retrieves key-related form values, deciding which field to use
+   * based on the hideKey toggle.
+   *
+   * @private
+   * @returns {{ slot: string, key: string, hideKey: boolean }}
+   */
   getKeyData() {
     const { keySlot, keyBlank, keyPassword, hideKey } = this.formHandler.formValues;
     return {

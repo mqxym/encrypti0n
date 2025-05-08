@@ -1,91 +1,167 @@
-// passwordGenerator.js
-
 import { ElementHandler } from './helpers/ElementHandler.js';
 import { delay } from './utils/misc.js';
 
-export function  pwGenWrapper (length, allowed_characters = '') {
+/**
+ * Wrapper function for password generation.
+ *
+ * @function pwGenWrapper
+ * @param {number} length - Desired length of the generated password.
+ * @param {string} [allowed_characters=''] - Additional characters to include in the character set.
+ * @returns {string} Generated password string.
+ */
+export function pwGenWrapper(length, allowed_characters = '') {
   const pwGenerator = new PasswordGenerator();
   return pwGenerator.generate(length, allowed_characters);
-} 
+}
 
+/**
+ * @class PasswordGenerator
+ * @classdesc
+ * Generates cryptographically secure random passwords, with optional custom special characters.
+ */
 export class PasswordGenerator {
+  /**
+   * @param {string} [defaultAllowed] - Default allowed character set;  
+   *   if omitted, letters and digits are used.
+   */
   constructor(defaultAllowed) {
-    this.defaultAllowed = defaultAllowed || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    /** @private @type {string} */
+    this.defaultAllowed =
+      defaultAllowed ||
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   }
 
-  // Core secure random string generator
+  /**
+   * Generates a secure random string of specified length from the allowed characters,
+   * preventing modulo bias.
+   *
+   * @private
+   * @param {number} length - Number of characters to generate.
+   * @param {string} [allowed=this.defaultAllowed] - Character set to choose from.
+   * @returns {string} Randomly generated string.
+   */
   generateSecureRandomString(length, allowed = this.defaultAllowed) {
     const allowedLength = allowed.length;
     const result = [];
     const cryptoObj = window.crypto || window.msCrypto;
-    const maxMultiple = Math.floor(256 / allowedLength) * allowedLength; // Prevent modulo bias
+    // Prevent modulo bias by discarding out-of-range values.
+    const maxMultiple =
+      Math.floor(256 / allowedLength) * allowedLength;
 
     while (result.length < length) {
       const randomBytes = new Uint8Array(length - result.length);
       cryptoObj.getRandomValues(randomBytes);
-      for (let i = 0; i < randomBytes.length && result.length < length; i++) {
+      for (
+        let i = 0;
+        i < randomBytes.length && result.length < length;
+        i++
+      ) {
         if (randomBytes[i] < maxMultiple) {
-          result.push(allowed[randomBytes[i] % allowedLength]);
+          result.push(
+            allowed[randomBytes[i] % allowedLength]
+          );
         }
       }
     }
     return result.join('');
   }
 
-  // Generate a password.
-  // Allows a custom set of special characters to be added.
+  /**
+   * Generates a password of the given length, optionally including custom special characters.
+   *
+   * @param {number} [length=16] - Desired password length.
+   * @param {string} [customSpecialChars=''] - Additional special characters to include.
+   * @returns {string} Generated password.
+   */
   generate(length = 16, customSpecialChars = '') {
     let allowed = this.defaultAllowed;
 
-    // allowed length * 2/3 = customLenght * x
-    // x = floor(allowed length * 2 / customlength * 3)
-
     if (customSpecialChars) {
-      let specialCharsFactor = Math.floor((allowed.length * 2) / (customSpecialChars.length * 3));
+      // Determine how many times to repeat special chars to balance frequency.
+      let specialCharsFactor = Math.floor(
+        (allowed.length * 2) /
+          (customSpecialChars.length * 3)
+      );
       specialCharsFactor = Math.min(specialCharsFactor, 12);
       specialCharsFactor = Math.max(specialCharsFactor, 1);
-      customSpecialChars = Array.from(new Set(customSpecialChars)).join(''); // Remove duplicates
-      let multipliedSpecials = customSpecialChars.repeat(specialCharsFactor);
-      allowed = allowed + multipliedSpecials;
+      // Remove duplicates and repeat
+      customSpecialChars = Array.from(
+        new Set(customSpecialChars)
+      ).join('');
+      const multipliedSpecials = customSpecialChars.repeat(
+        specialCharsFactor
+      );
+      allowed += multipliedSpecials;
     }
-    return this.generateSecureRandomString(length, allowed);
+
+    return this.generateSecureRandomString(
+      length,
+      allowed
+    );
   }
 }
 
+/**
+ * @class PasswordGeneratorController
+ * @classdesc
+ * Binds UI controls for password generation: slider, custom chars input, generate and copy buttons.
+ */
 export class PasswordGeneratorController {
+  /**
+   * @param {PasswordGenerator} generator - Instance of PasswordGenerator to use for generation.
+   */
   constructor(generator) {
-    this.generator = generator;
+    /** @private */ this.generator = generator;
     this.bindUI();
   }
 
+  /**
+   * Attaches event listeners for slider input, generate button, and copy button.
+   *
+   * @private
+   * @returns {void}
+   */
   bindUI() {
-    // Ensure the DOM is ready before binding events
     $(document).ready(() => {
-      // Optional: Update slider value display if an element with id 'sliderValue' exists.
       $('#lengthSlider').on('input', () => {
         $('#sliderValue').text($('#lengthSlider').val());
         this.handleGenerate();
       });
 
-      // Bind click event to the generate button.
       $('#generateButton').on('click', () => {
         this.handleGenerate();
       });
+
       $('#keyCopy').on('click', () => this.keyCopy());
 
+      // Initial generation and slider display
       this.handleGenerate();
       $('#sliderValue').text($('#lengthSlider').val());
     });
   }
 
-  // Handler to generate and display the password.
+  /**
+   * Generates a new password based on current slider and special chars input,
+   * and updates the output field.
+   *
+   * @returns {void}
+   */
   handleGenerate() {
     const length = parseInt($('#lengthSlider').val(), 10);
     const specialChars = $('#specialChars').val();
-    const password = this.generator.generate(length, specialChars);
+    const password = this.generator.generate(
+      length,
+      specialChars
+    );
     $('#passwordOutput').val(password);
   }
 
+  /**
+   * Copies the displayed password to the clipboard, showing success or failure feedback.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async keyCopy() {
     const keyToCopy = $('#passwordOutput').val();
     try {

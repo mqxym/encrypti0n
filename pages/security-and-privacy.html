@@ -279,11 +279,6 @@
 
                                 <!-- Secured Data -->
                                 <h3>Secured Data</h3>
-                                <p>
-                                    When the
-                                    <strong>"Encrypt Application"</strong>
-                                    feature is activated using a master password, the following data is securely encrypted and stored locally:
-                                </p>
                                 <ul>
                                     <li>
                                         <strong>Saved Passwords:</strong>
@@ -299,8 +294,10 @@
                                     </li>
                                 </ul>
                                 <p>
-                                    Secured data is encrypted using AES-GCM encryption combined with Argon2 key derivation, ensuring robust protection. For implementation details, refer to the
-                                    <a href="/pages/how-it-works.html">How it Works Page</a>
+                                    Secured data is encrypted using AES-GCM encryption and a local non-extractable device-bound <code>Key-Encryption-Key</code> for <strong>password-less mode</strong>
+                                    or <br>
+                                    <code>Argon2id</code> key derivation with 64MiB memory usage and 20 rounds for <strong>master password mode</strong>. For implementation details, refer to the
+                                    <a href="/pages/how-it-works.html">How it Works Page</a>.
                                 </p>
                             </div>
                         </div>

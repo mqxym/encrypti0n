@@ -10,9 +10,17 @@ import { ConfigManager } from '../services/configManagement/ConfigManager.js';
 import { UIManager } from '../ui/UIManager.js';
 import appState from '../state/AppState.js';
 
+/**
+ * @class MainController
+ * @classdesc
+ * Main application controller that initializes services, sets up sub-controllers,
+ * binds UI events, and delegates encryption/decryption actions based on the current view.
+ */
 export class MainController {
   /**
-   * @param {string} formId - The id of the main form.
+   * Creates a new MainController instance.
+   *
+   * @param {string} formId - The ID of the main form to handle.
    */
   constructor(formId) {
     this.formId = formId;
@@ -20,7 +28,10 @@ export class MainController {
   }
 
   /**
-   * Initialize the controller
+   * Initializes application services, controllers, and UI.
+   *
+   * @async
+   * @returns {Promise<void>}
    */
   async init() {
     await this.initializeServices();
@@ -31,6 +42,13 @@ export class MainController {
     this.appDataController.setUIManager(this.UIManager);
   }
 
+  /**
+   * Initializes core services: configuration, storage, encryption, Argon2, and form handling.
+   *
+   * @async
+   * @private
+   * @returns {Promise<void>}
+   */
   async initializeServices() {
     const confManager = await ConfigManager.create();
     this.services = {
@@ -44,6 +62,12 @@ export class MainController {
     this.services.form.preventSubmitAction();
   }
 
+  /**
+   * Instantiates feature controllers: text, file, key management, and app data.
+   *
+   * @private
+   * @returns {void}
+   */
   initializeControllers() {
     this.textEncryptionController = new TextEncryptionController(this.services);
     this.fileEncryptionController = new FileEncryptionController(this.services);
@@ -52,7 +76,9 @@ export class MainController {
   }
 
   /**
-   * Bind Maincontroller events
+   * Binds click events on action buttons to the central handleAction method.
+   *
+   * @returns {void}
    */
   bindEvents() {
     $('.action-button').on('click', () => this.handleAction());
@@ -60,6 +86,12 @@ export class MainController {
 
   // ––––––– Action Orchestration –––––––
 
+  /**
+   * Delegates encryption or decryption actions based on the current view state.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async handleAction() {
     const { currentView, isEncrypting } = appState.state;
     if (isEncrypting) return;

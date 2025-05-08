@@ -3,25 +3,31 @@ import { deriveKey } from './Argon2Key/Argon2KeyDerivation.js';
 import { AESGCMConstants } from '../constants/constants.js';
 
 /**
- * AESGCMEncryption implements the AES-GCM encryption/decryption algorithm.
- * It extends the IEncryptionAlgorithm interface with concrete implementations.
+ * @class AESGCMEncryption
+ * @extends IEncryptionAlgorithm
+ * @classdesc
+ * Concrete implementation of the AES-GCM encryption algorithm.
+ * Uses Argon2 for key derivation and Web Crypto API for AES-GCM operations.
  */
 export class AESGCMEncryption extends IEncryptionAlgorithm {
   /**
-   * Constructs an instance of AESGCMEncryption.
-   * Sets key length, IV length, and hash algorithm.
+   * Constructs a new AESGCMEncryption instance.
+   * Initializes constants for key and IV lengths from AESGCMConstants.
    */
   constructor() {
     super();
   }
 
   /**
-   * Initializes the AES-GCM encryption instance by deriving the encryption key.
-   * @param {Uint8Array} keyMaterial - The passphrase or key material.
-   * @param {number} saltLength - The length of the salt in bytes.
-   * @param {number} iterations - Number of argon2 iterations.
-   * @param {Uint8Array} [providedSalt] - Optional salt (used during decryption).
-   * @returns {Promise<Uint8Array>} The salt used in key derivation.
+   * Initializes this instance by deriving an AES key from the given key material.
+   *
+   * @async
+   * @override
+   * @param {Uint8Array} keyMaterial - The passphrase or raw key material.
+   * @param {number} saltLength - Number of bytes for salt generation when not provided.
+   * @param {number} iterations - Number of Argon2 iterations to perform.
+   * @param {Uint8Array} [providedSalt] - Optional salt to reuse during decryption.
+   * @returns {Promise<Uint8Array>} A promise resolving to the salt used for key derivation.
    */
   async initialize(keyMaterial, saltLength, iterations, providedSalt) {
     const salt = typeof providedSalt !== 'undefined'
@@ -30,10 +36,14 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
     this.key = await deriveKey(keyMaterial, salt, iterations);
     return salt;
   }
+
   /**
-   * Encrypts the provided plaintext data.
-   * @param {Uint8Array|string} plaintext - The data to encrypt.
-   * @returns {Promise<Uint8Array>} The IV concatenated with the ciphertext.
+   * Encrypts the provided plaintext using AES-GCM.
+   *
+   * @async
+   * @override
+   * @param {Uint8Array|string} plaintext - The data to encrypt, as bytes or UTF-8 string.
+   * @returns {Promise<Uint8Array>} A promise resolving to the concatenation of IV and ciphertext.
    */
   async encryptData(plaintext) {
     const plainBytes = plaintext instanceof Uint8Array
@@ -43,9 +53,11 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
   }
 
   /**
-   * Encrypts a data chunk by generating a fresh IV and encrypting with AES-GCM.
-   * @param {Uint8Array} dataChunk - The data chunk to encrypt.
-   * @returns {Promise<Uint8Array>} The concatenation of the IV and the ciphertext.
+   * Generates a fresh IV and encrypts a chunk of data with AES-GCM.
+   *
+   * @async
+   * @param {Uint8Array} dataChunk - The raw bytes to encrypt.
+   * @returns {Promise<Uint8Array>} A promise resolving to IV concatenated with ciphertext bytes.
    */
   async encryptChunk(dataChunk) {
     const iv = crypto.getRandomValues(new Uint8Array(AESGCMConstants.IV_LENGTH));
@@ -61,9 +73,12 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
   }
 
   /**
-   * Decrypts the ciphertext (which includes the IV) and returns the plaintext bytes.
-   * @param {Uint8Array} cipherWithIv - The data containing the IV and ciphertext.
-   * @returns {Promise<Uint8Array>} The decrypted plaintext bytes.
+   * Decrypts the provided cipher data (including IV) using AES-GCM.
+   *
+   * @async
+   * @override
+   * @param {Uint8Array} cipherWithIv - Byte array containing IV followed by ciphertext.
+   * @returns {Promise<Uint8Array>} A promise resolving to the decrypted plaintext bytes.
    */
   async decryptData(cipherWithIv) {
     const plainBuffer = await this.decryptChunk(cipherWithIv);
@@ -71,9 +86,11 @@ export class AESGCMEncryption extends IEncryptionAlgorithm {
   }
 
   /**
-   * Decrypts a data chunk by extracting the IV and decrypting the ciphertext.
-   * @param {Uint8Array} dataChunk - The data chunk containing the IV and ciphertext.
-   * @returns {Promise<ArrayBuffer>} The decrypted data.
+   * Extracts the IV from the data chunk and decrypts the ciphertext.
+   *
+   * @async
+   * @param {Uint8Array} dataChunk - Byte array containing IV and ciphertext.
+   * @returns {Promise<ArrayBuffer>} A promise resolving to the decrypted data buffer.
    */
   async decryptChunk(dataChunk) {
     const data = new Uint8Array(dataChunk);

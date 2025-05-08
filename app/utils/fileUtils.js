@@ -1,3 +1,10 @@
+/**
+ * Converts a number of bytes into a human-readable string using SI units.
+ *
+ * @param {number} bytes - The number of bytes.
+ * @param {number} [decimals=2] - Number of decimal places to include in the result.
+ * @returns {string} The formatted string, e.g. "1.23 MB".
+ */
 export function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return '0 Bytes';
 
