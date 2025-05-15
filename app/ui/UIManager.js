@@ -43,6 +43,7 @@ export class UIManager {
     $('#inputText').on('input', (event) => this.handleDataChange(event));
     $('#copyOutput').on('click', () => this.copyOutput());
     $('#clearInput').on('click', () => this.clearInput());
+    $('#clearInputFiles').on('click', () => this.clearInputFiles());
     $('.Argon2-Options').on('click', () => $('#argon2-modal').modal('show'));
     $('#renameSlots').on('click', () => $('#renameSlotsModal').modal('show'));
   }
@@ -228,7 +229,7 @@ export class UIManager {
     const fileListElem = $('#fileList');
     const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length) {
-      fileListElem.text('No files selected.');
+      fileListElem.text('Selected files appear here...');
       return;
     }
     fileListElem.empty();
@@ -289,6 +290,18 @@ export class UIManager {
   }
 
   /**
+   * Clears the file input field and resets encryption indicators.
+   *
+   * @returns {void}
+   */
+    clearInputFiles() {
+      $('#inputFiles').val('');
+      $('#fileList').text('Selected files appear here...');
+
+      this.updateEncryptionState(false);
+    }
+
+  /**
    * Clears password input fields (blank and masked).
    *
    * @returns {void}
@@ -305,8 +318,8 @@ export class UIManager {
    */
   clearFiles() {
     this.formHandler.setFormValue('inputFiles', '');
-    $('#fileList').html('');
-    $('#outputFiles').html('The encrypted files appears here');
+    $('#fileList').text('Selected files appear here...');
+    $('#outputFiles').text('The encrypted files appears here');
   }
 
   /**

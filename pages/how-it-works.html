@@ -213,13 +213,7 @@
                                 <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="security-setups.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-lightning-bolt"></i></span>
-                                <span class="menu-text">Setups</span>
-                                <span class="badge bg-warning ms-auto">obs.</span>
-                            </a>
-                        </li>
+                        
                     </ul>
                     <!--- End Menu -->
                     <div class="clearfix"></div>
@@ -513,7 +507,7 @@ outputOriginalData(decryptedData);</code></pre>
     },
     "data": {
         "iv": "V0hzptZKrwI5wHbJ",
-        "ciphertext": "xxxxxx__local_data"
+        "ciphertext": "xxxxxx__secured_data"
     }
 }</code></pre>
                                                 </div>
@@ -522,7 +516,7 @@ outputOriginalData(decryptedData);</code></pre>
     "header": {
         "v": 2,
         "salt": "FtBVivCpev4+G0uqAn7Z5w==",
-        "rounds": 431,
+        "rounds": 20,
         "iv": "TQ5fMPx4cx5y5Yoi",
         "wrappedKey": "BBBB…=="
     },
@@ -552,11 +546,11 @@ dek = crypto.generateAesGcmKey(256);
 
 // pick a KEK
 if (userSetsMasterPassword) {
-    salt = randomSalt();
-    rounds = randomRounds();
-    kek = argon2id(masterPassword, salt, rounds);
+    salt = randomSalt(); // crypto.getRandomValues(16-bytes)
+    rounds = randomRounds(); // 20-21
+    kek = argon2id(masterPassword, salt, rounds); // 64MiB memory used
 } else {
-    kek = DeviceKeyProvider.getKey();
+    kek = DeviceKeyProvider.getKey(); // IndexedDB
     salt = ""; rounds = 1;
 }
 
@@ -572,7 +566,7 @@ storeData({ iv:"", ciphertext:"" });</code></pre>
 if (header.rounds > 1) {
     kek = argon2id(promptPassword(), header.salt, header.rounds);
 } else {
-    kek = DeviceKeyProvider.getKey();
+    kek = DeviceKeyProvider.getKey(); 
 }
 
 dek = AES_GCM_Unwrap(header.wrappedKey, kek, header.iv);</code></pre>

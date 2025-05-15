@@ -42,7 +42,7 @@ export class FileEncryptionController extends EncryptionController {
 
       if (fileLength === 0) {
         ElementHandler.arrowsToCross();
-        $('#outputFiles').html('Encryption / Decryption failed. Please check data or password.');
+        $('#outputFiles').text('Encryption / Decryption failed. Please check data or password.');
         await this.postActionHandling(false, laddaManager);
         return;
       }
