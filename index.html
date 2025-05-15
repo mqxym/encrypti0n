@@ -94,8 +94,8 @@
                         "Local key derivation using Argon2id",
                         "File upload and download",
                         "Text encryption and decryption",
-                        "Password manager with local storage",
-                    ]
+                        "Password manager with local storage"
+                    ],
                     "applicationSubCategory": "Data Encryption",
                     "softwareVersion": "3.0.0b3",
                     "screenshot": "https://encrypti0n.com/assets/images/v3-main-app-screenshot.png",
@@ -294,13 +294,7 @@
                                 <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="security-setups.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-lightning-bolt"></i></span>
-                                <span class="menu-text">Setups</span>
-                                <span class="badge bg-warning ms-auto">obs.</span>
-                            </a>
-                        </li>
+                        
                     </ul>
                     <!--- End Menu -->
                     <div class="clearfix"></div>
@@ -466,10 +460,11 @@
                                             </p>
                                         </div>
                                         <div class="card-body d-none" id="fileEncryptionInput">
-                                            <div class="d-flex flex-row align-items-center" id="inputAction">
+                                            <div class="d-flex flex-row align-items-center" id="inputActionFiles">
                                                 <span class="help-block me-auto">
                                                     <small id="helpOutput">Select the files you want to encrypt or decrypt:</small>
                                                 </span>
+                                                <i class="fs-4 mdi mdi-delete-circle-outline" id="clearInputFiles" data-bs-container="#inputActionFiles" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Clear Files"></i>
                                             </div>
                                             <div class="d-grid">
                                                 <button type="button" class="mb-2 btn btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
@@ -641,7 +636,7 @@
                                             <p class="help-block d-none d-xxl-block mb-0">
                                                 <small>
                                                     Click
-                                                    <i class="mdi mdi-arrow-right-circle-outline"></i>
+                                                    <i class="mdi mdi-arrow-right-circle-outline text-pink"></i>
                                                     to start the
                                                     <span class="action-explanation">encryption</span>
                                                     .
@@ -650,7 +645,7 @@
                                             <p class="help-block d-xxl-none mb-0">
                                                 <small>
                                                     Click
-                                                    <i class="mdi mdi-arrow-down-circle-outline"></i>
+                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink"></i>
                                                     to start
                                                     <span class="action-explanation">encryption</span>
                                                     .
@@ -673,7 +668,7 @@
                             <div class="row informationRow">
                                 <!-- Card 1 -->
                                 <div class="col-lg-4 col-xxl-3 col-12 mb-3">
-                                    <div class="card border-dashed border-secondary border h-100">
+                                    <section class="card border-dashed border-secondary border h-100">
                                         <div class="card-header">
                                             <div class="row align-items-center">
                                                 <div class="col">
@@ -702,7 +697,7 @@
                                                 </p>
                                             </blockquote>
                                         </div>
-                                    </div>
+                                    </section>
                                 </div>
                                 <div class="col-xxl-1 d-none d-xxl-flex d-flex justify-content-center align-items-center mb-3">
                                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
@@ -712,7 +707,7 @@
 
                                 <!-- Card 2 -->
                                 <div class="col-lg-4 col-xxl-3 col-12 mb-3" id="Argon2Info">
-                                    <div class="card border-dashed border-secondary border h-100">
+                                    <section class="card border-dashed border-secondary border h-100">
                                         <div class="card-header">
                                             <div class="row align-items-center">
                                                 <div class="col">
@@ -742,7 +737,7 @@
                                                 </p>
                                             </blockquote>
                                         </div>
-                                    </div>
+                                    </section>
                                 </div>
                                 <div class="col-xxl-1 d-none d-xxl-flex d-flex justify-content-center align-items-center mb-3">
                                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
@@ -752,7 +747,7 @@
 
                                 <!-- Card 3 -->
                                 <div class="col-lg-4 col-xxl-4 col-12 mb-3" id="AESGCMInfo">
-                                    <div class="card border-dashed border-secondary border h-100">
+                                    <section class="card border-dashed border-secondary border h-100">
                                         <div class="card-header">
                                             <div class="row align-items-center">
                                                 <div class="col">
@@ -784,7 +779,7 @@
                                                 </p>
                                             </blockquote>
                                         </div>
-                                    </div>
+                                    </section>
                                 </div>
                             </div>
                         </form>
