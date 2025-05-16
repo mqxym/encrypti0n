@@ -183,7 +183,7 @@
                 <!-- menu-left -->
                 <nav class="scrollbar" role="navigation" aria-label="Main menu">
                     <!--- Menu -->
-                    <ul class="menu" role="menubar">
+                    <menu class="menu" role="menubar">
                         <li class="p-2 menu-item text-white">
                             <a href="/index.html" class="spinner-link menu-link btn btn-primary">
                                 <span class="menu-icon text-white"><i class="mdi mdi-application-import" aria-hidden="true"></i></span>
@@ -302,7 +302,7 @@
                             </a>
                         </li>
                         
-                    </ul>
+                    </menu>
                     <!--- End Menu -->
                     <div class="clearfix"></div>
                 </nav>
@@ -452,7 +452,7 @@
                                                 <label for="inputText" class="help-block me-auto">
                                                     <small id="helpOutput">Enter the text you want to encrypt or decrypt:</small>
                                                 </label>
-                                                <i class="fs-4 mdi mdi-delete-circle-outline" id="clearInput" data-bs-container="#inputAction" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Clear Input" aria-label="Clear text input"></i>
+                                                <i class="fs-4 mdi mdi-delete-circle-outline" id="clearInput" data-bs-container="#inputAction" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Clear Input"></i>
                                             </div>
 
                                             <textarea id="inputText" class="form-control mb-1 border border-blue" style="resize: none" name="inputText" placeholder="Your input here" rows="5"></textarea>
@@ -518,7 +518,7 @@
                                                 <div class="input-group" id="tooltip-copy">
                                                     <input type="text" class="border border-secondary rounded-start form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password" autocomplete="off" />
                                                     <input type="password" class="border border-secondary rounded-start form-control" id="keyPassword" name="keyPassword" placeholder="Password" autocomplete="off" />
-                                                    <button id="keyCopy" type="button" class="rounded-end btn input-group-text btn-outline-warning waves-effect" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Copy Password">
+                                                    <button id="keyCopy" type="button" class="rounded-end btn input-group-text btn-outline-warning waves-effect" aria-label="Copy Password" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Copy Password">
                                                         <i id="keyCopyText" aria-hidden="true" class="mdi mdi-content-copy me-1"></i>
                                                         <i id="keyCopySuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
                                                         <i id="keyCopyFail" aria-hidden="true" class="mdi mdi-close-circle-multiple d-none"></i>
@@ -540,7 +540,7 @@
                                                 <span class="help-block me-auto">
                                                     <small>Load or save passwords</small>
                                                 </span>
-                                                <i class="fs-4 mdi mdi-circle-edit-outline" aria-label="Rename slot sames" id="renameSlots" data-bs-container="#slotAction" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Rename Slots"></i>
+                                                <i class="fs-4 mdi mdi-circle-edit-outline" id="renameSlots" data-bs-container="#slotAction" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Rename Slots"></i>
                                             </div>
                                             <div class="input-group">
                                                 <label for="keySlot" class="d-none">Password slot selection</label>
@@ -585,7 +585,7 @@
                                     <button type="submit" id="actionRight" aria-label="Start encryption or decryption" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-none d-xxl-block" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
                                         <i class="mdi mdi-arrow-right-thick ladda-label"></i>
                                     </button>
-                                    <button type="submit" aria-hidden="true" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-xxl-none" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
+                                    <button type="submit" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-xxl-none" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
                                         <i class="mdi mdi-arrow-down-bold ladda-label"></i>
                                     </button>
                                 </div>
@@ -610,7 +610,7 @@
                                             <p class="help-block d-xxl-none mb-0">
                                                 <small>
                                                     Click
-                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink" aria-label="Start encryption button"></i>
+                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink"></i>
                                                     to start
                                                     <span class="action-explanation">encryption</span>
                                                     .
@@ -652,7 +652,7 @@
                                             <p class="help-block d-xxl-none mb-0">
                                                 <small>
                                                     Click
-                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink" aria-label="Start encryption button"></i>
+                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink"></i>
                                                     to start
                                                     <span class="action-explanation">encryption</span>
                                                     .
