@@ -24,8 +24,18 @@
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#38414A" />
 
-        <!-- Jquery Toast css -->
-        <link href="assets/libs/jquery-toast-plugin/jquery.toast.min.css" rel="stylesheet" type="text/css" />
+        <!-- Social Preview Data -->
+        <meta property="og:title" content="Encrypt or Decrypt Data Securely | Encrypti0n.com">
+        <meta property="og:description" content="Encrypt and decrypt text or files directly in your browser with Encrypti0n.com's secure AES-GCM 256-bit encryption.">
+        <meta property="og:image" content="https://encrypti0n.com/assets/images/v3-main-app-screenshot.png">
+        <meta property="og:url" content="https://encrypti0n.com/index.html">
+        <meta property="og:type" content="website">
+
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Encrypt or Decrypt Data Securely | Encrypti0n.com">
+        <meta name="twitter:description" content="Encrypt and decrypt text or files directly in your browser with Encrypti0n.com's secure AES-GCM 256-bit encryption.">
+        <meta name="twitter:image" content="https://encrypti0n.com/assets/images/v3-main-app-screenshot.png">
+        <meta name="twitter:site" content="@mqxym77">
 
         <!-- Loading button css -->
         <link href="assets/libs/ladda/ladda.min.css" rel="stylesheet" type="text/css" />
@@ -150,36 +160,33 @@
     <body>
         <!-- Begin page -->
         <div id="wrapper">
-            <div id="preloader">
-                <div id="status">
-                    <div class="spinner">Loading...</div>
+            <div id="preloader" aria-hidden="true">
+                <div id="status" role="status" aria-live="polite" aria-busy="true">
+                    <div class="spinner" role="img" aria-label="Loading animation">Loading...</div>
                 </div>
             </div>
 
             <!-- ========== Menu ========== -->
             <div class="app-menu">
-                <!-- Brand Logo -->
                 <div class="logo-box">
-                    <!-- Brand Logo Light -->
-                    <a href="/" class="logo-light">
-                        <img src="assets/images/logo-dark.webp" alt="logo" class="logo-lg" />
-                        <img src="assets/images/logo-sm.webp" alt="small logo" class="logo-sm" />
+                     <a href="/" class="logo-light">
+                        <img src="assets/images/logo-dark.webp" alt="Encrypti0n.com main logo"  class="logo-lg" />
+                        <img src="assets/images/logo-sm.webp" alt="Encrypti0n.com small logo"  class="logo-sm" />
                     </a>
-
-                    <!-- Brand Logo Dark -->
+                   
                     <a href="/" class="logo-dark">
-                        <img src="assets/images/logo.webp" alt="dark logo" class="logo-lg" />
-                        <img src="assets/images/logo-sm.webp" alt="small logo" class="logo-sm" />
+                        <img src="assets/images/logo.webp" aria-hidden="true"  class="logo-lg" />
+                        <img src="assets/images/logo-sm.webp" aria-hidden="true" class="logo-sm" />
                     </a>
                 </div>
 
                 <!-- menu-left -->
-                <div class="scrollbar">
+                <nav class="scrollbar" role="navigation" aria-label="Main menu">
                     <!--- Menu -->
-                    <ul class="menu">
+                    <ul class="menu" role="menubar">
                         <li class="p-2 menu-item text-white">
                             <a href="/index.html" class="spinner-link menu-link btn btn-primary">
-                                <span class="menu-icon text-white"><i class="mdi mdi-application-import"></i></span>
+                                <span class="menu-icon text-white"><i class="mdi mdi-application-import" aria-hidden="true"></i></span>
                                 <span class="menu-text text-white">Main App</span>
                             </a>
                         </li>
@@ -191,31 +198,31 @@
 
                         <li class="menu-item">
                             <a href="/pages/faq.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-comment-question"></i></span>
                                 <span class="menu-text">FAQ</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="/pages/how-it-works.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-file-document"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-file-document"></i></span>
                                 <span class="menu-text">How it works</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="/pages/security-and-privacy.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-upload-lock"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-upload-lock"></i></span>
                                 <span class="menu-text">Security & Privacy</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="/pages/developer-documentation-technical-information.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-source-branch"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-source-branch"></i></span>
                                 <span class="menu-text">Dev Information</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="/pages/encryption-glossary.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-globe-model"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-globe-model"></i></span>
                                 <span class="menu-text">Glossary</span>
                             </a>
                         </li>
@@ -223,7 +230,7 @@
                         <li class="menu-title">Tools</li>
                         <li class="menu-item">
                             <a href="/pages/password-generator.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-form-textbox-password"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-form-textbox-password"></i></span>
                                 <span class="menu-text">Password Generator</span>
                             </a>
                         </li>
@@ -232,7 +239,7 @@
 
                         <li class="menu-item">
                             <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-code-braces"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-code-braces"></i></span>
                                 <span class="menu-text">Sourcecode</span>
                             </a>
                         </li>
@@ -240,7 +247,7 @@
 
                         <li class="menu-item">
                             <a href="/web-crypto-api-playground.html" class="spinner-link menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-gamepad-variant-outline"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-gamepad-variant-outline"></i></span>
                                 <span class="menu-text">Crypto Playground</span>
                             </a>
                         </li>
@@ -249,19 +256,19 @@
 
                         <li class="menu-item">
                             <a href="/index-deprecated.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-view-dashboard-outline"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-view-dashboard-outline"></i></span>
                                 <span class="menu-text">Previous App</span>
                                 <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
 
                         <li class="menu-item">
-                            <a href="#methods" data-bs-toggle="collapse" class="menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-video-input-component"></i></span>
+                            <a href="#methods" data-bs-toggle="collapse" aria-expanded="false" class="menu-link">
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-video-input-component"></i></span>
                                 <span class="menu-text">Methods</span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <div class="collapse" id="methods">
+                            <div class="collapse" id="methods" aria-hidden="true" aria-expanded="false">
                                 <ul class="sub-menu">
                                     <li class="menu-item spinner-link">
                                         <a href="/deprecated/pages/methods-aes-encryption.html" class="menu-link">
@@ -289,7 +296,7 @@
 
                         <li class="menu-item">
                             <a href="/deprecated/pages/faq-old.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-help"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-help"></i></span>
                                 <span class="menu-text">FAQ</span>
                                 <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
@@ -298,30 +305,28 @@
                     </ul>
                     <!--- End Menu -->
                     <div class="clearfix"></div>
-                </div>
+                </nav>
             </div>
 
             <div class="content-page">
-                <div class="navbar-custom">
+                <nav class="navbar-custom" role="navigation" aria-label="Application menu">
                     <div class="topbar">
                         <div class="topbar-menu d-flex align-items-center gap-1">
                             <div class="logo-box">
-                                <!-- Brand Logo Light -->
-                                <a href="/" class="logo-light">
-                                    <img src="assets/images/logo-dark.webp" alt="logo" class="logo-lg" />
-                                    <img src="assets/images/logo-sm.webp" alt="small logo" class="logo-sm" />
+                                 <a href="/" class="logo-light">
+                                    <img src="assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
+                                    <img src="assets/images/logo-sm.webp" alt="Encrypti0n.com small logo" class="logo-sm" />
                                 </a>
 
-                                <!-- Brand Logo Dark -->
                                 <a href="/" class="logo-dark">
-                                    <img src="assets/images/logo.webp" alt="dark logo" class="logo-lg" />
-                                    <img src="assets/images/logo-sm.webp" alt="small logo" class="logo-sm" />
+                                    <img src="assets/images/logo.webp" aria-hidden="true" class="logo-lg" />
+                                    <img src="assets/images/logo-sm.webp" aria-hidden="true" class="logo-sm" />
                                 </a>
                             </div>
 
                             <!-- Sidebar Menu Toggle Button -->
-                            <button class="button-toggle-menu">
-                                <i class="mdi mdi-menu"></i>
+                            <button class="button-toggle-menu" aria-label="Toggle navigation menu" aria-expanded="false">
+                                <i class="mdi mdi-menu" aria-hidden="true"></i>
                             </button>
                         </div>
 
@@ -332,7 +337,7 @@
                                 </a>
                             </li>
                             <li class="dropdown">
-                                <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" aria-label="App Data options">
                                     <i class="fe-settings font-22 d-md-none"></i>
                                     <i class="fe-settings d-md-inline-block d-none"></i>
                                     <span class="ms-1 d-none d-md-inline-block">
@@ -390,8 +395,8 @@
                             </li>
                         </ul>
                     </div>
-                </div>
-                <div class="content">
+                </nav>
+                <main class="content" role="main">
                     <div class="container-fluid px-2">
                         <div class="col-12 mb-1">
                             <div class="page-title-box">
@@ -404,7 +409,7 @@
                                 </div>
                                 <h1 class="page-title">
                                     Main App
-                                    <span class="informationRow">| Encrypt & Decrypt With Client-Side Security</span>
+                                    <span class="informationRow">| Encrypt & Decrypt Online With Client-Side Security</span>
                                 </h1>
                                 <p class="text-muted informationRow">
                                     Use
@@ -444,10 +449,10 @@
                                         </div>
                                         <div class="card-body" id="textEncryptionInput">
                                             <div class="d-flex flex-row align-items-center" id="inputAction">
-                                                <span class="help-block me-auto">
+                                                <label for="inputText" class="help-block me-auto">
                                                     <small id="helpOutput">Enter the text you want to encrypt or decrypt:</small>
-                                                </span>
-                                                <i class="fs-4 mdi mdi-delete-circle-outline" id="clearInput" data-bs-container="#inputAction" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Clear Input"></i>
+                                                </label>
+                                                <i class="fs-4 mdi mdi-delete-circle-outline" id="clearInput" data-bs-container="#inputAction" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Clear Input" aria-label="Clear text input"></i>
                                             </div>
 
                                             <textarea id="inputText" class="form-control mb-1 border border-blue" style="resize: none" name="inputText" placeholder="Your input here" rows="5"></textarea>
@@ -461,13 +466,13 @@
                                         </div>
                                         <div class="card-body d-none" id="fileEncryptionInput">
                                             <div class="d-flex flex-row align-items-center" id="inputActionFiles">
-                                                <span class="help-block me-auto">
+                                                <label for="inputFiles" class="help-block me-auto">
                                                     <small id="helpOutput">Select the files you want to encrypt or decrypt:</small>
-                                                </span>
-                                                <i class="fs-4 mdi mdi-delete-circle-outline" id="clearInputFiles" data-bs-container="#inputActionFiles" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Clear Files"></i>
+                                                </label>
+                                                <i class="fs-4 mdi mdi-delete-circle-outline" aria-label="Clear file input" id="clearInputFiles" data-bs-container="#inputActionFiles" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Clear Files"></i>
                                             </div>
                                             <div class="d-grid">
-                                                <button type="button" class="mb-2 btn btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
+                                                <button type="button" id="uploadFiles" class="mb-2 btn btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
                                                     <span>
                                                         <i class="mdi mdi-file-upload mr-5"></i>
                                                         Select Files
@@ -475,7 +480,7 @@
                                                 </button>
                                             </div>
                                             <input style="display: none" id="inputFiles" name="inputFiles" type="file" class="upload" multiple />
-                                            <div class="form-control border border-secondary rounded scrollable" style="overflow-y: auto; height: 120px" id="fileList" name="fileList">Selected files appear here...</div>
+                                            <div class="form-control border border-secondary rounded scrollable" style="overflow-y: auto; height: 120px" id="fileList" name="fileList" role="status" aria-live="polite">Selected files appear here...</div>
                                             <p class="card-text text-muted">
                                                 The site detects if your files are
                                                 <span class="badge badge-outline-pink rounded-pill" id="encryptedFilesPill">encrypted</span>
@@ -487,7 +492,7 @@
                                     </div>
                                 </div>
                                 <div class="col-xxl-1 col-lg-2 col-12 d-flex justify-content-center align-items-center mb-3">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
+                                    <button  tabindex="-1" aria-hidden="true" type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
                                         <i class="mdi mdi-plus"></i>
                                     </button>
                                 </div>
@@ -497,7 +502,7 @@
                                             <div class="d-flex flex-row align-items-center">
                                                 <div class="me-auto"><h2>Password</h2></div>
                                                 <div>
-                                                    <a href="#Argon2Info" class="btn btn-xs btn-outline-secondary rounded-pill">Salted Argon2</a>
+                                                    <a tabindex="-1" href="#Argon2Info" class="btn btn-xs btn-outline-secondary rounded-pill">Salted Argon2</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -514,14 +519,14 @@
                                                     <input type="text" class="border border-secondary rounded-start form-control d-none" id="keyBlank" name="keyBlank" placeholder="Password" autocomplete="off" />
                                                     <input type="password" class="border border-secondary rounded-start form-control" id="keyPassword" name="keyPassword" placeholder="Password" autocomplete="off" />
                                                     <button id="keyCopy" type="button" class="rounded-end btn input-group-text btn-outline-warning waves-effect" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Copy Password">
-                                                        <i id="keyCopyText" class="mdi mdi-content-copy me-1"></i>
-                                                        <i id="keyCopySuccess" class="mdi mdi-check-all d-none"></i>
-                                                        <i id="keyCopyFail" class="mdi mdi-close-circle-multiple d-none"></i>
+                                                        <i id="keyCopyText" aria-hidden="true" class="mdi mdi-content-copy me-1"></i>
+                                                        <i id="keyCopySuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
+                                                        <i id="keyCopyFail" aria-hidden="true" class="mdi mdi-close-circle-multiple d-none"></i>
                                                     </button>
                                                 </div>
                                                 <button id="keyGenerate" class="btn btn-outline-secondary waves-effect ms-1" style="min-width: 90px" type="button" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Generate Password">
-                                                    <i id="keyGenerateText" class="mdi mdi-cached me-1"></i>
-                                                    <i id="keyGenerateSuccess" class="mdi mdi-check-all d-none"></i>
+                                                    <i id="keyGenerateText" aria-hidden="true" class="mdi mdi-cached me-1"></i>
+                                                    <i id="keyGenerateSuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
                                                     <span>New</span>
                                                 </button>
                                             </div>
@@ -535,12 +540,13 @@
                                                 <span class="help-block me-auto">
                                                     <small>Load or save passwords</small>
                                                 </span>
-                                                <i class="fs-4 mdi mdi-circle-edit-outline" id="renameSlots" data-bs-container="#slotAction" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Rename Slots"></i>
+                                                <i class="fs-4 mdi mdi-circle-edit-outline" aria-label="Rename slot sames" id="renameSlots" data-bs-container="#slotAction" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Rename Slots"></i>
                                             </div>
                                             <div class="input-group">
+                                                <label for="keySlot" class="d-none">Password slot selection</label>
                                                 <div class="d-flex flex-row align-items-center w-100" id="tooltip-password">
                                                     <div class="me-auto flex-grow-1">
-                                                        <select class="border border-secondary form-select w-100" id="keySlot" name="keySlot">
+                                                        <select class="border border-secondary form-select w-100" id="keySlot" name="keySlot" aria-label="Select password slot">
                                                             <option value="1">Slot 1</option>
                                                             <option value="2">Slot 2</option>
                                                             <option value="3">Slot 3</option>
@@ -555,31 +561,31 @@
                                                     </div>
                                                     <div>
                                                         <button type="button" id="loadKey" class="ms-1 btn btn-outline-secondary waves-effect">
-                                                            <i id="loadKeyFail" class="mdi d-none mdi-close-circle-multiple"></i>
-                                                            <i id="loadKeySuccess" class="mdi mdi-check-all d-none"></i>
+                                                            <i id="loadKeyFail" aria-hidden="true" class="mdi d-none mdi-close-circle-multiple"></i>
+                                                            <i id="loadKeySuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
                                                             <span id="loadKeyText">Load</span>
                                                         </button>
                                                     </div>
                                                     <div class="ms-1">
                                                         <button type="button" id="saveKey" class="btn btn-outline-secondary waves-effect mr-2">
-                                                            <i id="saveKeySuccess" class="mdi mdi-check-all d-none"></i>
-                                                            <i id="saveKeyFail" class="mdi mdi-close-circle-multiple d-none"></i>
+                                                            <i id="saveKeySuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
+                                                            <i id="saveKeyFail" aria-hidden="true" class="mdi mdi-close-circle-multiple d-none"></i>
                                                             <span id="saveKeyText">Save</span>
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <p class="card-text position-absolute bottom-0 end-0 m-2">
-                                                <u class="Argon2-Options">Open Argon2 Options</u>
+                                                <u class="Argon2-Options" tabindex="0">Open Argon2 Options</u>
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-xxl-1 col-lg-12 d-flex justify-content-center align-items-center mb-3 pe-xxl-4" id="tooltip-encrypt">
-                                    <button type="submit" id="actionRight" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-none d-xxl-block" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
+                                    <button type="submit" id="actionRight" aria-label="Start encryption or decryption" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-none d-xxl-block" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
                                         <i class="mdi mdi-arrow-right-thick ladda-label"></i>
                                     </button>
-                                    <button type="submit" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-xxl-none" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
+                                    <button type="submit" aria-hidden="true" class="action-button ladda-button btn btn-lg btn-pink waves-effect waves-light rounded-pill d-xxl-none" data-style="zoom-in" dir="ltr" data-bs-container="#tooltip-encrypt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Encrypt with AES-GCM-256">
                                         <i class="mdi mdi-arrow-down-bold ladda-label"></i>
                                     </button>
                                 </div>
@@ -588,11 +594,11 @@
                                         <div class="card-header" style="height: 60px">
                                             <div class="d-flex flex-row align-items-center">
                                                 <div class="me-auto"><h2>Output</h2></div>
-                                                <a href="#AESGCMInfo" class="btn btn-xs btn-outline-secondary rounded-pill">AES-GCM | 256-bit</a>
+                                                <a tabindex="-1" href="#AESGCMInfo" class="btn btn-xs btn-outline-secondary rounded-pill">AES-GCM | 256-bit</a>
                                             </div>
                                         </div>
                                         <div class="card-body" id="textEncryptionOutput">
-                                            <p class="help-block d-none d-xxl-block mb-0">
+                                            <p class="help-block d-none d-xxl-block mb-0" aria-hidden="true">
                                                 <small>
                                                     Click
                                                     <i class="mdi mdi-arrow-right-circle-outline text-pink"></i>
@@ -604,7 +610,7 @@
                                             <p class="help-block d-xxl-none mb-0">
                                                 <small>
                                                     Click
-                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink"></i>
+                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink" aria-label="Start encryption button"></i>
                                                     to start
                                                     <span class="action-explanation">encryption</span>
                                                     .
@@ -613,6 +619,7 @@
 
                                             <div class="input-group mb-2">
                                                 <div class="col-12">
+                                                    <label for="outputText" class="d-none">Encrypted text output</label>
                                                     <textarea class="form-control border border-pink" id="outputText" name="outputText" style="resize: none" readonly placeholder="The encryption result appears here" rows="5"></textarea>
                                                     <span class="help-block">
                                                         <small id="outputFooter">Encrypted output is base64 formatted.</small>
@@ -623,9 +630,9 @@
                                                 <div class="col-12">
                                                     <div class="d-grid">
                                                         <button id="copyOutput" type="button" class="btn btn-sm btn-outline-warning waves-effect">
-                                                            <i id="copyOutputText" class="mdi mdi-content-copy me-1"></i>
-                                                            <i id="copyOutputSuccess" class="mdi mdi-check-all me-1 d-none"></i>
-                                                            <i id="copyOutputFail" class="mdi mdi-close-circle-multiple me-1 d-none"></i>
+                                                            <i id="copyOutputText" aria-hidden="true" class="mdi mdi-content-copy me-1"></i>
+                                                            <i id="copyOutputSuccess" aria-hidden="true" class="mdi mdi-check-all me-1 d-none"></i>
+                                                            <i id="copyOutputFail" aria-hidden="true" class="mdi mdi-close-circle-multiple me-1 d-none"></i>
                                                             <span>Copy Output</span>
                                                         </button>
                                                     </div>
@@ -633,7 +640,7 @@
                                             </div>
                                         </div>
                                         <div class="card-body d-none" id="fileEncryptionOutput">
-                                            <p class="help-block d-none d-xxl-block mb-0">
+                                            <p class="help-block d-none d-xxl-block mb-0" aria-hidden="true">
                                                 <small>
                                                     Click
                                                     <i class="mdi mdi-arrow-right-circle-outline text-pink"></i>
@@ -645,7 +652,7 @@
                                             <p class="help-block d-xxl-none mb-0">
                                                 <small>
                                                     Click
-                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink"></i>
+                                                    <i class="mdi mdi-arrow-down-circle-outline text-pink" aria-label="Start encryption button"></i>
                                                     to start
                                                     <span class="action-explanation">encryption</span>
                                                     .
@@ -654,7 +661,8 @@
 
                                             <div class="input-group mb-2">
                                                 <div class="col-12">
-                                                    <div class="form-control border border-secondary rounded scrollable" style="overflow-y: auto; height: 150px" id="outputFiles" name="outputFiles" placeholder="The encrypted files appears here">The encrypted files appears here</div>
+                                                    <label for="outputFiles" class="d-none">Encrypted files output:</label>
+                                                    <div role="status" aria-live="polite" class="form-control border border-secondary rounded scrollable" style="overflow-y: auto; height: 150px" id="outputFiles" name="outputFiles" placeholder="The encrypted files appears here">The encrypted files appears here</div>
                                                     <span class="help-block">
                                                         <small id="outputFooter">Encrypted files are in raw binary format.</small>
                                                     </span>
@@ -700,7 +708,7 @@
                                     </section>
                                 </div>
                                 <div class="col-xxl-1 d-none d-xxl-flex d-flex justify-content-center align-items-center mb-3">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
+                                    <button tabindex="-1" type="button" aria-hidden="true" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
                                         <i class="mdi mdi-plus"></i>
                                     </button>
                                 </div>
@@ -729,7 +737,7 @@
 
                                                 <p>
                                                     You can customize the rounds and salt by opening the
-                                                    <u class="Argon2-Options">Argon2 Options</u>
+                                                    <u class="Argon2-Options" tabindex="0">Argon2 Options</u>
                                                     (if you know what you are doing).
                                                 </p>
                                                 <p>
@@ -740,7 +748,7 @@
                                     </section>
                                 </div>
                                 <div class="col-xxl-1 d-none d-xxl-flex d-flex justify-content-center align-items-center mb-3">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
+                                    <button tabindex="-1" aria-hidden="true" type="button" class="btn btn-sm btn-outline-secondary rounded-pill waves-effect waves-light">
                                         <i class="mdi mdi-arrow-right-thick"></i>
                                     </button>
                                 </div>
@@ -784,8 +792,8 @@
                             </div>
                         </form>
                     </div>
-                </div>
-                <div id="do-application-encryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="encryptApplication-Modal" aria-hidden="true">
+                </main>
+                <div id="do-application-encryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="encryptApplication-Modal" aria-hidden="true" aria-modal="true">
                     <div class="modal-dialog">
                         <form role="form" id="encryptApplicationForm" autocomplete="on">
                             <div class="modal-content">
@@ -809,11 +817,11 @@
                                             <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
                                             <div class="mb-3">
                                                 <label for="encryptApplicationPw" class="form-label">Master Password</label>
-                                                <input name="encryptApplicationMPw" type="password" class="form-control border border-secondary" id="encryptApplicationPw" placeholder="Secure Password" autocomplete="new-password" required />
+                                                <input name="encryptApplicationMPw" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="encryptApplicationPw" placeholder="Secure Password" autocomplete="new-password" required />
                                             </div>
                                             <div class="mb-3">
                                                 <label for="encryptApplicationPwConfirmation" class="form-label">Confirm Password</label>
-                                                <input name="encryptApplicationMPwConfirmation" type="password" class="form-control border border-secondary" id="encryptApplicationPwConfirmation" autocomplete="new-password" required />
+                                                <input name="encryptApplicationMPwConfirmation" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="encryptApplicationPwConfirmation" autocomplete="new-password" required />
                                             </div>
                                             <p class="text-pink d-none" id="encryptApplicationMatchFail">The two entered passwords don't match.</p>
                                             <p class="text-pink d-none" id="encryptApplicationMissingPw">You have to enter your secure master password two times to encrypt the applications data.</p>
@@ -826,17 +834,17 @@
                                         Close
                                     </button>
                                     <button type="submit" id="encryptApplication" class="ladda-button btn btn-pink waves-effect waves-light" data-style="zoom-in" dir="ltr">
-                                        <i id="encryptApplicationSuccess" class="mdi mdi-check-all d-none"></i>
-                                        <i id="encryptApplicationText" class="mdi mdi-lock-outline"></i>
+                                        <i id="encryptApplicationSuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
+                                        <i id="encryptApplicationText" aria-hidden="true" class="mdi mdi-lock-outline"></i>
                                         <span class="ladda-label" id="encryptApplicationText">Encrypt!</span>
-                                        <span class="ladda-spinner"></span>
+                                        <span aria-hidden="true" class="ladda-spinner"></span>
                                     </button>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
-                <div id="do-application-decryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="do-application-decryption" aria-hidden="true" style="display: none">
+                <div id="do-application-decryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="do-application-decryption" aria-hidden="true" style="display: none" aria-modal="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -851,7 +859,7 @@
                                             <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
                                             <div class="mb-3">
                                                 <label for="decryptApplicationMPw" class="form-label">Master Password</label>
-                                                <input name="decryptApplicationMPw" type="password" class="form-control border border-secondary" id="decryptApplicationMPw" autocomplete="current-password" required />
+                                                <input name="decryptApplicationMPw" type="password" class="form-control border border-secondary" id="decryptApplicationMPw" autocomplete="current-password" required aria-required="true" aria-invalid="false" />
                                             </div>
                                             <p>If you don't remember your master password, deleting data is the only option.</p>
                                         </div>
@@ -863,17 +871,17 @@
                                         <span>Delete all data</span>
                                     </button>
                                     <button type="submit" id="decryptApplication" class="ladda-button btn btn-blue waves-effect waves-light" data-style="zoom-in" dir="ltr">
-                                        <i id="decryptApplicationText" class="mdi mdi-lock-open-variant-outline"></i>
-                                        <i id="decryptApplicationFail" class="mdi mdi-close-circle-multiple d-none"></i>
+                                        <i id="decryptApplicationText" aria-hidden="true" class="mdi mdi-lock-open-variant-outline"></i>
+                                        <i id="decryptApplicationFail" aria-hidden="true" class="mdi mdi-close-circle-multiple d-none"></i>
                                         <span class="ladda-label" id="decryptApplicationText">Decrypt!</span>
-                                        <span class="ladda-spinner"></span>
+                                        <span aria-hidden="true" class="ladda-spinner"></span>
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
-                <div id="argon2-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="argon2-modal-label" aria-hidden="true">
+                <div id="argon2-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="argon2-modal-label" aria-hidden="true" aria-modal="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -939,15 +947,15 @@
                                 </button>
                                 <button type="button" id="argon2-save" class="ladda-button btn btn-outline-success waves-effect waves-light" data-style="zoom-in">
                                     <i id="saveOptionsText" class="mdi mdi-content-save-outline"></i>
-                                    <i id="saveOptionsSuccess" class="mdi mdi-check-all d-none"></i>
-                                    <i id="saveOptionsFail" class="mdi mdi-close-circle-multiple d-none"></i>
+                                    <i id="saveOptionsSuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
+                                    <i id="saveOptionsFail" aria-hidden="true" class="mdi mdi-close-circle-multiple d-none"></i>
                                     <span>Save Settings</span>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="renameSlotsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="renameSlots" aria-hidden="true">
+                <div id="renameSlotsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="renameSlots" aria-hidden="true" aria-modal="true">
                     <div class="modal-dialog">
                         <form id="newSlotForm" autocomplete="off">
                             <div class="modal-content">
@@ -961,8 +969,9 @@
                                             <div class="input-group mb-2">
                                                 <b class="mb-1">Change the name for each slot:</b>
                                                 <div class="d-flex flex-row align-items-center w-100">
+                                                    <label for="keySlotChange" class="d-none">Password slot selection</label>
                                                     <div class="me-auto">
-                                                        <select class="form-select border border-secondary" name="keySlotChange">
+                                                        <select class="form-select border border-secondary" aria-label="Select Slot for name change" name="keySlotChange">
                                                             <option value="1">Slot 1</option>
                                                             <option value="2">Slot 2</option>
                                                             <option value="3">Slot 3</option>
@@ -989,9 +998,9 @@
                                         Close
                                     </button>
                                     <button type="submit" id="renameSlotAction" class="btn btn-outline-success waves-effect waves-light">
-                                        <i id="renameSlotActionText" class="mdi mdi-content-save-outline"></i>
-                                        <i id="renameSlotActionSuccess" class="mdi mdi-check-all d-none"></i>
-                                        <i id="renameSlotActionFail" class="mdi mdi-close-circle-multiple d-none"></i>
+                                        <i id="renameSlotActionText" aria-hidden="true" class="mdi mdi-content-save-outline"></i>
+                                        <i id="renameSlotActionSuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
+                                        <i id="renameSlotActionFail" aria-hidden="true" class="mdi mdi-close-circle-multiple d-none"></i>
                                         <span>Save Slot Name</span>
                                     </button>
                                 </div>
