@@ -39,36 +39,32 @@
     <body>
         <!-- Begin page -->
         <div id="wrapper">
-            <div id="preloader">
-                <div id="status">
-                    <div class="spinner">Loading...</div>
+            <div id="preloader" aria-hidden="true">
+                <div id="status" role="status" aria-live="polite" aria-busy="true">
+                    <div class="spinner" role="img" aria-label="Loading animation">Loading...</div>
                 </div>
             </div>
 
             <!-- ========== Menu ========== -->
             <div class="app-menu">
-                <!-- Brand Logo -->
                 <div class="logo-box">
-                    <!-- Brand Logo Light -->
                     <a href="/" class="logo-light">
-                        <img src="../assets/images/logo-dark.webp" alt="logo" class="logo-lg" />
-                        <img src="../assets/images/logo-sm.webp" alt="small logo" class="logo-sm" />
+                        <img src="../assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
+                        <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo"  class="logo-sm" />
                     </a>
-
-                    <!-- Brand Logo Dark -->
                     <a href="/" class="logo-dark">
-                        <img src="../assets/images/logo.webp" alt="dark logo" class="logo-lg" />
-                        <img src="../assets/images/logo-sm.webp" alt="small logo" class="logo-sm" />
+                        <img src="../assets/images/logo.webp" aria-hidden="true"  class="logo-lg" />
+                        <img src="../assets/images/logo-sm.webp" aria-hidden="true" class="logo-sm" />
                     </a>
                 </div>
 
                 <!-- menu-left -->
-                <div class="scrollbar">
+                <nav class="scrollbar" role="navigation" aria-label="Main menu">
                     <!--- Menu -->
-                    <ul class="menu">
+                    <ul class="menu" role="menubar">
                         <li class="p-2 menu-item text-white">
                             <a href="/index.html" class="spinner-link menu-link btn btn-primary">
-                                <span class="menu-icon text-white"><i class="mdi mdi-application-import"></i></span>
+                                <span class="menu-icon text-white"><i class="mdi mdi-application-import" aria-hidden="true"></i></span>
                                 <span class="menu-text text-white">Open App</span>
                                 <span class="badge bg-light text-dark ms-auto">New</span>
                             </a>
@@ -81,31 +77,31 @@
 
                         <li class="menu-item">
                             <a href="/pages/faq.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-comment-question"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-comment-question"></i></span>
                                 <span class="menu-text">FAQ</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="/pages/how-it-works.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-file-document"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-file-document"></i></span>
                                 <span class="menu-text">How it works</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="/pages/security-and-privacy.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-upload-lock"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-upload-lock"></i></span>
                                 <span class="menu-text">Security & Privacy</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="/pages/developer-documentation-technical-information.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-source-branch"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-source-branch"></i></span>
                                 <span class="menu-text">Dev Information</span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a href="/pages/encryption-glossary.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-globe-model"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-globe-model"></i></span>
                                 <span class="menu-text">Glossary</span>
                             </a>
                         </li>
@@ -113,7 +109,7 @@
                         <li class="menu-title">Tools</li>
                         <li class="menu-item">
                             <a href="/pages/password-generator.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-form-textbox-password"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-form-textbox-password"></i></span>
                                 <span class="menu-text">Password Generator</span>
                             </a>
                         </li>
@@ -122,7 +118,7 @@
 
                         <li class="menu-item">
                             <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-code-braces"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-code-braces"></i></span>
                                 <span class="menu-text">Sourcecode</span>
                             </a>
                         </li>
@@ -130,7 +126,7 @@
 
                         <li class="menu-item">
                             <a href="/web-crypto-api-playground.html" class="spinner-link menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-gamepad-variant-outline"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-gamepad-variant-outline"></i></span>
                                 <span class="menu-text">Crypto Playground</span>
                             </a>
                         </li>
@@ -139,19 +135,19 @@
 
                         <li class="menu-item">
                             <a href="/index-deprecated.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-view-dashboard-outline"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-view-dashboard-outline"></i></span>
                                 <span class="menu-text">Previous App</span>
                                 <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
 
                         <li class="menu-item">
-                            <a href="#methods" data-bs-toggle="collapse" class="menu-link">
-                                <span class="menu-icon"><i class="mdi mdi-video-input-component"></i></span>
+                            <a href="#methods" data-bs-toggle="collapse" aria-expanded="false" class="menu-link">
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-video-input-component"></i></span>
                                 <span class="menu-text">Methods</span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <div class="collapse" id="methods">
+                            <div class="collapse" id="methods" aria-hidden="true" aria-expanded="false">
                                 <ul class="sub-menu">
                                     <li class="menu-item spinner-link">
                                         <a href="/deprecated/pages/methods-aes-encryption.html" class="menu-link">
@@ -179,7 +175,7 @@
 
                         <li class="menu-item">
                             <a href="/deprecated/pages/faq-old.html" class="menu-link spinner-link">
-                                <span class="menu-icon"><i class="mdi mdi-help"></i></span>
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-help"></i></span>
                                 <span class="menu-text">FAQ</span>
                                 <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
@@ -188,48 +184,46 @@
                     </ul>
                     <!--- End Menu -->
                     <div class="clearfix"></div>
-                </div>
+                </nav>
             </div>
 
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
-                        <div class="topbar-menu d-flex align-items-center gap-1">
+                      <div class="topbar-menu d-flex align-items-center gap-1">
                             <div class="logo-box">
-                                <!-- Brand Logo Light -->
-                                <a href="/" class="logo-light">
-                                    <img src="../assets/images/logo-dark.webp" alt="logo" class="logo-lg" />
-                                    <img src="../assets/images/logo-sm.webp" alt="small logo" class="logo-sm" />
+                                 <a href="/" class="logo-light">
+                                    <img src="../assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
+                                    <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo" class="logo-sm" />
                                 </a>
 
-                                <!-- Brand Logo Dark -->
                                 <a href="/" class="logo-dark">
-                                    <img src="../assets/images/logo.webp" alt="dark logo" class="logo-lg" />
-                                    <img src="../assets/images/logo-sm.webp" alt="small logo" class="logo-sm" />
+                                    <img src="../assets/images/logo.webp" aria-hidden="true" class="logo-lg" />
+                                    <img src="../assets/images/logo-sm.webp" aria-hidden="true" class="logo-sm" />
                                 </a>
                             </div>
 
                             <!-- Sidebar Menu Toggle Button -->
-                            <button class="button-toggle-menu">
-                                <i class="mdi mdi-menu"></i>
+                            <button class="button-toggle-menu" aria-label="Toggle navigation menu" aria-expanded="false">
+                                <i class="mdi mdi-menu" aria-hidden="true"></i>
                             </button>
                         </div>
 
-                        <ul class="topbar-menu d-flex align-items-center">
+                       <ul class="topbar-menu d-flex align-items-center">
                             <li class="d-none d-md-inline-block">
-                                <a class="nav-link waves-effect waves-light" href="" data-toggle="fullscreen">
+                                <a class="nav-link waves-effect waves-light" aria-label="Toggle fullscreen" href="" data-toggle="fullscreen">
                                     <i class="fe-maximize font-22"></i>
                                 </a>
                             </li>
                             <li class="">
-                                <div class="nav-link waves-effect waves-light" id="light-dark-mode">
+                                <a class="nav-link waves-effect waves-light" id="light-dark-mode" aria-label="Toggle darkmode">
                                     <i class="ri-moon-line font-22"></i>
-                                </div>
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <div class="content">
+                <main class="content">
                     <div class="container-fluid px-2">
                         <div class="col-12 mb-1">
                             <div class="page-title-box">
@@ -250,7 +244,7 @@
                             <p class="lead">Links coming soon.</p>
                         </section>
                     </div>
-                </div>
+                </main>
 
                 <footer class="footer py-2">
                     <div class="container-fluid">
