@@ -441,8 +441,8 @@
                                                 <label for="inputText" class="help-block me-auto">
                                                     <small id="helpOutput">Enter the text you want to encrypt or decrypt:</small>
                                                 </label>
-                                                <button id="clearInput" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Clear Input" data-bs-container="#inputAction" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Clear Input">
-                                                    <i class="mdi mdi-delete-circle-outline text-secondary"></i>
+                                                <button id="clearInput" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Clear Text Input">
+                                                    <i class="mdi mdi-delete-circle-outline text-secondary" data-bs-container="#inputAction" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Clear Input"></i>
                                                 </button>
                                             </div>
 
@@ -460,7 +460,10 @@
                                                 <label for="inputFiles" class="help-block me-auto">
                                                     <small id="helpOutput">Select the files you want to encrypt or decrypt:</small>
                                                 </label>
-                                                <i class="fs-4 mdi mdi-delete-circle-outline" aria-label="Clear file input" id="clearInputFiles" data-bs-container="#inputActionFiles" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Clear Files"></i>
+                                                <button id="clearInputFiles" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Clear file input">
+                                                    <i class="mdi mdi-delete-circle-outline bg-secondary" data-bs-container="#inputActionFiles" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Clear Files"></i>
+                                                </button>
+                                                
                                             </div>
                                             <div class="d-grid">
                                                 <button type="button" id="uploadFiles" class="mb-2 btn btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
@@ -503,8 +506,8 @@
                                                 <span class="help-block me-auto">
                                                     <small id="helpOutput">Enter or generate the encryption password:</small>
                                                 </span>
-                                                <button id="clearPassword" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Clear Password" data-bs-container="#clearPasswordContainer" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Clear Password">
-                                                    <i class="mdi mdi-delete-circle-outline text-secondary"></i>
+                                                <button id="clearPassword" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Clear Password">
+                                                    <i class="mdi mdi-delete-circle-outline text-secondary" data-bs-container="#clearPasswordContainer" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Clear Password"></i>
                                                 </button>
                                             </div>
                                             <div class="d-flex flex-row align-items-center mb-1">
@@ -533,8 +536,8 @@
                                                 <span class="help-block me-auto">
                                                     <small>Load or save passwords</small>
                                                 </span>
-                                                <button id="renameSlots" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Rename Slots" data-bs-container="#slotAction" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Rename Slots">
-                                                    <i class="mdi mdi-circle-edit-outline text-secondary"></i>
+                                                <button id="renameSlots" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Rename Slots">
+                                                    <i class="mdi mdi-circle-edit-outline text-secondary" data-bs-container="#slotAction" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Rename Slots"></i>
                                                 </button>
                                             </div>
                                             <div class="input-group">
