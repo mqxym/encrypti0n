@@ -339,6 +339,13 @@
                                     </div>
                                     <div class="dropdown-divider"></div>
 
+                                    <!-- item-->
+                                    <a class="dropdown-item notify-item" id="clearClipboard">
+                                        <i class="mdi mdi-clipboard-text-off me-1"></i>
+                                        Clear Clipboard
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+
                                     <div class="dropdown-header noti-title">
                                         <h6 class="text-overflow m-0">Encrypt local data with a master password</h6>
                                     </div>
@@ -882,7 +889,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title" id="argon2-modal-label">Configure Argon2 Algorithm</h4>
+                                <h4 class="modal-title" id="argon2-modal-label">Configure Argon2id Algorithm</h4>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-4">
@@ -894,11 +901,11 @@
                                                 <br />
                                                 <span class="help-block">
                                                     <small>
-                                                        Low: 5 rounds
+                                                        Low: 5 rounds <span class="text-danger">(low security / <b>not recommended</b> / use with caution)</span>
                                                         <br />
-                                                        Middle: 20 rounds
+                                                        Middle: <b>20 rounds</b> (default, moderate long calculation)
                                                         <br />
-                                                        High: 40 rounds
+                                                        High: <b>40 rounds</b> (higher computational cost, longer calculation)
                                                     </small>
                                                 </span>
                                             </p>
@@ -919,9 +926,9 @@
                                                 <br />
                                                 <span class="help-block">
                                                     <small>
-                                                        Low: Random 12-byte
+                                                        Low: Random <b>12-byte</b> (smaller output)
                                                         <br />
-                                                        High: Random 16-byte
+                                                        High: Random <b>16-byte</b> (default)
                                                     </small>
                                                 </span>
                                             </p>
@@ -933,6 +940,22 @@
                                                     <button type="button" id="salt-high" class="btn btn-sm btn-secondary rounded-pill">High</button>
                                                 </div>
                                             </div>
+                                            <hr />
+                                            <p class="mt-3">
+                                                <b>Other Used Argon2 Values</b>
+                                                <br />
+                                                <span class="help-block">
+                                                    <small>
+                                                        Argon2-Variant: Argon2id
+                                                        <br />
+                                                        Parallelism: 1 (JavaScript limitation)
+                                                        <br />
+                                                        Algorithm Memory: 65536 KiB (Memory Cost)
+                                                        <br>
+                                                        Key Length: 32-Byte / 256-Bit
+                                                    </small>
+                                                </span>
+                                            </p>
                                         </div>
                                     </div>
                                 </form>

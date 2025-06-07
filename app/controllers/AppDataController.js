@@ -45,6 +45,7 @@ export class AppDataController {
     $('#encryptApplicationModal').on('click', () => this.handleAppEncryptModal());
     $('#removeAllData').on('click', () => this.removeAllData());
     $('#removeLocalDataDecryptionModal').on('click', () => this.removeAllData());
+    $('#clearClipboard').on('click', () => this.clearClipboard());
   }
 
   /**
@@ -289,6 +290,27 @@ export class AppDataController {
     }
     if (typeof password !== 'string') {
       throw new Error('Key must be a string');
+    }
+  }
+
+  async clearClipboard () {
+    try {
+      await navigator.clipboard.writeText('');
+      Swal.fire({
+            icon: 'success',
+            title: 'Clipboard cleared.',
+            timer: 2500,
+            showCancelButton: false,
+            confirmButtonText: 'Ok',
+          });
+    } catch (err) {
+       Swal.fire({
+        icon: 'error',
+        title: 'Failed to clear clipboard',
+        text: '',
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
     }
   }
 }

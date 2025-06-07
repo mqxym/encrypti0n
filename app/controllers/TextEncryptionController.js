@@ -73,8 +73,9 @@ export class TextEncryptionController extends EncryptionController {
    */
   async handleEncryption() {
     const { inputText } = this.formHandler.formValues;
-    const { key } = this.getKeyData();
+    let { key } = this.getKeyData();
     if (!inputText || !key) return false;
+    this.shortPasswordWarning(key);
 
     try {
       const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
@@ -85,6 +86,9 @@ export class TextEncryptionController extends EncryptionController {
       return true;
     } catch (err) {
       return false;
+    } finally {
+      key = null;
+      this.formHandler.setFormValue('inputText', '');
     }
   }
 
@@ -97,15 +101,19 @@ export class TextEncryptionController extends EncryptionController {
    */
   async handleDecryption() {
     const { inputText } = this.formHandler.formValues;
-    const { key } = this.getKeyData();
+    let { key } = this.getKeyData();
     if (!inputText || !key) return false;
+    let decrypted;
 
     try {
-      const decrypted = await this.encryptionService.decryptText(inputText, key);
+      decrypted = await this.encryptionService.decryptText(inputText, key);
       this.formHandler.setFormValue('outputText', decrypted);
       return true;
     } catch (error) {
       return false;
+    } finally {
+      key = null;
+      decrypted = null
     }
   }
 }

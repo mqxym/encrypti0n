@@ -73,6 +73,8 @@ export async function deriveKey(password, salt, iterations, mem_cost = null) {
     ['encrypt', 'decrypt']
   );
 
+  argon2Result.hash = null;
+
   return cryptoKey;
 }
 
@@ -115,5 +117,6 @@ export async function deriveKek(password, salt, iterations) {
     ['wrapKey', 'unwrapKey']
   );
 
+  argon2Result.hash = null;
   return cryptoKey;
 }
