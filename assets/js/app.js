@@ -710,6 +710,29 @@ class ThemeCustomizer {
             })
         });
 
+        // CUSTOM AUTO THEME CHANGE
+
+        // Define your function to handle the theme change
+        function handleThemeChange(e) {
+        if (e.matches) {
+            // OS is using dark mode
+            self.changeThemeMode('dark');
+        } else {
+            // OS is using light mode
+            self.changeThemeMode('light');
+        }
+        }
+
+        // Set up the listener
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        mediaQuery.addEventListener('change', handleThemeChange);
+
+        // Optional: run once on load to set initial theme
+        if (mediaQuery.matches) {
+        self.changeThemeMode('dark');
+        } else {
+        self.changeThemeMode('light');
+        }
 
         //TopBar Light Dark
         var themeColorToggle = document.getElementById('light-dark-mode');
