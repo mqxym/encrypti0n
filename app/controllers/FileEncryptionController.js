@@ -79,6 +79,7 @@ export class FileEncryptionController extends EncryptionController {
   async handleEncryption(file) {
     const { key } = this.getKeyData();
     if (!key) return false;
+    this.shortPasswordWarning(key);
     const algo = 'aesgcm';
     const outputFilesDiv = $('#outputFiles');
 

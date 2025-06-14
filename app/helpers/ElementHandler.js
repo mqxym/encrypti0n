@@ -169,14 +169,4 @@ export class ElementHandler {
   static uncheck(element) {
     $('#' + element).prop('checked', false);
   }
-  static copyText(element) {
-    var input = $('#' + element)[0];
-    input.select();
-
-    // Copy the text inside the text field
-    document.execCommand('copy');
-
-    // Deselect the text field
-    input.setSelectionRange(0, 0);
-  }
 }

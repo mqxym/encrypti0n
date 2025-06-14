@@ -93,4 +93,17 @@ export class EncryptionController {
       hideKey,
     };
   }
+
+  shortPasswordWarning (key) {
+    if (typeof key !== "string") return;
+    if (key.length < 12) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Your password is short.',
+        html: '<em>Encryption continues...</em> <br>For better security choose a longer password.',
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
+    }
+  }
 }
