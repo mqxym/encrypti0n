@@ -811,7 +811,7 @@
                                             <p>
                                                 Encrypts
                                                 <b>all security relevant locally saved data (e.g. passwords, names, Argon2 config)</b>
-                                                with a master password.
+                                                with a master password instead of a device-key.
                                             </p>
                                             <p>The encryption process uses AES-GCM and Argon2id with a random salt and 20 Argon2id rounds with 64MiB of memory. Don't close the windows while encrypting.</p>
                                             <p>
@@ -819,14 +819,20 @@
                                                 If you forget your master password, you can't decrypt your app data anymore.
                                             </p>
                                             <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
-                                            <div class="mb-3">
+                                            <div class="mb-1">
                                                 <label for="encryptApplicationPw" class="form-label">Master Password</label>
                                                 <input name="encryptApplicationMPw" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="encryptApplicationPw" placeholder="Secure Password" autocomplete="new-password" required />
                                             </div>
+                                            <div class="progress" style="height: 10px;">
+                                                <div id="password-strength" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                                            </div>
+                                             <small id="password-strength-text" class="form-text mb-2"></small>
                                             <div class="mb-3">
                                                 <label for="encryptApplicationPwConfirmation" class="form-label">Confirm Password</label>
                                                 <input name="encryptApplicationMPwConfirmation" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="encryptApplicationPwConfirmation" autocomplete="new-password" required />
                                             </div>
+                                           
+                                           
                                             <p class="text-pink d-none" id="encryptApplicationMatchFail">The two entered passwords don't match.</p>
                                             <p class="text-pink d-none" id="encryptApplicationMissingPw">You have to enter your secure master password two times to encrypt the applications data.</p>
                                         </div>
@@ -1069,6 +1075,9 @@
 
         <!-- Argos 2 JS -->
         <script src="assets/libs/argon2/argon2-bundled.min.js" defer></script>
+
+        <!-- PW strenght checker JS -->
+        <script src="assets/libs/check-password-strength/umd.js" defer></script>
 
         <script type="module" src="app/index.js" defer></script>
         <script src="app/insertVersion.js" defer></script>

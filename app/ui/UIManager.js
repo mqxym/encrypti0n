@@ -46,6 +46,7 @@ export class UIManager {
     $('#clearInputFiles').on('click', () => this.clearInputFiles());
     $('.Argon2-Options').on('click', () => $('#argon2-modal').modal('show'));
     $('#renameSlots').on('click', () => $('#renameSlotsModal').modal('show'));
+     $('#encryptApplicationPw').on('input', () => this.showMastgerPasswordStrenght());
   }
 
   /**
@@ -379,6 +380,43 @@ export class UIManager {
     }
     if (typeof output !== 'string') {
       throw new Error('Output must be a string');
+    }
+  }
+
+  /**
+   * Shows the passwords strenght in the UI when setting a master password
+   *
+   * @returns {void}
+   */
+  showMastgerPasswordStrenght () {
+    const password = $("#encryptApplicationPw").val();
+    const strength = checkPasswordStrength.passwordStrength(password).id;
+
+    console.log(strength);
+
+    const $bar = $('#password-strength');
+    const $text = $('#password-strength-text');
+    // Reset progress bar classes
+    $bar.removeClass('bg-danger bg-warning bg-info bg-success');
+
+    // Set based on strength level
+    switch (strength) {
+      case 0:
+        $bar.css('width', '10%').addClass('bg-danger');
+        $text.text('Strength: Very Weak');
+        break;
+      case 1:
+        $bar.css('width', '35%').addClass('bg-danger');
+        $text.text('Strength: Weak');
+        break;
+      case 2:
+        $bar.css('width', '65%').addClass('bg-warning');
+        $text.text('Strength: Medium');
+        break;
+      case 3:
+        $bar.css('width', '100%').addClass('bg-success');
+        $text.text('Strength: Strong');
+        break;
     }
   }
 }

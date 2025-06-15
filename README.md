@@ -15,6 +15,7 @@ The main feature is encryption and decryption of text and files with standard cr
 - Automatic data clearing and user logout upon activation of app encryption after 5 minutes of inactivity
 - Delete all local data with a click to overwrite with default values
 - Clear clipboard button
+- Password strenght checking
 
 Try it out here: [encryption.com](https://encrypti0n.com)
 
