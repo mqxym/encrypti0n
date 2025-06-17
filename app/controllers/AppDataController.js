@@ -425,6 +425,9 @@ export class AppDataController {
         });
         this._reactAppUnlockedStatus();
         await this._afterUnlockLoad();
+        // other ui changes
+        $('#export-no-masterpassword-set').hide();
+        $('#export-masterpassword-set').show();
       } else if (result === 'storedWithDeviceKey') {
         Swal.fire({
           icon: 'success',
