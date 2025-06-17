@@ -2,7 +2,7 @@ import { StorageService } from '../StorageService.js';
 import { ApplicationEncryptionManager } from './ApplicationEncryptionManager.js';
 import { ConfigManagerConstants } from '../../constants/constants.js';
 import { deriveKek } from '../../algorithms/Argon2Key/Argon2KeyDerivation.js';
-import { base64ToUint8Array } from '../../utils/base64.js';
+import { base64ToUint8Array, arrayBufferToBase64 } from '../../utils/base64.js';
 
 /**
  * @class ConfigManager
@@ -586,7 +586,7 @@ export class ConfigManager {
    * 
    * @async
    * @param {string} exportPassword - Password to protect the export
-   * @returns {Promise<string>} Base64 encoded encrypted export
+   * @returns {Promise<Uint8Array>} Encoded and encrypted export
    * @throws {Error} If session is locked
    */
   async exportConfig(exportPassword) {
@@ -634,8 +634,8 @@ export class ConfigManager {
       data: this.config.data
     };
 
-    // Return base64 encoded export
-    return btoa(JSON.stringify(exportBundle));
+    // Return export as binary (Uint8Array)
+    return base64ToUint8Array(btoa(JSON.stringify(exportBundle)));
   }
 
   /**
@@ -644,15 +644,14 @@ export class ConfigManager {
    * When export key is used: Re-Wrap with DeviceKey and unlock Session
    * 
    * @async
-   * @param {string} exportedConfig - Base64 encoded exported config
+   * @param {string} exportedConfig - Buffer encoded exported config
    * @param {string} exportPassword - Password used to protect the export (Master Password / Export Password)
    * @returns {Promise<void>}
    * @throws {Error} If import fails
    */
   async importConfig(exportedConfig, exportPassword) {
     try {
-      // Decode and parse export bundle
-      const bundle = JSON.parse(atob(exportedConfig));
+      const bundle = JSON.parse(atob(atob(arrayBufferToBase64(exportedConfig)))); //this is weird
 
       // Version check
       if (bundle.header.v !== ConfigManagerConstants.CURRENT_DATA_VERSION) {

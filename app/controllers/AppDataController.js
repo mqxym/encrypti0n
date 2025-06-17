@@ -371,7 +371,7 @@ export class AppDataController {
       const data = await this.configManager.exportConfig(exportDataPw);
       this._downloadExport(data);
       
-    } catch (err) {å
+    } catch (err) {
       Swal.fire({
         icon: 'error',
         title: 'Failed to export the configuration!',
@@ -411,8 +411,8 @@ export class AppDataController {
       }
 
       formHandlerLocal.setFormValue('importDataPw', '');
-      const textContent = await this._readFileAsText(file);
-      const result = await this.configManager.importConfig(textContent, importDataPw);
+      const binaryContent = await this._readFileAsBuffer(file);
+      const result = await this.configManager.importConfig(binaryContent, importDataPw);
       $('#importDataFile').val('');
 
       if (result === 'storedWithMasterPassword') {
@@ -440,6 +440,7 @@ export class AppDataController {
       }
       ElementHandler.hideModal('do-data-import');
     } catch (err) {
+      console.log(err);
       Swal.fire({
         icon: 'error',
         title: 'Failed to import the configuration!',
@@ -460,8 +461,8 @@ export class AppDataController {
    * @param {string|ArrayBuffer} data - The serialized configuration data to download.
    * @returns {void}
    */
-  _downloadExport(data) {
-      let blob = new Blob([data], { type: 'text/plain' });
+  _downloadExport(buffer) {
+      let blob =  new Blob([buffer], { type: 'application/octet-stream' });
       let a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = 'export.dat';
@@ -477,14 +478,14 @@ export class AppDataController {
    * Reads the provided File object as text.
    * @private
    * @param {File} file - The file to read.
-   * @returns {Promise<string>} Resolves with the file's text content.
+   * @returns {Promise<Uint8Array>} Resolves with the file's content.
    */
-  _readFileAsText(file) {
+  _readFileAsBuffer(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
       reader.onerror = () => reject(reader.error);
-      reader.readAsText(file);
+      reader.readAsArrayBuffer(file);
     });
   }
 

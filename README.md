@@ -16,6 +16,7 @@ The main feature is encryption and decryption of text and files with standard cr
 - Delete all local data with a click to overwrite with default values
 - Clear clipboard button
 - Password strenght checking
+- Importing / exporting local app data with envelope encryption applied
 
 Try it out here: [encryption.com](https://encrypti0n.com)
 
