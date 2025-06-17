@@ -1,6 +1,8 @@
 import { StorageService } from '../StorageService.js';
 import { ApplicationEncryptionManager } from './ApplicationEncryptionManager.js';
 import { ConfigManagerConstants } from '../../constants/constants.js';
+import { deriveKek } from '../../algorithms/Argon2Key/Argon2KeyDerivation.js';
+import { base64ToUint8Array } from '../../utils/base64.js';
 
 /**
  * @class ConfigManager
@@ -577,5 +579,133 @@ export class ConfigManager {
    */
   isUsingMasterPassword() {
     return (this.config?.header?.rounds ?? 0) > 1;
+  }
+
+  /**
+   * Exports the encrypted configuration protected with a password.
+   * 
+   * @async
+   * @param {string} exportPassword - Password to protect the export
+   * @returns {Promise<string>} Base64 encoded encrypted export
+   * @throws {Error} If session is locked
+   */
+  async exportConfig(exportPassword) {
+
+    if ((typeof exportPassword === undefined || exportPassword === '' || exportPassword === null) && this.isUsingMasterPassword()) {
+      return btoa(JSON.stringify(this.config));
+    }
+    
+
+    if (!this.dek) throw new Error('Session locked');
+    if (typeof exportPassword === undefined || exportPassword === '') throw new Error ('No Password set');
+    
+    // Generate fresh salt and rounds for export
+    const exportSalt = this.encryptionManager.generateRandomSalt();
+    const exportRounds = this._getRandomInt(
+      ConfigManagerConstants.ARGON2_ROUNDS_MIN,
+      ConfigManagerConstants.ARGON2_ROUNDS_MAX
+    );
+
+    const deviceKek = await this.encryptionManager.getDeviceKey();
+    const exportKek = await deriveKek(
+      exportPassword,
+      base64ToUint8Array(exportSalt),
+      exportRounds
+    );
+
+    let currentDekForWrapping = await this.encryptionManager.unwrapDekForWrapping(this.config.header.iv, this.config.header.wrappedKey, deviceKek)
+    const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(currentDekForWrapping, exportKek);
+
+    currentDekForWrapping = null;
+
+    const header = {
+      v: ConfigManagerConstants.CURRENT_DATA_VERSION,
+      salt: exportSalt,
+      rounds: exportRounds,
+      iv: ivWrap,
+      mPw: false,
+      wrappedKey
+    };
+
+
+    // Create export bundle
+    const exportBundle = {
+      header: header,
+      data: this.config.data
+    };
+
+    // Return base64 encoded export
+    return btoa(JSON.stringify(exportBundle));
+  }
+
+  /**
+   * Imports an encrypted configuration protected with a password.
+   * When master password is used: unlock Session with master password
+   * When export key is used: Re-Wrap with DeviceKey and unlock Session
+   * 
+   * @async
+   * @param {string} exportedConfig - Base64 encoded exported config
+   * @param {string} exportPassword - Password used to protect the export (Master Password / Export Password)
+   * @returns {Promise<void>}
+   * @throws {Error} If import fails
+   */
+  async importConfig(exportedConfig, exportPassword) {
+    try {
+      // Decode and parse export bundle
+      const bundle = JSON.parse(atob(exportedConfig));
+
+      // Version check
+      if (bundle.header.v !== ConfigManagerConstants.CURRENT_DATA_VERSION) {
+        throw new Error('Unsupported export version');
+      }
+
+      if (!bundle.data || !bundle.header) {
+        throw new Error('Invalid export format');
+      }
+
+      if (typeof bundle.header.mPw === undefined || bundle.header.mPw === '' || bundle.header.mPw !== false) {
+        const configBackup = this.config;
+        this.config = bundle;
+        try {
+          await this.unlockSession(exportPassword);
+        } catch (err) {
+          this.config = configBackup;
+          throw new Error ("Failed to validated master-password");
+        }
+        this._saveConfig();
+        
+        return "storedWithMasterPassword";
+      }
+
+      // Derive key from export password
+      const importKek = await deriveKek(
+        exportPassword,
+        base64ToUint8Array(bundle.header.salt),
+        bundle.header.rounds
+      );
+      let currentDekForWrapping = await this.encryptionManager.unwrapDekForWrapping(bundle.header.iv, bundle.header.wrappedKey, importKek);
+      
+      const devieKey = await this.encryptionManager.getDeviceKey();
+      const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(currentDekForWrapping, devieKey);
+      currentDekForWrapping = null;
+
+      bundle.header = {
+        v: 2,
+        salt: '',
+        rounds: 1,
+        iv: ivWrap,
+        wrappedKey
+      };
+
+      this.config = bundle;
+      
+      this._saveConfig();
+      this._loadDekIntoMemory();
+
+      return 'storedWithDeviceKey'
+
+    } catch (error) {
+      throw new Error(`Import failed: ${error.message}`);
+    }
   }
 }

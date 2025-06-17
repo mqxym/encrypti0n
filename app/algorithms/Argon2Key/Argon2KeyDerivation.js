@@ -31,23 +31,64 @@ import { Argon2Constants } from "../../constants/constants.js";
  * // key is a CryptoKey usable with AES-GCM encrypt/decrypt operations
  * ```
  */
-export async function deriveKey(password, salt, iterations, mem_cost = null) {
-  if (mem_cost !== null && !Number.isInteger(mem_cost)) {
-    throw new Error('mem_cost must be an integer');
+export async function deriveKey(
+  password,
+  salt,
+  iterations,
+  mem_cost = null
+) {
+  // === Password validation ===
+  const isString = typeof password === 'string';
+  const isBytes  = password instanceof Uint8Array;
+  if (!isString && !isBytes) {
+    throw new TypeError('`password` must be a string or Uint8Array');
+  }
+  if (isString && password.length === 0) {
+    throw new RangeError('`password` string cannot be empty');
+  }
+  if (isBytes && password.byteLength === 0) {
+    throw new RangeError('`password` Uint8Array cannot be empty');
   }
 
-  const timeCost = iterations; 
 
-  // Derive the raw key using Argon2id
+  if (!(salt instanceof Uint8Array)) {
+    throw new TypeError('`salt` must be a Uint8Array');
+  }
+  if (salt.byteLength < 8) {
+    throw new RangeError('`salt` must be at least 8 bytes');
+  }
+
+  // === Iterations / time cost validation ===
+  if (!Number.isInteger(iterations)) {
+    throw new TypeError('`iterations` must be an integer');
+  }
+  if (iterations <= 0) {
+    throw new RangeError('`iterations` must be a positive integer');
+  }
+
+  // === Memory cost validation ===
+  if (mem_cost !== null) {
+    if (!Number.isInteger(mem_cost)) {
+      throw new TypeError('`mem_cost` must be an integer or null');
+    }
+    if (mem_cost <= 0) {
+      throw new RangeError('`mem_cost` must be a positive integer if provided');
+    }
+  }
+
+  // Now run Argon2id
+  const timeCost = iterations;
+  const memoryCost = mem_cost ?? Argon2Constants.MEMORY_COST;
+
   const argon2Result = await new Promise((resolve, reject) => {
     setTimeout(
       async () => {
         try {
           const result = await argon2.hash({
             pass: password,
-            salt: salt,
+            salt,
             time: timeCost,
-            mem: mem_cost ?? Argon2Constants.MEMORY_COST,
+            mem: memoryCost,
             hashLen: Argon2Constants.HASH_LEN,
             parallelism: Argon2Constants.PARALLELISM,
             type: argon2.ArgonType.Argon2id,
@@ -61,7 +102,11 @@ export async function deriveKey(password, salt, iterations, mem_cost = null) {
     );
   });
 
-  // Import the raw key into a CryptoKey object for AES-GCM.
+  if (!argon2Result || !argon2Result.hash) {
+    throw new Error('Argon2 failed to produce a hash');
+  }
+
+  // Import into Web Crypto API
   const cryptoKey = await crypto.subtle.importKey(
     'raw',
     argon2Result.hash,
@@ -73,12 +118,44 @@ export async function deriveKey(password, salt, iterations, mem_cost = null) {
     ['encrypt', 'decrypt']
   );
 
+  // Zero out the raw hash in memory
   argon2Result.hash = null;
 
   return cryptoKey;
 }
 
+// Same as deriveKey but different use (wrap, unwrap)
+
 export async function deriveKek(password, salt, iterations) {
+
+  // === Password validation ===
+  const isString = typeof password === 'string';
+  const isBytes  = password instanceof Uint8Array;
+  if (!isString && !isBytes) {
+    throw new TypeError('`password` must be a string or Uint8Array');
+  }
+  if (isString && password.length === 0) {
+    throw new RangeError('`password` string cannot be empty');
+  }
+  if (isBytes && password.byteLength === 0) {
+    throw new RangeError('`password` Uint8Array cannot be empty');
+  }
+
+
+  if (!(salt instanceof Uint8Array)) {
+    throw new TypeError('`salt` must be a Uint8Array');
+  }
+  if (salt.byteLength < 8) {
+    throw new RangeError('`salt` must be at least 8 bytes');
+  }
+
+  // === Iterations / time cost validation ===
+  if (!Number.isInteger(iterations)) {
+    throw new TypeError('`iterations` must be an integer');
+  }
+  if (iterations <= 0) {
+    throw new RangeError('`iterations` must be a positive integer');
+  }
 
   const timeCost = iterations; 
 

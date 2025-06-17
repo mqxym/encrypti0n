@@ -46,6 +46,8 @@ export class AppDataController {
     $('#removeAllData').on('click', () => this.removeAllData());
     $('#removeLocalDataDecryptionModal').on('click', () => this.removeAllData());
     $('#clearClipboard').on('click', () => this.clearClipboard());
+    $('#exportDataBtn').on('click', () => this.handleExportData());
+    $('#importDataBtn').on('click', () => this.handleImportData());
   }
 
   /**
@@ -96,18 +98,16 @@ export class AppDataController {
     formHandlerLocal.setFormValue('encryptApplicationMPw', '');
     formHandlerLocal.setFormValue('encryptApplicationMPwConfirmation', '');
 
-    const laddaEncryptApplication = Ladda.create($('#encryptApplication')[0]);
+   
     if (appState.state.isEncrypting) return;
     appState.setState({ isEncrypting: true });
 
+    const laddaEncryptApplication = this._laddaStart($('#encryptApplication')[0]);
+
     try {
-      laddaEncryptApplication.start();
-      laddaEncryptApplication.setProgress(0.7);
       await this.configManager.setMasterPassword(encryptApplicationMPw);
       ElementHandler.hideModal('do-application-encryption');
-      ElementHandler.show('removeApplicationEncryption');
-      ElementHandler.hide('encryptApplicationModal');
-      this.initActivityService();
+      this._reactAppUnlockedStatus();
       Swal.fire({
         icon: 'success',
         title: 'The application is encrypted!',
@@ -116,6 +116,7 @@ export class AppDataController {
         showCancelButton: false,
         confirmButtonText: 'Ok',
       });
+      this.UIManager.handleMasterPasswordCase();
     } catch (err) {
       Swal.fire({
         icon: 'error',
@@ -147,19 +148,18 @@ export class AppDataController {
     formHandlerLocal.preventSubmitAction();
     const { decryptApplicationMPw } = formHandlerLocal.getFormValues();
     formHandlerLocal.setFormValue('decryptApplicationMPw', '');
-    const laddaDecryptApplication = Ladda.create($('#decryptApplication')[0]);
+
+    const laddaDecryptApplication = this._laddaStart($('#decryptApplication')[0]);
+    
     try {
       this.validatePassword(decryptApplicationMPw);
-      laddaDecryptApplication.start();
-      laddaDecryptApplication.setProgress(0.7);
+     
       await this.configManager.unlockSession(decryptApplicationMPw);
       ElementHandler.hideModal('do-application-decryption');
-      const slotNames = await this.configManager.readSlotNames();
-      ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
-      ElementHandler.show('removeApplicationEncryption');
-      ElementHandler.hide('encryptApplicationModal');
-      await this.argon2Service.loadOptions();
-      this.initActivityService();
+      
+      await this._afterUnlockLoad();
+      this._reactAppUnlockedStatus();
+
       Swal.fire({
         icon: 'success',
         title: 'The application is decrypted!',
@@ -169,12 +169,50 @@ export class AppDataController {
         confirmButtonText: 'Ok',
       });
     } catch (err) {
-      laddaDecryptApplication.stop();
       await handleActionError('decryptApplication');
     } finally {
       laddaDecryptApplication.stop();
       appState.setState({ isEncrypting: false });
     }
+  }
+
+  /**
+   * Loads saved slot names into the “keySlot” selector and initializes Argon2 options
+   * after the application is unlocked.
+   * @private
+   * @async
+   * @returns {Promise<void>}
+   */
+  async _afterUnlockLoad() {
+    const slotNames = await this.configManager.readSlotNames();
+    ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
+    await this.argon2Service.loadOptions();
+  }
+
+  /**
+   * Updates the UI to reflect that the application is unlocked:
+   * shows the “removeApplicationEncryption” element, hides the encryption modal,
+   * and initializes the activity service.
+   * @private
+   * @returns {void}
+   */
+  _reactAppUnlockedStatus() {
+    ElementHandler.show('removeApplicationEncryption');
+    ElementHandler.hide('encryptApplicationModal');
+    this.initActivityService();
+  }
+
+  /**
+   * Starts a Ladda button spinner on the given element and sets its initial progress.
+   * @private
+   * @param {HTMLElement|string} id - The target button element or its selector.
+   * @returns {Ladda} The Ladda instance for further control.
+   */
+  _laddaStart(id) {
+    const ladda = Ladda.create(id);
+    ladda.start();
+    ladda.setProgress(0.7);
+    return ladda;
   }
 
   /**
@@ -279,6 +317,179 @@ export class AppDataController {
   }
 
   /**
+   * Handles exporting the application configuration:
+   * - Prevents default form submission
+   * - Exports using master password if enabled, otherwise validates and encrypts using user-provided password
+   * - Provides user feedback via loading spinner and alerts
+   * @private
+   * @async
+   * @returns {Promise<void>}
+   */
+  async handleExportData() {
+    const formHandlerLocal = new FormHandler('exportDataForm');
+    formHandlerLocal.preventSubmitAction();
+
+    if (this.configManager.isUsingMasterPassword()) {
+      try {
+        const data = await this.configManager.exportConfig(null);
+        this._downloadExport(data);
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to export the configuration!',
+          text: 'Please try again or report the bug.',
+          timer: 2500,
+          showCancelButton: false,
+          confirmButtonText: 'Ok',
+        });
+      }
+      return;
+    }
+
+    ElementHandler.hide('exportDataMatchFail');
+    ElementHandler.hide('exportDataMissingPw');
+    const { exportDataPw, exportDataPwConfirmation } = formHandlerLocal.getFormValues();
+    if (!exportDataPw || !exportDataPwConfirmation) {
+      ElementHandler.show('exportDataMissingPw');
+      return;
+    }
+    if (exportDataPw !== exportDataPwConfirmation) {
+      ElementHandler.show('exportDataMatchFail');
+      return;
+    }
+    formHandlerLocal.setFormValue('exportDataPw', '');
+    formHandlerLocal.setFormValue('exportDataMPwConfirmation', '');
+
+    
+    if (appState.state.isEncrypting) return;
+    appState.setState({ isEncrypting: true });
+
+    const laddaExport = this._laddaStart($('#exportDataBtn')[0]);
+
+    try {
+      this.validatePassword(exportDataPw);
+      const data = await this.configManager.exportConfig(exportDataPw);
+      this._downloadExport(data);
+      
+    } catch (err) {å
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to export the configuration!',
+        text: 'Please try again or report the bug.',
+        timer: 2500,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
+    } finally {
+      appState.setState({ isEncrypting: false });
+      laddaExport.stop();
+    }
+  }
+
+  /**
+   * Handles exporting the application configuration:
+   * - Prevents default form submission
+   * - Exports using master password if enabled, otherwise validates and encrypts using user-provided password
+   * - Provides user feedback via loading spinner and alerts
+   * @private
+   * @async
+   * @returns {Promise<void>}
+   */
+  async handleImportData () {
+    const formHandlerLocal = new FormHandler('importDataForm');
+    formHandlerLocal.preventSubmitAction();
+    let { importDataPw } = formHandlerLocal.getFormValues();
+
+    const laddaImport = this._laddaStart($('#importDataBtn')[0]);
+
+    try {
+      this.validatePassword(importDataPw);
+      const fileInput = $('#importDataFile')[0];
+      const file = fileInput.files[0];
+      if (!file) {
+        throw new Error('No file selected');
+      }
+
+      formHandlerLocal.setFormValue('importDataPw', '');
+      const textContent = await this._readFileAsText(file);
+      const result = await this.configManager.importConfig(textContent, importDataPw);
+      $('#importDataFile').val('');
+
+      if (result === 'storedWithMasterPassword') {
+        Swal.fire({
+          icon: 'success',
+          title: 'Application data successfully imported with a master password!',
+          text: 'You can now use your saved data. Your master password is now required when re-entering the application.',
+          showCancelButton: false,
+          confirmButtonText: 'Ok',
+        });
+        this._reactAppUnlockedStatus();
+        await this._afterUnlockLoad();
+      } else if (result === 'storedWithDeviceKey') {
+        Swal.fire({
+          icon: 'success',
+          title: 'Application data successfully imported with export password!',
+          text: 'You can now use your saved data.',
+          timer: 3500,
+          showCancelButton: false,
+          confirmButtonText: 'Ok',
+        });
+        await this._afterUnlockLoad();
+      } else {
+        throw new Error ('Unknown return code.');
+      }
+      ElementHandler.hideModal('do-data-import');
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to import the configuration!',
+        text: 'Please check data or password.',
+        timer: 2500,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
+    } finally {
+      importDataPw = null;
+      laddaImport.stop();
+    }
+  }
+
+  /**
+   * Triggers download of exported data as a file named "export.dat".
+   * @private
+   * @param {string|ArrayBuffer} data - The serialized configuration data to download.
+   * @returns {void}
+   */
+  _downloadExport(data) {
+      let blob = new Blob([data], { type: 'text/plain' });
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'export.dat';
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);  
+  }
+
+  /**
+   * Reads the provided File object as text.
+   * @private
+   * @param {File} file - The file to read.
+   * @returns {Promise<string>} Resolves with the file's text content.
+   */
+  _readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsText(file);
+    });
+  }
+
+
+  /**
    * Validates that a provided password is a non-empty string.
    *
    * @param {*} password - The password value to validate.
@@ -292,7 +503,12 @@ export class AppDataController {
       throw new Error('Key must be a string');
     }
   }
-
+  /**
+   * Clears the system clipboard and notifies the user of success or failure.
+   * @private
+   * @async
+   * @returns {Promise<void>}
+   */
   async clearClipboard () {
     try {
       await navigator.clipboard.writeText('');

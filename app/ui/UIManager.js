@@ -46,7 +46,10 @@ export class UIManager {
     $('#clearInputFiles').on('click', () => this.clearInputFiles());
     $('.Argon2-Options').on('click', () => $('#argon2-modal').modal('show'));
     $('#renameSlots').on('click', () => $('#renameSlotsModal').modal('show'));
-     $('#encryptApplicationPw').on('input', () => this.showMastgerPasswordStrenght());
+    $('#importDataModal').on('click', () => $('#do-data-import').modal('show'));
+    $('#exportDataModal').on('click', () => $('#do-data-export').modal('show'));
+    $('#encryptApplicationPw').on('input', () => this.showPasswordStrenght('encryptApplicationPw', 'password-strength', 'password-strength-text'));
+    $('#exportDataPw').on('input', () => this.showPasswordStrenght('encryptApplicationPw', 'export-password-strength', 'export-password-strength-text'));
   }
 
   /**
@@ -62,13 +65,14 @@ export class UIManager {
     this.resetUIState();
     if (this.configManager.isUsingMasterPassword()) {
       this.handleMasterPasswordCase();
+      $('#do-application-decryption').modal('show');
       return;
     }
     await this.initializeApplication();
   }
 
   /**
-   * Disables encryption button and shows decryption modal when a master password exists.
+   * Disables encryption button when a master password exists.
    *
    * @private
    * @returns {void}
@@ -76,7 +80,11 @@ export class UIManager {
   handleMasterPasswordCase() {
     ElementHandler.disable('encryptApplicationModal');
     $(document).off('click', '#encryptApplicationModal');
-    $('#do-application-decryption').modal('show');
+    $('#export-no-masterpassword-set').hide();
+    $('#export-masterpassword-set').show();
+    ElementHandler.disable('exportDataPw');
+    ElementHandler.disable('exportDataPwConfirmation');
+
   }
 
   /**
@@ -87,6 +95,8 @@ export class UIManager {
    * @returns {Promise<void>}
    */
   async initializeApplication() {
+    $('#export-no-masterpassword-set').show();
+    $('#export-masterpassword-set').hide();
     const initializationFailed = await this.loadApplicationData();
     if (initializationFailed) {
       await this.showInitializationError();
@@ -384,18 +394,24 @@ export class UIManager {
   }
 
   /**
-   * Shows the passwords strenght in the UI when setting a master password
+   * Updates the visual strength indicator and label for a password input.
    *
+   * Retrieves the value of the password field, computes its strength level,
+   * and adjusts a progress bar’s width, color class, and accompanying text
+   * to reflect "Very Weak", "Weak", "Medium", or "Strong".
+   *
+   * @param {string} pwFieldId - The DOM id of the password input element.
+   * @param {string} barId     - The DOM id of the progress bar element.
+   * @param {string} textId    - The DOM id of the text label element.
    * @returns {void}
    */
-  showMastgerPasswordStrenght () {
-    const password = $("#encryptApplicationPw").val();
+  
+  showPasswordStrenght (pwFieldId, barId, textId) {
+    const password = $("#" + pwFieldId).val();
     const strength = checkPasswordStrength.passwordStrength(password).id;
 
-    console.log(strength);
-
-    const $bar = $('#password-strength');
-    const $text = $('#password-strength-text');
+    const $bar = $("#" + barId);
+    const $text = $("#" + textId);
     // Reset progress bar classes
     $bar.removeClass('bg-danger bg-warning bg-info bg-success');
 

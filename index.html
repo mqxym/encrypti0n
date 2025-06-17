@@ -371,10 +371,23 @@
                                         <i class="mdi mdi-delete me-1"></i>
                                         Clear all data
                                     </a>
+                                     <div class="dropdown-divider"></div>
+                                     <div class="dropdown-header noti-title">
+                                        <h6 class="text-overflow m-0">Export / Import data</h6>
+                                    </div>
+                                    <a id="exportDataModal" class="dropdown-item notify-item btn btn-outline-secondary d-block waves-effect waves-light mt-auto">
+                                        <i class="mdi mdi-upload me-1"></i>
+                                        Export local data
+                                    </a>
+                                    <a id="importDataModal" class="dropdown-item notify-item btn btn-outline-secondary d-block waves-effect waves-light mt-auto mb-2">
+                                        <i class="mdi mdi-download me-1"></i>
+                                        Import local data
+                                    </a>
                                     <div class="dropdown-divider"></div>
                                     <div class="dropdown-header noti-title">
                                         <h6 class="text-overflow m-0" id="inactivityCountdown"></h6>
                                     </div>
+
                                 </div>
                             </li>
                             <li class="d-none d-md-inline-block">
@@ -813,11 +826,16 @@
                                                 <b>all security relevant locally saved data (e.g. passwords, names, Argon2 config)</b>
                                                 with a master password instead of a device-key.
                                             </p>
-                                            <p>The encryption process uses AES-GCM and Argon2id with a random salt and 20 Argon2id rounds with 64MiB of memory. Don't close the windows while encrypting.</p>
-                                            <p>
-                                                <b>Attention:</b>
-                                                If you forget your master password, you can't decrypt your app data anymore.
-                                            </p>
+                                            <p>The encryption process uses AES-GCM-256 and Argon2id with a random salt and 20 Argon2id rounds with 64MiB of memory. Don't close the windows while encrypting.</p>
+                                            <div class="alert alert-warning mb-2">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="mdi mdi-alert-circle-outline me-2 font-18"></i>
+                                                    <div>
+                                                        If you forget your master password, you can't decrypt your app data anymore when you visit the page again.
+                                                    </div>
+                                                </div>
+                                            </div>
+                            
                                             <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
                                             <div class="mb-1">
                                                 <label for="encryptApplicationPw" class="form-label">Master Password</label>
@@ -870,8 +888,15 @@
                                             <div class="mb-3">
                                                 <label for="decryptApplicationMPw" class="form-label">Master Password</label>
                                                 <input name="decryptApplicationMPw" type="password" class="form-control border border-secondary" id="decryptApplicationMPw" autocomplete="current-password" required aria-required="true" aria-invalid="false" />
+                                            </div> 
+                                              <div class="alert alert-warning mb-0">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="mdi mdi-alert-circle-outline me-2 font-18"></i>
+                                                    <div>
+                                                        If you don't remember your master password, deleting data is the only option.
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <p>If you don't remember your master password, deleting data is the only option.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1028,6 +1053,143 @@
                                         <i id="renameSlotActionSuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
                                         <i id="renameSlotActionFail" aria-hidden="true" class="mdi mdi-close-circle-multiple d-none"></i>
                                         <span>Save Slot Name</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="do-data-export" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exportData-Modal" aria-hidden="true" aria-modal="true">
+                    <div class="modal-dialog">
+                        <form role="form" id="exportDataForm" autocomplete="on">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Export Application Data</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div id="export-no-masterpassword-set">
+                                                <p>
+                                                    Export
+                                                    <b>all locally saved data (passwords, names, settings)</b>
+                                                    protected with a secure export password.
+                                                </p>
+                                                <p>The export is encrypted using AES-GCM-256 and Argon2id with a random salt and 20 Argon2id rounds with 64MiB of memory.</p>
+                                                <p>
+                                                    <b>Important:</b>
+                                                    You'll need this export password to import the data on another device.
+                                                </p>
+                                                <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
+                                                <div class="mb-1">
+                                                    <label for="exportDataPw" class="form-label">Export Password</label>
+                                                    <input id="exportDataPw" name="exportDataPw" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="exportDataPw" placeholder="Secure Password" autocomplete="new-password" required />
+                                                </div>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div id="export-password-strength" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                                                </div>
+                                                <small id="export-password-strength-text" class="form-text mb-2"></small>
+                                                <div class="mb-3">
+                                                    <label for="exportDataPwConfirmation" class="form-label">Confirm Password</label>
+                                                    <input id="exportDataPwConfirmation" name="exportDataPwConfirmation" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="exportDataPwConfirmation" autocomplete="new-password" required />
+                                                </div>
+                                                
+                                                <p class="text-pink d-none" id="exportDataMatchFail">The two entered passwords don't match.</p>
+                                                <p class="text-pink d-none" id="exportDataMissingPw">You have to enter a secure export password two times to export the data.</p>
+                                            </div>
+                                             <div id="export-masterpassword-set">
+                                                <p>
+                                                    Your export is secured with the same master password and security measures you set for the application.
+                                                </p>
+                                            </div>
+                                            
+
+                                            <div class="alert alert-info mb-0">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="mdi mdi-information-outline me-2 font-18"></i>
+                                                    <div>
+                                                        After successful export, you'll receive a file containing your encrypted data. Store this file securely.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">
+                                        <i class="mdi mdi-cancel"></i>
+                                        Close
+                                    </button>
+                                    <button type="submit" id="exportDataBtn" class="ladda-button btn btn-pink waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                        <i id="exportDataSuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
+                                        <i id="exportDataText" aria-hidden="true" class="mdi mdi-upload-outline"></i>
+                                        <span class="ladda-label" id="exportDataText">Export!</span>
+                                        <span aria-hidden="true" class="ladda-spinner"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="do-data-import" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importData-Modal" aria-hidden="true" aria-modal="true">
+                    <div class="modal-dialog">
+                        <form role="form" id="importDataForm" autocomplete="on">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Import Application Data</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p>
+                                                Import
+                                                <b>previously exported data</b>
+                                                using the export password or master password if used.
+                                            </p>
+                                            <p>The import process will overwrite your existing configuration. Make sure to use the correct export password.</p>
+                                            <p>
+                                                <b>Note:</b>
+                                                Only files exported from this application version can be imported.
+                                            </p>
+
+                                            <div class="mb-3">
+                                                <label for="importDataFile" class="form-label">Import File</label>
+                                                <input type="file" class="form-control border border-secondary" id="importDataFile" accept=".dat" required />
+                                                <small class="form-text text-muted">Select the encrypted export file (.dat)</small>
+                                            </div>
+
+                                            <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
+                                            <div class="mb-3">
+                                                <label for="importDataPw" class="form-label">Export Password / Master Password</label>
+                                                <input name="importDataPw" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="importDataPw" placeholder="Export Password" autocomplete="new-password" required />
+                                            </div>
+
+                                            <div class="alert alert-warning mb-0">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="mdi mdi-alert-circle-outline me-2 font-18"></i>
+                                                    <div>
+                                                        Importing will overwrite your existing configuration. 
+                                                        Make sure to backup your current data before importing.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <p class="text-pink d-none" id="importDataError">Failed to import data. Please check the password and file.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">
+                                        <i class="mdi mdi-cancel"></i>
+                                        Close
+                                    </button>
+                                    <button type="submit" id="importDataBtn" class="ladda-button btn btn-pink waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                        <i id="importDataSuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
+                                        <i id="importDataText" aria-hidden="true" class="mdi mdi-download-outline"></i>
+                                        <span class="ladda-label" id="importDataText">Import!</span>
+                                        <span aria-hidden="true" class="ladda-spinner"></span>
                                     </button>
                                 </div>
                             </div>
