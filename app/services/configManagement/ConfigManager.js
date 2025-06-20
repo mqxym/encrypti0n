@@ -2,7 +2,8 @@ import { StorageService } from '../StorageService.js';
 import { ApplicationEncryptionManager } from './ApplicationEncryptionManager.js';
 import { ConfigManagerConstants } from '../../constants/constants.js';
 import { deriveKek } from '../../algorithms/Argon2Key/Argon2KeyDerivation.js';
-import { base64ToUint8Array, arrayBufferToBase64 } from '../../utils/base64.js';
+import { base64ToUint8Array } from '../../utils/base64.js';
+import { returnDecoded, returnEncoded } from '../../utils/dataEncode.js';
 
 /**
  * @class ConfigManager
@@ -592,7 +593,7 @@ export class ConfigManager {
   async exportConfig(exportPassword) {
 
     if ((typeof exportPassword === undefined || exportPassword === '' || exportPassword === null) && this.isUsingMasterPassword()) {
-      return btoa(JSON.stringify(this.config));
+      return returnEncoded(this.config);
     }
     
 
@@ -634,8 +635,8 @@ export class ConfigManager {
       data: this.config.data
     };
 
-    // Return export as binary (Uint8Array)
-    return base64ToUint8Array(btoa(JSON.stringify(exportBundle)));
+    // Return export as binary (buffer)
+    return await returnEncoded(exportBundle);
   }
 
   /**
@@ -651,7 +652,7 @@ export class ConfigManager {
    */
   async importConfig(exportedConfig, exportPassword) {
     try {
-      const bundle = JSON.parse(atob(atob(arrayBufferToBase64(exportedConfig)))); //this is weird
+      const bundle = await returnDecoded(exportedConfig);
 
       // Version check
       if (bundle.header.v !== ConfigManagerConstants.CURRENT_DATA_VERSION) {

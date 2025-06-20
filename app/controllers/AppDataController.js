@@ -358,7 +358,7 @@ export class AppDataController {
       return;
     }
     formHandlerLocal.setFormValue('exportDataPw', '');
-    formHandlerLocal.setFormValue('exportDataMPwConfirmation', '');
+    formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
 
     
     if (appState.state.isEncrypting) return;
@@ -443,7 +443,6 @@ export class AppDataController {
       }
       ElementHandler.hideModal('do-data-import');
     } catch (err) {
-      console.log(err);
       Swal.fire({
         icon: 'error',
         title: 'Failed to import the configuration!',

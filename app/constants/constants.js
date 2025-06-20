@@ -79,3 +79,15 @@ export const Argon2Constants = {
 export const AESGCMConstants = {
     IV_LENGTH: 12
 };
+
+
+/**
+ * @namespace AESGCMConstants
+ * @description
+ * Constants for data encoding
+ * @property {Uint8Array} OBFUSCATION_VALUE - A static value used for XOR data obfuscation for export / import
+ */
+export const EncodeConstants = {
+    OBFUSCATION_VALUE: new TextEncoder().encode('https://encrypti0n.com/index.html?user=mqxym&password=11myx11'),
+    OBFUSCATION_VALUE_OUTER: new TextEncoder().encode('zOekjqqmK:{4Q?wTka!9qO1hb_x.]*_,_[O6F$>RCa?WBC=LniO,VP_V|Z+tes2m')
+}

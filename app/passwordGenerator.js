@@ -1,5 +1,6 @@
 import { ElementHandler } from './helpers/ElementHandler.js';
 import { delay } from './utils/misc.js';
+import { passwordEntropy } from '../assets/libs/fast-password-entropy/index.js';
 
 /**
  * Wrapper function for password generation.
@@ -154,6 +155,17 @@ export class PasswordGeneratorController {
       specialChars
     );
     $('#passwordOutput').val(password);
+    this.showEntropy(password);
+  }
+
+  /**
+   * Displays the passwords entropy in bits
+   *
+   * @returns {void}
+   */
+
+  showEntropy (password) {
+    $('#pw-entropy').text(passwordEntropy(password));
   }
 
   /**

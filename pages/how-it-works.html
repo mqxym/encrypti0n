@@ -279,7 +279,7 @@
                                     of both text and files. This
                                     <strong>local-first approach</strong>
                                     keeps your data secure, preventing unauthorized access during data transfer or storage. Below, we outline clearly and technically how our encryption processes for the
-                                    <a href="/index.html">Main App</a>
+                                    <a href="../index.html">Main App</a>
                                     function internally.
                                 </p>
                             </div>
@@ -634,7 +634,7 @@ plainData = AES_GCM_Decrypt(ciphertext, dek, iv);</code></pre>
                                             </li>
                                             <li>
                                                 <strong>Generate Download</strong>
-                                                : Serialize the export structure, encode it in Base64, and trigger a file download via a JavaScript-created temporary element.
+                                                : Serialize the export structure, encode it in binary, and trigger a file download via a JavaScript-created temporary element.
                                             </li>
                                         </ol>
                                         <p><strong>Sample export file structure:</strong></p>
@@ -657,8 +657,8 @@ plainData = AES_GCM_Decrypt(ciphertext, dek, iv);</code></pre>
                                     <div class="tab-pane fade" id="import" role="tabpanel" aria-labelledby="import-tab">
                                         <ol>
                                             <li>
-                                                <strong>Base64 Decode</strong>
-                                                : Begin by decoding the Base64-encoded import string back into JSON format.
+                                                <strong>Binary Decode</strong>
+                                                : Begin by decoding the binary import data back into JSON format.
                                             </li>
                                             <li>
                                                 <strong>Extract Header Parameters</strong>
@@ -674,11 +674,11 @@ plainData = AES_GCM_Decrypt(ciphertext, dek, iv);</code></pre>
                                             </li>
                                              <li>
                                                 <strong>Save New Config</strong>
-                                                : The imported config is saved to local storage. When a device key is used, the DEK is re-wrapped with the devie key.
+                                                : The imported config is saved to local storage. When a device key is used, the DEK is re-wrapped with the device key.
                                             </li>
                                         </ol>
                                         <p><strong>Pseudocode overview of the import logic:</strong></p>
-                                        <pre class="bg-light p-1 rounded"><code class="language-javascript">decoded = base64Decode(fileContents);
+                                        <pre class="bg-light p-1 rounded"><code class="language-javascript">decoded = binaryDecode(fileContents);
 header = decoded.header;
 salt, rounds, iv = header.salt, header.rounds, header.iv;
 key = deriveArgon2Key(password, salt, rounds);
