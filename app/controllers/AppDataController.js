@@ -329,8 +329,8 @@ export class AppDataController {
   async handleExportData() {
     const formHandlerLocal = new FormHandler('exportDataForm');
     formHandlerLocal.preventSubmitAction();
-    const EXPORT_PROCESS_TIMEOUT = 30000; // 30 seconds
-    let laddaExport; // Declare laddaExport here to be accessible in finally
+    const EXPORT_PROCESS_TIMEOUT = 40000; 
+    let laddaExport; 
 
     try {
         if (this.configManager.isUsingMasterPassword()) {
@@ -341,15 +341,6 @@ export class AppDataController {
             });
             const data = await Promise.race([exportOperationPromise, timeoutPromise]);
             this._downloadExport(data);
-            // Optionally, a Swal.fire success message here if desired
-            Swal.fire({
-                icon: 'success',
-                title: 'Export Successful',
-                text: 'Your data has been successfully prepared for download using your master password.',
-                timer: 2500,
-                showCancelButton: false,
-                confirmButtonText: 'Ok',
-            });
         } else {
             ElementHandler.hide('exportDataMatchFail');
             ElementHandler.hide('exportDataMissingPw');
@@ -357,32 +348,19 @@ export class AppDataController {
 
             if (!exportDataPw || !exportDataPwConfirmation) {
                 ElementHandler.show('exportDataMissingPw');
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Missing Information',
-                    text: 'Please enter and confirm your password for export.',
-                    confirmButtonText: 'Ok',
-                });
-                return; // Exit early
+                return; 
             }
             if (exportDataPw !== exportDataPwConfirmation) {
                 ElementHandler.show('exportDataMatchFail');
-                 Swal.fire({
-                    icon: 'error',
-                    title: 'Password Mismatch',
-                    text: 'The entered passwords do not match. Please try again.',
-                    confirmButtonText: 'Ok',
-                });
                 formHandlerLocal.setFormValue('exportDataPw', '');
                 formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
-                return; // Exit early
+                return;
             }
 
             formHandlerLocal.setFormValue('exportDataPw', '');
             formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
 
-            // if (appState.state.isEncrypting) return; // This check seems like it could be earlier or removed if ladda handles button state
-            // AppState management moved to finally to ensure it's always reset
+            if (appState.state.isEncrypting) return;
             appState.setState({ isEncrypting: true });
 
             laddaExport = this._laddaStart($('#exportDataBtn')[0]);
@@ -415,7 +393,7 @@ export class AppDataController {
             text = err.message;
         } else if (err.message && err.message.toLowerCase().includes('key cannot be empty')) {
             title = 'Export Failed';
-            text = 'Password cannot be empty. This should have been caught earlier.';
+            text = 'Password cannot be empty.';
         }
         Swal.fire({
             icon: 'error',
@@ -445,10 +423,10 @@ export class AppDataController {
   async handleImportData () {
     const formHandlerLocal = new FormHandler('importDataForm');
     formHandlerLocal.preventSubmitAction();
-    let { importDataPw } = formHandlerLocal.getFormValues(); // Keep this let
+    let { importDataPw } = formHandlerLocal.getFormValues(); 
 
     const laddaImport = this._laddaStart($('#importDataBtn')[0]);
-    const IMPORT_PROCESS_TIMEOUT = 30000; // 30 seconds
+    const IMPORT_PROCESS_TIMEOUT = 40000;
 
     try {
         this.validatePassword(importDataPw); // Initial validation outside timeout
@@ -456,21 +434,19 @@ export class AppDataController {
         const fileInput = $('#importDataFile')[0];
         const file = fileInput.files[0];
         if (!file) {
-            // Use Swal.fire for this error
             Swal.fire({
                 icon: 'error',
                 title: 'Import Failed',
                 text: 'No file selected. Please choose a file to import.',
-                timer: 2500, // Or longer as appropriate
+                timer: 2500, 
                 showCancelButton: false,
                 confirmButtonText: 'Ok',
             });
-            return; // Exit early
+            return;
         }
 
         const importOperationPromise = (async () => {
-            const binaryContent = await this._readFileAsBuffer(file); // This has its own timeout
-            // If _readFileAsBuffer throws, it will be caught by the outer catch
+            const binaryContent = await this._readFileAsBuffer(file);
             return await this.configManager.importConfig(binaryContent, importDataPw);
         })();
 
@@ -507,12 +483,11 @@ export class AppDataController {
             });
             await this._afterUnlockLoad();
         } else {
-            throw new Error ('Unknown return code from importConfig.'); // This will be caught by the main catch
+            throw new Error ('Unknown return code from importConfig.'); 
         }
         ElementHandler.hideModal('do-data-import');
 
     } catch (err) {
-        // Ensure password field is cleared on error too
         formHandlerLocal.setFormValue('importDataPw', '');
 
         let title = 'Failed to import the configuration!';
@@ -528,19 +503,18 @@ export class AppDataController {
             title = 'Import Failed';
             text = 'Password cannot be empty. Please enter a password.';
         }
-        // Add more specific error checks if needed
 
         Swal.fire({
             icon: 'error',
             title: title,
             text: text,
-            timer: 3000, // Adjust timer as needed
+            timer: 3500,
             showCancelButton: false,
             confirmButtonText: 'Ok',
         });
     } finally {
-        importDataPw = null; // Ensure this is cleared
-        if (laddaImport) { // Check if laddaImport was initialized
+        importDataPw = null;
+        if (laddaImport) { 
             laddaImport.stop();
         }
     }
