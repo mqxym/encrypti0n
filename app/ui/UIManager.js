@@ -49,7 +49,7 @@ export class UIManager {
     $('#importDataModal').on('click', () => $('#do-data-import').modal('show'));
     $('#exportDataModal').on('click', () => $('#do-data-export').modal('show'));
     $('#encryptApplicationPw').on('input', () => this.showPasswordStrenght('encryptApplicationPw', 'password-strength', 'password-strength-text'));
-    $('#exportDataPw').on('input', () => this.showPasswordStrenght('encryptApplicationPw', 'export-password-strength', 'export-password-strength-text'));
+    $('#exportDataPw').on('input', () => this.showPasswordStrenght('exportDataPw', 'export-password-strength', 'export-password-strength-text'));
   }
 
   /**

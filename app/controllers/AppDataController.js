@@ -248,6 +248,8 @@ export class AppDataController {
           await this.configManager.removeMasterPassword();
           ElementHandler.hide('removeApplicationEncryption');
           ElementHandler.show('encryptApplicationModal');
+          $('#export-no-masterpassword-set').show();
+          $('#export-masterpassword-set').hide();
           Swal.fire({
             icon: 'success',
             title: 'The encryption is removed.',
@@ -529,10 +531,11 @@ export class AppDataController {
    * @returns {void}
    */
   _downloadExport(buffer) {
-      let blob =  new Blob([buffer], { type: 'application/octet-stream' });
-      let a = document.createElement('a');
+      const blob =  new Blob([buffer], { type: 'application/octet-stream' });
+      const a = document.createElement('a');
+      const suffix = crypto.getRandomValues(new Uint8Array(6)).reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
       a.href = URL.createObjectURL(blob);
-      a.download = 'export.dat';
+      a.download = `export_${suffix}.dat`;
       document.body.appendChild(a);
       a.click();
 
