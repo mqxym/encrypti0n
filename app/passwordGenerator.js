@@ -124,6 +124,13 @@ export class PasswordGeneratorController {
    */
   bindUI() {
     $(document).ready(() => {
+      $("#lengthSlider").ionRangeSlider({
+        min: 12,
+        max: 64,
+        from: 24,
+        grid: true,
+        extra_classes: "irs-primary",
+      });
       $('#lengthSlider').on('input', () => {
         $('#sliderValue').text($('#lengthSlider').val());
         this.handleGenerate();
