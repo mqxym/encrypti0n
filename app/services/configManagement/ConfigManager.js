@@ -82,9 +82,9 @@ export class ConfigManager {
         salt: '',
         rounds: 1,
         iv: ivWrap,
-        wrappedKey
+        wrappedKey,
       },
-      data: { iv: '', ciphertext: '' }
+      data: { iv: '', ciphertext: '' },
     };
 
     const initialData = {
@@ -98,15 +98,15 @@ export class ConfigManager {
         7: { name: 'Slot 7', value: null },
         8: { name: 'Slot 8', value: null },
         9: { name: 'Slot 9', value: null },
-        10: { name: 'Slot 10', value: null }
+        10: { name: 'Slot 10', value: null },
       },
       Options: {
         saltDifficulty: 'high',
-        roundDifficulty: 'middle'
-      }
+        roundDifficulty: 'middle',
+      },
     };
 
-    await this._encryptAndStore(initialData).catch(err => {
+    await this._encryptAndStore(initialData).catch((err) => {
       throw new Error(`Failed to init config: ${err.message}`);
     });
   }
@@ -130,7 +130,7 @@ export class ConfigManager {
         title: 'Migration to local data v2 not possible.',
         text: 'Due to limitations with a set master password, a migration to a more secure local data model (v2) is not possible. Your only option is to reset local data.',
         showCancelButton: false,
-        confirmButtonText: 'Ok'
+        confirmButtonText: 'Ok',
       });
       return;
     } else {
@@ -139,11 +139,7 @@ export class ConfigManager {
     }
 
     // Decrypt existing data with KEK
-    const plainData = await this.encryptionManager.decryptData(
-      kek,
-      this.config.data.iv,
-      this.config.data.ciphertext
-    );
+    const plainData = await this.encryptionManager.decryptData(kek, this.config.data.iv, this.config.data.ciphertext);
 
     // Generate new DEK and re-wrap
     this.dek = await this.encryptionManager.createDek();
@@ -159,7 +155,7 @@ export class ConfigManager {
       salt: isUsingMasterPassword ? argon2Salt : '',
       rounds: isUsingMasterPassword ? argon2Rounds : 1,
       iv: ivWrap,
-      wrappedKey
+      wrappedKey,
     };
 
     this.config = { header, data: { iv, ciphertext } };
@@ -170,7 +166,7 @@ export class ConfigManager {
       title: 'Migrated local data to v2!',
       text: 'The security of your local data has improved significantly.',
       showCancelButton: false,
-      confirmButtonText: 'Ok'
+      confirmButtonText: 'Ok',
     });
   }
 
@@ -411,7 +407,7 @@ export class ConfigManager {
       salt: newSalt,
       rounds: newRounds,
       iv: ivWrap,
-      wrappedKey
+      wrappedKey,
     };
 
     await this._unwrapDek(null, false);
@@ -447,7 +443,7 @@ export class ConfigManager {
       salt: '',
       rounds: 1,
       iv: ivWrap,
-      wrappedKey
+      wrappedKey,
     };
 
     await this._unwrapDek(deviceKek, false);
@@ -513,11 +509,7 @@ export class ConfigManager {
    * @returns {Promise<CryptoKey>} The derived KEK.
    */
   async _deriveKekFromPassword(password, saltB64, rounds) {
-    return this.encryptionManager.sessionKeyManager.deriveAndCacheKey(
-      password,
-      saltB64,
-      rounds
-    );
+    return this.encryptionManager.sessionKeyManager.deriveAndCacheKey(password, saltB64, rounds);
   }
 
   /**
@@ -584,22 +576,23 @@ export class ConfigManager {
 
   /**
    * Exports the encrypted configuration protected with a password.
-   * 
+   *
    * @async
    * @param {string} exportPassword - Password to protect the export
    * @returns {Promise<Uint8Array>} Encoded and encrypted export
    * @throws {Error} If session is locked
    */
   async exportConfig(exportPassword) {
-
-    if ((typeof exportPassword === undefined || exportPassword === '' || exportPassword === null) && this.isUsingMasterPassword()) {
+    if (
+      (typeof exportPassword === undefined || exportPassword === '' || exportPassword === null) &&
+      this.isUsingMasterPassword()
+    ) {
       return returnEncoded(this.config);
     }
-    
 
     if (!this.dek) throw new Error('Session locked');
-    if (typeof exportPassword === undefined || exportPassword === '') throw new Error ('No Password set');
-    
+    if (typeof exportPassword === undefined || exportPassword === '') throw new Error('No Password set');
+
     // Generate fresh salt and rounds for export
     const exportSalt = this.encryptionManager.generateRandomSalt();
     const exportRounds = this._getRandomInt(
@@ -608,13 +601,13 @@ export class ConfigManager {
     );
 
     const deviceKek = await this.encryptionManager.getDeviceKey();
-    const exportKek = await deriveKek(
-      exportPassword,
-      base64ToUint8Array(exportSalt),
-      exportRounds
-    );
+    const exportKek = await deriveKek(exportPassword, base64ToUint8Array(exportSalt), exportRounds);
 
-    let currentDekForWrapping = await this.encryptionManager.unwrapDekForWrapping(this.config.header.iv, this.config.header.wrappedKey, deviceKek)
+    let currentDekForWrapping = await this.encryptionManager.unwrapDekForWrapping(
+      this.config.header.iv,
+      this.config.header.wrappedKey,
+      deviceKek
+    );
     const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(currentDekForWrapping, exportKek);
 
     currentDekForWrapping = null;
@@ -625,14 +618,13 @@ export class ConfigManager {
       rounds: exportRounds,
       iv: ivWrap,
       mPw: false,
-      wrappedKey
+      wrappedKey,
     };
-
 
     // Create export bundle
     const exportBundle = {
       header: header,
-      data: this.config.data
+      data: this.config.data,
     };
 
     // Return export as binary (buffer)
@@ -643,7 +635,7 @@ export class ConfigManager {
    * Imports an encrypted configuration protected with a password.
    * When master password is used: unlock Session with master password
    * When export key is used: Re-Wrap with DeviceKey and unlock Session
-   * 
+   *
    * @async
    * @param {string} exportedConfig - Buffer encoded exported config
    * @param {string} exportPassword - Password used to protect the export (Master Password / Export Password)
@@ -670,21 +662,21 @@ export class ConfigManager {
           await this.unlockSession(exportPassword);
         } catch (err) {
           this.config = configBackup;
-          throw new Error ("Failed to validated master-password");
+          throw new Error('Failed to validated master-password');
         }
         this._saveConfig();
-        
-        return "storedWithMasterPassword";
+
+        return 'storedWithMasterPassword';
       }
 
       // Derive key from export password
-      const importKek = await deriveKek(
-        exportPassword,
-        base64ToUint8Array(bundle.header.salt),
-        bundle.header.rounds
+      const importKek = await deriveKek(exportPassword, base64ToUint8Array(bundle.header.salt), bundle.header.rounds);
+      let currentDekForWrapping = await this.encryptionManager.unwrapDekForWrapping(
+        bundle.header.iv,
+        bundle.header.wrappedKey,
+        importKek
       );
-      let currentDekForWrapping = await this.encryptionManager.unwrapDekForWrapping(bundle.header.iv, bundle.header.wrappedKey, importKek);
-      
+
       const devieKey = await this.encryptionManager.getDeviceKey();
       const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(currentDekForWrapping, devieKey);
       currentDekForWrapping = null;
@@ -694,16 +686,15 @@ export class ConfigManager {
         salt: '',
         rounds: 1,
         iv: ivWrap,
-        wrappedKey
+        wrappedKey,
       };
 
       this.config = bundle;
-      
+
       this._saveConfig();
       this._loadDekIntoMemory();
 
-      return 'storedWithDeviceKey'
-
+      return 'storedWithDeviceKey';
     } catch (error) {
       throw new Error(`Import failed: ${error.message}`);
     }
