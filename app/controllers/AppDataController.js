@@ -482,6 +482,8 @@ export class AppDataController {
                 confirmButtonText: 'Ok',
             });
             await this._afterUnlockLoad();
+            $('#export-no-masterpassword-set').show();
+            $('#export-masterpassword-set').hide();
         } else {
             throw new Error ('Unknown return code from importConfig.'); 
         }
@@ -491,12 +493,12 @@ export class AppDataController {
         formHandlerLocal.setFormValue('importDataPw', '');
 
         let title = 'Failed to import the configuration!';
-        let text = 'Please check data or password.'; // Default message
+        let text = 'Please check data or password.';
 
-        if (err.message && err.message.includes('timed out')) { // Check for specific timeout messages
+        if (err.message && err.message.includes('timed out')) { 
             title = 'Import Timed Out';
-            text = err.message; // Use the timeout error message
-        } else if (err.message && err.message.includes('No file selected')) { // Though handled above, good as a fallback
+            text = err.message;
+        } else if (err.message && err.message.includes('No file selected')) { 
             title = 'Import Failed';
             text = 'No file selected. Please choose a file to import.';
         } else if (err.message && err.message.toLowerCase().includes('key cannot be empty')) {
