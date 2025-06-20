@@ -368,7 +368,7 @@ export class AppDataController {
             this.validatePassword(exportDataPw);
             const exportOperationPromise = this.configManager.exportConfig(exportDataPw);
             const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error('Export process timed out after 30 seconds.')), EXPORT_PROCESS_TIMEOUT);
+                setTimeout(() => reject(new Error('Export process timed out after 40 seconds.')), EXPORT_PROCESS_TIMEOUT);
             });
             const data = await Promise.race([exportOperationPromise, timeoutPromise]);
             this._downloadExport(data);
@@ -451,7 +451,7 @@ export class AppDataController {
         })();
 
         const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Import process timed out after 30 seconds.')), IMPORT_PROCESS_TIMEOUT);
+            setTimeout(() => reject(new Error('Import process timed out after 40 seconds.')), IMPORT_PROCESS_TIMEOUT);
         });
 
         const result = await Promise.race([importOperationPromise, timeoutPromise]);
