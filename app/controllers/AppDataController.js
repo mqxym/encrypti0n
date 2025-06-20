@@ -490,6 +490,8 @@ export class AppDataController {
     } catch (err) {
         formHandlerLocal.setFormValue('importDataPw', '');
 
+        console.log(err);
+
         let title = 'Failed to import the configuration!';
         let text = 'Please check data or password.'; // Default message
 
