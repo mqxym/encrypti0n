@@ -1,5 +1,5 @@
-import { EncodeConstants } from "../constants/constants.js";
-import { base64ToUint8Array, arrayBufferToBase64 } from "./base64.js";
+import { EncodeConstants } from '../constants/constants.js';
+import { base64ToUint8Array, arrayBufferToBase64 } from './base64.js';
 
 /**
  * Compute SHA‑512 digest using the Web Crypto API.
@@ -8,7 +8,7 @@ import { base64ToUint8Array, arrayBufferToBase64 } from "./base64.js";
  * @returns {Promise<Uint8Array>} 64‑byte digest.
  */
 async function sha512(data) {
-  const digest = await crypto.subtle.digest("SHA-512", data);
+  const digest = await crypto.subtle.digest('SHA-512', data);
   return new Uint8Array(digest);
 }
 
@@ -21,10 +21,10 @@ async function sha512(data) {
  */
 function xorBinary(data, key) {
   if (!(data instanceof Uint8Array) || !(key instanceof Uint8Array)) {
-    throw new TypeError("Both data and key must be Uint8Array");
+    throw new TypeError('Both data and key must be Uint8Array');
   }
   if (key.length === 0) {
-    throw new Error("Key must not be empty");
+    throw new Error('Key must not be empty');
   }
 
   const out = new Uint8Array(data.length);
@@ -34,7 +34,7 @@ function xorBinary(data, key) {
   return out;
 }
 
-async function getKey (base, salt) {
+async function getKey(base, salt) {
   return await sha512(concatUint8Arrays(base, salt));
 }
 
@@ -42,7 +42,7 @@ async function getKey (base, salt) {
  * Obfuscate binary data with:
  * - Envelope XOR obfuscation using a SHA-512 key with json payload and fake random meta data
  * - Up to 1024-Bytes of random pre-padding
- * 
+ *
  * @param {Uint8Array} data - AES-encrypted data to obfuscate
  * @returns {Promise<Uint8Array>} - Obfuscated result
  */
@@ -53,13 +53,15 @@ async function obfuscate(data) {
 
   // Fake metadata
   const metaAndData = {
-    sig: Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2, '0')).join(''),
+    sig: Array.from(crypto.getRandomValues(new Uint8Array(8)))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join(''),
     ver: getRandomVersion(),
     ts: getRandomTimestamp(),
     vf: arrayBufferToBase64(saltInner.buffer),
-    pl: arrayBufferToBase64(obfuscatedInner)
+    pl: arrayBufferToBase64(obfuscatedInner),
   };
-  const metaBytes = new TextEncoder().encode("::" + JSON.stringify(metaAndData));
+  const metaBytes = new TextEncoder().encode('::' + JSON.stringify(metaAndData));
 
   // Pre-padding
   const prePad = crypto.getRandomValues(new Uint8Array(Math.floor(Math.random() * 1024) + 8));
@@ -82,8 +84,8 @@ function getRandomTimestamp() {
 }
 function getRandomVersion() {
   const major = Math.floor(Math.random() * 9) + 1; // 1–9
-  const minor = Math.floor(Math.random() * 10);    // 0–9
-  const patch = Math.floor(Math.random() * 10);    // 0–9
+  const minor = Math.floor(Math.random() * 10); // 0–9
+  const patch = Math.floor(Math.random() * 10); // 0–9
   return `${major}.${minor}.${patch}`;
 }
 
@@ -101,7 +103,7 @@ async function deobfuscate(input) {
   const keyOuter = await getKey(EncodeConstants.OBFUSCATION_VALUE_OUTER, saltOuter);
   const payload = xorBinary(cipherOuter, keyOuter);
   // --- locate metadata -----------------------------------------------------
-  const marker = new TextEncoder().encode("::");
+  const marker = new TextEncoder().encode('::');
   let markerPos = -1;
   for (let i = 0; i < payload.length - 1; i++) {
     if (payload[i] === marker[0] && payload[i + 1] === marker[1]) {
@@ -109,7 +111,7 @@ async function deobfuscate(input) {
       break;
     }
   }
-  if (markerPos === -1) throw new Error("Metadata marker not found");
+  if (markerPos === -1) throw new Error('Metadata marker not found');
 
   // --- parse metadata ------------------------------------------------------
   const metaBytes = payload.slice(markerPos + 2); // skip "::"
