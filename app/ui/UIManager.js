@@ -45,7 +45,7 @@ export class UIManager {
     $('#clearInput').on('click', () => this.clearInput());
     $('#clearInputFiles').on('click', () => this.clearInputFiles());
     $('.Argon2-Options').on('click', () => $('#argon2-modal').modal('show'));
-    $('#renameSlots').on('click', () => $('#renameSlotsModal').modal('show'));
+    $('#editSlots').on('click', () => $('#editSlotsModal').modal('show'));
     $('#importDataModal').on('click', () => $('#do-data-import').modal('show'));
     $('#exportDataModal').on('click', () => $('#do-data-export').modal('show'));
     $('#encryptApplicationPw').on('input', () => this.showPasswordStrenght('encryptApplicationPw', 'password-strength', 'password-strength-text'));

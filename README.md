@@ -13,13 +13,12 @@ The main feature is encryption and decryption of text and files with standard cr
 - Intuitive UI with password generator and a simple local password manager secured with envelope encryption
 - The password managers' data can be locally encrypted with the same standard algorithms (Argon2id + AES-GCM-256)
 - Automatic data clearing and user logout upon activation of app encryption after 5 minutes of inactivity
-- Delete all local data with a click to overwrite with default values
-- Clear clipboard button
+- Delete all local data with a click (overwrite with default values)
 - Password strenght checking
 - Importing / exporting local app data with envelope encryption applied
 
 Try it out here: [encryption.com](https://encrypti0n.com)
 
-## Supports Local and Offline Execution
+### Supports Local and Offline Execution
 
 Everything needed is included, with no external dependencies (except some fonts). Download the latest release on GitHub: [encrypti0n/releases](https://github.com/mqxym/encrypti0n/releases).
