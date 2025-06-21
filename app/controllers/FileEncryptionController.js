@@ -3,7 +3,7 @@ import { EncryptionController } from './EncryptionController.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { formatBytes } from '../utils/fileUtils.js';
-import { argon2Service } from '../services/argon2Service.js';
+import { argon2Service } from '../ui/services/argon2Service.js';
 import appState from '../state/AppState.js';
 
 /**

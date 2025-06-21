@@ -23,6 +23,7 @@ export class UIManager {
     /** @private */ this.formHandler = services.form;
     /** @private */ this.configManager = services.config;
     /** @private */ this.argon2Service = services.argon2;
+    /** @private */ this.slotService = services.slots;
     /** @private */ this.storageService = services.storage;
     /** @private */ this.encryptionService = services.encryption;
     /** @private */ this.keyManagementController = keyManagementController;
@@ -45,7 +46,11 @@ export class UIManager {
     $('#clearInput').on('click', () => this.clearInput());
     $('#clearInputFiles').on('click', () => this.clearInputFiles());
     $('.Argon2-Options').on('click', () => $('#argon2-modal').modal('show'));
-    $('#editSlots').on('click', () => $('#editSlotsModal').modal('show'));
+    $('#editSlots').on('click', async () => {
+      await this.slotService.render();
+      $('#editSlotsModal').modal('show');
+    
+    });
     $('#importDataModal').on('click', () => $('#do-data-import').modal('show'));
     $('#exportDataModal').on('click', () => $('#do-data-export').modal('show'));
     $('#encryptApplicationPw').on('input', () => this.showPasswordStrenght('encryptApplicationPw', 'password-strength', 'password-strength-text'));

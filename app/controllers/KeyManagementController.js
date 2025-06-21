@@ -145,30 +145,6 @@ export class KeyManagementController {
     });
   }
 
-  /**
-   * Renames an existing key slot based on form input,
-   * refreshes the slot list, and displays feedback.
-   *
-   * @async
-   * @returns {Promise<void>}
-   */
-  async changeSlotName() {
-    await wrapAction(async () => {
-      const formHandlerLocal = new FormHandler('newSlotForm');
-      formHandlerLocal.preventSubmitAction();
-      const { keySlotChange, slotName } = formHandlerLocal.getFormValues();
-      try {
-        this.validateSlotName(keySlotChange, slotName);
-        await this.configManager.setSlotName(keySlotChange, slotName);
-        const slotNames = await this.configManager.readSlotNames();
-        ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
-        await handleActionSuccess('renameSlotAction');
-        $('#slotName').val('');
-      } catch (error) {
-        await handleActionError('renameSlotAction');
-      }
-    });
-  }
 
   /**
    * Clears both key input fields.

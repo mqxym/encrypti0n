@@ -260,24 +260,6 @@ export class ConfigManager {
   }
 
   /**
-   * Reads all slot names from the decrypted data.
-   *
-   * @async
-   * @returns {Promise<Object.<string, string>>} Map of slot IDs to names.
-   */
-  async readSlotNames() {
-    const data = await this.getDecryptedData();
-    const result = {};
-    for (const key in data.slots) {
-      if (data.slots.hasOwnProperty(key)) {
-        result[key] = data.slots[key].name;
-      }
-    }
-    this._securelyClearObject(data);
-    return result;
-  }
-
-  /**
    * Reads the value of a specific slot.
    *
    * @async
@@ -329,6 +311,63 @@ export class ConfigManager {
     data.slots[id].name = newName;
     await this.setDecryptedData(data);
     this._securelyClearObject(data);
+  }
+
+  /**
+   * Reads all slot names from the decrypted data.
+   *
+   * @async
+   * @returns {Promise<Object.<string, string>>} Map of slot IDs to names.
+   */
+  async readSlotNames() {
+    const data = await this.getDecryptedData();
+    const result = {};
+    for (const key in data.slots) {
+      if (data.slots.hasOwnProperty(key)) {
+        result[key] = data.slots[key].name;
+      }
+    }
+    this._securelyClearObject(data);
+    return result;
+  }
+
+    /**
+   * Deletes a slot by its ID.
+   *
+   * @async
+   * @param {string|number} id - Slot identifier to delete.
+   * @returns {Promise<void>}
+   * @throws {Error} If the slot does not exist or session is locked.
+   */
+  async deleteSlot(id) {
+    const data = await this.getDecryptedData();
+    if (!data.slots[id]) {
+      this._securelyClearObject(data);
+      throw new Error(`Slot ${id} does not exist`);
+    }
+    delete data.slots[id];
+    await this.setDecryptedData(data);
+    this._securelyClearObject(data);
+  }
+
+  /**
+   * Adds a new slot with default values.
+   *
+   * @async
+   * @returns {Promise<number>} The index of the newly added slot.
+   * @throws {Error} If session is locked.
+   */
+  async addSlot() {
+    const data = await this.getDecryptedData();
+    // Find the next available numeric index
+    let newIndex = 1;
+    while (data.slots.hasOwnProperty(newIndex)) {
+      newIndex++;
+    }
+    data.slots[newIndex] = { name: `Slot ${newIndex}`, value: null };
+    await this.setDecryptedData(data);
+    this._securelyClearObject(data);
+    return newIndex;
   }
 
   /**
@@ -573,6 +612,10 @@ export class ConfigManager {
   isUsingMasterPassword() {
     return (this.config?.header?.rounds ?? 0) > 1;
   }
+
+  // -----------------------------
+  // Import Export
+  // -----------------------------
 
   /**
    * Exports the encrypted configuration protected with a password.
