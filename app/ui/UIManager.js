@@ -362,7 +362,7 @@ export class UIManager {
   }
 
   /**
-   * Resets key slot select to default placeholder names (Slot 1…Slot 10).
+   * Resets key slot select to default placeholder names (Slot 1…Slot 5).
    *
    * @returns {void}
    */
@@ -373,11 +373,6 @@ export class UIManager {
       3: 'Slot 3',
       4: 'Slot 4',
       5: 'Slot 5',
-      6: 'Slot 6',
-      7: 'Slot 7',
-      8: 'Slot 8',
-      9: 'Slot 9',
-      10: 'Slot 10',
     };
     ElementHandler.populateSelectWithSlotNames(obj, 'keySlot');
   }
