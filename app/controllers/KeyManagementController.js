@@ -48,7 +48,7 @@ export class KeyManagementController {
    * @returns {Promise<void>}
    */
   async keyGenerate() {
-    await wrapAction(async () => {
+    await wrapAction('keyGenerate', async () => {
       const randomKey = pwGenWrapper(
         KeyManagementConstants.KEY_LENGTH,
         KeyManagementConstants.ALLOWED_CHARACTERS
@@ -67,7 +67,7 @@ export class KeyManagementController {
    * @returns {Promise<void>}
    */
   async keyCopy() {
-    await wrapAction(async () => {
+    await wrapAction('keyCopy',async () => {
       const { key } = this.getKeyData();
       try {
         this.validateKey(key);
@@ -110,7 +110,7 @@ export class KeyManagementController {
    * @returns {Promise<void>}
    */
   async loadKey() {
-    await wrapAction(async () => {
+    await wrapAction('loadKey', async () => {
       const { slot } = this.getKeyData();
       try {
         this.validateSlot(slot);
@@ -133,7 +133,7 @@ export class KeyManagementController {
    * @returns {Promise<void>}
    */
   async saveKey() {
-    await wrapAction(async () => {
+    await wrapAction('saveKey', async () => {
       const { key, slot } = this.getKeyData();
       try {
         this.validateKeyInput(key, slot);
@@ -199,29 +199,6 @@ export class KeyManagementController {
    */
   validateKeyInput(key, slot) {
     this.validateKey(key);
-    this.validateSlot(slot);
-  }
-
-  /**
-   * Validates a slot and its new name against length constraints.
-   *
-   * @private
-   * @param {*} slot - The slot identifier to validate.
-   * @param {*} name - The new slot name to validate.
-   * @throws {Error} If the name is invalid or too long, or the slot is invalid.
-   */
-  validateSlotName(slot, name) {
-    if (!name) {
-      throw new Error('Slot name cannot be empty');
-    }
-    if (typeof name !== 'string') {
-      throw new Error('Slot name must be a string');
-    }
-    if (name.length > KeyManagementConstants.MAX_SLOT_NAME_LENGTH) {
-      throw new Error(
-        `Slot name cannot exceed ${KeyManagementConstants.MAX_SLOT_NAME_LENGTH} characters`
-      );
-    }
     this.validateSlot(slot);
   }
 

@@ -10,13 +10,12 @@ class AppState {
    */
   constructor() {
     /**
-     * @type {{ isEncrypting: boolean, currentView: string, isLocked: boolean, actionInProgress: boolean }}
+     * @type {{ isEncrypting: boolean, currentView: string, isLocked: boolean, actionInProgress: Object }}
      */
     this.state = {
-      isEncrypting: false,
       currentView: 'text',
       isLocked: false,
-      actionInProgress: false,
+      actionInProgress: {},
     };
     /** @private @type {Array<function(Object)>} */
     this.listeners = [];
@@ -43,7 +42,7 @@ class AppState {
   /**
    * Updates the internal state with provided values and notifies all subscribers.
    *
-   * @param {Partial<{ isEncrypting: boolean, currentView: string, isLocked: boolean, actionInProgress: boolean }>} newState
+   * @param {Partial<{ isEncrypting: boolean, currentView: string, isLocked: boolean, actionInProgress: object }>} newState
    *   An object containing one or more state properties to update.
    */
   setState(newState) {

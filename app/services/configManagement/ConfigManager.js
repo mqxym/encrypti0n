@@ -94,11 +94,6 @@ export class ConfigManager {
         3: { name: 'Slot 3', value: null },
         4: { name: 'Slot 4', value: null },
         5: { name: 'Slot 5', value: null },
-        6: { name: 'Slot 6', value: null },
-        7: { name: 'Slot 7', value: null },
-        8: { name: 'Slot 8', value: null },
-        9: { name: 'Slot 9', value: null },
-        10: { name: 'Slot 10', value: null },
       },
       Options: {
         saltDifficulty: 'high',
@@ -331,7 +326,7 @@ export class ConfigManager {
     return result;
   }
 
-    /**
+  /**
    * Deletes a slot by its ID.
    *
    * @async

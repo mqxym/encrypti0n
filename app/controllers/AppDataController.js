@@ -1,10 +1,9 @@
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { ActivityService } from '../services/ActivityService.js';
-const READ_FILE_TIMEOUT = 15000; // 15 seconds
 import { handleActionError } from '../utils/controller.js';
 import { AppDataConstants } from '../constants/constants.js';
-import appState from '../state/AppState.js';
+import { wrapAction } from '../utils/controller.js';
 
 /**
  * @class AppDataController
@@ -40,15 +39,14 @@ export class AppDataController {
    * Binds click events on various buttons to their corresponding handlers.
    */
   bindEvents() {
-    $('#encryptApplication').on('click', () => this.handleAppEncrypt());
-    $('#decryptApplication').on('click', () => this.handleAppDecrypt());
+    $('#encryptApplication').on('click', () => wrapAction('encryptApplication', this.handleAppEncrypt.bind(this)));
+    $('#decryptApplication').on('click', () => wrapAction('decryptApplication', this.handleAppDecrypt.bind(this)));
     $('#removeApplicationEncryption').on('click', () => this.handleAppEncryptionRemove());
-    $('#encryptApplicationModal').on('click', () => this.handleAppEncryptModal());
     $('#removeAllData').on('click', () => this.removeAllData());
     $('#removeLocalDataDecryptionModal').on('click', () => this.removeAllData());
     $('#clearClipboard').on('click', () => this.clearClipboard());
-    $('#exportDataBtn').on('click', () => this.handleExportData());
-    $('#importDataBtn').on('click', () => this.handleImportData());
+    $('#exportDataBtn').on('click', () => wrapAction('exportData', this.handleExportData.bind(this)));
+    $('#importDataBtn').on('click', () => wrapAction('importData', this.handleImportData.bind(this)));
   }
 
   /**
@@ -99,10 +97,6 @@ export class AppDataController {
     formHandlerLocal.setFormValue('encryptApplicationMPw', '');
     formHandlerLocal.setFormValue('encryptApplicationMPwConfirmation', '');
 
-   
-    if (appState.state.isEncrypting) return;
-    appState.setState({ isEncrypting: true });
-
     const laddaEncryptApplication = this._laddaStart($('#encryptApplication')[0]);
 
     try {
@@ -128,7 +122,6 @@ export class AppDataController {
         confirmButtonText: 'Ok',
       });
     } finally {
-      appState.setState({ isEncrypting: false });
       laddaEncryptApplication.stop();
     }
   }
@@ -143,22 +136,22 @@ export class AppDataController {
    * @returns {Promise<void>}
    */
   async handleAppDecrypt() {
-    if (appState.state.isEncrypting) return;
-    appState.setState({ isEncrypting: true });
     const formHandlerLocal = new FormHandler('applicationDecryptionForm');
     formHandlerLocal.preventSubmitAction();
     const { decryptApplicationMPw } = formHandlerLocal.getFormValues();
     formHandlerLocal.setFormValue('decryptApplicationMPw', '');
 
     const laddaDecryptApplication = this._laddaStart($('#decryptApplication')[0]);
-    
+
     try {
       this.validatePassword(decryptApplicationMPw);
-     
+
       await this.configManager.unlockSession(decryptApplicationMPw);
       ElementHandler.hideModal('do-application-decryption');
-      
-      await this._afterUnlockLoad();
+
+      const loadingResult = await this.UIManager.loadApplicationData();
+      if (loadingResult) throw Error('Failed to load application data');
+
       this._reactAppUnlockedStatus();
 
       Swal.fire({
@@ -173,21 +166,7 @@ export class AppDataController {
       await handleActionError('decryptApplication');
     } finally {
       laddaDecryptApplication.stop();
-      appState.setState({ isEncrypting: false });
     }
-  }
-
-  /**
-   * Loads saved slot names into the “keySlot” selector and initializes Argon2 options
-   * after the application is unlocked.
-   * @private
-   * @async
-   * @returns {Promise<void>}
-   */
-  async _afterUnlockLoad() {
-    const slotNames = await this.configManager.readSlotNames();
-    ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
-    await this.argon2Service.loadOptions();
   }
 
   /**
@@ -246,10 +225,7 @@ export class AppDataController {
         try {
           this.stopActivityService();
           await this.configManager.removeMasterPassword();
-          ElementHandler.hide('removeApplicationEncryption');
-          ElementHandler.show('encryptApplicationModal');
-          $('#export-no-masterpassword-set').show();
-          $('#export-masterpassword-set').hide();
+          this.UIManager.handlePasswordlessCase();
           Swal.fire({
             icon: 'success',
             title: 'The encryption is removed.',
@@ -267,14 +243,6 @@ export class AppDataController {
         }
       }
     });
-  }
-
-  /**
-   * Opens the modal to initiate application encryption if not already encrypted.
-   */
-  handleAppEncryptModal() {
-    if (this.configManager.isUsingMasterPassword()) return;
-    ElementHandler.showModal('do-application-encryption');
   }
 
   /**
@@ -331,85 +299,86 @@ export class AppDataController {
   async handleExportData() {
     const formHandlerLocal = new FormHandler('exportDataForm');
     formHandlerLocal.preventSubmitAction();
-    const EXPORT_PROCESS_TIMEOUT = 40000; 
-    let laddaExport; 
+    let laddaExport;
 
     try {
-        if (this.configManager.isUsingMasterPassword()) {
-            laddaExport = this._laddaStart($('#exportDataBtn')[0]); // Start Ladda here for this path
-            const exportOperationPromise = this.configManager.exportConfig(null);
-            const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error('Export process timed out after 30 seconds.')), EXPORT_PROCESS_TIMEOUT);
-            });
-            const data = await Promise.race([exportOperationPromise, timeoutPromise]);
-            this._downloadExport(data);
-        } else {
-            ElementHandler.hide('exportDataMatchFail');
-            ElementHandler.hide('exportDataMissingPw');
-            const { exportDataPw, exportDataPwConfirmation } = formHandlerLocal.getFormValues();
+      if (this.configManager.isUsingMasterPassword()) {
+        laddaExport = this._laddaStart($('#exportDataBtn')[0]); // Start Ladda here for this path
+        const exportOperationPromise = this.configManager.exportConfig(null);
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(
+            () => reject(new Error('Export process timed out after 40 seconds.')),
+            AppDataConstants.EXPORT_PROCESS_TIMEOUT
+          );
+        });
+        const data = await Promise.race([exportOperationPromise, timeoutPromise]);
+        this._downloadExport(data);
+      } else {
+        ElementHandler.hide('exportDataMatchFail');
+        ElementHandler.hide('exportDataMissingPw');
+        const { exportDataPw, exportDataPwConfirmation } = formHandlerLocal.getFormValues();
 
-            if (!exportDataPw || !exportDataPwConfirmation) {
-                ElementHandler.show('exportDataMissingPw');
-                return; 
-            }
-            if (exportDataPw !== exportDataPwConfirmation) {
-                ElementHandler.show('exportDataMatchFail');
-                formHandlerLocal.setFormValue('exportDataPw', '');
-                formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
-                return;
-            }
-
-            formHandlerLocal.setFormValue('exportDataPw', '');
-            formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
-
-            if (appState.state.isEncrypting) return;
-            appState.setState({ isEncrypting: true });
-
-            laddaExport = this._laddaStart($('#exportDataBtn')[0]);
-
-            this.validatePassword(exportDataPw);
-            const exportOperationPromise = this.configManager.exportConfig(exportDataPw);
-            const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error('Export process timed out after 40 seconds.')), EXPORT_PROCESS_TIMEOUT);
-            });
-            const data = await Promise.race([exportOperationPromise, timeoutPromise]);
-            this._downloadExport(data);
-            Swal.fire({
-                icon: 'success',
-                title: 'Export Successful',
-                text: 'Your data has been successfully prepared for download.',
-                timer: 2500,
-                showCancelButton: false,
-                confirmButtonText: 'Ok',
-            });
+        if (!exportDataPw || !exportDataPwConfirmation) {
+          ElementHandler.show('exportDataMissingPw');
+          return;
         }
-    } catch (err) {
+        if (exportDataPw !== exportDataPwConfirmation) {
+          ElementHandler.show('exportDataMatchFail');
+          formHandlerLocal.setFormValue('exportDataPw', '');
+          formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
+          return;
+        }
+
         formHandlerLocal.setFormValue('exportDataPw', '');
         formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
 
-        let title = 'Failed to export the configuration!';
-        let text = 'Please try again or report the bug.';
+        laddaExport = this._laddaStart($('#exportDataBtn')[0]);
 
-        if (err.message && err.message.includes('timed out')) {
-            title = 'Export Timed Out';
-            text = err.message;
-        } else if (err.message && err.message.toLowerCase().includes('key cannot be empty')) {
-            title = 'Export Failed';
-            text = 'Password cannot be empty.';
-        }
-        Swal.fire({
-            icon: 'error',
-            title: title,
-            text: text,
-            timer: 3000,
-            showCancelButton: false,
-            confirmButtonText: 'Ok',
+        this.validatePassword(exportDataPw);
+        const exportOperationPromise = this.configManager.exportConfig(exportDataPw);
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(
+            () => reject(new Error('Export process timed out after 40 seconds.')),
+            AppDataConstants.EXPORT_PROCESS_TIMEOUT
+          );
         });
+        const data = await Promise.race([exportOperationPromise, timeoutPromise]);
+        this._downloadExport(data);
+        Swal.fire({
+          icon: 'success',
+          title: 'Export Successful',
+          text: 'Your data has been successfully prepared for download.',
+          timer: 2500,
+          showCancelButton: false,
+          confirmButtonText: 'Ok',
+        });
+      }
+    } catch (err) {
+      formHandlerLocal.setFormValue('exportDataPw', '');
+      formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
+
+      let title = 'Failed to export the configuration!';
+      let text = 'Please try again or report the bug.';
+
+      if (err.message && err.message.includes('timed out')) {
+        title = 'Export Timed Out';
+        text = err.message;
+      } else if (err.message && err.message.toLowerCase().includes('key cannot be empty')) {
+        title = 'Export Failed';
+        text = 'Password cannot be empty.';
+      }
+      Swal.fire({
+        icon: 'error',
+        title: title,
+        text: text,
+        timer: 3000,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
     } finally {
-        appState.setState({ isEncrypting: false });
-        if (laddaExport) {
-            laddaExport.stop();
-        }
+      if (laddaExport) {
+        laddaExport.stop();
+      }
     }
   }
 
@@ -422,105 +391,108 @@ export class AppDataController {
    * @async
    * @returns {Promise<void>}
    */
-  async handleImportData () {
+  async handleImportData() {
     const formHandlerLocal = new FormHandler('importDataForm');
     formHandlerLocal.preventSubmitAction();
-    let { importDataPw } = formHandlerLocal.getFormValues(); 
+    let { importDataPw } = formHandlerLocal.getFormValues();
 
     const laddaImport = this._laddaStart($('#importDataBtn')[0]);
-    const IMPORT_PROCESS_TIMEOUT = 40000;
 
     try {
-        this.validatePassword(importDataPw); // Initial validation outside timeout
+      this.validatePassword(importDataPw); // Initial validation outside timeout
 
-        const fileInput = $('#importDataFile')[0];
-        const file = fileInput.files[0];
-        if (!file) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Import Failed',
-                text: 'No file selected. Please choose a file to import.',
-                timer: 2500, 
-                showCancelButton: false,
-                confirmButtonText: 'Ok',
-            });
-            return;
-        }
-
-        const importOperationPromise = (async () => {
-            const binaryContent = await this._readFileAsBuffer(file);
-            return await this.configManager.importConfig(binaryContent, importDataPw);
-        })();
-
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Import process timed out after 40 seconds.')), IMPORT_PROCESS_TIMEOUT);
+      const fileInput = $('#importDataFile')[0];
+      const file = fileInput.files[0];
+      if (!file) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Import Failed',
+          text: 'No file selected. Please choose a file to import.',
+          timer: 2500,
+          showCancelButton: false,
+          confirmButtonText: 'Ok',
         });
+        return;
+      }
 
-        const result = await Promise.race([importOperationPromise, timeoutPromise]);
+      const importOperationPromise = (async () => {
+        const binaryContent = await this._readFileAsBuffer(file);
+        return await this.configManager.importConfig(binaryContent, importDataPw);
+      })();
 
-        // Clear form values AFTER successful import logic, but before Swal success messages
-        formHandlerLocal.setFormValue('importDataPw', '');
-        $('#importDataFile').val('');
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(
+          () => reject(new Error('Import process timed out after 40 seconds.')),
+          AppDataConstants.IMPORT_PROCESS_TIMEOUT
+        );
+      });
 
-        if (result === 'storedWithMasterPassword') {
-            Swal.fire({
-                icon: 'success',
-                title: 'Application data successfully imported with a master password!',
-                text: 'You can now use your saved data. Your master password is now required when re-entering the application.',
-                showCancelButton: false,
-                confirmButtonText: 'Ok',
-            });
-            this._reactAppUnlockedStatus();
-            await this._afterUnlockLoad();
-            $('#export-no-masterpassword-set').hide();
-            $('#export-masterpassword-set').show();
-        } else if (result === 'storedWithDeviceKey') {
-            Swal.fire({
-                icon: 'success',
-                title: 'Application data successfully imported with export password!',
-                text: 'You can now use your saved data.',
-                timer: 3500,
-                showCancelButton: false,
-                confirmButtonText: 'Ok',
-            });
-            await this._afterUnlockLoad();
-            $('#export-no-masterpassword-set').show();
-            $('#export-masterpassword-set').hide();
-        } else {
-            throw new Error ('Unknown return code from importConfig.'); 
-        }
-        ElementHandler.hideModal('do-data-import');
+      const result = await Promise.race([importOperationPromise, timeoutPromise]);
+
+      // Clear form values AFTER successful import logic, but before Swal success messages
+      formHandlerLocal.setFormValue('importDataPw', '');
+      $('#importDataFile').val('');
+
+      if (result === 'storedWithMasterPassword') {
+        Swal.fire({
+          icon: 'success',
+          title: 'Application data successfully imported with a master password!',
+          text: 'You can now use your saved data. Your master password is now required when re-entering the application.',
+          showCancelButton: false,
+          confirmButtonText: 'Ok',
+        });
+        
+        const loadingResult = await this.UIManager.loadApplicationData();
+        if (loadingResult) throw Error('Failed to load application data');
+        this.UIManager.handleMasterPasswordCase();
+        this._reactAppUnlockedStatus();
+
+      } else if (result === 'storedWithDeviceKey') {
+        Swal.fire({
+          icon: 'success',
+          title: 'Application data successfully imported with export password!',
+          text: 'You can now use your saved data.',
+          timer: 3500,
+          showCancelButton: false,
+          confirmButtonText: 'Ok',
+        });
+        await this.UIManager.initUI();
+
+      } else {
+        throw new Error('Unknown return code from importConfig.');
+      }
+      ElementHandler.hideModal('do-data-import');
 
     } catch (err) {
-        formHandlerLocal.setFormValue('importDataPw', '');
+      formHandlerLocal.setFormValue('importDataPw', '');
 
-        let title = 'Failed to import the configuration!';
-        let text = 'Please check data or password.';
+      let title = 'Failed to import the configuration!';
+      let text = 'Please check data or password.';
 
-        if (err.message && err.message.includes('timed out')) { 
-            title = 'Import Timed Out';
-            text = err.message;
-        } else if (err.message && err.message.includes('No file selected')) { 
-            title = 'Import Failed';
-            text = 'No file selected. Please choose a file to import.';
-        } else if (err.message && err.message.toLowerCase().includes('key cannot be empty')) {
-            title = 'Import Failed';
-            text = 'Password cannot be empty. Please enter a password.';
-        }
+      if (err.message && err.message.includes('timed out')) {
+        title = 'Import Timed Out';
+        text = err.message;
+      } else if (err.message && err.message.includes('No file selected')) {
+        title = 'Import Failed';
+        text = 'No file selected. Please choose a file to import.';
+      } else if (err.message && err.message.toLowerCase().includes('key cannot be empty')) {
+        title = 'Import Failed';
+        text = 'Password cannot be empty. Please enter a password.';
+      }
 
-        Swal.fire({
-            icon: 'error',
-            title: title,
-            text: text,
-            timer: 3500,
-            showCancelButton: false,
-            confirmButtonText: 'Ok',
-        });
+      Swal.fire({
+        icon: 'error',
+        title: title,
+        text: text,
+        timer: 3500,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
     } finally {
-        importDataPw = null;
-        if (laddaImport) { 
-            laddaImport.stop();
-        }
+      importDataPw = null;
+      if (laddaImport) {
+        laddaImport.stop();
+      }
     }
   }
 
@@ -531,17 +503,19 @@ export class AppDataController {
    * @returns {void}
    */
   _downloadExport(buffer) {
-      const blob =  new Blob([buffer], { type: 'application/octet-stream' });
-      const a = document.createElement('a');
-      const suffix = crypto.getRandomValues(new Uint8Array(6)).reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
-      a.href = URL.createObjectURL(blob);
-      a.download = `export_${suffix}.dat`;
-      document.body.appendChild(a);
-      a.click();
+    const blob = new Blob([buffer], { type: 'application/octet-stream' });
+    const a = document.createElement('a');
+    const suffix = crypto
+      .getRandomValues(new Uint8Array(6))
+      .reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+    a.href = URL.createObjectURL(blob);
+    a.download = `export_${suffix}.dat`;
+    document.body.appendChild(a);
+    a.click();
 
-      // Clean up
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);  
+    // Clean up
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
   }
 
   /**
@@ -568,14 +542,10 @@ export class AppDataController {
       reader.readAsArrayBuffer(file);
 
       timeoutId = setTimeout(() => {
-        // Need to abort the reader before rejecting
-        // However, FileReader API doesn't have an abort() method that directly stops the reading.
-        // The operation will continue in the background, but we will have already rejected the promise.
         reject(new Error('File reading timed out'));
-      }, READ_FILE_TIMEOUT);
+      }, AppDataConstants.READ_FILE_TIMEOUT);
     });
   }
-
 
   /**
    * Validates that a provided password is a non-empty string.
@@ -597,18 +567,18 @@ export class AppDataController {
    * @async
    * @returns {Promise<void>}
    */
-  async clearClipboard () {
+  async clearClipboard() {
     try {
       await navigator.clipboard.writeText('');
       Swal.fire({
-            icon: 'success',
-            title: 'Clipboard cleared.',
-            timer: 2500,
-            showCancelButton: false,
-            confirmButtonText: 'Ok',
-          });
+        icon: 'success',
+        title: 'Clipboard cleared.',
+        timer: 2500,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
     } catch (err) {
-       Swal.fire({
+      Swal.fire({
         icon: 'error',
         title: 'Failed to clear clipboard',
         text: '',

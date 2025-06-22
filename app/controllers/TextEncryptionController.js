@@ -3,7 +3,6 @@ import { EncryptionController } from './EncryptionController.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { argon2Service } from '../ui/services/argon2Service.js';
-import appState from '../state/AppState.js';
 
 /**
  * @class TextEncryptionController
@@ -29,9 +28,7 @@ export class TextEncryptionController extends EncryptionController {
    */
   async handleAction() {
     const { inputText } = this.formHandler.formValues;
-    const laddaManager = new LaddaButtonManager('.action-button');
-    laddaManager.startAll();
-    laddaManager.setProgressAll(0.75);
+    const laddaManager = new LaddaButtonManager('.action-button').startAll().setProgressAll(0.75);
 
     try {
       const isEncrypted = await this.encryptionService.isEncrypted(inputText);
@@ -59,8 +56,6 @@ export class TextEncryptionController extends EncryptionController {
     } catch (error) {
       laddaManager.stopAll();
       ElementHandler.arrowsToCross();
-    } finally {
-      appState.setState({ isEncrypting: false });
     }
   }
 
@@ -75,7 +70,7 @@ export class TextEncryptionController extends EncryptionController {
     const { inputText } = this.formHandler.formValues;
     let { key } = this.getKeyData();
     if (!inputText || !key) return false;
-    this.shortPasswordWarning(key);
+    this.insecurePasswordWarning(key);
 
     try {
       const usedOptions = await argon2Service.getCurrentOptions(this.configManager);

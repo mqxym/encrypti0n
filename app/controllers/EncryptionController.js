@@ -100,7 +100,7 @@ export class EncryptionController {
    * @returns {void}
    */
 
-  shortPasswordWarning (key) {
+  insecurePasswordWarning (key) {
     if (typeof key !== "string") return;
     const strength = checkPasswordStrength.passwordStrength(key).id
     if (strength !== 3) {

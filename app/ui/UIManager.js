@@ -49,12 +49,16 @@ export class UIManager {
     $('#editSlots').on('click', async () => {
       await this.slotService.render();
       $('#editSlotsModal').modal('show');
-    
     });
+    $('#encryptApplicationModal').on('click', () => this.handleAppEncryptModal());
     $('#importDataModal').on('click', () => $('#do-data-import').modal('show'));
     $('#exportDataModal').on('click', () => $('#do-data-export').modal('show'));
-    $('#encryptApplicationPw').on('input', () => this.showPasswordStrenght('encryptApplicationPw', 'password-strength', 'password-strength-text'));
-    $('#exportDataPw').on('input', () => this.showPasswordStrenght('exportDataPw', 'export-password-strength', 'export-password-strength-text'));
+    $('#encryptApplicationPw').on('input', () =>
+      this.showPasswordStrenght('encryptApplicationPw', 'password-strength', 'password-strength-text')
+    );
+    $('#exportDataPw').on('input', () =>
+      this.showPasswordStrenght('exportDataPw', 'export-password-strength', 'export-password-strength-text')
+    );
   }
 
   /**
@@ -89,7 +93,19 @@ export class UIManager {
     $('#export-masterpassword-set').show();
     ElementHandler.disable('exportDataPw');
     ElementHandler.disable('exportDataPwConfirmation');
+  }
 
+  /**
+   * Enables encryption button when a master password does not exist.
+   *
+   * @private
+   * @returns {void}
+   */
+  handlePasswordlessCase() {
+    ElementHandler.hide('removeApplicationEncryption');
+    ElementHandler.show('encryptApplicationModal');
+    $('#export-no-masterpassword-set').show();
+    $('#export-masterpassword-set').hide();
   }
 
   /**
@@ -100,8 +116,7 @@ export class UIManager {
    * @returns {Promise<void>}
    */
   async initializeApplication() {
-    $('#export-no-masterpassword-set').show();
-    $('#export-masterpassword-set').hide();
+    this.handlePasswordlessCase();
     const initializationFailed = await this.loadApplicationData();
     if (initializationFailed) {
       await this.showInitializationError();
@@ -123,7 +138,7 @@ export class UIManager {
       ElementHandler.populateSelectWithSlotNames(slotNames, 'keySlot');
       await this.argon2Service.loadOptions();
       return false;
-    } catch (err){
+    } catch (err) {
       return true;
     }
   }
@@ -181,6 +196,14 @@ export class UIManager {
     const inputText = event.target.value;
     const isEncrypted = await this.encryptionService.isEncrypted(inputText.trim());
     this.updateEncryptionState(isEncrypted);
+  }
+
+  /**
+   * Opens the modal to initiate application encryption if not already encrypted.
+   */
+  handleAppEncryptModal() {
+    if (this.configManager.isUsingMasterPassword()) return;
+    ElementHandler.showModal('do-application-encryption');
   }
 
   /**
@@ -310,12 +333,12 @@ export class UIManager {
    *
    * @returns {void}
    */
-    clearInputFiles() {
-      $('#inputFiles').val('');
-      $('#fileList').text('Selected files appear here...');
+  clearInputFiles() {
+    $('#inputFiles').val('');
+    $('#fileList').text('Selected files appear here...');
 
-      this.updateEncryptionState(false);
-    }
+    this.updateEncryptionState(false);
+  }
 
   /**
    * Clears password input fields (blank and masked).
@@ -345,8 +368,16 @@ export class UIManager {
    */
   clearSlotNames() {
     const obj = {
-      1: 'Slot 1', 2: 'Slot 2', 3: 'Slot 3', 4: 'Slot 4', 5: 'Slot 5',
-      6: 'Slot 6', 7: 'Slot 7', 8: 'Slot 8', 9: 'Slot 9', 10: 'Slot 10',
+      1: 'Slot 1',
+      2: 'Slot 2',
+      3: 'Slot 3',
+      4: 'Slot 4',
+      5: 'Slot 5',
+      6: 'Slot 6',
+      7: 'Slot 7',
+      8: 'Slot 8',
+      9: 'Slot 9',
+      10: 'Slot 10',
     };
     ElementHandler.populateSelectWithSlotNames(obj, 'keySlot');
   }
@@ -361,6 +392,7 @@ export class UIManager {
     this.clearInput();
     this.clearPassword();
     this.clearSlotNames();
+    this.slotService.resetModal();
   }
 
   /**
@@ -370,7 +402,7 @@ export class UIManager {
    * @returns {Promise<void>}
    */
   async copyOutput() {
-    await wrapAction(async () => {
+    await wrapAction('copyOutput', async () => {
       const { outputText } = this.formHandler.formValues;
       try {
         this.validateOutput(outputText);
@@ -410,13 +442,13 @@ export class UIManager {
    * @param {string} textId    - The DOM id of the text label element.
    * @returns {void}
    */
-  
-  showPasswordStrenght (pwFieldId, barId, textId) {
-    const password = $("#" + pwFieldId).val();
+
+  showPasswordStrenght(pwFieldId, barId, textId) {
+    const password = $('#' + pwFieldId).val();
     const strength = checkPasswordStrength.passwordStrength(password).id;
 
-    const $bar = $("#" + barId);
-    const $text = $("#" + textId);
+    const $bar = $('#' + barId);
+    const $text = $('#' + textId);
     // Reset progress bar classes
     $bar.removeClass('bg-danger bg-warning bg-info bg-success');
 

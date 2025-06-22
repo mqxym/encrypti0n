@@ -11,20 +11,31 @@ import { delay } from './misc.js';
 import { UIConstants } from '../constants/constants.js';
 
 /**
- * Ensures that only one action runs at a time by checking and setting `actionInProgress` in global state.
- * Wraps the provided async function, automatically toggling the state flag before and after execution.
+ * Wraps an async action to prevent concurrent runs and track its progress in the global app state.
  *
- * @async
- * @param {function(): Promise<void>} actionFn - The async function representing the action to perform.
- * @returns {Promise<void>}
+ * @param {string} actionName - A unique key identifying the action (e.g. "isEncrypting").
+ * @param {() => Promise<any>} actionFn - The asynchronous function to execute.
+ * @returns {Promise<void>} Resolves when the action completes (or immediately if already in progress).
  */
-export async function wrapAction(actionFn) {
-  if (appState.state.actionInProgress) return;
-  appState.setState({ actionInProgress: true });
+export async function wrapAction(actionName, actionFn) {
+  if (appState.state.actionInProgress[actionName]) return;
+
+  appState.setState({
+    actionInProgress: {
+      ...appState.state.actionInProgress,
+      [actionName]: true,
+    },
+  });
+
   try {
     await actionFn();
   } finally {
-    appState.setState({ actionInProgress: false });
+    appState.setState({
+      actionInProgress: {
+        ...appState.state.actionInProgress,
+        [actionName]: false,
+      },
+    });
   }
 }
 

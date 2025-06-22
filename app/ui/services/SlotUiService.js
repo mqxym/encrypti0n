@@ -18,6 +18,7 @@
 
 import { ElementHandler } from '../../helpers/ElementHandler.js';
 import { handleActionError, handleActionSuccess } from '../../utils/controller.js';
+import { KeyManagementConstants } from '../../constants/constants.js';
 
 /**
  * @typedef {import('./ConfigManager.js').default} ConfigManager
@@ -33,11 +34,11 @@ export class SlotUiService {
    * @param {string} [options.tableContainerSelector]   - Selector (relative to modal) into which the table is injected (defaults to `.modal-body`).
    * @param {ConfigManager} configManager               - ConfigManager instance.
    */
-  constructor (options, configManager) {
+  constructor(options, configManager) {
     if (!configManager) throw new Error('configManager instance is required');
 
-    /** @private */ this.configManager  = configManager;
-    /** @private */ this.modalSelector  = options.modalSelector || '#editSlotsModal';
+    /** @private */ this.configManager = configManager;
+    /** @private */ this.modalSelector = options.modalSelector || '#editSlotsModal';
     /** @private */ this.tableContainerSelector = options.tableContainerSelector || '.modal-body';
     /** @private */ this.$modal = $(this.modalSelector);
 
@@ -71,9 +72,10 @@ export class SlotUiService {
    * Called automatically whenever the modal is shown.
    *
    * @async
+   * @public
    * @returns {Promise<void>}
    */
-  async render () {
+  async render() {
     // If we already have a staged copy (user is editing) we re-render from it;
     // otherwise load fresh data.
     if (Object.keys(this.slots).length === 0) {
@@ -83,9 +85,7 @@ export class SlotUiService {
     const $container = this.$modal.find(this.tableContainerSelector);
     $container.empty();
 
-    const $table = $(
-      '<table id="slotTable" class="table align-middle mb-0"></table>'
-    );
+    const $table = $('<table id="slotTable" class="table align-middle mb-0"></table>');
     $table.append(`
       <thead>
         <tr>
@@ -101,7 +101,7 @@ export class SlotUiService {
     Object.keys(this.slots)
       .map(Number)
       .sort((a, b) => a - b)
-      .forEach(id => $tbody.append(this._buildRow(id, this.slots[id])));
+      .forEach((id) => $tbody.append(this._buildRow(id, this.slots[id])));
 
     $table.append($tbody);
     $container.append($table, this._buildAddButton(), $information);
@@ -109,12 +109,26 @@ export class SlotUiService {
     this._bindDynamicEvents();
   }
 
+  /**
+   * Resets the modal state: clears staged data, empties the table container,
+   * and resets the temporary ID counter.
+   *
+   * @public
+   */
+  resetModal() {
+    this.slots = {};
+    this.originalSlots = {};
+    this._tmpId = -1;
+    const $container = this.$modal.find(this.tableContainerSelector);
+    $container.empty();
+  }
+
   // ────────────────────────────────────────────────────────────────────────────
   // Event binding helpers
   // ────────────────────────────────────────────────────────────────────────────
 
   /** @private */
-  _bindStaticEvents () {
+  _bindStaticEvents() {
     // Refresh table whenever modal is shown (and reset staged data).
     this.$modal.on('shown.bs.modal', () => {
       this.slots = {}; // reset staging so we fetch fresh.
@@ -130,20 +144,23 @@ export class SlotUiService {
   }
 
   /** @private */
-  _bindDynamicEvents () {
+  _bindDynamicEvents() {
     const $container = this.$modal.find(this.tableContainerSelector);
 
     // Inline-name editing updates the staged data only.
-    $container.find('.slot-name-input')
+    $container
+      .find('.slot-name-input')
       .off('input')
       .on('input', (e) => {
         const $input = $(e.currentTarget);
         const id = $input.data('id');
-        this.slots[id] = $input.val().toString().trim().slice(0, 15);
+        const name = $input.val().toString().trim().slice(0, 15);
+        this.slots[id] = name;
       });
 
     // Delete row (staged deletion)
-    $container.find('.delete-slot-btn')
+    $container
+      .find('.delete-slot-btn')
       .off('click')
       .on('click', (e) => {
         const id = $(e.currentTarget).data('id');
@@ -152,7 +169,7 @@ export class SlotUiService {
           text: 'This change will be applied after you press Save.',
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonText: 'Yes, delete it!'
+          confirmButtonText: 'Yes, delete it!',
         }).then(({ isConfirmed }) => {
           if (!isConfirmed) return;
           delete this.slots[id];
@@ -161,7 +178,8 @@ export class SlotUiService {
       });
 
     // Add new row (staged)
-    $container.find('#addSlotBtn')
+    $container
+      .find('#addSlotBtn')
       .off('click')
       .on('click', () => {
         const newId = this._tmpId--; // negative unique ID
@@ -175,7 +193,7 @@ export class SlotUiService {
   // ────────────────────────────────────────────────────────────────────────────
 
   /** @private */
-  _buildRow (id, name) {
+  _buildRow(id, name) {
     const $tr = $('<tr>').attr('data-id', id);
     const $idCell = $('<td>').text(id > 0 ? id : '—');
     const $nameCell = $('<td>').append(
@@ -185,7 +203,7 @@ export class SlotUiService {
         maxlength: 15,
         value: name,
         'data-id': id,
-        'aria-label': `Slot ${id} name`
+        'aria-label': `Slot ${id} name`,
       })
     );
     const $deleteCell = $('<td>').append(
@@ -194,7 +212,7 @@ export class SlotUiService {
         class: 'btn btn-sm btn-outline-danger delete-slot-btn',
         'data-id': id,
         html: '<i class="mdi mdi-trash-can-outline"></i>',
-        title: 'Delete slot'
+        title: 'Delete slot',
       })
     );
 
@@ -202,13 +220,13 @@ export class SlotUiService {
   }
 
   /** @private */
-  _buildAddButton () {
+  _buildAddButton() {
     return $('<div>', { class: 'd-flex justify-content-end mt-3' }).append(
       $('<button>', {
         type: 'button',
         id: 'addSlotBtn',
         class: 'btn btn-outline-primary btn-sm',
-        html: '<i class="mdi mdi-plus-circle-outline me-1"></i>Add Slot'
+        html: '<i class="mdi mdi-plus-circle-outline me-1"></i>Add Slot',
       })
     );
   }
@@ -221,16 +239,52 @@ export class SlotUiService {
    * Loads slots from ConfigManager into both `originalSlots` and `slots`.
    * @private
    */
-  async _loadSlotsFromConfig () {
+  async _loadSlotsFromConfig() {
     try {
-        this.originalSlots = await this.configManager.readSlotNames();
-        // Deep clone to avoid shared refs.
-        this.slots = JSON.parse(JSON.stringify(this.originalSlots));
+      this.originalSlots = await this.configManager.readSlotNames();
+      // Deep clone to avoid shared refs.
+      this.slots = JSON.parse(JSON.stringify(this.originalSlots));
     } catch (err) {
-        this.originalSlots = {};
-        this.slots = {};
+      this.originalSlots = {};
+      this.slots = {};
     }
-    
+  }
+
+  /**
+   * Validates a slot and its new name against length constraints.
+   *
+   * @private
+   * @param {*} slot - The slot identifier to validate.
+   * @param {*} name - The new slot name to validate.
+   * @throws {Error} If the name is invalid or too long, or the slot is invalid.
+   */
+  _validateSlotName(slot, name) {
+    if (!name) {
+      throw new Error('Slot name cannot be empty');
+    }
+    if (typeof name !== 'string') {
+      throw new Error('Slot name must be a string');
+    }
+    if (name.length > KeyManagementConstants.MAX_SLOT_NAME_LENGTH) {
+      throw new Error(`Slot name cannot exceed ${KeyManagementConstants.MAX_SLOT_NAME_LENGTH} characters`);
+    }
+    this._validateSlot(slot);
+  }
+
+  /**
+   * Ensures the provided slot identifier is a non-empty string.
+   *
+   * @private
+   * @param {*} slot - The slot value to validate.
+   * @throws {Error} If the slot is empty or not a string.
+   */
+  _validateSlot(slot) {
+    if (!slot) {
+      throw new Error('Slot cannot be empty');
+    }
+    if (typeof slot !== 'string') {
+      throw new Error('Slot must be a string');
+    }
   }
 
   /**
@@ -240,14 +294,18 @@ export class SlotUiService {
    * @private
    * @returns {Promise<void>}
    */
-  async _saveChanges () {
+  async _saveChanges() {
     const $btn = this.$modal.find('#slotAction');
     $btn.prop('disabled', true);
     try {
+      if (Object.keys(this.slots).length === 0) {
+        throw new Error('There must be at least one slot.');
+      }
+
       // ─── Determine changes ───────────────────────────────────────────────
       /** @type {Array<string|number>} */ const deletions = [];
-      /** @type {Array<{id:number|string,name:string}>} */ const updates   = [];
-      /** @type {Array<{tmpId:number,name:string}>} */ const additions  = [];
+      /** @type {Array<{id:number|string,name:string}>} */ const updates = [];
+      /** @type {Array<{tmpId:number,name:string}>} */ const additions = [];
 
       // Deletions & updates
       for (const id in this.originalSlots) {
@@ -267,6 +325,7 @@ export class SlotUiService {
 
       // ─── Persist via ConfigManager ───────────────────────────────────────
       for (const id of deletions) {
+        this._validateSlot(id);
         await this.configManager.deleteSlot(id);
       }
 
@@ -275,11 +334,13 @@ export class SlotUiService {
       for (const { tmpId, name } of additions) {
         const realId = await this.configManager.addSlot();
         tmpIdToRealId.set(tmpId, realId);
+        this._validateSlotName(realId, name);
         await this.configManager.setSlotName(realId, name);
       }
 
       // Updates (for both existing and just-added rows)
       for (const { id, name } of updates) {
+        this._validateSlotName(id, name);
         await this.configManager.setSlotName(id, name);
       }
 
@@ -287,6 +348,7 @@ export class SlotUiService {
       for (const { tmpId, name } of additions) {
         const realId = tmpIdToRealId.get(tmpId);
         // The previous setSlotName already did it, but safer to ensure.
+        this._validateSlotName(realId, name);
         await this.configManager.setSlotName(realId, name);
       }
 

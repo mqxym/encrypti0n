@@ -9,6 +9,7 @@ import { argon2Service } from '../ui/services/argon2Service.js';
 import { SlotUiService } from '../ui/services/SlotUiService.js';
 import { ConfigManager } from '../services/configManagement/ConfigManager.js';
 import { UIManager } from '../ui/UIManager.js';
+import { wrapAction } from '../utils/controller.js';
 import appState from '../state/AppState.js';
 
 /**
@@ -59,7 +60,6 @@ export class MainController {
       argon2: new argon2Service('argon2-modal', confManager),
       slots: new SlotUiService({ modalSelector: '#editSlotsModal' }, confManager),
       form: new FormHandler(this.formId),
-
     };
 
     this.services.form.preventSubmitAction();
@@ -96,16 +96,15 @@ export class MainController {
    * @returns {Promise<void>}
    */
   async handleAction() {
-    const { currentView, isEncrypting } = appState.state;
-    if (isEncrypting) return;
-    appState.setState({ isEncrypting: true });
+    const { currentView } = appState.state;
+    await wrapAction('isEncryting', async () => {
+      if (currentView === 'text') {
+        await this.textEncryptionController.handleAction();
+      }
 
-    if (currentView === 'text') {
-      await this.textEncryptionController.handleAction();
-    }
-
-    if (currentView === 'files') {
-      await this.fileEncryptionController.handleAction();
-    }
+      if (currentView === 'files') {
+        await this.fileEncryptionController.handleAction();
+      }
+    });
   }
 }

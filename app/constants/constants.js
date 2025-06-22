@@ -47,9 +47,15 @@ export const ConfigManagerConstants = {
  * @description
  * Constants related to application data lock settings.
  * @property {number} APP_DATA_LOCK_TIMEOUT - Inactivity timeout in seconds before app lock.
+ * @property {number} READ_FILE_TIMEOUT - Timeout in miliseconds before stopping file reading.
+ * @property {number} EXPORT_PROCESS_TIMEOUT - Timeout in miliseconds before stopping export process
+ * @property {number} IMPORT_PROCESS_TIMEOUT - Timeout in miliseconds before stopping export process
  */
 export const AppDataConstants = {
-    APP_DATA_LOCK_TIMEOUT: 300
+    APP_DATA_LOCK_TIMEOUT: 300,
+    READ_FILE_TIMEOUT: 15000,
+    EXPORT_PROCESS_TIMEOUT: 40000,
+    IMPORT_PROCESS_TIMEOUT: 40000,
 };
 
 /**
