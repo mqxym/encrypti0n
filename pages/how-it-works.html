@@ -279,7 +279,7 @@
                                     of both text and files. This
                                     <strong>local-first approach</strong>
                                     keeps your data secure, preventing unauthorized access during data transfer or storage. Below, we outline clearly and technically how our encryption processes for the
-                                    <a href="/index.html">Main App</a>
+                                    <a href="../index.html">Main App</a>
                                     function internally.
                                 </p>
                             </div>
@@ -291,11 +291,12 @@
                                 <li><a href="#file-encryption-process">File Encryption Process</a></li>
                                 <li><a href="#decryption-process">Decryption Process</a></li>
                                 <li><a href="#encrypt-application">Encrypt Application</a></li>
+                                <li><a href="#import-export-flow">Import / Export Data</a></li>
                             </ul>
                         </nav>
 
                         <!-- Text Encryption Process Section -->
-                        <div class="row my-4" id="text-encryption-process">
+                        <section class="row my-4" id="text-encryption-process">
                             <div class="col-12">
                                 <h2>Text Encryption Process</h2>
                                 <p>Encrypting text securely involves the following precise steps:</p>
@@ -335,10 +336,10 @@ iv = crypto.getRandomValues(12);
 ciphertext = AES_GCM_Encrypt(encodedText, key, iv);
 outputBase64(ciphertext);</code></pre>
                             </div>
-                        </div>
+                        </section>
 
                         <!-- File Encryption Process Section -->
-                        <div class="row my-4" id="file-encryption-process">
+                        <section class="row my-4" id="file-encryption-process">
                             <div class="col-12">
                                 <h2>File Encryption Process</h2>
                                 <p>Encrypting files follows a similar core logic with additional file-specific enhancements for improved security and manageability:</p>
@@ -379,10 +380,10 @@ for each chunk:
     storeInBlob(encryptedChunk, iv, chunk.length);
 createDownloadLink(blob);</code></pre>
                             </div>
-                        </div>
+                        </section>
 
                         <!-- Decryption Process Section -->
-                        <div class="row my-4" id="decryption-process">
+                        <section class="row my-4" id="decryption-process">
                             <div class="col-12">
                                 <h2>Decryption Process</h2>
                                 <p>Decryption meticulously reverses the encryption, ensuring data integrity:</p>
@@ -416,11 +417,11 @@ key = deriveArgon2Key(encodedPassword, salt, rounds);
 decryptedData = AES_GCM_Decrypt(encryptedChunks, key, iv);
 outputOriginalData(decryptedData);</code></pre>
                             </div>
-                        </div>
+                        </section>
 
                         <!-- Encrypt Application (App Data Protection) Section -->
-                        <div class="row my-4" id="encrypt-application">
-                            <h2 class="">Encrypt Application (App Data Protection)</h2>
+                        <section class="row my-4" id="encrypt-application">
+                            <h2 class="">App Data Protection</h2>
 
                             <h3 class="m-1 mb-0">Envelope-Encryption Stack:</h3>
                             <ul class="m-2">
@@ -600,7 +601,102 @@ plainData = AES_GCM_Decrypt(ciphertext, dek, iv);</code></pre>
                             </ul>
 
                             <p class="text-muted">With this layered approach, an attacker needs both the encrypted payload AND either your master password or physical access to the device key store.</p>
-                        </div>
+                        </section>
+                        <section class="row my-4" id="import-export-flow">
+                            <div class="col-12">
+                                <h2>Data Import and Export Flow</h2>
+                                <p>The following outlines the secure process for exporting and importing encrypted data. Use the tabs to toggle between the two flows:</p>
+
+                                <ul class="nav nav-tabs" id="importExportTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="export-tab" data-bs-toggle="tab" data-bs-target="#export" type="button" role="tab" aria-controls="export" aria-selected="true">Export</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="import-tab" data-bs-toggle="tab" data-bs-target="#import" type="button" role="tab" aria-controls="import" aria-selected="false">Import</button>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content pt-3" id="importExportTabsContent">
+                                    <!-- Export Tab -->
+                                    <div class="tab-pane fade show active" id="export" role="tabpanel" aria-labelledby="export-tab">
+                                        <ol>
+                                            <li>
+                                                <strong>Determine Export Mode</strong>
+                                                : If a master password is set, the Data Encryption Key (DEK) is already wrapped using Argon2id. Otherwise, a custom export password is used to derive a 256-bit key.
+                                            </li>
+                                            <li>
+                                                <strong>Wrap DEK</strong>
+                                                : If no master password is present, the DEK is encrypted with the export-derived key using Argon2id + AES-GCM-256.
+                                            </li>
+                                            <li>
+                                                <strong>Build Export Structure</strong>
+                                                : Construct the export object to include the versioned header with salt, Argon2 rounds, IV, and wrapped DEK. The encrypted data is added as-is.
+                                            </li>
+                                            <li>
+                                                <strong>Generate Download</strong>
+                                                : Serialize the export structure, encode it in binary, and trigger a file download via a JavaScript-created temporary element.
+                                            </li>
+                                        </ol>
+                                        <p><strong>Sample export file structure:</strong></p>
+                                        <pre class="bg-light p-1 rounded"><code class="language-json">{
+    "header": {
+        "v": 2,
+        "salt": "tmKYbB...",
+        "rounds": 20,
+        "iv": "pmb26K...",
+        "wrappedKey": "+aEaNG..."
+    },
+    "data": {
+        "iv": "PbxE0D...",
+        "ciphertext": "IeysxB4H..."
+    }
+}</code></pre>
+                                    </div>
+
+                                    <!-- Import Tab -->
+                                    <div class="tab-pane fade" id="import" role="tabpanel" aria-labelledby="import-tab">
+                                        <ol>
+                                            <li>
+                                                <strong>Binary Decode</strong>
+                                                : Begin by decoding the binary import data back into JSON format.
+                                            </li>
+                                            <li>
+                                                <strong>Extract Header Parameters</strong>
+                                                : Parse the header to retrieve the version, salt, Argon2id parameters, IV, and wrapped DEK.
+                                            </li>
+                                            <li>
+                                                <strong>Key Unwrapping</strong>
+                                                : Use the appropriate password (master or export) to derive the unwrapping key via Argon2id, then decrypt the wrapped DEK using AES-GCM.
+                                            </li>
+                                            <li>
+                                                <strong>Data Decryption</strong>
+                                                : Once the DEK is recovered and setup for decryption, the imported data can be decrypted when needed.
+                                            </li>
+                                             <li>
+                                                <strong>Save New Config</strong>
+                                                : The imported config is saved to local storage. When a device key is used, the DEK is re-wrapped with the device key.
+                                            </li>
+                                        </ol>
+                                        <p><strong>Pseudocode overview of the import logic:</strong></p>
+                                        <pre class="bg-light p-1 rounded"><code class="language-javascript">decoded = binaryDecode(fileContents);
+header = decoded.header;
+salt, rounds, iv = header.salt, header.rounds, header.iv;
+key = deriveArgon2Key(password, salt, rounds);
+DEK = AES_GCM_Decrypt(header.wrappedKey, key, iv);
+plaintext = AES_GCM_Decrypt(decoded.data.ciphertext, DEK, decoded.data.iv); //when needed
+if (masterPasswordUsed) {
+    saveLocalData(decoded)
+} else {
+    kek = DeviceKeyProvider.getKey(); // IndexedDB
+    header.wrappedKey, header.iv = AES_GCM_Encrypt(DEK, kek)
+    header.salt = ""
+    header.rounds = 1
+    saveLocalData(header, decode.data)
+}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
                     </div>
                 </main>
 

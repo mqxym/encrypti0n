@@ -13,6 +13,7 @@ export class LaddaButtonManager {
     /** @private @type {Array<Ladda>} */
     this.buttons = Array.from(document.querySelectorAll(selector))
       .map((btn) => Ladda.create(btn));
+    return this;
   }
 
   /**
@@ -22,6 +23,7 @@ export class LaddaButtonManager {
    */
   startAll() {
     this.buttons.forEach((btn) => btn.start());
+    return this;
   }
 
   /**
@@ -31,6 +33,7 @@ export class LaddaButtonManager {
    */
   stopAll() {
     this.buttons.forEach((btn) => btn.stop());
+    return this;
   }
 
   /**
@@ -41,5 +44,6 @@ export class LaddaButtonManager {
    */
   setProgressAll(progress) {
     this.buttons.forEach((btn) => btn.setProgress(progress));
+    return this;
   }
 }

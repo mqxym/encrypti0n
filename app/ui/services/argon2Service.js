@@ -1,5 +1,5 @@
-import { ElementHandler } from '../helpers/ElementHandler.js';
-import { handleActionError, handleActionSuccess } from '../utils/controller.js';
+import { ElementHandler } from '../../helpers/ElementHandler.js';
+import { handleActionError, handleActionSuccess } from '../../utils/controller.js';
 
 /**
  * @class argon2Service
@@ -165,7 +165,10 @@ export class argon2Service {
     try {
       return await configManager.readOptions();
     } catch (error) {
-      throw error;
+      return {
+        roundDifficulty: 'middle',
+        saltDifficulty: 'high',
+      };
     }
   }
 }

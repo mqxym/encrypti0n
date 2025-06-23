@@ -47,9 +47,15 @@ export const ConfigManagerConstants = {
  * @description
  * Constants related to application data lock settings.
  * @property {number} APP_DATA_LOCK_TIMEOUT - Inactivity timeout in seconds before app lock.
+ * @property {number} READ_FILE_TIMEOUT - Timeout in miliseconds before stopping file reading.
+ * @property {number} EXPORT_PROCESS_TIMEOUT - Timeout in miliseconds before stopping export process
+ * @property {number} IMPORT_PROCESS_TIMEOUT - Timeout in miliseconds before stopping export process
  */
 export const AppDataConstants = {
-    APP_DATA_LOCK_TIMEOUT: 300
+    APP_DATA_LOCK_TIMEOUT: 300,
+    READ_FILE_TIMEOUT: 15000,
+    EXPORT_PROCESS_TIMEOUT: 40000,
+    IMPORT_PROCESS_TIMEOUT: 40000,
 };
 
 /**
@@ -79,3 +85,15 @@ export const Argon2Constants = {
 export const AESGCMConstants = {
     IV_LENGTH: 12
 };
+
+
+/**
+ * @namespace AESGCMConstants
+ * @description
+ * Constants for data encoding
+ * @property {Uint8Array} OBFUSCATION_VALUE - A static value used for XOR data obfuscation for export / import
+ */
+export const EncodeConstants = {
+    OBFUSCATION_VALUE: new TextEncoder().encode('https://encrypti0n.com/index.html?user=mqxym&password=11myx11'),
+    OBFUSCATION_VALUE_OUTER: new TextEncoder().encode('zOekjqqmK:{4Q?wTka!9qO1hb_x.]*_,_[O6F$>RCa?WBC=LniO,VP_V|Z+tes2m')
+}

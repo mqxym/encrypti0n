@@ -3,7 +3,7 @@ import { EncryptionController } from './EncryptionController.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { formatBytes } from '../utils/fileUtils.js';
-import { argon2Service } from '../services/argon2Service.js';
+import { argon2Service } from '../ui/services/argon2Service.js';
 import appState from '../state/AppState.js';
 
 /**
@@ -30,9 +30,7 @@ export class FileEncryptionController extends EncryptionController {
    * @returns {Promise<void>}
    */
   async handleAction() {
-    const laddaManager = new LaddaButtonManager('.action-button');
-    laddaManager.startAll();
-
+    const laddaManager = new LaddaButtonManager('.action-button').startAll();
     try {
       const inputFilesElem = $('#inputFiles')[0];
       const fileLength = inputFilesElem.files.length;
@@ -63,8 +61,6 @@ export class FileEncryptionController extends EncryptionController {
     } catch (error) {
       laddaManager.stopAll();
       ElementHandler.arrowsToCross();
-    } finally {
-      appState.setState({ isEncrypting: false });
     }
   }
 
@@ -79,7 +75,7 @@ export class FileEncryptionController extends EncryptionController {
   async handleEncryption(file) {
     const { key } = this.getKeyData();
     if (!key) return false;
-    this.shortPasswordWarning(key);
+    this.insecurePasswordWarning(key);
     const algo = 'aesgcm';
     const outputFilesDiv = $('#outputFiles');
 

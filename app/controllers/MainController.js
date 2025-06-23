@@ -5,9 +5,12 @@ import { AppDataController } from './AppDataController.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { StorageService } from '../services/StorageService.js';
 import { EncryptionService } from '../services/EncryptionService.js';
-import { argon2Service } from '../services/argon2Service.js';
+import { argon2Service } from '../ui/services/argon2Service.js';
+import { SlotUiService } from '../ui/services/SlotUiService.js';
 import { ConfigManager } from '../services/configManagement/ConfigManager.js';
 import { UIManager } from '../ui/UIManager.js';
+import { wrapAction } from '../utils/controller.js';
+import { EventBinder } from '../helpers/ElementHandler.js';
 import appState from '../state/AppState.js';
 
 /**
@@ -56,6 +59,7 @@ export class MainController {
       storage: new StorageService(),
       encryption: new EncryptionService(),
       argon2: new argon2Service('argon2-modal', confManager),
+      slots: new SlotUiService({ modalSelector: '#editSlotsModal' }, confManager),
       form: new FormHandler(this.formId),
     };
 
@@ -81,7 +85,7 @@ export class MainController {
    * @returns {void}
    */
   bindEvents() {
-    $('.action-button').on('click', () => this.handleAction());
+    EventBinder.on('.action-button', 'click', () =>  this.handleAction());
   }
 
   // ––––––– Action Orchestration –––––––
@@ -93,16 +97,15 @@ export class MainController {
    * @returns {Promise<void>}
    */
   async handleAction() {
-    const { currentView, isEncrypting } = appState.state;
-    if (isEncrypting) return;
-    appState.setState({ isEncrypting: true });
+    const { currentView } = appState.state;
+    await wrapAction('isEncryting', async () => {
+      if (currentView === 'text') {
+        await this.textEncryptionController.handleAction();
+      }
 
-    if (currentView === 'text') {
-      await this.textEncryptionController.handleAction();
-    }
-
-    if (currentView === 'files') {
-      await this.fileEncryptionController.handleAction();
-    }
+      if (currentView === 'files') {
+        await this.fileEncryptionController.handleAction();
+      }
+    });
   }
 }

@@ -94,13 +94,20 @@ export class EncryptionController {
     };
   }
 
-  shortPasswordWarning (key) {
+  /**
+   * Shows a password strenght low warning when encrypting
+   *
+   * @returns {void}
+   */
+
+  insecurePasswordWarning (key) {
     if (typeof key !== "string") return;
-    if (key.length < 12) {
+    const strength = checkPasswordStrength.passwordStrength(key).id
+    if (strength !== 3) {
       Swal.fire({
         icon: 'warning',
-        title: 'Your password is short.',
-        html: '<em>Encryption continues...</em> <br>For better security choose a longer password.',
+        title: 'Your password is weak.',
+        html: '<em>Encryption continues...</em> <br>For better security choose a longer and/or more complex password.',
         showCancelButton: false,
         confirmButtonText: 'Ok',
       });
