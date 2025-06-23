@@ -10,6 +10,7 @@ import { SlotUiService } from '../ui/services/SlotUiService.js';
 import { ConfigManager } from '../services/configManagement/ConfigManager.js';
 import { UIManager } from '../ui/UIManager.js';
 import { wrapAction } from '../utils/controller.js';
+import { EventBinder } from '../helpers/ElementHandler.js';
 import appState from '../state/AppState.js';
 
 /**
@@ -84,7 +85,7 @@ export class MainController {
    * @returns {void}
    */
   bindEvents() {
-    $('.action-button').on('click', () => this.handleAction());
+    EventBinder.on('.action-button', 'click', () =>  this.handleAction());
   }
 
   // ––––––– Action Orchestration –––––––

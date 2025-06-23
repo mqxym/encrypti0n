@@ -1,5 +1,5 @@
 import { formatBytes } from '../utils/fileUtils.js';
-import { ElementHandler } from '../helpers/ElementHandler.js';
+import { ElementHandler, EventBinder } from '../helpers/ElementHandler.js';
 import appState from '../state/AppState.js';
 import { handleActionSuccess, handleActionError, wrapAction } from '../utils/controller.js';
 
@@ -37,26 +37,26 @@ export class UIManager {
    * @returns {void}
    */
   bindEvents() {
-    $('#showTextEncryption').on('click', () => this.showTextInput());
-    $('#showFilesEncryption').on('click', () => this.showFileInput());
-    $('#inputFiles').on('change', () => this.updateFileList());
-    $('#hideInformation').on('click', () => this.setInformationTab());
-    $('#inputText').on('input', (event) => this.handleDataChange(event));
-    $('#copyOutput').on('click', () => this.copyOutput());
-    $('#clearInput').on('click', () => this.clearInput());
-    $('#clearInputFiles').on('click', () => this.clearInputFiles());
-    $('.Argon2-Options').on('click', () => $('#argon2-modal').modal('show'));
-    $('#editSlots').on('click', async () => {
+    EventBinder.on('#showTextEncryption', 'click', () => this.showTextInput());
+    EventBinder.on('#showFilesEncryption', 'click', () => this.showFileInput());
+    EventBinder.on('#inputFiles', 'change', () => this.updateFileList());
+    EventBinder.on('#hideInformation', 'click', () => this.setInformationTab());
+    EventBinder.on('#inputText', 'input', (event) => this.handleDataChange(event));
+    EventBinder.on('#copyOutput', 'click', () => this.copyOutput());
+    EventBinder.on('#clearInput', 'click', () => this.clearInput());
+    EventBinder.on('#clearInputFiles', 'click', () => this.clearInputFiles());
+    EventBinder.on('.Argon2-Options', 'click', () => EventBinder.showModal('#argon2-modal'));
+    EventBinder.on('#editSlots', 'click', async () => {
       await this.slotService.render();
-      $('#editSlotsModal').modal('show');
+      EventBinder.showModal('#editSlotsModal');
     });
-    $('#encryptApplicationModal').on('click', () => this.handleAppEncryptModal());
-    $('#importDataModal').on('click', () => $('#do-data-import').modal('show'));
-    $('#exportDataModal').on('click', () => $('#do-data-export').modal('show'));
-    $('#encryptApplicationPw').on('input', () =>
+    EventBinder.on('#encryptApplicationModal', 'click', () => this.handleAppEncryptModal());
+    EventBinder.on('#importDataModal', 'click', () => EventBinder.showModal('#do-data-import'));
+    EventBinder.on('#exportDataModal', 'click', () => EventBinder.showModal('#do-data-export'));
+    EventBinder.on('#encryptApplicationPw', 'input', () =>
       this.showPasswordStrenght('encryptApplicationPw', 'password-strength', 'password-strength-text')
     );
-    $('#exportDataPw').on('input', () =>
+    EventBinder.on('#exportDataPw', 'input', () =>
       this.showPasswordStrenght('exportDataPw', 'export-password-strength', 'export-password-strength-text')
     );
   }
@@ -67,6 +67,7 @@ export class UIManager {
    * - Shows decryption modal if master password is set
    * - Otherwise loads slots and Argon2 options
    *
+   * @public
    * @async
    * @returns {Promise<void>}
    */
@@ -74,7 +75,7 @@ export class UIManager {
     this.resetUIState();
     if (this.configManager.isUsingMasterPassword()) {
       this.handleMasterPasswordCase();
-      $('#do-application-decryption').modal('show');
+      ElementHandler.showModal('do-application-decryption');
       return;
     }
     await this.initializeApplication();
@@ -83,14 +84,14 @@ export class UIManager {
   /**
    * Disables encryption button when a master password exists.
    *
-   * @private
+   * @public
    * @returns {void}
    */
   handleMasterPasswordCase() {
     ElementHandler.disable('encryptApplicationModal');
-    $(document).off('click', '#encryptApplicationModal');
-    $('#export-no-masterpassword-set').hide();
-    $('#export-masterpassword-set').show();
+    ElementHandler.removeHandler('encryptApplicationModal');
+    ElementHandler.hide('export-no-masterpassword-set');
+    ElementHandler.show('export-masterpassword-set');
     ElementHandler.disable('exportDataPw');
     ElementHandler.disable('exportDataPwConfirmation');
   }
@@ -98,14 +99,15 @@ export class UIManager {
   /**
    * Enables encryption button when a master password does not exist.
    *
-   * @private
+   * @public
    * @returns {void}
    */
   handlePasswordlessCase() {
     ElementHandler.hide('removeApplicationEncryption');
     ElementHandler.show('encryptApplicationModal');
-    $('#export-no-masterpassword-set').show();
-    $('#export-masterpassword-set').hide();
+    ElementHandler.show('export-no-masterpassword-set');
+    ElementHandler.hide('export-masterpassword-set');
+    EventBinder.on('#encryptApplicationModal', 'click', () => this.handleAppEncryptModal());
   }
 
   /**
@@ -222,10 +224,10 @@ export class UIManager {
       ElementHandler.fillPillPink('encryptedPill');
       ElementHandler.fillPillPink('encryptedFilesPill');
       ElementHandler.buttonClassPinkToBlue('action-button');
-      $('#outputText').attr('placeholder', 'The decryption result appears here');
-      $('.action-explanation').text('decryption');
-      $('.action-button').attr('data-bs-original-title', 'Decrypt with AES-GCM-256');
-      $('#outputFooter').text('Decrypted output is UTF-8 formatted.');
+      document.getElementById('outputText').setAttribute('placeholder', 'The decryption result appears here');
+      document.querySelectorAll('.action-explanation').forEach(el => el.textContent = 'decryption');
+      document.querySelectorAll('.action-button').forEach(el => el.setAttribute('data-bs-original-title', 'Decrypt with AES-GCM-256'));
+      document.getElementById('outputFooter').textContent = 'Decrypted output is UTF-8 formatted.';
     } else {
       ElementHandler.pinkToBlueBorder('inputText');
       ElementHandler.blueToPinkBorder('outputText');
@@ -234,10 +236,10 @@ export class UIManager {
       ElementHandler.emptyPillPink('encryptedPill');
       ElementHandler.emptyPillPink('encryptedFilesPill');
       ElementHandler.buttonClassBlueToPink('action-button');
-      $('#outputText').attr('placeholder', 'The encryption result appears here');
-      $('.action-explanation').text('encryption');
-      $('.action-button').attr('data-bs-original-title', 'Encrypt with AES-GCM-256');
-      $('#outputFooter').text('Encrypted output is base64 formatted.');
+      document.getElementById('outputText').setAttribute('placeholder', 'The encryption result appears here');
+      document.querySelectorAll('.action-explanation').forEach(el => el.textContent = 'encryption');
+      document.querySelectorAll('.action-button').forEach(el => el.setAttribute('data-bs-original-title', 'Encrypt with AES-GCM-256'));
+      document.getElementById('outputFooter').textContent = 'Encrypted output is base64 formatted.';
     }
   }
 
@@ -334,8 +336,8 @@ export class UIManager {
    * @returns {void}
    */
   clearInputFiles() {
-    $('#inputFiles').val('');
-    $('#fileList').text('Selected files appear here...');
+    this.formHandler.setFormValue('inputFiles', '');
+    document.getElementById('fileList').textContent = 'Selected files appear here...';
 
     this.updateEncryptionState(false);
   }
@@ -357,8 +359,8 @@ export class UIManager {
    */
   clearFiles() {
     this.formHandler.setFormValue('inputFiles', '');
-    $('#fileList').text('Selected files appear here...');
-    $('#outputFiles').text('The encrypted files appears here');
+    document.getElementById('fileList').textContent = 'Selected files appear here...';
+    document.getElementById('outputFiles').textContent = 'The encrypted files appears here';
   }
 
   /**
@@ -439,31 +441,36 @@ export class UIManager {
    */
 
   showPasswordStrenght(pwFieldId, barId, textId) {
-    const password = $('#' + pwFieldId).val();
+    const password = document.getElementById(pwFieldId).value;
     const strength = checkPasswordStrength.passwordStrength(password).id;
 
-    const $bar = $('#' + barId);
-    const $text = $('#' + textId);
-    // Reset progress bar classes
-    $bar.removeClass('bg-danger bg-warning bg-info bg-success');
+    const bar = document.getElementById(barId);
+    const text = document.getElementById(textId);
+
+    // Remove previous strength classes
+    bar.classList.remove('bg-danger', 'bg-warning', 'bg-info', 'bg-success');
 
     // Set based on strength level
     switch (strength) {
       case 0:
-        $bar.css('width', '10%').addClass('bg-danger');
-        $text.text('Strength: Very Weak');
+        bar.style.width = '10%';
+        bar.classList.add('bg-danger');
+        text.textContent = 'Strength: Very Weak';
         break;
       case 1:
-        $bar.css('width', '35%').addClass('bg-danger');
-        $text.text('Strength: Weak');
+        bar.style.width = '35%';
+        bar.classList.add('bg-danger');
+        text.textContent = 'Strength: Weak';
         break;
       case 2:
-        $bar.css('width', '65%').addClass('bg-warning');
-        $text.text('Strength: Medium');
+        bar.style.width = '65%';
+        bar.classList.add('bg-warning');
+        text.textContent = 'Strength: Medium';
         break;
       case 3:
-        $bar.css('width', '100%').addClass('bg-success');
-        $text.text('Strength: Strong');
+        bar.style.width = '100%';
+        bar.classList.add('bg-success');
+        text.textContent = 'Strength: Strong';
         break;
     }
   }

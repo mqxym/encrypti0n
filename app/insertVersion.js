@@ -2,4 +2,6 @@
 
 const appVersion = "3.0.0b6";
 
-$(".version").text(appVersion);
+document.querySelectorAll(".version").forEach(function(el) {
+  el.textContent = appVersion;
+});

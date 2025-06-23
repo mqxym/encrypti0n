@@ -1,4 +1,4 @@
-import { ElementHandler } from '../helpers/ElementHandler.js';
+import { ElementHandler, EventBinder } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { handleActionError, handleActionSuccess, wrapAction } from '../utils/controller.js';
 import { pwGenWrapper } from '../passwordGenerator.js';
@@ -29,13 +29,13 @@ export class KeyManagementController {
    * @returns {void}
    */
   bindKeyManagementEvents() {
-    $('#renameSlotAction').on('click', () => this.changeSlotName());
-    $('#keyGenerate').on('click', () => this.keyGenerate());
-    $('#clearPassword').on('click', () => this.clearPassword());
-    $('#keyCopy').on('click', () => this.keyCopy());
-    $('#hideKey').on('change', () => this.toggleKey());
-    $('#loadKey').on('click', () => this.loadKey());
-    $('#saveKey').on('click', () => this.saveKey());
+    EventBinder.on('#renameSlotAction', 'click', () => this.changeSlotName());
+    EventBinder.on('#keyGenerate', 'click', () => this.keyGenerate());
+    EventBinder.on('#clearPassword', 'click', () => this.clearPassword());
+    EventBinder.on('#keyCopy', 'click', () => this.keyCopy());
+    EventBinder.on('#hideKey', 'change', () => this.toggleKey());
+    EventBinder.on('#loadKey', 'click', () => this.loadKey());
+    EventBinder.on('#saveKey', 'click', () => this.saveKey());
   }
 
   // ––––––– Key Management Methods –––––––
@@ -85,7 +85,8 @@ export class KeyManagementController {
    * @returns {void}
    */
   toggleKey() {
-    if ($('#hideKey').is(':checked')) {
+    const hideKeyCheckbox = document.getElementById('hideKey');
+    if (hideKeyCheckbox && hideKeyCheckbox.checked) {
       ElementHandler.hide('keyBlank');
       ElementHandler.show('keyPassword');
       this.formHandler.setFormValue(

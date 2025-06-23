@@ -165,7 +165,10 @@ export class argon2Service {
     try {
       return await configManager.readOptions();
     } catch (error) {
-      throw error;
+      return {
+        roundDifficulty: 'middle',
+        saltDifficulty: 'high',
+      };
     }
   }
 }

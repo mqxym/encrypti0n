@@ -131,20 +131,24 @@ export class PasswordGeneratorController {
         grid: true,
         extra_classes: "irs-primary",
       });
+      
       $('#lengthSlider').on('input', () => {
         $('#sliderValue').text($('#lengthSlider').val());
         this.handleGenerate();
       });
 
-      $('#generateButton').on('click', () => {
+      // Generate button
+      const generateButton = document.getElementById('generateButton');
+      generateButton.addEventListener('click', () => {
         this.handleGenerate();
       });
 
-      $('#keyCopy').on('click', () => this.keyCopy());
+      // Copy button
+      const keyCopyBtn = document.getElementById('keyCopy');
+      keyCopyBtn.addEventListener('click', () => this.keyCopy());
 
-      // Initial generation and slider display
+      // Initial generation
       this.handleGenerate();
-      $('#sliderValue').text($('#lengthSlider').val());
     });
   }
 
@@ -155,13 +159,10 @@ export class PasswordGeneratorController {
    * @returns {void}
    */
   handleGenerate() {
-    const length = parseInt($('#lengthSlider').val(), 10);
-    const specialChars = $('#specialChars').val();
-    const password = this.generator.generate(
-      length,
-      specialChars
-    );
-    $('#passwordOutput').val(password);
+    const length = parseInt(document.getElementById('lengthSlider').value, 10);
+    const specialChars = document.getElementById('specialChars').value;
+    const password = this.generator.generate(length, specialChars);
+    document.getElementById('passwordOutput').value = password;
     this.showEntropy(password);
   }
 
@@ -170,9 +171,8 @@ export class PasswordGeneratorController {
    *
    * @returns {void}
    */
-
-  showEntropy (password) {
-    $('#pw-entropy').text(passwordEntropy(password));
+  showEntropy(password) {
+    document.getElementById('pw-entropy').textContent = passwordEntropy(password);
   }
 
   /**
@@ -182,7 +182,7 @@ export class PasswordGeneratorController {
    * @returns {Promise<void>}
    */
   async keyCopy() {
-    const keyToCopy = $('#passwordOutput').val();
+    const keyToCopy = document.getElementById('passwordOutput').value;
     try {
       await navigator.clipboard.writeText(keyToCopy);
       ElementHandler.buttonRemoveTextAddSuccess('keyCopy');

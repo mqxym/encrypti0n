@@ -1,172 +1,309 @@
+export class EventBinder {
+  /**
+   * Binds an event to a selector.
+   * @param {string} selector - CSS selector (id or class).
+   * @param {string} event - Event type (e.g., 'click', 'input').
+   * @param {Function} handler - Event handler function.
+   */
+  static on(selector, event, handler) {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach(el => el.addEventListener(event, handler));
+  }
+
+
+  /**
+   * Shows a Bootstrap 5 modal by selector (with animation and backdrop).
+   * @param {string} selector - CSS selector for the modal (e.g. '#myModal').
+   */
+  static showModal(selector) {
+    const modalElem = document.querySelector(selector);
+    if (!modalElem) return;
+    // Bootstrap 5 Modal API
+    let modal = bootstrap.Modal.getInstance(modalElem);
+    if (!modal) {
+      modal = new bootstrap.Modal(modalElem, {
+        backdrop: true,
+        keyboard: true,
+        focus: true
+      });
+    }
+    modal.show();
+  }
+}
+
 /**
  * Manages Element Handling
  */
 export class ElementHandler {
   static hide(element) {
-    $('#' + element).addClass('d-none');
+    const el = document.getElementById(element);
+    if (el) el.classList.add('d-none');
   }
+
   static show(element) {
-    $('#' + element).removeClass('d-none');
+    const el = document.getElementById(element);
+    if (el) el.classList.remove('d-none');
   }
 
   static showModal(modalId) {
-    $(`#${modalId}`).modal('show');
+    const modalElem = document.getElementById(modalId);
+    if (!modalElem) return;
+    let modal = bootstrap.Modal.getInstance(modalElem);
+    if (!modal) {
+      modal = new bootstrap.Modal(modalElem, {
+        backdrop: true,
+        keyboard: true,
+        focus: true
+      });
+    }
+    modal.show();
   }
-  
+
   static hideModal(modalId) {
-    $(`#${modalId}`).modal('hide');
+    const modalElem = document.getElementById(modalId);
+    if (!modalElem) return;
+    let modal = bootstrap.Modal.getInstance(modalElem);
+    if (!modal) {
+      modal = new bootstrap.Modal(modalElem, {
+        backdrop: true,
+        keyboard: true,
+        focus: true
+      });
+    }
+    modal.hide();
   }
+
+  static removeHandler(element) {
+    const oldElem = document.getElementById(element);
+    if (oldElem) {
+      const newElem = oldElem.cloneNode(true);
+      oldElem.parentNode.replaceChild(newElem, oldElem);
+    }
+  }
+
   static blueToPinkBorder(element) {
-    $('#' + element)
-      .removeClass('border-blue')
-      .addClass('border-pink');
+    const el = document.getElementById(element);
+    if (el) {
+      el.classList.remove('border-blue');
+      el.classList.add('border-pink');
+    }
   }
+
   static pinkToBlueBorder(element) {
-    $('#' + element)
-      .removeClass('border-pink')
-      .addClass('border-blue');
+    const el = document.getElementById(element);
+    if (el) {
+      el.classList.remove('border-pink');
+      el.classList.add('border-blue');
+    }
   }
+
   static fillPillBlue(element) {
-    $('#' + element)
-      .removeClass('badge-outline-blue')
-      .addClass('bg-blue');
+    const el = document.getElementById(element);
+    if (el) {
+      el.classList.remove('badge-outline-blue');
+      el.classList.add('bg-blue');
+    }
   }
+
   static emptyPillBlue(element) {
-    $('#' + element)
-      .removeClass('bg-blue')
-      .addClass('badge-outline-blue');
+    const el = document.getElementById(element);
+    if (el) {
+      el.classList.remove('bg-blue');
+      el.classList.add('badge-outline-blue');
+    }
   }
+
   static fillPillPink(element) {
-    $('#' + element)
-      .removeClass('badge-outline-pink')
-      .addClass('bg-pink');
+    const el = document.getElementById(element);
+    if (el) {
+      el.classList.remove('badge-outline-pink');
+      el.classList.add('bg-pink');
+    }
   }
+
   static emptyPillPink(element) {
-    $('#' + element)
-      .removeClass('bg-pink')
-      .addClass('badge-outline-pink');
+    const el = document.getElementById(element);
+    if (el) {
+      el.classList.remove('bg-pink');
+      el.classList.add('badge-outline-pink');
+    }
   }
+
   static buttonClassBlueToPinkOutline(inputClass) {
-    $('.' + inputClass)
-      .removeClass('btn-outline-blue')
-      .addClass('btn-outline-pink');
+    document.querySelectorAll('.' + inputClass).forEach(el => {
+      el.classList.remove('btn-outline-blue');
+      el.classList.add('btn-outline-pink');
+    });
   }
+
   static buttonClassPinkToBlueOutline(inputClass) {
-    $('.' + inputClass)
-      .removeClass('btn-outline-pink')
-      .addClass('btn-outline-blue');
+    document.querySelectorAll('.' + inputClass).forEach(el => {
+      el.classList.remove('btn-outline-pink');
+      el.classList.add('btn-outline-blue');
+    });
   }
+
   static buttonClassBlueToPink(inputClass) {
-    $('.' + inputClass)
-      .removeClass('btn-blue')
-      .addClass('btn-pink');
+    document.querySelectorAll('.' + inputClass).forEach(el => {
+      el.classList.remove('btn-blue');
+      el.classList.add('btn-pink');
+    });
   }
+
   static buttonClassPinkToBlue(inputClass) {
-    $('.' + inputClass)
-      .removeClass('btn-pink')
-      .addClass('btn-blue');
+    document.querySelectorAll('.' + inputClass).forEach(el => {
+      el.classList.remove('btn-pink');
+      el.classList.add('btn-blue');
+    });
   }
+
   static fillButtonClassBlue(inputClass) {
-    $('.' + inputClass)
-      .removeClass('btn-outline-blue')
-      .addClass('btn-blue');
+    document.querySelectorAll('.' + inputClass).forEach(el => {
+      el.classList.remove('btn-outline-blue');
+      el.classList.add('btn-blue');
+    });
   }
+
   static fillButtonClassPink(inputClass) {
-    $('.' + inputClass)
-      .removeClass('btn-outline-pink')
-      .addClass('btn-pink');
+    document.querySelectorAll('.' + inputClass).forEach(el => {
+      el.classList.remove('btn-outline-pink');
+      el.classList.add('btn-pink');
+    });
   }
+
   static emptyButtonClassBlue(inputClass) {
-    $('.' + inputClass)
-      .addClass('btn-outline-blue')
-      .removeClass('btn-blue');
+    document.querySelectorAll('.' + inputClass).forEach(el => {
+      el.classList.add('btn-outline-blue');
+      el.classList.remove('btn-blue');
+    });
   }
+
   static emptyButtonClassPink(inputClass) {
-    $('.' + inputClass)
-      .addClass('btn-outline-pink')
-      .removeClass('btn-pink');
+    document.querySelectorAll('.' + inputClass).forEach(el => {
+      el.classList.add('btn-outline-pink');
+      el.classList.remove('btn-pink');
+    });
   }
+
   static arrowsToCheck() {
-    $('.mdi-arrow-right-thick')
-      .removeClass('mdi-arrow-right-thick')
-      .addClass('removed-right')
-      .addClass('mdi-check-all');
-    $('.mdi-arrow-down-bold').removeClass('mdi-arrow-down-bold').addClass('removed-down').addClass('mdi-check-all');
+    document.querySelectorAll('.mdi-arrow-right-thick').forEach(el => {
+      el.classList.remove('mdi-arrow-right-thick');
+      el.classList.add('removed-right', 'mdi-check-all');
+    });
+    document.querySelectorAll('.mdi-arrow-down-bold').forEach(el => {
+      el.classList.remove('mdi-arrow-down-bold');
+      el.classList.add('removed-down', 'mdi-check-all');
+    });
   }
+
   static checkToArrows() {
-    $('.removed-right').removeClass('removed-right').addClass('mdi-arrow-right-thick').removeClass('mdi-check-all');
-    $('.removed-down').removeClass('removed-down').addClass('mdi-arrow-down-bold').removeClass('mdi-check-all');
+    document.querySelectorAll('.removed-right').forEach(el => {
+      el.classList.remove('removed-right', 'mdi-check-all');
+      el.classList.add('mdi-arrow-right-thick');
+    });
+    document.querySelectorAll('.removed-down').forEach(el => {
+      el.classList.remove('removed-down', 'mdi-check-all');
+      el.classList.add('mdi-arrow-down-bold');
+    });
   }
+
   static arrowsToCross() {
-    $('.mdi-arrow-right-thick')
-      .removeClass('mdi-arrow-right-thick')
-      .addClass('removed-right')
-      .addClass('mdi-close-circle-multiple');
-    $('.mdi-arrow-down-bold')
-      .removeClass('mdi-arrow-down-bold')
-      .addClass('removed-down')
-      .addClass('mdi-close-circle-multiple');
+    document.querySelectorAll('.mdi-arrow-right-thick').forEach(el => {
+      el.classList.remove('mdi-arrow-right-thick');
+      el.classList.add('removed-right', 'mdi-close-circle-multiple');
+    });
+    document.querySelectorAll('.mdi-arrow-down-bold').forEach(el => {
+      el.classList.remove('mdi-arrow-down-bold');
+      el.classList.add('removed-down', 'mdi-close-circle-multiple');
+    });
   }
+
   static crossToArrows() {
-    $('.removed-right')
-      .removeClass('removed-right')
-      .addClass('mdi-arrow-right-thick')
-      .removeClass('mdi-close-circle-multiple');
-    $('.removed-down')
-      .removeClass('removed-down')
-      .addClass('mdi-arrow-down-bold')
-      .removeClass('mdi-close-circle-multiple');
+    document.querySelectorAll('.removed-right').forEach(el => {
+      el.classList.remove('removed-right', 'mdi-close-circle-multiple');
+      el.classList.add('mdi-arrow-right-thick');
+    });
+    document.querySelectorAll('.removed-down').forEach(el => {
+      el.classList.remove('removed-down', 'mdi-close-circle-multiple');
+      el.classList.add('mdi-arrow-down-bold');
+    });
   }
+
   static buttonRemoveTextAddSuccess(preId) {
-    $(`#${preId}Text`).addClass('d-none');
-    $(`#${preId}Success`).removeClass('d-none');
+    const text = document.getElementById(`${preId}Text`);
+    const success = document.getElementById(`${preId}Success`);
+    if (text) text.classList.add('d-none');
+    if (success) success.classList.remove('d-none');
   }
+
   static buttonRemoveTextAddFail(preId) {
-    $('#' + preId + 'Text').addClass('d-none');
-    $('#' + preId + 'Fail').removeClass('d-none');
+    const text = document.getElementById(`${preId}Text`);
+    const fail = document.getElementById(`${preId}Fail`);
+    if (text) text.classList.add('d-none');
+    if (fail) fail.classList.remove('d-none');
   }
+
   static buttonRemoveStatusAddText(preId) {
-    $('#' + preId + 'Success').addClass('d-none');
-    $('#' + preId + 'Fail').addClass('d-none');
-    $('#' + preId + 'Text').removeClass('d-none');
+    const success = document.getElementById(`${preId}Success`);
+    const fail = document.getElementById(`${preId}Fail`);
+    const text = document.getElementById(`${preId}Text`);
+    if (success) success.classList.add('d-none');
+    if (fail) fail.classList.add('d-none');
+    if (text) text.classList.remove('d-none');
   }
 
   static fillButtonGray(id) {
-    $('#' + id)
-      .addClass('btn-secondary')
-      .removeClass('btn-outline-secondary');
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('btn-secondary');
+      el.classList.remove('btn-outline-secondary');
+    }
   }
+
   static emptyButtonGray(id) {
-    $('#' + id)
-      .addClass('btn-outline-secondary')
-      .removeClass('btn-secondary');
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('btn-outline-secondary');
+      el.classList.remove('btn-secondary');
+    }
   }
 
   static populateSelectWithSlotNames(slotNames, selectId) {
-    const $select = $('#' + selectId);
-    $select.empty(); // Clear existing options
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    select.innerHTML = '';
     for (const key in slotNames) {
-      if (slotNames.hasOwnProperty(key)) {
-        $select.append(`<option value="${key}">${slotNames[key]}</option>`);
+      if (Object.prototype.hasOwnProperty.call(slotNames, key)) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = slotNames[key];
+        select.appendChild(option);
       }
     }
   }
 
   static disable(element) {
-    $('#' + element).prop('disabled', true);
+    const el = document.getElementById(element);
+    if (el) el.disabled = true;
   }
+
   static enable(element) {
-    $('#' + element).prop('disabled', false);
+    const el = document.getElementById(element);
+    if (el) el.disabled = false;
   }
 
   static setPlaceholderById(id, placeholderText) {
-    $(`#${id}`).attr('placeholder', placeholderText);
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('placeholder', placeholderText);
   }
 
   static check(element) {
-    $('#' + element).prop('checked', true);
+    const el = document.getElementById(element);
+    if (el) el.checked = true;
   }
+
   static uncheck(element) {
-    $('#' + element).prop('checked', false);
+    const el = document.getElementById(element);
+    if (el) el.checked = false;
   }
 }

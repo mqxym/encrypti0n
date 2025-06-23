@@ -1,4 +1,4 @@
-import { ElementHandler } from '../helpers/ElementHandler.js';
+import { ElementHandler, EventBinder } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { ActivityService } from '../services/ActivityService.js';
 import { handleActionError } from '../utils/controller.js';
@@ -39,14 +39,14 @@ export class AppDataController {
    * Binds click events on various buttons to their corresponding handlers.
    */
   bindEvents() {
-    $('#encryptApplication').on('click', () => wrapAction('encryptApplication', this.handleAppEncrypt.bind(this)));
-    $('#decryptApplication').on('click', () => wrapAction('decryptApplication', this.handleAppDecrypt.bind(this)));
-    $('#removeApplicationEncryption').on('click', () => this.handleAppEncryptionRemove());
-    $('#removeAllData').on('click', () => this.removeAllData());
-    $('#removeLocalDataDecryptionModal').on('click', () => this.removeAllData());
-    $('#clearClipboard').on('click', () => this.clearClipboard());
-    $('#exportDataBtn').on('click', () => wrapAction('exportData', this.handleExportData.bind(this)));
-    $('#importDataBtn').on('click', () => wrapAction('importData', this.handleImportData.bind(this)));
+    EventBinder.on('#encryptApplication', 'click', () => wrapAction('encryptApplication', this.handleAppEncrypt.bind(this)));
+    EventBinder.on('#decryptApplication', 'click', () => wrapAction('decryptApplication', this.handleAppDecrypt.bind(this)));
+    EventBinder.on('#removeApplicationEncryption', 'click', () => this.handleAppEncryptionRemove());
+    EventBinder.on('#removeAllData', 'click', () => this.removeAllData());
+    EventBinder.on('#removeLocalDataDecryptionModal', 'click', () => this.removeAllData());
+    EventBinder.on('#clearClipboard', 'click', () => this.clearClipboard());
+    EventBinder.on('#exportDataBtn', 'click', () => wrapAction('exportData', this.handleExportData.bind(this)));
+    EventBinder.on('#importDataBtn', 'click', () => wrapAction('importData', this.handleImportData.bind(this)));
   }
 
   /**
@@ -97,7 +97,7 @@ export class AppDataController {
     formHandlerLocal.setFormValue('encryptApplicationMPw', '');
     formHandlerLocal.setFormValue('encryptApplicationMPwConfirmation', '');
 
-    const laddaEncryptApplication = this._laddaStart($('#encryptApplication')[0]);
+    const laddaEncryptApplication = this._laddaStart(document.getElementById('encryptApplication'));
 
     try {
       await this.configManager.setMasterPassword(encryptApplicationMPw);
@@ -141,7 +141,7 @@ export class AppDataController {
     const { decryptApplicationMPw } = formHandlerLocal.getFormValues();
     formHandlerLocal.setFormValue('decryptApplicationMPw', '');
 
-    const laddaDecryptApplication = this._laddaStart($('#decryptApplication')[0]);
+    const laddaDecryptApplication = this._laddaStart(document.getElementById('decryptApplication'));
 
     try {
       this.validatePassword(decryptApplicationMPw);
@@ -163,6 +163,7 @@ export class AppDataController {
         confirmButtonText: 'Ok',
       });
     } catch (err) {
+      laddaDecryptApplication.stop();
       await handleActionError('decryptApplication');
     } finally {
       laddaDecryptApplication.stop();
@@ -303,7 +304,7 @@ export class AppDataController {
 
     try {
       if (this.configManager.isUsingMasterPassword()) {
-        laddaExport = this._laddaStart($('#exportDataBtn')[0]); // Start Ladda here for this path
+        laddaExport = this._laddaStart(document.getElementById('exportDataBtn')); // Start Ladda here for this path
         const exportOperationPromise = this.configManager.exportConfig(null);
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(
@@ -332,7 +333,7 @@ export class AppDataController {
         formHandlerLocal.setFormValue('exportDataPw', '');
         formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
 
-        laddaExport = this._laddaStart($('#exportDataBtn')[0]);
+        laddaExport = this._laddaStart(document.getElementById('exportDataBtn'));
 
         this.validatePassword(exportDataPw);
         const exportOperationPromise = this.configManager.exportConfig(exportDataPw);
@@ -396,12 +397,12 @@ export class AppDataController {
     formHandlerLocal.preventSubmitAction();
     let { importDataPw } = formHandlerLocal.getFormValues();
 
-    const laddaImport = this._laddaStart($('#importDataBtn')[0]);
+    const laddaImport = this._laddaStart(document.getElementById('importDataBtn'));
 
     try {
       this.validatePassword(importDataPw); // Initial validation outside timeout
 
-      const fileInput = $('#importDataFile')[0];
+      const fileInput = document.getElementById('importDataFile');
       const file = fileInput.files[0];
       if (!file) {
         Swal.fire({
@@ -431,7 +432,7 @@ export class AppDataController {
 
       // Clear form values AFTER successful import logic, but before Swal success messages
       formHandlerLocal.setFormValue('importDataPw', '');
-      $('#importDataFile').val('');
+      document.getElementById('importDataFile').value = '';
 
       if (result === 'storedWithMasterPassword') {
         Swal.fire({
