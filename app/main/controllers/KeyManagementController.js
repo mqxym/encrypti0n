@@ -1,7 +1,7 @@
 import { ElementHandler, EventBinder } from '../helpers/ElementHandler.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { handleActionError, handleActionSuccess, wrapAction } from '../utils/controller.js';
-import { pwGenWrapper } from '../passwordGenerator.js';
+import { pwGenWrapper } from '../../passwordGenerator/passwordGenerator.js';
 import { KeyManagementConstants } from '../constants/constants.js';
 
 /**

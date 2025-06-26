@@ -282,7 +282,7 @@ export class SlotUiService {
     if (!slot) {
       throw new Error('Slot cannot be empty');
     }
-    if (typeof slot !== 'string') {
+    if (typeof slot !== 'string' && typeof slot !== 'number') {
       throw new Error('Slot must be a string');
     }
   }

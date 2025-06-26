@@ -35,34 +35,7 @@ export async function deriveKey(
   iterations,
   mem_cost = null
 ) {
-  // === Password validation ===
-  const isString = typeof password === 'string';
-  const isBytes  = password instanceof Uint8Array;
-  if (!isString && !isBytes) {
-    throw new TypeError('`password` must be a string or Uint8Array');
-  }
-  if (isString && password.length === 0) {
-    throw new RangeError('`password` string cannot be empty');
-  }
-  if (isBytes && password.byteLength === 0) {
-    throw new RangeError('`password` Uint8Array cannot be empty');
-  }
-
-
-  if (!(salt instanceof Uint8Array)) {
-    throw new TypeError('`salt` must be a Uint8Array');
-  }
-  if (salt.byteLength < 8) {
-    throw new RangeError('`salt` must be at least 8 bytes');
-  }
-
-  // === Iterations / time cost validation ===
-  if (!Number.isInteger(iterations)) {
-    throw new TypeError('`iterations` must be an integer');
-  }
-  if (iterations <= 0) {
-    throw new RangeError('`iterations` must be a positive integer');
-  }
+  checkParameters(password, salt, iterations);
 
   // === Memory cost validation ===
   if (mem_cost !== null) {
@@ -125,36 +98,7 @@ export async function deriveKey(
 // Same as deriveKey but different use (wrap, unwrap)
 
 export async function deriveKek(password, salt, iterations) {
-
-  // === Password validation ===
-  const isString = typeof password === 'string';
-  const isBytes  = password instanceof Uint8Array;
-  if (!isString && !isBytes) {
-    throw new TypeError('`password` must be a string or Uint8Array');
-  }
-  if (isString && password.length === 0) {
-    throw new RangeError('`password` string cannot be empty');
-  }
-  if (isBytes && password.byteLength === 0) {
-    throw new RangeError('`password` Uint8Array cannot be empty');
-  }
-
-
-  if (!(salt instanceof Uint8Array)) {
-    throw new TypeError('`salt` must be a Uint8Array');
-  }
-  if (salt.byteLength < 8) {
-    throw new RangeError('`salt` must be at least 8 bytes');
-  }
-
-  // === Iterations / time cost validation ===
-  if (!Number.isInteger(iterations)) {
-    throw new TypeError('`iterations` must be an integer');
-  }
-  if (iterations <= 0) {
-    throw new RangeError('`iterations` must be a positive integer');
-  }
-
+  checkParameters(password, salt, iterations);
   const timeCost = iterations; 
 
   // Derive the raw key using Argon2id
@@ -198,4 +142,50 @@ export async function deriveKek(password, salt, iterations) {
 
   argon2Result = null;
   return cryptoKey;
+}
+
+/**
+ * Validates the input parameters for a password-based key derivation function.
+ *
+ * @param {string | Uint8Array} password - The password to validate. Must be a non-empty string or a non-empty Uint8Array.
+ * @param {Uint8Array} salt - A salt value used in key derivation. Must be a Uint8Array of at least 8 bytes.
+ * @param {number} iterations - The iteration count (time cost) for key derivation. Must be a positive integer.
+ *
+ * @throws {TypeError} If `password` is not a string or Uint8Array.
+ * @throws {RangeError} If `password` is an empty string or Uint8Array.
+ * @throws {TypeError} If `salt` is not a Uint8Array.
+ * @throws {RangeError} If `salt` is less than 8 bytes.
+ * @throws {TypeError} If `iterations` is not an integer.
+ * @throws {RangeError} If `iterations` is not a positive integer.
+ */
+
+function checkParameters (password, salt, iterations) {
+  // === Password validation ===
+  const isString = typeof password === 'string';
+  const isBytes  = password instanceof Uint8Array;
+  if (!isString && !isBytes) {
+    throw new TypeError('`password` must be a string or Uint8Array');
+  }
+  if (isString && password.length === 0) {
+    throw new RangeError('`password` string cannot be empty');
+  }
+  if (isBytes && password.byteLength === 0) {
+    throw new RangeError('`password` Uint8Array cannot be empty');
+  }
+
+
+  if (!(salt instanceof Uint8Array)) {
+    throw new TypeError('`salt` must be a Uint8Array');
+  }
+  if (salt.byteLength < 8) {
+    throw new RangeError('`salt` must be at least 8 bytes');
+  }
+
+  // === Iterations / time cost validation ===
+  if (!Number.isInteger(iterations)) {
+    throw new TypeError('`iterations` must be an integer');
+  }
+  if (iterations <= 0) {
+    throw new RangeError('`iterations` must be a positive integer');
+  }
 }

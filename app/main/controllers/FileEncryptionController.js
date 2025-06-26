@@ -4,8 +4,6 @@ import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { formatBytes } from '../utils/fileUtils.js';
 import { argon2Service } from '../ui/services/argon2Service.js';
-import appState from '../state/AppState.js';
-
 /**
  * @class FileEncryptionController
  * @extends EncryptionController
@@ -77,8 +75,7 @@ export class FileEncryptionController extends EncryptionController {
     if (!key) return false;
     this.insecurePasswordWarning(key);
     const algo = 'aesgcm';
-    const outputFilesDiv = $('#outputFiles');
-
+    const outputFilesDiv = document.getElementById('outputFiles');
     try {
       const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
       this.encryptionService.setargon2Difficulty(usedOptions.roundDifficulty);
@@ -86,17 +83,10 @@ export class FileEncryptionController extends EncryptionController {
 
       const blob = await this.encryptionService.encryptFile(file, key, algo);
       const size = formatBytes(blob.size);
-      const url = URL.createObjectURL(blob);
-      const link = $('<a class="btn mb-1 btn-sm bg-pink text-white rounded-pill me-1">')
-        .attr('href', url)
-        .attr('download', `${file.name}.bin`)
-        .text(`${file.name}.bin | ${size}`);
-      outputFilesDiv.append(link);
+      this._appendDownloadLink(`${file.name}.bin`, `${file.name}.bin | ${size}`, blob, 'bg-pink', outputFilesDiv);
       return true;
     } catch (err) {
-      const link = $('<a class="btn mb-1 btn-sm bg-secondary text-white rounded-pill me-1">')
-        .text(`FAILED: ${file.name}`);
-      outputFilesDiv.append(link);
+      this._appendDownloadLink('',`FAILED: ${file.name}`,  null, 'bg-secondary', outputFilesDiv);
       return false;
     }
   }
@@ -112,7 +102,7 @@ export class FileEncryptionController extends EncryptionController {
     const { key } = this.getKeyData();
     const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length || !key) return false;
-    const outputFilesDiv = $('#outputFiles');
+    const outputFilesDiv = document.getElementById('outputFiles');
 
     try {
       const decryptedBytes = await this.encryptionService.decryptFile(file, key);
@@ -120,18 +110,39 @@ export class FileEncryptionController extends EncryptionController {
       const size = formatBytes(blob.size);
       if (blob.size === 0) return false;
       const downloadName = file.name.replace('.bin', '');
-      const url = URL.createObjectURL(blob);
-      const link = $('<a class="btn mb-1 btn-sm bg-blue text-white rounded-pill me-1">')
-        .attr('href', url)
-        .attr('download', downloadName)
-        .text(`${downloadName} | ${size}`);
-      outputFilesDiv.append(link);
+      this._appendDownloadLink(downloadName, `${downloadName} | ${size}`, blob, 'bg-blue', outputFilesDiv);
       return true;
     } catch (err) {
-      const link = $('<a class="btn mb-1 btn-sm bg-secondary text-white rounded-pill me-1">')
-        .text(`FAILED: ${file.name}`);
-      outputFilesDiv.append(link);
+      this._appendDownloadLink('',`FAILED: ${file.name}`,  null, 'bg-secondary', outputFilesDiv);
       return false;
     }
+  }
+
+  /**
+   * Appends a Bootstrap-styled download link to a container.
+   *
+   * @param {string}      downloadName   – the exact text for the download filename
+   * @param {string}      downloadText   – the exact text for the link 
+   * @param {Blob}        blob           – the Blob or File to download
+   * @param {string}      bgColorClass   – Bootstrap bg-color class (e.g. "bg-primary")
+   * @param {HTMLElement} parentDiv      – container element to append the link into
+   */
+  _appendDownloadLink(downloadName, downloadText, blob, bgColorClass, parentDiv) {
+    const link = document.createElement('a');
+
+    if (blob !== null) {
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = downloadName;
+    }
+
+    link.textContent = downloadText;
+    link.className = ['btn', 'btn-sm', 'mb-1', bgColorClass, 'text-white', 'rounded-pill', 'me-1'].join(' ');
+
+    parentDiv.appendChild(link);
+
+    link.addEventListener('click', () => {
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
   }
 }
