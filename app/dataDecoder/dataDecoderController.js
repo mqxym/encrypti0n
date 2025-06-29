@@ -89,7 +89,8 @@ class DecodeController {
       // Update status badge based on detected algorithm.
       this.setStatus(
         algorithmName === "aesgcm" ? "encrypted" : "unknown",
-        algorithmName === "aesgcm" ? "bg-pink" : "bg-secondary"
+        algorithmName === "aesgcm" ? "bg-pink" : "bg-secondary",
+        algorithmName === "aesgcm" ? "border-pink" : "border-secondary"
       );
 
       // Display salt metadata.
@@ -159,11 +160,13 @@ class DecodeController {
    * Updates the status badge label and style.
    * @param {string} label - Text label for the status.
    * @param {string} badgeClass - CSS class for badge styling.
+   * @param {string} borderClass - CSS class for input border styling.
    * @private
    */
-  setStatus(label, badgeClass) {
+  setStatus(label, badgeClass, borderClass) {
     this.$status.textContent = label;
     this.$status.className = `badge rounded-pill ${badgeClass}`;
+    this.$input.className = `form-control mb-1 border ${borderClass}`;
   }
 
   /**
@@ -187,7 +190,7 @@ class DecodeController {
    * @private
    */
   resetView() {
-    this.setStatus("unknown", "bg-secondary");
+    this.setStatus("unknown", "bg-secondary", "border-secondary");
     this.clearFields();
   }
 }
