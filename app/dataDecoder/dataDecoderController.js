@@ -9,6 +9,7 @@ import {
   arrayBufferToBase64,
   base64ToUint8Array,
 } from "../main/utils/base64.js";
+import { AESGCMConstants } from "../main/constants/constants.js";
 
 /**
  * Class responsible for handling user input decoding, metadata extraction,
@@ -48,6 +49,10 @@ class DecodeController {
     this.$ivValue        = $("ivValue");
     /** @type {HTMLElement} Element showing payload length. */
     this.$payloadLength  = $("payloadLength");
+    /** @type {HTMLElement} Element showing payload length. */
+    this.$authLength  = $("authLength");
+    /** @type {HTMLElement} Element showing payload length. */
+    this.$authVal  = $("authVal");
 
     // Bind event listeners and process initial input.
     this.bindEvents();
@@ -106,12 +111,24 @@ class DecodeController {
       this.$version.textContent = header.version + 1;
 
       // Extract and display IV and payload lengths and values.
-      const IV_BYTES = 12;
+      const IV_BYTES = AESGCMConstants.IV_LENGTH;
       const ivBytes = bytes.slice(headerLength, headerLength + IV_BYTES);
       this.$ivLength.textContent = `${IV_BYTES}-byte`;
       this.$ivValue.textContent = arrayBufferToBase64(ivBytes);
 
-      const payloadLen = bytes.length - headerLength - IV_BYTES;
+      const tagLenghtBytes = AESGCMConstants.TAG_LENGTH / 8;
+
+      const tag = bytes.slice(bytes.length - tagLenghtBytes);
+
+      this.$authLength.textContent = `${tagLenghtBytes}-byte`;
+      this.$authVal.textContent = arrayBufferToBase64(tag);
+
+      const payloadLen = bytes.length - headerLength - IV_BYTES - tagLenghtBytes;
+
+      if (payloadLen <= 0) {
+        throw Error("Payload can't be smaller than 0");
+      }
+
       this.$payloadLength.textContent = `${payloadLen}-byte`;
     } catch (err) {
       this.resetView();
@@ -182,6 +199,8 @@ class DecodeController {
       this.$ivLength,
       this.$ivValue,
       this.$payloadLength,
+      this.$authLength,
+      this.$authVal,
     ].forEach((el) => (el.textContent = "—"));
   }
 

@@ -107,9 +107,11 @@ export const Argon2Constants = {
  * @description
  * Constants for AES-GCM encryption parameters.
  * @property {number} IV_LENGTH - Length in bytes of the AES-GCM initialization vector.
+ * @property {number} TAG_LENGTH - Length in bits of the AES-GCM authentication tag.
  */
 export const AESGCMConstants = {
-    IV_LENGTH: 12
+    IV_LENGTH: 12,
+    TAG_LENGTH: 128
 };
 
 

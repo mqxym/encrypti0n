@@ -354,7 +354,7 @@
                                             <span class="text-muted mb-0">Paste the encrypted text you want to analyze:</span>
                                         </label>
 
-                                        <textarea id="dataInput" class="form-control mb-1 border border-pink" style="resize: none" name="dataInput" placeholder="Paste your encrypted text here." rows="12"></textarea>
+                                        <textarea id="dataInput" class="form-control mb-1 border border-pink" style="resize: none" name="dataInput" placeholder="Paste your encrypted text here." rows="18"></textarea>
                                     </div>
                                     <div class="col-12 col-md-6 mt-4 mt-md-0">
                                         <!-- compact header with a floating status badge -->
@@ -368,9 +368,9 @@
                                         <div class="border rounded p-3 bg-white">
                                             <div class="row gy-2">
                                                 <!-- VERSION -->
-                                                <div class="col-6 text-muted">Data Version</div>
+                                                <div class="col-6">Data Version</div>
                                                 <div id="version" class="col-6 text-end text-monospace fw-medium">—</div>
-
+                                                <h5 class="mb-0">Key Derivation Parameters:</h5>
                                                 <!-- SALT LEN -->
                                                 <div class="col-6 text-muted">Salt&nbsp;length</div>
                                                 <div id="saltLength" class="col-6 text-end text-monospace">—</div>
@@ -385,6 +385,7 @@
                                                 <div class="col-6 text-muted">Round&nbsp;count</div>
                                                 <div id="roundCount" class="col-6 text-end text-monospace">—</div>
 
+                                                <h5 class="mb-0">Encryption Algorithm Parameters:</h5>
                                                 <!-- IV LEN -->
                                                 <div class="col-6 text-muted">IV&nbsp;length</div>
                                                 <div id="ivLength" class="col-6 text-end text-monospace">—</div>
@@ -393,6 +394,16 @@
                                                 <div class="col-6 text-muted">IV&nbsp;value</div>
                                                 <div class="col-6 text-end">
                                                     <code id="ivValue" class="user-select-all text-break d-block small">—</code>
+                                                </div>
+
+                                                <!-- AuthTag LEN -->
+                                                <div class="col-6 text-muted">AuthTag&nbsp;length</div>
+                                                <div id="authLength" class="col-6 text-end text-monospace">—</div>
+
+                                                <!-- AuthTag VAL -->
+                                                <div class="col-6 text-muted">AuthTag&nbsp;value</div>
+                                                <div class="col-6 text-end">
+                                                    <code id="authVal" class="user-select-all text-break d-block small">—</code>
                                                 </div>
 
                                                 <!-- PAYLOAD -->
