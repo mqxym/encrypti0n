@@ -105,7 +105,6 @@ export class TextEncryptionController extends EncryptionController {
       this.formHandler.setFormValue('outputText', decrypted);
       return true;
     } catch (error) {
-      console.log(error);
       return false;
     } finally {
       key = null;

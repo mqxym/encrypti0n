@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Secure Password Generator Tool | Encrypti0n.com</title>
+        <title>Decode Encrypted Data Tool | Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="Generate secure, customizable passwords with Encrypti0n.com's browser-based tool. Built with client-side crypto for privacy and strong randomness." />
         <meta name="keywords" content="Encrypti0n.com,password generator,secure passwords,client-side encryption,random password generator,crypto.getRandomValues" />
@@ -28,7 +28,7 @@
         <script src="../assets/js/head.js"></script>
 
         <!-- Ion Config css -->
-        <link href="../assets/libs/ion-rangeslider/css/ion.rangeSlider.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../assets/libs/ion-rangeslider/css/ion.rangeSlider.min.css" rel="stylesheet" type="text/css" />
 
         <!-- Bootstrap css -->
         <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="app-style" />
@@ -144,16 +144,16 @@
                 <div class="logo-box">
                     <a href="/" class="logo-light">
                         <img src="../assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
-                        <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo"  class="logo-sm" />
+                        <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo" class="logo-sm" />
                     </a>
                     <a href="/" class="logo-dark">
-                        <img src="../assets/images/logo.webp" aria-hidden="true"  class="logo-lg" />
+                        <img src="../assets/images/logo.webp" aria-hidden="true" class="logo-lg" />
                         <img src="../assets/images/logo-sm.webp" aria-hidden="true" class="logo-sm" />
                     </a>
                 </div>
 
                 <!-- menu-left -->
-               <nav class="scrollbar" role="navigation" aria-label="Main menu" style="overflow-y: auto; -ms-overflow-style: none; scrollbar-width: none">
+                <nav class="scrollbar" role="navigation" aria-label="Main menu" style="overflow-y: auto; -ms-overflow-style: none; scrollbar-width: none">
                     <!--- Menu -->
                     <ul class="menu" role="menubar">
                         <li class="p-2 menu-item text-white">
@@ -280,7 +280,6 @@
                                 <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
-                        
                     </ul>
                     <!--- End Menu -->
                     <div class="clearfix"></div>
@@ -290,9 +289,9 @@
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
-                      <div class="topbar-menu d-flex align-items-center gap-1">
+                        <div class="topbar-menu d-flex align-items-center gap-1">
                             <div class="logo-box">
-                                 <a href="/" class="logo-light">
+                                <a href="/" class="logo-light">
                                     <img src="../assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
                                     <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo" class="logo-sm" />
                                 </a>
@@ -309,7 +308,7 @@
                             </button>
                         </div>
 
-                       <ul class="topbar-menu d-flex align-items-center">
+                        <ul class="topbar-menu d-flex align-items-center">
                             <li class="d-none d-md-inline-block">
                                 <a class="nav-link waves-effect waves-light" aria-label="Toggle fullscreen" href="" data-toggle="fullscreen">
                                     <i class="fe-maximize font-22"></i>
@@ -336,85 +335,148 @@
                                 </div>
                             </div>
                         </div>
-                    </div>               
+                    </div>
                     <div class="container my-5">
                         <!-- Page Title -->
                         <div class="row">
                             <div class="col-12">
-                                <h1 class="mb-4">Encrypti0n.com's Password Generator</h1>
-                                <p>Generate secure passwords for the use case of your choosing.</p>
+                                <h1 class="mb-4">Data Decoder for Encrypti0n.com v3 (Beta)</h1>
+                                <p>Gain insights into data <strong>encrypted</strong> on this platform.</p>
                             </div>
                         </div>
 
                         <div class="card shadow-lg border border-secondary mb-4">
                             <div class="card-body">
-                                <div class="mb-4">
-                                    <label for="lengthSlider" class="form-label">
-                                        Set Password Length
-                                    </label>
-                                    <input type="range" class="form-range bg-primary text-primary" min="12" max="64" id="lengthSlider" value="32" />
-                                </div>
-                                <div class="mb-4">
-                                    <label for="specialChars" class="form-label">Edit Included Special Characters (optional)</label>
-                                    <input type="text" class="form-control border border-secondary" id="specialChars" placeholder="No special characters" value="!@#$%^&*()_+-=[]{}|;':,./<>?" />
-                                </div>
-                                <div class="mb-4">
-                                    <label for="passwordOutput" class="form-label">Generated Password</label>
-                                    <div class="input-group" id="tooltip-copy">
-                                        <input type="text" class="form-control border border-primary" id="passwordOutput" readonly />
-                                        <button id="keyCopy" type="button" class="rounded-end btn input-group-text btn-outline-warning waves-effect" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Copy Password">
-                                            <i id="keyCopyText" class="mdi mdi-content-copy me-1"></i>
-                                            <i id="keyCopySuccess" class="mdi mdi-check-all d-none"></i>
-                                            <i id="keyCopyFail" class="mdi mdi-close-circle-multiple d-none"></i>
-                                        </button>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h2>Data Input</h2>
+                                        <label for="dataInput" class="help-block me-auto mb-3">
+                                            <span class="text-muted mb-0">Paste the encrypted text you want to analyze:</span>
+                                        </label>
+
+                                        <textarea id="dataInput" class="form-control mb-1 border border-pink" style="resize: none" name="dataInput" placeholder="Paste your encrypted text here." rows="12"></textarea>
                                     </div>
-                                    <small>Entropy of the generated password: <span class="fw-bold" id="pw-entropy">0</span> bits</small>
-                                </div>
-                                <hr />
-                                <div class="d-grid">
-                                    <button type="button" class="shadow-lg btn btn-lg btn-primary waves-effect" id="generateButton">
-                                        <i class="mdi mdi-autorenew me-1"></i>
-                                        Generate Password
-                                    </button>
+                                    <div class="col-12 col-md-6 mt-4 mt-md-0">
+                                        <!-- compact header with a floating status badge -->
+                                        <h2>Analysis Result</h2>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span class="text-muted mb-0">Status of Input</span>
+                                            <span id="statusBadge" class="badge rounded-pill bg-secondary px-3 py-2">unknown</span>
+                                        </div>
+
+                                        <!-- data grid ------------------------------------------------------>
+                                        <div class="border rounded p-3 bg-white">
+                                            <div class="row gy-2">
+                                                <!-- VERSION -->
+                                                <div class="col-6 text-muted">Data Version</div>
+                                                <div id="version" class="col-6 text-end text-monospace fw-medium">—</div>
+
+                                                <!-- SALT LEN -->
+                                                <div class="col-6 text-muted">Salt&nbsp;length</div>
+                                                <div id="saltLength" class="col-6 text-end text-monospace">—</div>
+
+                                                <!-- SALT VAL -->
+                                                <div class="col-6 text-muted">Salt&nbsp;value</div>
+                                                <div class="col-6 text-end">
+                                                    <code id="saltValue" class="user-select-all text-break d-block small">—</code>
+                                                </div>
+
+                                                <!-- ROUND CNT -->
+                                                <div class="col-6 text-muted">Round&nbsp;count</div>
+                                                <div id="roundCount" class="col-6 text-end text-monospace">—</div>
+
+                                                <!-- IV LEN -->
+                                                <div class="col-6 text-muted">IV&nbsp;length</div>
+                                                <div id="ivLength" class="col-6 text-end text-monospace">—</div>
+
+                                                <!-- IV VAL -->
+                                                <div class="col-6 text-muted">IV&nbsp;value</div>
+                                                <div class="col-6 text-end">
+                                                    <code id="ivValue" class="user-select-all text-break d-block small">—</code>
+                                                </div>
+
+                                                <!-- PAYLOAD -->
+                                                <div class="col-6 text-muted">Payload&nbsp;length</div>
+                                                <div id="payloadLength" class="col-6 text-end text-monospace">—</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <section class="card shadow-sm border-dashed border border-secondary">
-                                    <div class="card-body">
-                                        <h2 class="card-title">It's just a generic generator, right?</h2>
-                                        <div class="card-text">
-                                            Yes, this is just a generic password generator, however:
-                                            <ul>
-                                                <li>
-                                                    <strong>Automatic Weighting:</strong>
-                                                    Special characters are weighted higher or lower based on how many are included.
-                                                </li>
-                                                <li>
-                                                    <strong>Local First:</strong>
-                                                    The random calculation happens on your device only.
-                                                </li>
-                                                <li>
-                                                    <strong>Secure Number Generator:</strong>
-                                                    Uses Javascript's
-                                                    <code>crypto.getRandomValues()</code>
-                                                    to securely derive a password.
-                                                </li>
-                                                <li>
-                                                    <strong>Entropy Displayed:</strong>
-                                                    Uses this <a href="https://github.com/autonomoussoftware/fast-password-entropy" target="_blank">library</a>
-                                                    to calculate the entropy of the generated password.
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <p class="card-footer">
-                                            This password generator is used in
-                                            <a href="../index.html">Main App</a>
-                                            for secure text and file encryption.
-                                        </p>
+                        <div class="row mb-4">
+                            <!-- AES-GCM Encryption Details -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card shadow border border-dashed border-secondary h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h3 class="card-title">About Data Version 1: Encryption Scheme</h3>
+                                        <p class="card-text">Payloads labeled “Version 1” are secured using AES-GCM with a 256-bit key, providing both confidentiality and integrity.</p>
+
+                                        <h4>Algorithm Details</h4>
+                                        <ul class="mb-4">
+                                            <li>
+                                                <strong>Algorithm:</strong>
+                                                AES-GCM
+                                            </li>
+                                            <li>
+                                                <strong>Key Size:</strong>
+                                                256 bits (32 bytes)
+                                            </li>
+                                            <li>
+                                                <strong>IV / Nonce Size:</strong>
+                                                96 bits (12 bytes)
+                                            </li>
+                                            <li>
+                                                <strong>Authentication Tag:</strong>
+                                                128 bits (16 bytes)
+                                            </li>
+                                        </ul>
+
+                                        <h5>Reference</h5>
+                                        <ul class="list-unstyled mb-0">
+                                            <li>
+                                                <a href="https://tools.ietf.org/html/rfc5116" target="_blank">RFC 5116: An Interface and Algorithms for Authenticated Encryption</a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                </section>
+                                </div>
+                            </div>
+
+                            <!-- Argon2id KDF Details -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card shadow border border-dashed border-secondary h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h3 class="card-title">About Data Version 1: Key Derivation</h3>
+                                        <p class="card-text">The AES key is derived from your passphrase using Argon2id, tuned for strong security while accommodating JavaScript’s single-threaded environment.</p>
+
+                                        <h4>Argon2id Parameters</h4>
+                                        <ul class="mb-4">
+                                            <li>
+                                                <strong>Variant:</strong>
+                                                Argon2id
+                                            </li>
+                                            <li>
+                                                <strong>Parallelism:</strong>
+                                                1 (JS limitation)
+                                            </li>
+                                            <li>
+                                                <strong>Memory Cost:</strong>
+                                                65 536 KiB
+                                            </li>
+                                            <li>
+                                                <strong>Output Length:</strong>
+                                                32 bytes (256 bits)
+                                            </li>
+                                        </ul>
+
+                                        <h5>Reference</h5>
+                                        <ul class="list-unstyled mb-0">
+                                            <li>
+                                                <a href="https://www.rfc-editor.org/rfc/rfc9106.html" target="_blank">RFC 9106: Argon2 Password Hashing</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -452,10 +514,13 @@
         <!-- Theme App js -->
         <script src="../assets/js/app.js" defer></script>
 
+        <!-- Sweet Alerts js -->
+        <script src="../assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
+
         <script src="../assets/libs/ion-rangeslider/js/ion.rangeSlider.min.js" defer></script>
 
         <!-- App JS-->
         <script src="../app/insertVersion.js" defer></script>
-        <script type="module" src="../app/passwordGenerator/index.js" defer></script>
+        <script type="module" src="../app/dataDecoder/index.js" defer></script>
     </body>
 </html>

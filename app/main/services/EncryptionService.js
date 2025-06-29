@@ -102,7 +102,7 @@ export class EncryptionService {
    */
   async decryptText(base64Cipher, passphrase) {
     const combined = new Uint8Array([...atob(base64Cipher)].map((c) => c.charCodeAt(0)));
-    const { algorithmName, header, saltBytes, headerLength } = this._decodeHeader(combined);
+    const { algorithmName, header, saltBytes, headerLength } = this.decodeHeader(combined);
     const algo = this.getAlgorithm(algorithmName);
     const passphraseBytes = new TextEncoder().encode(passphrase);
 
@@ -166,7 +166,7 @@ export class EncryptionService {
     // Read header bytes from file
     const headerBuffer = await file.slice(0, 20).arrayBuffer();
     const headerBytes = new Uint8Array(headerBuffer);
-    const { algorithmName, header, saltBytes, headerLength } = this._decodeHeader(headerBytes);
+    const { algorithmName, header, saltBytes, headerLength } = this.decodeHeader(headerBytes);
     const algo = this.getAlgorithm(algorithmName);
     const passphraseBytes = new TextEncoder().encode(passphrase);
 
@@ -271,7 +271,7 @@ export class EncryptionService {
    */
 
   /**
-   * @private
+   * @public
    * Decode the encryption header from a combined byte array.
    *
    * Reads:
@@ -285,7 +285,7 @@ export class EncryptionService {
    * @throws {Error} If the algorithm identifier byte is not recognized.
    * @throws {Error} If decoding is not implemented for the detected algorithm/version.
    */
-  _decodeHeader(combinedData) {
+  decodeHeader(combinedData) {
     const algorithmIdentifiers = {};
     algorithmIdentifiers[EncryptionServiceConstants.START_BYTE] = 'aesgcm';
     const algoId = combinedData[0];
@@ -317,7 +317,6 @@ export class EncryptionService {
         let header = {};
         header.argon2Iterations = argon2Codes[argon2Code];
         header.version = version;
-        console.log(header);
         return { algorithmName, header, saltBytes, headerLength };
       }
     }
