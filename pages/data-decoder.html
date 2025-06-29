@@ -128,6 +128,15 @@
                 ]
             }
         </script>
+
+        <style>
+            @media (max-width: 768px) { 
+  .responsive-textarea {
+    height: auto;
+    max-height: 180px;
+  }
+}
+        </style>
     </head>
 
     <body>
@@ -354,7 +363,7 @@
                                             <span class="text-muted mb-0">Paste the encrypted text you want to analyze:</span>
                                         </label>
 
-                                        <textarea id="dataInput" class="form-control mb-1 border border-pink" style="resize: none" name="dataInput" placeholder="Paste your encrypted text here." rows="18"></textarea>
+                                        <textarea id="dataInput" class="responsive-textarea form-control mb-1 border border-pink" style="resize: none" name="dataInput" placeholder="Paste your encrypted text here." rows="18"></textarea>
                                     </div>
                                     <div class="col-12 col-md-6 mt-4 mt-md-0">
                                         <!-- compact header with a floating status badge -->
