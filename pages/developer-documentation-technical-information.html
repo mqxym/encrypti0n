@@ -36,6 +36,9 @@
         <!-- Icons css -->
         <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
 
+        <!-- Custom CSS -->
+        <link href="../assets/css/custom.css" rel="stylesheet" type="text/css" />
+
         <link href="../assets/libs/highlightjs/highlightjs.min.css" rel="stylesheet" type="text/css" />
 
         <script type="application/ld+json">
@@ -100,7 +103,7 @@
                 </div>
 
                 <!-- menu-left -->
-               <nav class="scrollbar" role="navigation" aria-label="Main menu" style="overflow-y: auto; -ms-overflow-style: none; scrollbar-width: none">
+               <nav class="scrollbar cust-scrollbar-hidden" role="navigation" aria-label="Main menu">
                     <!--- Menu -->
                     <ul class="menu" role="menubar">
                         <li class="p-2 menu-item text-white">
@@ -158,6 +161,7 @@
                             <a href="./data-decoder.html" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-file-key"></i></span>
                                 <span class="menu-text">Data Decoder</span>
+                                <span class="badge bg-primary ms-auto">New</span>
                             </a>
                         </li>
 
@@ -469,10 +473,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <div>
-                                    <script>
-                                        document.write(new Date().getFullYear());
-                                    </script>
-                                    © Encrypti0n.com | Version
+                                    <span id="currentYear"></span> © Encrypti0n.com | Version
                                     <b class="version"></b>
                                 </div>
                             </div>
@@ -502,12 +503,5 @@
         <!-- Highlight.js -->
         <script src="../assets/libs/highlightjs/highlightjs.min.js" defer></script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', (event) => {
-                document.querySelectorAll('.language-javascript').forEach((el) => {
-                    hljs.highlightElement(el);
-                });
-            });
-            </script>
     </body>
 </html>

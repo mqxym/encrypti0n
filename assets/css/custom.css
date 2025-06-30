@@ -1,0 +1,62 @@
+/* Custom Styles for Encrypti0n.com */
+
+/* Utility Classes */
+.cust-scrollbar-hidden {
+    overflow-y: auto;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.cust-scrollbar-hidden::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.cust-h-60 {
+    height: 60px;
+}
+
+.cust-h-10 {
+    height: 10px;
+}
+
+.cust-cursor-pointer {
+    cursor: pointer;
+}
+
+.cust-resize-none {
+    resize: none;
+}
+
+.cust-overflow-y-auto-h-120 {
+    overflow-y: auto;
+    height: 120px;
+}
+
+.cust-overflow-y-auto-h-150 {
+    overflow-y: auto;
+    height: 150px;
+}
+
+.cust-min-w-90 {
+    min-width: 90px;
+}
+
+.cust-sr-offset {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+}
+
+.cust-w-0 {
+    width: 0%;
+}
+
+/* Component-specific or Page-specific classes */
+
+/* For data-decoder.html responsive textarea */
+@media (max-width: 768px) {
+    .cust-responsive-textarea {
+        height: auto;
+        max-height: 180px;
+    }
+}

@@ -53,6 +53,9 @@
         <!-- Icons css -->
         <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
 
+        <!-- Custom CSS -->
+        <link href="assets/css/custom.css" rel="stylesheet" type="text/css" />
+
         <script type="application/ld+json">
             {
                 "@graph": [
@@ -173,7 +176,7 @@
                     </a>
                 </div>
 
-                <nav class="scrollbar" role="navigation" aria-label="Main menu" style="overflow-y: auto; -ms-overflow-style: none; scrollbar-width: none">
+                <nav class="scrollbar cust-scrollbar-hidden" role="navigation" aria-label="Main menu">
                     <ul class="menu" role="menubar">
                         <li role="none" class="p-2 menu-item text-white">
                             <a href="/index.html" role="menuitem" class="spinner-link menu-link btn btn-primary">
@@ -231,6 +234,7 @@
                             <a href="./pages/data-decoder.html" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-file-key"></i></span>
                                 <span class="menu-text">Data Decoder</span>
+                                <span class="badge bg-primary ms-auto">New</span>
                             </a>
                         </li>
 
@@ -446,7 +450,7 @@
                             <div class="row" id="appRow">
                                 <div class="col-xxl-3 col-lg-5 col-12 mb-3 mb-xxl-0">
                                     <div class="card border-secondary border shadow-lg h-100 w-100">
-                                        <div class="card-header" style="height: 60px">
+                                        <div class="card-header cust-h-60">
                                             <div class="d-flex flex-row align-items-center" role="group" aria-labelledby="dataHeading">
                                                 <!-- Left content -->
                                                 <div class="me-auto">
@@ -467,12 +471,12 @@
                                                 <label for="inputText" class="help-block me-auto">
                                                     <small id="helpOutput">Enter the text you want to encrypt or decrypt:</small>
                                                 </label>
-                                                <button id="clearInput" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Clear Text Input">
+                                                <button id="clearInput" class="bg-transparent border-0 p-0 m-0 fs-4 cust-cursor-pointer" aria-label="Clear Text Input">
                                                     <i class="mdi mdi-delete-circle-outline text-secondary" data-bs-container="#inputAction" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Clear Input"></i>
                                                 </button>
                                             </div>
 
-                                            <textarea id="inputText" class="form-control mb-1 border border-blue" style="resize: none" name="inputText" placeholder="Your input here" rows="5"></textarea>
+                                            <textarea id="inputText" class="form-control mb-1 border border-blue cust-resize-none" name="inputText" placeholder="Your input here" rows="5"></textarea>
                                             <p class="card-text text-muted">
                                                 The site detects if your input is
                                                 <span class="badge badge-outline-pink rounded-pill" id="encryptedPill">encrypted</span>
@@ -486,7 +490,7 @@
                                                 <label for="inputFiles" class="help-block me-auto">
                                                     <small id="helpOutput">Select the files you want to encrypt or decrypt:</small>
                                                 </label>
-                                                <button id="clearInputFiles" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Clear file input">
+                                                <button id="clearInputFiles" class="bg-transparent border-0 p-0 m-0 fs-4 cust-cursor-pointer" aria-label="Clear file input">
                                                     <i class="mdi mdi-delete-circle-outline text-secondary" data-bs-container="#inputActionFiles" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Clear Files"></i>
                                                 </button>
                                             </div>
@@ -498,8 +502,8 @@
                                                     </span>
                                                 </button>
                                             </div>
-                                            <input style="display: none" id="inputFiles" name="inputFiles" type="file" class="upload" multiple />
-                                            <div class="form-control border border-secondary rounded scrollable" style="overflow-y: auto; height: 120px" id="fileList" name="fileList" role="status" aria-live="polite">Selected files appear here...</div>
+                                            <input class="d-none" id="inputFiles" name="inputFiles" type="file" class="upload" multiple />
+                                            <div class="form-control border border-secondary rounded scrollable cust-overflow-y-auto-h-120" id="fileList" name="fileList" role="status" aria-live="polite">Selected files appear here...</div>
                                             <p class="card-text text-muted">
                                                 The site detects if your files are
                                                 <span class="badge badge-outline-pink rounded-pill" id="encryptedFilesPill">encrypted</span>
@@ -517,7 +521,7 @@
                                 </div>
                                 <div class="col-xxl-3 col-lg-5 col-12 mb-xxl-0 mb-3">
                                     <div class="card border-secondary border shadow-lg mb-3 w-100 h-100">
-                                        <div class="card-header" style="height: 60px">
+                                        <div class="card-header cust-h-60">
                                             <div class="d-flex flex-row align-items-center">
                                                 <div class="me-auto"><h2>Password</h2></div>
                                                 <div>
@@ -531,7 +535,7 @@
                                                 <span class="help-block me-auto">
                                                     <small id="helpOutput">Enter or generate the encryption password:</small>
                                                 </span>
-                                                <button id="clearPassword" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Clear Password">
+                                                <button id="clearPassword" class="bg-transparent border-0 p-0 m-0 fs-4 cust-cursor-pointer" aria-label="Clear Password">
                                                     <i class="mdi mdi-delete-circle-outline text-secondary" data-bs-container="#clearPasswordContainer" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Clear Password"></i>
                                                 </button>
                                             </div>
@@ -545,7 +549,7 @@
                                                         <i id="keyCopyFail" aria-hidden="true" class="mdi mdi-close-circle-multiple d-none"></i>
                                                     </button>
                                                 </div>
-                                                <button id="keyGenerate" class="btn btn-outline-secondary waves-effect ms-1" style="min-width: 90px" type="button" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Generate Password">
+                                                <button id="keyGenerate" class="btn btn-outline-secondary waves-effect ms-1 cust-min-w-90" type="button" data-bs-container="#tooltip-copy" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Generate Password">
                                                     <i id="keyGenerateText" aria-hidden="true" class="mdi mdi-cached me-1"></i>
                                                     <i id="keyGenerateSuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
                                                     <span>New</span>
@@ -561,7 +565,7 @@
                                                 <span class="help-block me-auto">
                                                     <small>Load or save passwords</small>
                                                 </span>
-                                                <button id="editSlots" class="bg-transparent border-0 p-0 m-0 fs-4" style="cursor: pointer" aria-label="Edit Slots">
+                                                <button id="editSlots" class="bg-transparent border-0 p-0 m-0 fs-4 cust-cursor-pointer" aria-label="Edit Slots">
                                                     <i class="mdi mdi-circle-edit-outline text-secondary" data-bs-container="#slotAction" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Edit Slots"></i>
                                                 </button>
                                             </div>
@@ -609,7 +613,7 @@
                                 </div>
                                 <div class="col-xxl-4 col-lg-12">
                                     <div class="card border-secondary border shadow-lg mb-3 h-100 w-100">
-                                        <div class="card-header" style="height: 60px">
+                                        <div class="card-header cust-h-60">
                                             <div class="d-flex flex-row align-items-center">
                                                 <div class="me-auto"><h2>Output</h2></div>
                                                 <a tabindex="-1" href="#AESGCMInfo" class="btn btn-xs btn-outline-secondary rounded-pill">AES-GCM | 256-bit</a>
@@ -638,7 +642,7 @@
                                             <div class="input-group mb-2">
                                                 <div class="col-12">
                                                     <label for="outputText" class="d-none">Encrypted text output</label>
-                                                    <textarea class="form-control border border-pink" id="outputText" name="outputText" style="resize: none" readonly placeholder="The encryption result appears here" rows="5"></textarea>
+                                                    <textarea class="form-control border border-pink cust-resize-none" id="outputText" name="outputText" readonly placeholder="The encryption result appears here" rows="5"></textarea>
                                                     <span class="help-block">
                                                         <small id="outputFooter">Encrypted output is base64 formatted.</small>
                                                     </span>
@@ -680,7 +684,7 @@
                                             <div class="input-group mb-2">
                                                 <div class="col-12">
                                                     <label for="outputFiles" class="d-none">Encrypted files output:</label>
-                                                    <div role="status" aria-live="polite" class="form-control border border-secondary rounded scrollable" style="overflow-y: auto; height: 150px" id="outputFiles" name="outputFiles" placeholder="The encrypted files appears here">The encrypted files appears here</div>
+                                                    <div role="status" aria-live="polite" class="form-control border border-secondary rounded scrollable cust-overflow-y-auto-h-150" id="outputFiles" name="outputFiles" placeholder="The encrypted files appears here">The encrypted files appears here</div>
                                                     <span class="help-block">
                                                         <small id="outputFooter">Encrypted files are in raw binary format.</small>
                                                     </span>
@@ -835,13 +839,13 @@
                                                 </div>
                                             </div>
                             
-                                            <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
+                                            <input type="text" autocomplete="username" class="cust-sr-offset" aria-hidden="true" value="anonymous" />
                                             <div class="mb-1">
                                                 <label for="encryptApplicationPw" class="form-label">Master Password</label>
                                                 <input name="encryptApplicationMPw" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="encryptApplicationPw" placeholder="Secure Password" autocomplete="new-password" required />
                                             </div>
-                                            <div class="progress" style="height: 10px;">
-                                                <div id="password-strength" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                                            <div class="progress cust-h-10">
+                                                <div id="password-strength" class="progress-bar cust-w-0" role="progressbar"></div>
                                             </div>
                                              <small id="password-strength-text" class="form-text mb-2"></small>
                                             <div class="mb-3">
@@ -871,7 +875,7 @@
                         </form>
                     </div>
                 </div>
-                <div id="do-application-decryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="do-application-decryption" aria-hidden="true" style="display: none" aria-modal="true">
+                <div id="do-application-decryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="do-application-decryption" aria-hidden="true" aria-modal="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -883,7 +887,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <p>To use saved data, please decrypt with your master password:</p>
-                                            <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
+                                            <input type="text" autocomplete="username" class="cust-sr-offset" aria-hidden="true" value="anonymous" />
                                             <div class="mb-3">
                                                 <label for="decryptApplicationMPw" class="form-label">Master Password</label>
                                                 <input name="decryptApplicationMPw" type="password" class="form-control border border-secondary" id="decryptApplicationMPw" autocomplete="current-password" required aria-required="true" aria-invalid="false" />
@@ -1054,13 +1058,13 @@
                                                     <b>Important:</b>
                                                     You'll need this export password to import the data on another device.
                                                 </p>
-                                                <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
+                                                <input type="text" autocomplete="username" class="cust-sr-offset" aria-hidden="true" value="anonymous" />
                                                 <div class="mb-1">
                                                     <label for="exportDataPw" class="form-label">Export Password</label>
                                                     <input id="exportDataPw" name="exportDataPw" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="exportDataPw" placeholder="Secure Password" autocomplete="new-password" required />
                                                 </div>
-                                                <div class="progress" style="height: 10px;">
-                                                    <div id="export-password-strength" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                                                <div class="progress cust-h-10">
+                                                    <div id="export-password-strength" class="progress-bar cust-w-0" role="progressbar"></div>
                                                 </div>
                                                 <small id="export-password-strength-text" class="form-text mb-2"></small>
                                                 <div class="mb-3">
@@ -1133,7 +1137,7 @@
                                                 <small class="form-text text-muted">Select the encrypted export file (.dat)</small>
                                             </div>
 
-                                            <input type="text" autocomplete="username" style="position: absolute; left: -9999px; top: -9999px" aria-hidden="true" value="anonymous" />
+                                            <input type="text" autocomplete="username" class="cust-sr-offset" aria-hidden="true" value="anonymous" />
                                             <div class="mb-3">
                                                 <label for="importDataPw" class="form-label">Export Password / Master Password</label>
                                                 <input name="importDataPw" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="importDataPw" placeholder="Export Password" autocomplete="new-password" required />
@@ -1174,10 +1178,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <div>
-                                    <script>
-                                        document.write(new Date().getFullYear());
-                                    </script>
-                                    © Encrypti0n.com | Version
+                                    <span id="currentYear"></span> © Encrypti0n.com | Version
                                     <b class="version"></b>
                                 </div>
                             </div>
