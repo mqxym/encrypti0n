@@ -131,7 +131,6 @@
                 ]
             }
         </script>
-
     </head>
 
     <body>
@@ -341,12 +340,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="container  my-3 my-md-5">
+                    <div class="container my-3 my-md-5">
                         <!-- Page Title -->
                         <div class="row">
                             <div class="col-12">
                                 <h1 class="mb-4">Data Decoder for Encrypti0n.com v3 (Beta)</h1>
-                                <p>Gain insights into data <strong>encrypted</strong> on this platform for debugging purposes.</p>
+                                <p>
+                                    Gain insights into data
+                                    <strong>encrypted</strong>
+                                    on this platform for debugging purposes.
+                                </p>
                             </div>
                         </div>
 
@@ -448,11 +451,12 @@
                                             </li>
                                         </ul>
 
-                                        <h5>Reference</h5>
+                                        <h5>References</h5>
                                         <ul class="list-unstyled mb-0">
                                             <li>
                                                 <a href="https://tools.ietf.org/html/rfc5116" target="_blank">RFC 5116: An Interface and Algorithms for Authenticated Encryption</a>
                                             </li>
+                                            <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html#cipher-modes" target="_blank">OWASP Cryptographic Storage Cheat Sheet: Cipher Modes</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -476,6 +480,22 @@
                                                 1 (JS limitation)
                                             </li>
                                             <li>
+                                                <strong>Rounds:</strong>
+                                                5
+                                                <small>(low)</small>
+                                                - 20
+                                                <small>(default)</small>
+                                                - 40
+                                                <small>(high)</small>
+                                            </li>
+                                            <li>
+                                                <strong>Salt-Length:</strong>
+                                                12-byte
+                                                <small>(low)</small>
+                                                - 16-byte
+                                                <small>(default)</small>
+                                            </li>
+                                            <li>
                                                 <strong>Memory Cost:</strong>
                                                 65 536 KiB
                                             </li>
@@ -485,10 +505,13 @@
                                             </li>
                                         </ul>
 
-                                        <h5>Reference</h5>
+                                        <h5>References</h5>
                                         <ul class="list-unstyled mb-0">
                                             <li>
                                                 <a href="https://www.rfc-editor.org/rfc/rfc9106.html" target="_blank">RFC 9106: Argon2 Password Hashing</a>
+                                            </li>
+                                            <li>
+                                                <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank">OWASP Password Storage Cheat Sheet: Argon2id Settings</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -503,7 +526,8 @@
                         <div class="row">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <div>
-                                    <span id="currentYear"></span> © Encrypti0n.com | Version
+                                    <span id="currentYear"></span>
+                                    © Encrypti0n.com | Version
                                     <b class="version"></b>
                                 </div>
                             </div>
