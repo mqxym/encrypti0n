@@ -183,7 +183,7 @@ class DecodeController {
   setStatus(label, badgeClass, borderClass) {
     this.$status.textContent = label;
     this.$status.className = `badge rounded-pill ${badgeClass}`;
-    this.$input.className = `responsive-textarea form-control mb-1 cust-resize-none border ${borderClass}`;
+    this.$input.className = `cust-responsive-textarea form-control mb-1 cust-resize-none border ${borderClass}`;
   }
 
   /**
