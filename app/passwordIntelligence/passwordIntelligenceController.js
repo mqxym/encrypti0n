@@ -6,7 +6,6 @@ export default class PasswordIntelligenceController {
     // DOM elements
     this.passwordInput = $('passwordInput');
     this.strengthBadge = $('strengthBadge');
-    this.scoreValueElem = $('scoreValue');
     this.timeFastElem = $('timeFast');
     this.timeArgonElem = $('timeArgon');
     this.weaknessListElem = $('weaknessList');
@@ -14,7 +13,7 @@ export default class PasswordIntelligenceController {
     this.timeArgonSingleElem = $('timeArgonSingle');
 
     // Strength badge text and color mappings for scores 0-4
-    this.strengthTexts = ["Very Weak", "Weak", "Fair", "Strong", "Very Strong"];
+    this.strengthTexts = ["0: Very Weak", "1: Weak", "2: Fair", "3: Strong", "4: Very Strong"];
     this.strengthClasses = ["bg-danger", "bg-danger", "bg-warning", "bg-info", "bg-success"];
 
     // Bind event
@@ -52,7 +51,6 @@ export default class PasswordIntelligenceController {
     const result = zxcvbn(pwd);
 
     const score = result.score;
-    this.scoreValueElem.innerText = score.toString();
     this.strengthBadge.innerText = this.strengthTexts[score];
     this.strengthBadge.className = `badge rounded-pill ${this.strengthClasses[score]} px-3 py-2`;
 
