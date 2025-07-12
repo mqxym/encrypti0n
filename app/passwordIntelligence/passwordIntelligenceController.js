@@ -25,7 +25,6 @@ export default class PasswordIntelligenceController {
   }
 
   resetOutput() {
-    this.scoreValueElem.innerText = "—";
     this.timeFastElem.innerText = "—";
     this.timeArgonElem.innerText = "—";
     // Reset strength badge
