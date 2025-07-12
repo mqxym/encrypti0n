@@ -47,144 +47,150 @@
 
             <!-- ========== Menu ========== -->
             <div class="app-menu">
-                <!-- Brand Logo -->
                 <div class="logo-box">
-                     <a href="/" class="logo-light">
-                        <img src="assets/images/logo-dark.webp" alt="Encrypti0n.com small logo" class="logo-lg" />
-                        <img src="assets/images/logo-sm.webp" aria-hidden="true" class="logo-sm" />
+                    <a href="/" class="logo-light">
+                        <img src="assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
+                        <img src="assets/images/logo-sm.webp" alt="Encrypti0n.com small logo" class="logo-sm" />
                     </a>
 
-                    <!-- Brand Logo Dark -->
                     <a href="/" class="logo-dark">
-                        <img src="assets/images/logo.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
+                        <img src="assets/images/logo.webp" aria-hidden="true" class="logo-lg" />
                         <img src="assets/images/logo-sm.webp" aria-hidden="true" class="logo-sm" />
                     </a>
                 </div>
 
-                <!-- menu-left -->
-                <nav class="scrollbar" role="navigation" aria-label="Main menu">
-                    <!--- Menu -->
+                <nav class="scrollbar cust-scrollbar-hidden" role="navigation" aria-label="Main menu">
                     <ul class="menu" role="menubar">
-                        <li class="p-2 menu-item text-white">
-                            <a href="/index.html" class="spinner-link menu-link btn btn-primary">
-                                <span class="menu-icon text-white"><i class="mdi mdi-application-import" aria-hidden="true"></i></span>
+                        <li role="none" class="p-2 menu-item text-white">
+                            <a href="/index.html" role="menuitem" class="spinner-link menu-link btn btn-primary">
+                                <span class="menu-icon text-white">
+                                    <i class="mdi mdi-application-import" aria-hidden="true"></i>
+                                </span>
                                 <span class="menu-text text-white">Main App</span>
                             </a>
                         </li>
 
-                        <li class="menu-title">
+                        <li role="presentation" class="menu-title">
                             App Information
                             <span class="badge bg-primary ms-auto">New</span>
                         </li>
 
-                        <li class="menu-item">
-                            <a href="/pages/faq.html" class="menu-link spinner-link">
+                        <li role="none" class="menu-item">
+                            <a href="./pages/faq.html" role="menuitem" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-comment-question"></i></span>
                                 <span class="menu-text">FAQ</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="/pages/how-it-works.html" class="menu-link spinner-link">
+                        <li role="none" class="menu-item">
+                            <a href="./pages/how-it-works.html" role="menuitem" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-file-document"></i></span>
                                 <span class="menu-text">How it works</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="/pages/security-and-privacy.html" class="menu-link spinner-link">
+                        <li role="none" class="menu-item">
+                            <a href="./pages/security-and-privacy.html" role="menuitem" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-upload-lock"></i></span>
-                                <span class="menu-text">Security & Privacy</span>
+                                <span class="menu-text">Security &amp; Privacy</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="/pages/developer-documentation-technical-information.html" class="menu-link spinner-link">
+                        <li role="none" class="menu-item">
+                            <a href="./pages/developer-documentation-technical-information.html" role="menuitem" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-source-branch"></i></span>
-                                <span class="menu-text">Dev Information</span>
+                                <span class="menu-text">Developer Information</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a href="/pages/encryption-glossary.html" class="menu-link spinner-link">
+                        <li role="none" class="menu-item">
+                            <a href="./pages/encryption-glossary.html" role="menuitem" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-globe-model"></i></span>
                                 <span class="menu-text">Glossary</span>
                             </a>
                         </li>
 
-                        <li class="menu-title">Tools</li>
-                        <li class="menu-item">
-                            <a href="/pages/password-generator.html" class="menu-link spinner-link">
+                        <li role="presentation" class="menu-title">Tools</li>
+                        <li role="none" class="menu-item">
+                            <a href="./pages/password-generator.html" role="menuitem" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-form-textbox-password"></i></span>
                                 <span class="menu-text">Password Generator</span>
                             </a>
                         </li>
-
-                        <li class="menu-title">Links</li>
-
                         <li class="menu-item">
-                            <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
-                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-code-braces"></i></span>
-                                <span class="menu-text">Sourcecode</span>
+                            <a href="./pages/password-intelligence.html" class="menu-link spinner-link">
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-security"></i></span>
+                                <span class="menu-text">Password Checker</span>
+                                <span class="badge bg-primary ms-auto">New</span>
                             </a>
                         </li>
-                        <li class="menu-title">Coming soon</li>
-
                         <li class="menu-item">
-                            <a href="/web-crypto-api-playground.html" class="spinner-link menu-link">
+                            <a href="./pages/data-decoder.html" class="menu-link spinner-link">
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-file-key"></i></span>
+                                <span class="menu-text">Data Decoder</span>
+                                <span class="badge bg-primary ms-auto">New</span>
+                            </a>
+                        </li>
+
+                        <li role="presentation" class="menu-title">Links</li>
+                        <li role="none" class="menu-item">
+                            <a href="https://github.com/mqxym/encrypti0n" target="_blank" role="menuitem" class="menu-link">
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-code-braces"></i></span>
+                                <span class="menu-text">Source Code</span>
+                            </a>
+                        </li>
+
+                        <li role="presentation" class="menu-title">Coming Soon</li>
+                        <li role="none" class="menu-item">
+                            <a href="/web-crypto-api-playground.html" role="menuitem" class="spinner-link menu-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-gamepad-variant-outline"></i></span>
                                 <span class="menu-text">Crypto Playground</span>
                             </a>
                         </li>
 
-                        <li class="menu-title">Deprecated Sites</li>
-
-                        <li class="menu-item">
-                            <a href="/index-deprecated.html" class="menu-link spinner-link">
+                        <li role="presentation" class="menu-title">Deprecated Sites</li>
+                        <li role="none" class="menu-item">
+                            <a href="/index-deprecated.html" role="menuitem" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-view-dashboard-outline"></i></span>
                                 <span class="menu-text">Previous App</span>
                                 <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
 
-                        <li class="menu-item">
-                            <a href="#methods" data-bs-toggle="collapse" aria-expanded="false" class="menu-link">
+                        <li role="none" class="menu-item">
+                            <a role="menuitem" aria-haspopup="true" aria-expanded="false" data-bs-toggle="collapse" data-bs-target="#methods" class="menu-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-video-input-component"></i></span>
                                 <span class="menu-text">Methods</span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <div class="collapse" id="methods" aria-hidden="true" aria-expanded="false">
-                                <ul class="sub-menu">
-                                    <li class="menu-item spinner-link">
-                                        <a href="/deprecated/pages/methods-aes-encryption.html" class="menu-link">
-                                            <span class="menu-text">AES</span>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item spinner-link">
-                                        <a href="/deprecated/pages/methods-blowfish-encryption.html" class="menu-link">
-                                            <span class="menu-text">Blowfish</span>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item spinner-link">
-                                        <a href="/deprecated/pages/methods-xor-encryption.html" class="menu-link">
-                                            <span class="menu-text">XOR</span>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item spinner-link">
-                                        <a href="/deprecated/pages/methods-password-hashing.html" class="menu-link">
-                                            <span class="menu-text">Hashing</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                            <ul id="methods" class="collapse" role="menu" aria-expanded="false">
+                                <li role="none" class="menu-item spinner-link">
+                                    <a href="/deprecated/pages/methods-aes-encryption.html" role="menuitem" class="menu-link">
+                                        <span class="menu-text">AES</span>
+                                    </a>
+                                </li>
+                                <li role="none" class="menu-item spinner-link">
+                                    <a href="/deprecated/pages/methods-blowfish-encryption.html" role="menuitem" class="menu-link">
+                                        <span class="menu-text">Blowfish</span>
+                                    </a>
+                                </li>
+                                <li role="none" class="menu-item spinner-link">
+                                    <a href="/deprecated/pages/methods-xor-encryption.html" role="menuitem" class="menu-link">
+                                        <span class="menu-text">XOR</span>
+                                    </a>
+                                </li>
+                                <li role="none" class="menu-item spinner-link">
+                                    <a href="/deprecated/pages/methods-password-hashing.html" role="menuitem" class="menu-link">
+                                        <span class="menu-text">Hashing</span>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
-                        <li class="menu-item">
-                            <a href="/deprecated/pages/faq-old.html" class="menu-link spinner-link">
+                        <li role="none" class="menu-item">
+                            <a href="/deprecated/pages/faq-old.html" role="menuitem" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-help"></i></span>
                                 <span class="menu-text">FAQ</span>
                                 <span class="badge bg-warning ms-auto">obs.</span>
                             </a>
                         </li>
-                        
                     </ul>
-                    <!--- End Menu -->
                     <div class="clearfix"></div>
                 </nav>
             </div>

@@ -60,3 +60,9 @@
         max-height: 180px;
     }
 }
+
+
+.tab-content {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
