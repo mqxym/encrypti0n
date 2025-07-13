@@ -35,6 +35,9 @@
 
         <!-- Icons css -->
         <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+        <!-- Custom CSS -->
+        <link href="../assets/css/custom.css" rel="stylesheet" type="text/css" />
     </head>
 
     <body>
@@ -60,11 +63,11 @@
                 </div>
 
                 <!-- menu-left -->
-               <nav class="scrollbar" role="navigation" aria-label="Main menu" style="overflow-y: auto; -ms-overflow-style: none; scrollbar-width: none">
+               <nav class="scrollbar cust-scrollbar-hidden" role="navigation" aria-label="Main menu">
                     <!--- Menu -->
                     <ul class="menu" role="menubar">
                         <li class="p-2 menu-item text-white">
-                            <a href="/index.html" class="spinner-link menu-link btn btn-primary">
+                            <a href="../index.html" class="spinner-link menu-link btn btn-primary">
                                 <span class="menu-icon text-white"><i class="mdi mdi-application-import" aria-hidden="true"></i></span>
                                 <span class="menu-text text-white">Open App</span>
                                 <span class="badge bg-light text-dark ms-auto">New</span>
@@ -77,31 +80,31 @@
                         </li>
 
                         <li class="menu-item">
-                            <a href="/pages/faq.html" class="menu-link spinner-link">
+                            <a href="./faq.html" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-comment-question"></i></span>
                                 <span class="menu-text">FAQ</span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/pages/how-it-works.html" class="menu-link spinner-link">
+                            <a href="./how-it-works.html" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-file-document"></i></span>
                                 <span class="menu-text">How it works</span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/pages/security-and-privacy.html" class="menu-link spinner-link">
+                            <a href="./security-and-privacy.html" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-upload-lock"></i></span>
                                 <span class="menu-text">Security & Privacy</span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/pages/developer-documentation-technical-information.html" class="menu-link spinner-link">
+                            <a href="./developer-documentation-technical-information.html" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-source-branch"></i></span>
                                 <span class="menu-text">Dev Information</span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="/pages/encryption-glossary.html" class="menu-link spinner-link">
+                            <a href="./encryption-glossary.html" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-globe-model"></i></span>
                                 <span class="menu-text">Glossary</span>
                             </a>
@@ -109,9 +112,23 @@
 
                         <li class="menu-title">Tools</li>
                         <li class="menu-item">
-                            <a href="/pages/password-generator.html" class="menu-link spinner-link">
+                            <a href="./password-generator.html" class="menu-link spinner-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-form-textbox-password"></i></span>
                                 <span class="menu-text">Password Generator</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="./password-intelligence.html" class="menu-link spinner-link">
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-security"></i></span>
+                                <span class="menu-text">Password Checker</span>
+                                <span class="badge bg-primary ms-auto">New</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="./data-decoder.html" class="menu-link spinner-link">
+                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-file-key"></i></span>
+                                <span class="menu-text">Data Decoder</span>
+                                <span class="badge bg-primary ms-auto">New</span>
                             </a>
                         </li>
 
@@ -232,7 +249,7 @@
                                     <ol class="breadcrumb m-0">
                                         <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
                                         <li class="breadcrumb-item"><a href="http://app.encrypti0n.com">App</a></li>
-                                        <li class="breadcrumb-item active"><a href="/pages/about.html">About</a></li>
+                                        <li class="breadcrumb-item active"><a href="./about.html">About</a></li>
                                     </ol>
                                 </div>
                             </div>
@@ -241,7 +258,7 @@
                     <div class="container my-5">
                         <!-- Hero Section -->
                         <section class="text-center mb-5">
-                            <h1 class="display-4">About Encrypti0n.com</h1>
+                            <h1 class="display-5">About Encrypti0n.com</h1>
                             <p class="lead">Your secure and user-centric platform designed to empower you to protect your data through robust, customizable, local-first encryption.</p>
                         </section>
 
@@ -331,19 +348,16 @@
                         <div class="row">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <div>
-                                    <script>
-                                        document.write(new Date().getFullYear());
-                                    </script>
-                                    © Encrypti0n.com | Version
+                                    <span id="currentYear"></span> © Encrypti0n.com | Version
                                     <b class="version"></b>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="d-flex footer-links flex-column flex-md-row gap-2 gap-md-4 justify-content-center justify-content-md-end">
-                                    <a href="/pages/about.html">About</a>
-                                    <a href="/pages/privacy-policy.html">Privacy Policy</a>
-                                    <a href="/pages/download-app.html">Download Project</a>
-                                    <a href="/pages/contact.html">Contact</a>
+                                    <a href="./about.html">About</a>
+                                    <a href="./privacy-policy.html">Privacy Policy</a>
+                                    <a href="./download-app.html">Download Project</a>
+                                    <a href="./contact.html">Contact</a>
                                 </div>
                             </div>
                         </div>

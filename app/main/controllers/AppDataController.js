@@ -4,6 +4,7 @@ import { ActivityService } from '../services/ActivityService.js';
 import { handleActionError } from '../utils/controller.js';
 import { AppDataConstants } from '../constants/constants.js';
 import { wrapAction } from '../utils/controller.js';
+import { readFileAsBuffer, creaeDownloadData } from '../utils/fileUtils.js';
 
 /**
  * @class AppDataController
@@ -417,7 +418,7 @@ export class AppDataController {
       }
 
       const importOperationPromise = (async () => {
-        const binaryContent = await this._readFileAsBuffer(file);
+        const binaryContent = await readFileAsBuffer(file, AppDataConstants.READ_FILE_TIMEOUT);
         return await this.configManager.importConfig(binaryContent, importDataPw);
       })();
 
@@ -504,48 +505,13 @@ export class AppDataController {
    * @returns {void}
    */
   _downloadExport(buffer) {
-    const blob = new Blob([buffer], { type: 'application/octet-stream' });
-    const a = document.createElement('a');
-    const suffix = crypto
+     const suffix = crypto
       .getRandomValues(new Uint8Array(6))
       .reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
-    a.href = URL.createObjectURL(blob);
-    a.download = `export_${suffix}.dat`;
-    document.body.appendChild(a);
-    a.click();
+    const export_name = `export_${suffix}`;
+    const extension = '.dat';
 
-    // Clean up
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
-  }
-
-  /**
-   * Reads the provided File object as text.
-   * @private
-   * @param {File} file - The file to read.
-   * @returns {Promise<Uint8Array>} Resolves with the file's content.
-   */
-  _readFileAsBuffer(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      let timeoutId;
-
-      reader.onload = () => {
-        clearTimeout(timeoutId);
-        resolve(reader.result);
-      };
-
-      reader.onerror = () => {
-        clearTimeout(timeoutId);
-        reject(reader.error);
-      };
-
-      reader.readAsArrayBuffer(file);
-
-      timeoutId = setTimeout(() => {
-        reject(new Error('File reading timed out'));
-      }, AppDataConstants.READ_FILE_TIMEOUT);
-    });
+    creaeDownloadData(buffer, export_name, extension)
   }
 
   /**

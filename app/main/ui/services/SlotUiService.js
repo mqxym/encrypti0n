@@ -200,7 +200,7 @@ export class SlotUiService {
       $('<input>', {
         type: 'text',
         class: 'form-control form-control-sm slot-name-input',
-        maxlength: 15,
+        maxlength: KeyManagementConstants.MAX_SLOT_NAME_LENGTH,
         value: name,
         'data-id': id,
         'aria-label': `Slot ${id} name`,
@@ -282,7 +282,7 @@ export class SlotUiService {
     if (!slot) {
       throw new Error('Slot cannot be empty');
     }
-    if (typeof slot !== 'string') {
+    if (typeof slot !== 'string' && typeof slot !== 'number') {
       throw new Error('Slot must be a string');
     }
   }

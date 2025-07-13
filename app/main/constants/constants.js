@@ -23,6 +23,32 @@ export const UIConstants = {
 };
 
 /**
+ * @namespace EncryptionServiceConstants
+ * @description
+ * Configuration parameters for EncryptionService.
+ * 
+ * @property {number} LOW_ITERATION_COUNT - Low iteration count for Argon2id key derivation.
+ * @property {number} MIDDLE_ITERATION_COUNT - Medium iteration count for Argon2id key derivation.
+ * @property {number} HIGH_ITERATION_COUNT - High iteration count for Argon2id key derivation.
+ * 
+ * @property {number} LOW_SALT_LENGTH_BYTES - Salt length in bytes for Argon2id.
+ * @property {number} HIGH_SALT_LENGTH_BYTES - Salt length in bytes for Argon2id.
+ * 
+ * @property {number} CURRENT_DATA_VERSION - Marks version of the encryption data format (algorithm/schema changes).
+ * @property {number} START_BYTE - Identifier or flag byte to mark the beginning of encrypted data.
+ */
+export const EncryptionServiceConstants = {
+    LOW_ITERATION_COUNT: 5,
+    MIDDLE_ITERATION_COUNT: 20,
+    HIGH_ITERATION_COUNT: 40,
+    LOW_SALT_LENGTH_BYTES: 12,
+    HIGH_SALT_LENGTH_BYTES: 16,
+    CURRENT_DATA_VERSION: 0b000, // 0-7 for 7 different schemas in the future
+    START_BYTE: 0x01
+};
+
+
+/**
  * @namespace ConfigManagerConstants
  * @description
  * Configuration parameters for application encryption management.
@@ -81,9 +107,11 @@ export const Argon2Constants = {
  * @description
  * Constants for AES-GCM encryption parameters.
  * @property {number} IV_LENGTH - Length in bytes of the AES-GCM initialization vector.
+ * @property {number} TAG_LENGTH - Length in bits of the AES-GCM authentication tag.
  */
 export const AESGCMConstants = {
-    IV_LENGTH: 12
+    IV_LENGTH: 12,
+    TAG_LENGTH: 128
 };
 
 
