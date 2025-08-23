@@ -4,6 +4,8 @@ import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { formatBytes } from '../utils/fileUtils.js';
 import { argon2Service } from '../ui/services/argon2Service.js';
+import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
+import { delay } from '../utils/misc.js';
 /**
  * @class FileEncryptionController
  * @extends EncryptionController
@@ -44,12 +46,14 @@ export class FileEncryptionController extends EncryptionController {
       }
 
       for (let file of inputFilesElem.files) {
-        const isEncrypted = await this.encryptionService.isEncryptedFile(file);
+        const isEncrypted = await Cryptit.isEncrypted(file);
         laddaManager.setProgressAll(fileCounter / fileLength);
         if (isEncrypted) {
+          await delay(150);
           result = await this.handleDecryption(file);
           if (!result) ElementHandler.arrowsToCross();
         } else {
+          await delay(150);
           result = await this.handleEncryption(file);
           if (!result) ElementHandler.arrowsToCross();
         }
@@ -78,10 +82,10 @@ export class FileEncryptionController extends EncryptionController {
     const outputFilesDiv = document.getElementById('outputFiles');
     try {
       const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
-      this.encryptionService.setargon2Difficulty(usedOptions.roundDifficulty);
-      this.encryptionService.setSaltLengthDifficulty(usedOptions.saltDifficulty);
+      this.cryptit.setDifficulty(usedOptions.roundDifficulty);
+      this.cryptit.setSaltDifficulty(usedOptions.saltDifficulty);
 
-      const blob = await this.encryptionService.encryptFile(file, key, algo);
+      const blob = await this.cryptit.encryptFile(file, key);
       const size = formatBytes(blob.size);
       this._appendDownloadLink(`${file.name}.bin`, `${file.name}.bin | ${size}`, blob, 'bg-pink', outputFilesDiv);
       return true;
@@ -105,7 +109,7 @@ export class FileEncryptionController extends EncryptionController {
     const outputFilesDiv = document.getElementById('outputFiles');
 
     try {
-      const decryptedBytes = await this.encryptionService.decryptFile(file, key);
+      const decryptedBytes = await this.cryptit.decryptFile(file, key);
       const blob = new Blob([decryptedBytes], { type: 'application/octet-stream' });
       const size = formatBytes(blob.size);
       if (blob.size === 0) return false;

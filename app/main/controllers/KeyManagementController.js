@@ -29,7 +29,7 @@ export class KeyManagementController {
    * @returns {void}
    */
   bindKeyManagementEvents() {
-    EventBinder.on('#renameSlotAction', 'click', () => this.changeSlotName());
+    // EventBinder.on('#renameSlotAction', 'click', () => this.changeSlotName());
     EventBinder.on('#keyGenerate', 'click', () => this.keyGenerate());
     EventBinder.on('#clearPassword', 'click', () => this.clearPassword());
     EventBinder.on('#keyCopy', 'click', () => this.keyCopy());

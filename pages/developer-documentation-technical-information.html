@@ -325,17 +325,22 @@
                                 <h2>Cryptographic Libraries &amp; APIs Used</h2>
                                 <p>Encrypti0n.com uses modern browser-native cryptographic libraries:</p>
                                 <ul>
+                                     <li>
+                                        <strong><code>@mqxym/cryptit v2.1.2</code></strong>
+                                        : TypeScript powered API used for AES-GCM / Argon2id text and file encryption <a target="_blank" href="https://github.com/mqxym/cryptit">(GitHub)</a>.
+                                    </li>
                                     <li>
                                         <strong><code>window.crypto</code></strong>
-                                        : Secure random number generation and cryptographic operations.
+                                        : Secure random number generation and cryptographic operations (used in the app and @mqxym/cryptit).
                                     </li>
                                     <li>
                                         <strong><code>window.crypto.subtle</code></strong>
-                                        : Provides essential cryptographic primitives like AES-GCM encryption/decryption and key imports.
+                                        : Provides essential cryptographic primitives like AES-GCM encryption/decryption and key imports (used in the app and @mqxym/cryptit).
                                     </li>
+                                    
                                     <li>
                                         <strong><code>antelle/argon2-browser</code></strong>
-                                        : Provides the Argon2id key derivation implementation for browsers <a href="https://github.com/antelle/argon2-browser">(GitHub)</a>.
+                                        : Provides the Argon2id key derivation implementation for browsers (used in the app and @mqxym/cryptit) <a href="https://github.com/antelle/argon2-browser">(GitHub)</a>.
                                     </li>
                                 </ul>
                                 <p>

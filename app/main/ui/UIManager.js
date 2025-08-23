@@ -2,6 +2,7 @@ import { formatBytes } from '../utils/fileUtils.js';
 import { ElementHandler, EventBinder } from '../helpers/ElementHandler.js';
 import appState from '../state/AppState.js';
 import { handleActionSuccess, handleActionError, wrapAction } from '../utils/controller.js';
+import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
 
 /**
  * @class UIManager
@@ -25,7 +26,6 @@ export class UIManager {
     /** @private */ this.argon2Service = services.argon2;
     /** @private */ this.slotService = services.slots;
     /** @private */ this.storageService = services.storage;
-    /** @private */ this.encryptionService = services.encryption;
     /** @private */ this.keyManagementController = keyManagementController;
     this.bindEvents();
   }
@@ -196,7 +196,7 @@ export class UIManager {
    */
   async handleDataChange(event) {
     const inputText = event.target.value;
-    const isEncrypted = await this.encryptionService.isEncrypted(inputText.trim());
+    const isEncrypted = await Cryptit.isEncrypted(inputText.trim());
     this.updateEncryptionState(isEncrypted);
   }
 
@@ -276,7 +276,7 @@ export class UIManager {
     fileListElem.empty();
     const files = Array.from(inputFilesElem.files);
     const encryptionChecks = files.map(async (file) => {
-      const isEncrypted = await this.encryptionService.isEncryptedFile(file);
+      const isEncrypted = await Cryptit.isEncrypted(file);
       const badge = isEncrypted
         ? $('<span class="badge bg-pink rounded-pill me-1">').text(`${file.name} | ${formatBytes(file.size)}`)
         : $('<span class="badge bg-blue rounded-pill me-1">').text(`${file.name} | ${formatBytes(file.size)}`);
