@@ -141,6 +141,7 @@ export class KeyManagementController {
         await this.configManager.setSlotValue(slot, key);
         await handleActionSuccess('saveKey');
       } catch (err) {
+        console.log(err);
         await handleActionError('saveKey');
       }
     });

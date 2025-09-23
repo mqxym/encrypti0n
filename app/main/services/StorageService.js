@@ -28,34 +28,12 @@ export class StorageService {
   }
 
   /**
-   * Retrieves and parses the encrypted main configuration object from localStorage.
-   *
-   * @returns {any} The parsed configuration object, or null if not set.
-   * @throws {SyntaxError} If the stored JSON is invalid.
-   */
-  getConf() {
-    const raw = this.getItem('encMainConf');
-    return raw !== null ? JSON.parse(raw) : null;
-  }
-
-  /**
-   * Serializes and stores the main configuration object in localStorage.
-   *
-   * @param {any} value - The configuration object to store.
-   * @returns {void}
-   */
-  setConf(value) {
-    localStorage.setItem('encMainConf', JSON.stringify(value));
-  }
-
-  /**
    * Removes all encryption-related data entries from localStorage,
    * including configuration and UI state.
    *
    * @returns {void}
    */
   deleteAllData() {
-    localStorage.removeItem('encMainConf');
     localStorage.removeItem('encInfoHidden');
     localStorage.removeItem('__ENC_UI_CONFIG__');
   }

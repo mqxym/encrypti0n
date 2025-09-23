@@ -65,7 +65,11 @@ export const ConfigManagerConstants = {
     ARGON2_ROUNDS_NO_PW: 1,
     ARGON2_ROUNDS_MIN: 20,
     ARGON2_ROUNDS_MAX: 21,
-    ARGON2_MEM_DEFAULT_KEY: 2048
+    ARGON2_MEM_DEFAULT_KEY: 2048,
+    LS_KEY_NAME: "encMainConf",
+    IDB_DB_NAME: "ENC_APP_KEYS",
+    IDB_STORE_NAME: "keys",
+    IDB_KEY_ID: "deviceKey"
 };
 
 /**

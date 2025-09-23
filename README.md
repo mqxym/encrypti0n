@@ -27,6 +27,8 @@ Everything needed is included, with no external dependencies (except some fonts)
 
 The core encryption and decryption API for text and files is provided by [@mqxym/cryptit (GitHub)](https://github.com/mqxym/cryptit) / [(npm)](https://www.npmjs.com/package/@mqxym/cryptit).
 
+Local storage envelope encryption is provided by [@mqxym/secure-local-storage (GitHub)](https://github.com/mqxym/secure-local-storage) / [(npm)](https://www.npmjs.com/package/@mqxym/secure-local-storage).
+
 ## Licence
 
 Custom Licence. See [LICENCE](LICENCE).

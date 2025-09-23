@@ -1,10 +1,7 @@
-import { StorageService } from '../StorageService.js';
-import { ApplicationEncryptionManager } from './ApplicationEncryptionManager.js';
 import { ConfigManagerConstants } from '../../constants/constants.js';
-import { deriveKek } from '../../algorithms/Argon2Key/Argon2KeyDerivation.js';
-import { base64ToUint8Array } from '../../utils/base64.js';
 import { returnDecoded, returnEncoded } from '../../utils/dataEncode.js';
-
+import { StorageService } from '../StorageService.js';
+import { SecureLocalStorage } from '../../../../assets/libs/secure-local-storage/sls.browser.min.js';
 /**
  * @class ConfigManager
  * @classdesc
@@ -16,14 +13,22 @@ export class ConfigManager {
    * Initializes the ConfigManager with storage and encryption managers.
    */
   constructor() {
-    /** @private {StorageService} */
     this.storageService = new StorageService();
-    /** @private {ApplicationEncryptionManager} */
-    this.encryptionManager = new ApplicationEncryptionManager();
-    /** @private {Object|null} */
-    this.config = null;
-    /** @private {CryptoKey|null} in-memory only */
-    this.dek = null;
+  }
+
+  initSls() {
+    /** @private {SecureLocalStorage} */
+
+    if (this.sls !== undefined) return;
+
+    this.sls = new SecureLocalStorage({
+      storageKey: ConfigManagerConstants.LS_KEY_NAME,
+      idbConfig: {
+        dbName: ConfigManagerConstants.IDB_DB_NAME,
+        storeName: ConfigManagerConstants.IDB_STORE_NAME,
+        keyId: ConfigManagerConstants.IDB_KEY_ID
+      }
+    });
   }
 
   // -----------------------------
@@ -40,16 +45,14 @@ export class ConfigManager {
    */
   static async create() {
     const instance = new ConfigManager();
-    instance.config = instance.storageService.getConf();
+    instance.initSls();
 
-    if (!instance.config) {
-      await instance._initFreshConfig();
-      instance._saveConfig();
-    } else if (instance.config.header?.v !== ConfigManagerConstants.CURRENT_DATA_VERSION) {
-      await instance._convertFromV1().catch(() => {});
+    try {
+      await instance.readOptions();
+    } catch (e) {
+      await instance._initFreshConfig(); // init fresh config
     }
 
-    await instance._loadDekIntoMemory().catch(() => {});
     return instance;
   }
 
@@ -65,27 +68,6 @@ export class ConfigManager {
    * @returns {Promise<void>}
    */
   async _initFreshConfig() {
-    this.dek = await this.encryptionManager.createDek();
-
-    // default (password-less) mode: get device-key KEK
-    const deviceKek = await this.encryptionManager.getDeviceKey();
-
-    // wrap DEK with deviceKek using random IV
-    const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(this.dek, deviceKek);
-
-    this.dek = await this.encryptionManager.unwrapDek(ivWrap, wrappedKey, deviceKek);
-
-    // build header + empty data
-    this.config = {
-      header: {
-        v: 2,
-        salt: '',
-        rounds: 1,
-        iv: ivWrap,
-        wrappedKey,
-      },
-      data: { iv: '', ciphertext: '' },
-    };
 
     const initialData = {
       slots: {
@@ -101,100 +83,10 @@ export class ConfigManager {
       },
     };
 
-    await this._encryptAndStore(initialData).catch((err) => {
-      throw new Error(`Failed to init config: ${err.message}`);
-    });
+    await this.sls.setData(initialData);
   }
 
-  /**
-   * Converts a legacy v1 config to the current format (v2).
-   *
-   * @private
-   * @async
-   * @returns {Promise<void>}
-   */
-  async _convertFromV1() {
-    if (this.config.dataVersion !== 1) return;
 
-    const { isUsingMasterPassword, argon2Salt, argon2Rounds } = this.config;
-    let kek;
-
-    if (isUsingMasterPassword) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Migration to local data v2 not possible.',
-        text: 'Due to limitations with a set master password, a migration to a more secure local data model (v2) is not possible. Your only option is to reset local data.',
-        showCancelButton: false,
-        confirmButtonText: 'Ok',
-      });
-      return;
-    } else {
-      await this._deriveDefaultKeyOnStartupV1();
-      kek = this.encryptionManager.sessionKeyManager.getSessionKey(argon2Salt, argon2Rounds);
-    }
-
-    // Decrypt existing data with KEK
-    const plainData = await this.encryptionManager.decryptData(kek, this.config.data.iv, this.config.data.ciphertext);
-
-    // Generate new DEK and re-wrap
-    this.dek = await this.encryptionManager.createDek();
-    const { iv, ciphertext } = await this.encryptionManager.encryptData(this.dek, plainData);
-
-    const deviceKek = await this.encryptionManager.getDeviceKey();
-    const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(this.dek, deviceKek);
-    this.dek = await this.encryptionManager.unwrapDek(ivWrap, wrappedKey, deviceKek);
-
-    // Build version-2 header
-    const header = {
-      v: ConfigManagerConstants.CURRENT_DATA_VERSION,
-      salt: isUsingMasterPassword ? argon2Salt : '',
-      rounds: isUsingMasterPassword ? argon2Rounds : 1,
-      iv: ivWrap,
-      wrappedKey,
-    };
-
-    this.config = { header, data: { iv, ciphertext } };
-    this._saveConfig();
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Migrated local data to v2!',
-      text: 'The security of your local data has improved significantly.',
-      showCancelButton: false,
-      confirmButtonText: 'Ok',
-    });
-  }
-
-  /**
-   * Derives and caches the default key on startup for legacy v1.
-   *
-   * @private
-   * @async
-   * @returns {Promise<void>}
-   */
-  async _deriveDefaultKeyOnStartupV1() {
-    if (!this.config.isUsingMasterPassword) {
-      await this.encryptionManager.sessionKeyManager.deriveAndCacheDefaultKeyV1(
-        this.config.default,
-        this.config.argon2Salt,
-        this.config.argon2Rounds,
-        ConfigManagerConstants.ARGON2_MEM_DEFAULT_KEY
-      );
-    }
-  }
-
-  /**
-   * Loads DEK into RAM – unwraps with device key or awaits user unlock.
-   *
-   * @private
-   * @async
-   * @returns {Promise<void>}
-   */
-  async _loadDekIntoMemory() {
-    if (this.isUsingMasterPassword()) return;
-    const deviceKek = await this.encryptionManager.getDeviceKey();
-    await this._unwrapDek(deviceKek);
-  }
 
   // -----------------------------
   // Session Unlock / Lock
@@ -208,9 +100,7 @@ export class ConfigManager {
    * @returns {Promise<void>}
    */
   async unlockSession(masterPassword) {
-    const { salt, rounds } = this.config.header;
-    await this._deriveKekFromPassword(masterPassword, salt, rounds);
-    await this._unwrapDek();
+    await this.sls.unlock(masterPassword);
   }
 
   /**
@@ -219,8 +109,7 @@ export class ConfigManager {
    * @returns {void}
    */
   lockSession() {
-    this.encryptionManager.sessionKeyManager.clearSessionKey();
-    this.dek = null;
+    this.sls.lock();
   }
 
   // -----------------------------
@@ -235,10 +124,12 @@ export class ConfigManager {
    * @throws {Error} If session is locked.
    */
   async getDecryptedData() {
-    if (!this.dek) throw new Error('Session locked');
-    const { iv, ciphertext } = this.config.data;
-    if (!iv || !ciphertext) return { slots: {}, Options: {} };
-    return this.encryptionManager.decryptData(this.dek, iv, ciphertext);
+    try {
+      const data = await this.sls.getData();
+      return data;
+    } catch (e) {
+      return { slots: {}, Options: {} };
+    }
   }
 
   /**
@@ -250,8 +141,7 @@ export class ConfigManager {
    * @throws {Error} If session is locked.
    */
   async setDecryptedData(newData) {
-    if (!this.dek) throw new Error('Session locked');
-    await this._encryptAndStore(newData);
+    await this.sls.setData(newData);
   }
 
   /**
@@ -263,12 +153,13 @@ export class ConfigManager {
    * @throws {Error} If the slot does not exist.
    */
   async readSlotValue(id) {
-    const data = await this.getDecryptedData();
+    const view = await this.getDecryptedData();
+    const data = this._deepCopy(view);
     if (!data.slots[id]) {
       throw new Error(`Slot ${id} does not exist`);
     }
     const value = data.slots[id].value;
-    this._securelyClearObject(data);
+    view.clear();
     return value;
   }
 
@@ -281,13 +172,17 @@ export class ConfigManager {
    * @returns {Promise<void>}
    */
   async setSlotValue(id, newValue) {
-    const data = await this.getDecryptedData();
-    if (!data.slots[id]) {
-      data.slots[id] = { name: `slot${id}`, value: null };
+    const view = await this.getDecryptedData();
+    try {
+      const data = this._deepCopy(view);
+      if (!data.slots[id]) {
+        data.slots[id] = { name: `slot${id}`, value: null };
+      }
+      data.slots[id].value = newValue;
+      await this.setDecryptedData(data);
+    } finally {
+      view.clear();
     }
-    data.slots[id].value = newValue;
-    await this.setDecryptedData(data);
-    this._securelyClearObject(data);
   }
 
   /**
@@ -299,13 +194,17 @@ export class ConfigManager {
    * @returns {Promise<void>}
    */
   async setSlotName(id, newName) {
-    const data = await this.getDecryptedData();
-    if (!data.slots[id]) {
-      data.slots[id] = { name: newName, value: null };
+    const view = await this.getDecryptedData();
+    try {
+      const data = this._deepCopy(view);
+      if (!data.slots[id]) {
+        data.slots[id] = { name: newName, value: null };
+      }
+      data.slots[id].name = newName;
+      await this.setDecryptedData(data);
+    } finally {
+      view.clear();
     }
-    data.slots[id].name = newName;
-    await this.setDecryptedData(data);
-    this._securelyClearObject(data);
   }
 
   /**
@@ -315,14 +214,15 @@ export class ConfigManager {
    * @returns {Promise<Object.<string, string>>} Map of slot IDs to names.
    */
   async readSlotNames() {
-    const data = await this.getDecryptedData();
+    const view = await this.getDecryptedData();
+    const data = this._deepCopy(view);
     const result = {};
     for (const key in data.slots) {
       if (data.slots.hasOwnProperty(key)) {
         result[key] = data.slots[key].name;
       }
     }
-    this._securelyClearObject(data);
+    view.clear();
     return result;
   }
 
@@ -335,14 +235,18 @@ export class ConfigManager {
    * @throws {Error} If the slot does not exist or session is locked.
    */
   async deleteSlot(id) {
-    const data = await this.getDecryptedData();
-    if (!data.slots[id]) {
-      this._securelyClearObject(data);
-      throw new Error(`Slot ${id} does not exist`);
+    const view = await this.getDecryptedData();
+    try {
+      const data = this._deepCopy(view);
+      if (!data.slots[id]) {
+        view.clear();
+        throw new Error(`Slot ${id} does not exist`);
+      }
+      delete data.slots[id];
+      await this.setDecryptedData(data);
+    } finally {
+      view.clear();
     }
-    delete data.slots[id];
-    await this.setDecryptedData(data);
-    this._securelyClearObject(data);
   }
 
   /**
@@ -353,16 +257,21 @@ export class ConfigManager {
    * @throws {Error} If session is locked.
    */
   async addSlot() {
-    const data = await this.getDecryptedData();
-    // Find the next available numeric index
     let newIndex = 1;
-    while (data.slots.hasOwnProperty(newIndex)) {
-      newIndex++;
+    const view = await this.getDecryptedData();
+    try {
+      const data = this._deepCopy(view);
+      let newIndex = 1;
+      while (data.slots.hasOwnProperty(newIndex)) {
+        newIndex++;
+      }
+      data.slots[newIndex] = { name: `Slot ${newIndex}`, value: null };
+      await this.setDecryptedData(data);
+      await this.setDecryptedData(data);
+    } finally {
+      view.clear();
     }
-    data.slots[newIndex] = { name: `Slot ${newIndex}`, value: null };
-    await this.setDecryptedData(data);
-    this._securelyClearObject(data);
-    return newIndex;
+     return newIndex;
   }
 
   /**
@@ -374,24 +283,28 @@ export class ConfigManager {
    * @returns {Promise<void>}
    */
   async setOptions(options) {
-    const data = await this.getDecryptedData();
-    const validRound = ['low', 'middle', 'high'];
-    const validSalt = ['low', 'high'];
+    const view = await this.getDecryptedData();
+    try {
+      const data = this._deepCopy(view);
+      const validRound = ['low', 'middle', 'high'];
+      const validSalt = ['low', 'high'];
 
-    if (
-      (options.saltDifficulty === null || validSalt.includes(options.saltDifficulty)) &&
-      (options.roundDifficulty === null || validRound.includes(options.roundDifficulty))
-    ) {
-      if (options.saltDifficulty === null) {
-        options.saltDifficulty = data.Options?.saltDifficulty ?? null;
+      if (
+        (options.saltDifficulty === null || validSalt.includes(options.saltDifficulty)) &&
+        (options.roundDifficulty === null || validRound.includes(options.roundDifficulty))
+      ) {
+        if (options.saltDifficulty === null) {
+          options.saltDifficulty = data.Options?.saltDifficulty ?? null;
+        }
+        if (options.roundDifficulty === null) {
+          options.roundDifficulty = data.Options?.roundDifficulty ?? null;
+        }
+        data.Options = options;
       }
-      if (options.roundDifficulty === null) {
-        options.roundDifficulty = data.Options?.roundDifficulty ?? null;
-      }
-      data.Options = options;
       await this.setDecryptedData(data);
+    } finally {
+      view.clear();
     }
-    this._securelyClearObject(data);
   }
 
   /**
@@ -402,7 +315,8 @@ export class ConfigManager {
    * @throws {Error} If options are missing.
    */
   async readOptions() {
-    const data = await this.getDecryptedData();
+    const view = await this.getDecryptedData();
+    const data = this._deepCopy(view);
     if (!data.Options) {
       throw new Error('Options does not exist');
     }
@@ -421,31 +335,7 @@ export class ConfigManager {
    * @returns {Promise<void>}
    */
   async setMasterPassword(newMasterPassword) {
-    const deviceKek = await this.encryptionManager.getDeviceKey();
-
-    // fresh salt & rounds
-    const newSalt = this.encryptionManager.generateRandomSalt();
-    const newRounds = this._getRandomInt(
-      ConfigManagerConstants.ARGON2_ROUNDS_MIN,
-      ConfigManagerConstants.ARGON2_ROUNDS_MAX
-    );
-
-    // derive new KEK from password
-    const newKek = await this._deriveKekFromPassword(newMasterPassword, newSalt, newRounds);
-
-    await this._unwrapDek(deviceKek, true);
-    const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(this.dek, newKek);
-
-    this.config.header = {
-      v: ConfigManagerConstants.CURRENT_DATA_VERSION,
-      salt: newSalt,
-      rounds: newRounds,
-      iv: ivWrap,
-      wrappedKey,
-    };
-
-    await this._unwrapDek(null, false);
-    this._saveConfig();
+   await this.sls.setMasterPassword(newMasterPassword);
   }
 
   /**
@@ -463,26 +353,7 @@ export class ConfigManager {
    * @throws {Error} If not currently using a master password.
    */
   async removeMasterPassword() {
-    if (!this.isUsingMasterPassword()) {
-      throw new Error('No master password is set.');
-    }
-
-    const deviceKek = await this.encryptionManager.getDeviceKey();
-    await this._unwrapDek(null, true);
-
-    const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(this.dek, deviceKek);
-
-    this.config.header = {
-      v: 2,
-      salt: '',
-      rounds: 1,
-      iv: ivWrap,
-      wrappedKey,
-    };
-
-    await this._unwrapDek(deviceKek, false);
-    this.encryptionManager.sessionKeyManager.clearSessionKey();
-    this._saveConfig();
+    await this.sls.removeMasterPassword();
   }
 
   // -----------------------------
@@ -496,107 +367,10 @@ export class ConfigManager {
    * @returns {Promise<void>}
    */
   async deleteAllConfigData() {
-    this.encryptionManager.sessionKeyManager.clearSessionKey();
+    this.sls.lock();
+    await this.sls.clear();
     this.storageService.deleteAllData();
-    this.config = null;
-    this.dek = null;
     await this._initFreshConfig();
-  }
-
-  // -----------------------------
-  // Helpers
-  // -----------------------------
-
-  /**
-   * Persists the current in-memory config object to storage.
-   *
-   * @private
-   * @returns {void}
-   */
-  _saveConfig() {
-    this.storageService.setConf(this.config);
-  }
-
-  /**
-   * Encrypts data with DEK, updates config.data, and saves to storage.
-   *
-   * @private
-   * @async
-   * @param {Object} plainData - The data to encrypt and store.
-   * @returns {Promise<void>}
-   */
-  async _encryptAndStore(plainData) {
-    const { iv, ciphertext } = await this.encryptionManager.encryptData(this.dek, plainData);
-    this.config.data.iv = iv;
-    this.config.data.ciphertext = ciphertext;
-    this._saveConfig();
-  }
-
-  /**
-   * Derives KEK from password and caches it inside SessionKeyManager.
-   *
-   * @private
-   * @async
-   * @param {string} password - Master password.
-   * @param {string} saltB64 - Base64 salt.
-   * @param {number} rounds - Argon2 rounds.
-   * @returns {Promise<CryptoKey>} The derived KEK.
-   */
-  async _deriveKekFromPassword(password, saltB64, rounds) {
-    return this.encryptionManager.sessionKeyManager.deriveAndCacheKey(password, saltB64, rounds);
-  }
-
-  /**
-   * Unwraps DEK using provided or cached KEK.
-   *
-   * @private
-   * @async
-   * @param {CryptoKey} [kek] - Optional KEK for unwrapping.
-   * @param {boolean} [forWrapping=false] - If true, uses unwrap-for-wrapping logic.
-   * @returns {Promise<void>}
-   */
-  async _unwrapDek(kek, forWrapping = false) {
-    const { iv, wrappedKey } = this.config.header;
-    let actualKek = kek;
-    if (!actualKek) {
-      const { salt, rounds } = this.config.header;
-      actualKek = this.encryptionManager.sessionKeyManager.getSessionKey(salt, rounds);
-      if (!actualKek) throw new Error('Session locked');
-    }
-    if (forWrapping) {
-      this.dek = await this.encryptionManager.unwrapDekForWrapping(iv, wrappedKey, actualKek);
-    } else {
-      this.dek = await this.encryptionManager.unwrapDek(iv, wrappedKey, actualKek);
-    }
-  }
-
-  /**
-   * Generates a random integer between min and max (inclusive).
-   *
-   * @private
-   * @param {number} min - Lower bound.
-   * @param {number} max - Upper bound.
-   * @returns {number} Random integer in [min, max].
-   */
-  _getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  /**
-   * Recursively overwrites all properties in an object with null to clear sensitive data.
-   *
-   * @private
-   * @param {*} obj - Object to clear.
-   */
-  _securelyClearObject(obj) {
-    if (!obj || typeof obj !== 'object') return;
-    for (const key of Object.keys(obj)) {
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        this._securelyClearObject(obj[key]);
-      } else {
-        obj[key] = null;
-      }
-    }
   }
 
   /**
@@ -605,7 +379,7 @@ export class ConfigManager {
    * @returns {boolean} true if in master-password mode.
    */
   isUsingMasterPassword() {
-    return (this.config?.header?.rounds ?? 0) > 1;
+    return this.sls.isUsingMasterPassword();
   }
 
   // -----------------------------
@@ -625,48 +399,14 @@ export class ConfigManager {
       (typeof exportPassword === undefined || exportPassword === '' || exportPassword === null) &&
       this.isUsingMasterPassword()
     ) {
-      return returnEncoded(this.config);
+      return returnEncoded(await this.sls.exportData());
     }
 
-    if (!this.dek) throw new Error('Session locked');
     if (typeof exportPassword === undefined || exportPassword === '') throw new Error('No Password set');
 
-    // Generate fresh salt and rounds for export
-    const exportSalt = this.encryptionManager.generateRandomSalt();
-    const exportRounds = this._getRandomInt(
-      ConfigManagerConstants.ARGON2_ROUNDS_MIN,
-      ConfigManagerConstants.ARGON2_ROUNDS_MAX
-    );
-
-    const deviceKek = await this.encryptionManager.getDeviceKey();
-    const exportKek = await deriveKek(exportPassword, base64ToUint8Array(exportSalt), exportRounds);
-
-    let currentDekForWrapping = await this.encryptionManager.unwrapDekForWrapping(
-      this.config.header.iv,
-      this.config.header.wrappedKey,
-      deviceKek
-    );
-    const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(currentDekForWrapping, exportKek);
-
-    currentDekForWrapping = null;
-
-    const header = {
-      v: ConfigManagerConstants.CURRENT_DATA_VERSION,
-      salt: exportSalt,
-      rounds: exportRounds,
-      iv: ivWrap,
-      mPw: false,
-      wrappedKey,
-    };
-
-    // Create export bundle
-    const exportBundle = {
-      header: header,
-      data: this.config.data,
-    };
-
     // Return export as binary (buffer)
-    return await returnEncoded(exportBundle);
+    const exportData = await this.sls.exportData(exportPassword);
+    return await returnEncoded(exportData);
   }
 
   /**
@@ -684,57 +424,20 @@ export class ConfigManager {
     try {
       const bundle = await returnDecoded(exportedConfig);
 
-      // Version check
-      if (bundle.header.v !== ConfigManagerConstants.CURRENT_DATA_VERSION) {
-        throw new Error('Unsupported export version');
-      }
+      const result = await this.sls.importData(bundle, exportPassword);
 
-      if (!bundle.data || !bundle.header) {
-        throw new Error('Invalid export format');
-      }
-
-      if (typeof bundle.header.mPw === undefined || bundle.header.mPw === '' || bundle.header.mPw !== false) {
-        const configBackup = this.config;
-        this.config = bundle;
-        try {
-          await this.unlockSession(exportPassword);
-        } catch (err) {
-          this.config = configBackup;
-          throw new Error('Failed to validated master-password');
-        }
-        this._saveConfig();
-
-        return 'storedWithMasterPassword';
-      }
-
-      // Derive key from export password
-      const importKek = await deriveKek(exportPassword, base64ToUint8Array(bundle.header.salt), bundle.header.rounds);
-      let currentDekForWrapping = await this.encryptionManager.unwrapDekForWrapping(
-        bundle.header.iv,
-        bundle.header.wrappedKey,
-        importKek
-      );
-
-      const devieKey = await this.encryptionManager.getDeviceKey();
-      const { ivWrap, wrappedKey } = await this.encryptionManager.wrapDek(currentDekForWrapping, devieKey);
-      currentDekForWrapping = null;
-
-      bundle.header = {
-        v: 2,
-        salt: '',
-        rounds: 1,
-        iv: ivWrap,
-        wrappedKey,
+      const map = {
+        masterPassword: 'storedWithMasterPassword',
+        customExportPassword: 'storedWithDeviceKey',
       };
 
-      this.config = bundle;
-
-      this._saveConfig();
-      this._loadDekIntoMemory();
-
-      return 'storedWithDeviceKey';
+      return map[result];
     } catch (error) {
       throw new Error(`Import failed: ${error.message}`);
     }
+  }
+
+  _deepCopy(item) {
+    return JSON.parse(JSON.stringify(item))
   }
 }
