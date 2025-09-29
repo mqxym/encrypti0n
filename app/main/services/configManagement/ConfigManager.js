@@ -261,12 +261,10 @@ export class ConfigManager {
     const view = await this.getDecryptedData();
     try {
       const data = this._deepCopy(view);
-      let newIndex = 1;
       while (data.slots.hasOwnProperty(newIndex)) {
         newIndex++;
       }
       data.slots[newIndex] = { name: `Slot ${newIndex}`, value: null };
-      await this.setDecryptedData(data);
       await this.setDecryptedData(data);
     } finally {
       view.clear();
@@ -435,6 +433,12 @@ export class ConfigManager {
     } catch (error) {
       throw new Error(`Import failed: ${error.message}`);
     }
+  }
+
+  async rotatePasswordless() {
+    if (this.isUsingMasterPassword()) return;
+
+    await this.sls.rotateKeys();
   }
 
   _deepCopy(item) {

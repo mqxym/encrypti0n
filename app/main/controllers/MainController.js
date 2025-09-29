@@ -54,7 +54,7 @@ export class MainController {
    */
   async initializeServices() {
     const confManager = await ConfigManager.create();
-    const cryptit = createCryptit();
+    const cryptit = createCryptit({acceptUnauthenticatedHeader: true});
     this.services = {
       config: confManager,
       cryptit: cryptit,

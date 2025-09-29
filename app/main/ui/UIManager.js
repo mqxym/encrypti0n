@@ -94,6 +94,8 @@ export class UIManager {
     ElementHandler.show('export-masterpassword-set');
     ElementHandler.disable('exportDataPw');
     ElementHandler.disable('exportDataPwConfirmation');
+    ElementHandler.disable('rotatePasswordLessKeys');
+    ElementHandler.hide('rotatePasswordLessKeys');
   }
 
   /**
@@ -104,6 +106,7 @@ export class UIManager {
    */
   handlePasswordlessCase() {
     ElementHandler.hide('removeApplicationEncryption');
+    ElementHandler.hide('changeMasterPasswordModal')
     ElementHandler.show('encryptApplicationModal');
     ElementHandler.show('export-no-masterpassword-set');
     ElementHandler.hide('export-masterpassword-set');
