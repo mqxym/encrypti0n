@@ -52,9 +52,16 @@ export class UIManager {
     });
     EventBinder.on('#encryptApplicationModal', 'click', () => this.handleAppEncryptModal());
     EventBinder.on('#importDataModal', 'click', () => EventBinder.showModal('#do-data-import'));
+    EventBinder.on('#changeMasterPasswordModal', 'click', () => {
+      if (this.configManager.isLocked()) return;
+      EventBinder.showModal('#do-masterpassword-rotation')
+    });
     EventBinder.on('#exportDataModal', 'click', () => EventBinder.showModal('#do-data-export'));
     EventBinder.on('#encryptApplicationPw', 'input', () =>
       this.showPasswordStrenght('encryptApplicationPw', 'password-strength', 'password-strength-text')
+    );
+    EventBinder.on('#newApplicationMPw', 'input', () =>
+      this.showPasswordStrenght('newApplicationMPw', 'password-strength-rotate', 'password-strength-rotate-text')
     );
     EventBinder.on('#exportDataPw', 'input', () =>
       this.showPasswordStrenght('exportDataPw', 'export-password-strength', 'export-password-strength-text')
@@ -95,7 +102,8 @@ export class UIManager {
     ElementHandler.disable('exportDataPw');
     ElementHandler.disable('exportDataPwConfirmation');
     ElementHandler.disable('rotatePasswordLessKeys');
-    ElementHandler.hide('rotatePasswordLessKeys');
+    ElementHandler.hideClass('rotateInterface');
+    ElementHandler.show('changeMasterPasswordModal');
   }
 
   /**
@@ -110,6 +118,7 @@ export class UIManager {
     ElementHandler.show('encryptApplicationModal');
     ElementHandler.show('export-no-masterpassword-set');
     ElementHandler.hide('export-masterpassword-set');
+    ElementHandler.showClass('rotateInterface');
     EventBinder.on('#encryptApplicationModal', 'click', () => this.handleAppEncryptModal());
   }
 

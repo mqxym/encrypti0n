@@ -380,6 +380,21 @@ export class ConfigManager {
     return this.sls.isUsingMasterPassword();
   }
 
+  /**
+   * Checks if master-password mode is and session is locked.
+   *
+   * @returns {boolean} true if in master-password mode and locked session.
+   */
+  isLocked() {
+    return this.sls.isLocked();
+  }
+
+  async rotateMasterPassword(oldMPw, newMPw) {
+    if (!this.isUsingMasterPassword()) return;
+
+    await this.sls.rotateMasterPassword(oldMPw, newMPw);
+  }
+
   // -----------------------------
   // Import Export
   // -----------------------------

@@ -40,6 +40,9 @@ export class AppDataController {
    * Binds click events on various buttons to their corresponding handlers.
    */
   bindEvents() {
+    EventBinder.on('#rotateMasterPassword', 'click', () =>
+      wrapAction('rotateMasterPassword', this.handleRotateMasterPassword.bind(this))
+    );
     EventBinder.on('#encryptApplication', 'click', () =>
       wrapAction('encryptApplication', this.handleAppEncrypt.bind(this))
     );
@@ -124,6 +127,61 @@ export class AppDataController {
         title: 'Failed to encrypt the application!',
         text: 'Encryption failed. If you think this is a bug, open a GitHub issue.',
         timer: 2500,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
+    } finally {
+      laddaEncryptApplication.stop();
+    }
+  }
+
+
+  /**
+   * Handles re-encrypting the entire application:
+   * - Validates and confirms master password input
+   * - Derives and sets the master password
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
+  async handleRotateMasterPassword() {
+    ElementHandler.hide('newApplicationMissingPw');
+    ElementHandler.hide('newApplicationMatchFail');
+    const formHandlerLocal = new FormHandler('masterPasswordRotationForm');
+    formHandlerLocal.preventSubmitAction();
+    const { newApplicationMPw, newApplicationMPwConfirmation, oldApplicationMPw } = formHandlerLocal.getFormValues();
+    if (!newApplicationMPw || !newApplicationMPwConfirmation || !oldApplicationMPw) {
+      ElementHandler.show('newApplicationMissingPw');
+      return;
+    }
+    if (newApplicationMPw !== newApplicationMPwConfirmation) {
+      ElementHandler.show('newApplicationMatchFail');
+      return;
+    }
+    formHandlerLocal.setFormValue('oldApplicationMPw', '');
+    formHandlerLocal.setFormValue('newApplicationMPw', '');
+    formHandlerLocal.setFormValue('newApplicationMPwConfirmation', '');
+
+    const laddaEncryptApplication = this._laddaStart(document.getElementById('rotateMasterPassword'));
+
+    try {
+      await this.configManager.rotateMasterPassword(oldApplicationMPw, newApplicationMPw);
+      ElementHandler.hideModal('do-masterpassword-rotation');
+      this._reactAppUnlockedStatus();
+      Swal.fire({
+        icon: 'success',
+        title: 'Master Password Changed!',
+        text: 'Remember your password.',
+        timer: 3500,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
+      this.UIManager.handleMasterPasswordCase();
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to Change Master Password!',
+        text: 'Check your old password first. If you think this is a bug, open a GitHub issue.',
         showCancelButton: false,
         confirmButtonText: 'Ok',
       });
