@@ -1,24 +1,40 @@
-  :root {
-    --anchor-pop-scale: 1.04;
-    --anchor-pop-duration: 600ms;
+  :target {
+    outline: none !important;
+    outline-offset: 0 !important;
+  }
+
+  /* Suppress the focus ring only while the pop animation runs */
+  .anchor-highlight:focus,
+  .anchor-highlight:focus-visible {
+    outline: none !important;
   }
 
   /* Brief enlarge/pulse for targeted headings */
+  @-webkit-keyframes anchor-pop {
+    0%   { -webkit-transform: scale(1); transform: scale(1); }
+    35%  { -webkit-transform: scale(1.04); transform: scale(1.04); }
+    100% { -webkit-transform: scale(1); transform: scale(1); }
+  }
   @keyframes anchor-pop {
-    0%   { transform: scale(1); }
-    35%  { transform: scale(var(--anchor-pop-scale)); }
-    100% { transform: scale(1); }
+    0%   { -webkit-transform: scale(1); transform: scale(1); }
+    35%  { -webkit-transform: scale(1.04); transform: scale(1.04); }
+    100% { -webkit-transform: scale(1); transform: scale(1); }
   }
 
-  /* Applied to the <h3 id="..."> element */
   .anchor-highlight {
-    animation: anchor-pop var(--anchor-pop-duration) cubic-bezier(.2,.7,.3,1);
+    -webkit-animation: anchor-pop 600ms cubic-bezier(.2,.7,.3,1);
+            animation: anchor-pop 600ms cubic-bezier(.2,.7,.3,1);
     will-change: transform;
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+            transform: translateZ(0); /* helps Safari/GPU rasterization */
   }
 
   /* Respect reduced-motion preferences */
   @media (prefers-reduced-motion: reduce) {
     .anchor-highlight {
-      animation: none;
+      -webkit-animation: none !important;
+              animation: none !important;
     }
   }
