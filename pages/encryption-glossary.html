@@ -39,100 +39,224 @@
         <!-- Custom CSS -->
         <link href="../assets/css/custom.css" rel="stylesheet" type="text/css" />
 
+        <!-- Glossary CSS -->
+        <link href="../assets/css/glossary.css" rel="stylesheet" type="text/css" />
+
         <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "DefinedTermSet",
+        "name": "Glossary of Encryption Terminology",
+        "description": "Welcome to the Encrypti0n.com glossary: Your quick, concise reference to essential cryptographic and encryption terms clearly explained for easy understanding.",
+        "url": "https://encrypti0n.com/pages/encryption-glossary.html",
+        "hasDefinedTerm": [
             {
-              "@context": "https://schema.org",
-              "@type": "DefinedTermSet",
-              "name": "Glossary of Encryption Terminology",
-              "url": "https://encrypti0n.com/pages/encryption-glossary.html",
-              "hasDefinedTerm": [
-                {
-                  "@type": "DefinedTerm",
-                  "name": "AES (Advanced Encryption Standard)",
-                  "description": "A popular symmetric cipher used worldwide to ensure secure data encryption.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#aes"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "AES-GCM (Galois/Counter Mode)",
-                  "description": "An advanced encryption mode of AES providing both confidentiality and built-in authentication, protecting against data tampering.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#aes-gcm"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Base64",
-                  "description": "A method of encoding binary data into ASCII text, useful for secure data transmission.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#base64"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Ciphertext",
-                  "description": "Encrypted data resulting from transforming plaintext; unreadable without a cryptographic key.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#ciphertext"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Encryption",
-                  "description": "The conversion of plaintext into ciphertext to secure data against unauthorized access.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#encryption"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Decryption",
-                  "description": "The reversal of encryption, converting ciphertext back into original plaintext.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#decryption"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "IV (Initialization Vector)",
-                  "description": "A unique random value used during encryption to produce distinct ciphertext for identical plaintext.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#iv"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Nonce",
-                  "description": "A 'number used once' to secure cryptographic processes from replay attacks, essential in AES-GCM.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#nonce"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Argon2 (Password-Based Key Derivation)",
-                  "description": "A method for securely deriving encryption keys from passwords using salts and is resistable to specialised hardware attacks.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#argon2"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Plaintext",
-                  "description": "Original, readable data before encryption, also called cleartext.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#plaintext"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Salt",
-                  "description": "Random data combined with passwords during key derivation to prevent precomputed attacks.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#salt"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Symmetric Encryption",
-                  "description": "Encryption where the same secret key is used for both encrypting and decrypting messages.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#symmetric-encryption"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Tamper-proof",
-                  "description": "A feature of secure cryptography (like AES-GCM) ensuring alterations in encrypted data are detectable.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#tamper-proof"
-                },
-                {
-                  "@type": "DefinedTerm",
-                  "name": "Web Crypto API",
-                  "description": "A secure JavaScript API offering cryptographic functions, such as AES-GCM encryption and Argon2 key generation, in browsers.",
-                  "url": "https://encrypti0n.com/pages/encryption-glossary.html#web-crypto-api"
-                }
-              ]
+            "@type": "DefinedTerm",
+            "name": "AES-GCM (Galois/Counter Mode)",
+            "description": "An AES mode that provides confidentiality and built-in authentication (AEAD). It uses a unique nonce/IV and produces an AuthTag that detects tampering.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#aes-gcm"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "AEAD (Authenticated Encryption with Associated Data)",
+            "description": "An encryption approach (e.g., AES-GCM) that ensures confidentiality, integrity, and authenticity. It authenticates both the ciphertext and optional associated data (AAD), outputting an AuthTag.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#aead"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "AAD (Associated Data)",
+            "description": "Data (e.g., headers/metadata) that is not encrypted but is authenticated with the ciphertext in an AEAD scheme. If AAD is altered, the AuthTag check fails.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#aad"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "AuthTag (Authentication Tag)",
+            "description": "A short value produced by AEAD modes like AES-GCM that verifies ciphertext and AAD. If verification fails, decryption is rejected.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#authtag"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Tamper-proof",
+            "description": "Informally describes tamper-evident protection: with AEAD (e.g., AES-GCM), any modification causes the AuthTag check to fail.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#tamper-proof"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Nonce",
+            "description": "A number used once that must be unique for each encryption under a given key in AES-GCM. Reuse breaks security. Often also called an IV.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#nonce"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "IV (Initialization Vector)",
+            "description": "A per-message value used to randomize encryption. In AES-GCM, the IV/nonce must be unique (not necessarily secret) to maintain security.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#iv"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "AES (Advanced Encryption Standard)",
+            "description": "A widely used symmetric cipher that encrypts data with 128-, 192-, or 256-bit keys. Modes like GCM add authentication.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#aes"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Symmetric Encryption",
+            "description": "Encryption where the same secret key is used for both encryption and decryption, e.g., AES in GCM mode.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#symmetric-encryption"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Encryption",
+            "description": "The process of transforming plaintext into ciphertext using a key, to protect data from unauthorized access.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#encryption"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Decryption",
+            "description": "The reverse of encryption, converting ciphertext back to plaintext using the correct key (and validating the AuthTag in AES-GCM).",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#decryption"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Plaintext",
+            "description": "Original, readable data before encryption—sometimes called cleartext.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#plaintext"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Ciphertext",
+            "description": "Encrypted output produced from plaintext. It is unreadable without the correct key and a valid AuthTag when using AEAD.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#ciphertext"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Payload",
+            "description": "The data being protected (e.g., a file's contents). It usually refers to the plaintext before encryption or the protected ciphertext after encryption.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#payload"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Key Material",
+            "description": "Any secret bits used as cryptographic keys. In this glossary, it includes DEKs, KEKs, and higher-level keys such as a Master Key.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#key-material"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "DEK (Data Encryption Key)",
+            "description": "A symmetric key that encrypts the actual data (payload). A DEK is often wrapped by a KEK using key wrapping.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#dek"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "KEK (Key Encryption Key)",
+            "description": "A higher-trust key used to encrypt (wrap) other keys such as a DEK. Typically protected by an HSM or managed by a KMS.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#kek"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Key Wrapping",
+            "description": "The process of encrypting one key (e.g., a DEK) with another (a KEK) for secure transport or storage—central to envelope encryption.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#key-wrapping"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Envelope Encryption",
+            "description": "A design where the data is encrypted with a DEK, and that DEK is wrapped with a KEK via key wrapping. The wrapped DEK is stored with the ciphertext; an HSM/KMS protects the KEK.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#envelope-encryption"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "HSM (Hardware Security Module)",
+            "description": "A dedicated hardware device for secure key generation, storage, and use. Often safeguards KEKs and a Master Key and enforces key rotation policies.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#hsm"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "KMS (Key Management System)",
+            "description": "A secure service that manages cryptographic keys: creation, storage, access control, and rotation. May use HSMs for hardware-backed protection.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#kms"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Master Key",
+            "description": "A high-level key (often root key material) used to derive or encrypt other keys such as KEKs. Commonly protected within a HSM/KMS.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#master-key"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Key Rotation",
+            "description": "The periodic replacement of cryptographic keys (DEKs, KEKs, Master Keys) to reduce exposure. Often orchestrated by a KMS or enforced by an HSM.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#key-rotation"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Master Password",
+            "description": "A user-chosen secret used to derive keys via a KDF (e.g., Argon2id). Should have high entropy; never stored in plaintext.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#master-password"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "KDF (Key Derivation Function)",
+            "description": "A function that derives strong cryptographic keys from secrets (e.g., a master password), using a salt and substantial work (time/memory). Many KDFs use a hash function or cipher primitives.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#kdf"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Hash Function",
+            "description": "A one-way function that maps data to a fixed-size digest, with properties like preimage and collision resistance. Used for integrity checks and inside some KDFs.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#hash-function"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Argon2id",
+            "description": "The recommended variant of Argon2 for password-based key derivation. It blends data-independent and data-dependent memory access to resist side-channel and GPU/ASIC attacks.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#argon2id"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Argon2 (Key Derivation)",
+            "description": "A family of KDFs that are memory-hardened. With a salt and tunable time/memory/parallelism, Argon2 thwarts large-scale brute-force attempts.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#argon2"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Memory-hardened",
+            "description": "Describes algorithms (e.g., Argon2) engineered to require significant memory, increasing cost for parallel cracking on GPUs/ASICs.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#memory-hardened"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Salt",
+            "description": "Random, per-password value added to KDF inputs to prevent precomputed and shared-work attacks, ensuring unique outputs even for identical passwords.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#salt"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Password Entropy",
+            "description": "A measure (in bits) of a password's unpredictability based on length and character set. Higher entropy resists brute-force guessing.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#password-entropy"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Brute-force Attack",
+            "description": "Systematically trying all possibilities to recover a password or key. Practicality is reduced by high entropy and KDF costs (e.g., Argon2id).",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#brute-force-attack"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Base64",
+            "description": "An encoding that represents binary data (ciphertexts, nonces, wrapped keys) as ASCII text. It is not encryption.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#base64"
+            },
+            {
+            "@type": "DefinedTerm",
+            "name": "Web Crypto API",
+            "description": "A browser API that provides primitives like AES-GCM, key wrapping, and KDF operations for building secure, in-browser cryptography.",
+            "url": "https://encrypti0n.com/pages/encryption-glossary.html#web-crypto-api"
             }
-            </script>
+        ]
+        }
+        </script>
 
             <script type="application/ld+json">
                 {
@@ -362,179 +486,317 @@
 
                         <!-- Table of Contents -->
                         <div class="row my-4">
-                            <div class="col-12">
-                                <h2>Table of Contents</h2>
-                                <ul class="list-unstyled">
-                                    <li><a href="#aes">AES (Advanced Encryption Standard)</a></li>
-                                    <li><a href="#aes-gcm">AES-GCM (Galois/Counter Mode)</a></li>
-                                    <li><a href="#base64">Base64</a></li>
-                                    <li><a href="#ciphertext">Ciphertext</a></li>
-                                    <li><a href="#encryption">Encryption</a></li>
-                                    <li><a href="#decryption">Decryption</a></li>
-                                    <li><a href="#iv">IV (Initialization Vector)</a></li>
-                                    <li><a href="#nonce">Nonce</a></li>
-                                    <li><a href="#argon2">Argon2 (Password-Based Key Derivation)</a></li>
-                                    <li><a href="#plaintext">Plaintext</a></li>
-                                    <li><a href="#salt">Salt</a></li>
-                                    <li><a href="#symmetric-encryption">Symmetric Encryption</a></li>
-                                    <li><a href="#tamper-proof">Tamper-proof</a></li>
-                                    <li><a href="#web-crypto-api">Web Crypto API</a></li>
-                                </ul>
-                            </div>
+                        <div class="col-12">
+                            <h2>Table of Contents</h2>
+                            <ul class="list-unstyled">
+                            <li><a href="#aes-gcm"><i class="mdi mdi-lock-check-outline me-2" aria-hidden="true"></i>AES-GCM (Galois/Counter Mode)</a></li>
+                            <li><a href="#aead"><i class="mdi mdi-shield-lock-outline me-2" aria-hidden="true"></i>AEAD (Authenticated Encryption with Associated Data)</a></li>
+                            <li><a href="#aad"><i class="mdi mdi-information-outline me-2" aria-hidden="true"></i>AAD (Associated Data)</a></li>
+                            <li><a href="#authtag"><i class="mdi mdi-check-decagram me-2" aria-hidden="true"></i>AuthTag (Authentication Tag)</a></li>
+                            <li><a href="#tamper-proof"><i class="mdi mdi-shield-check me-2" aria-hidden="true"></i>Tamper-proof</a></li>
+                            <li><a href="#nonce"><i class="mdi mdi-numeric-1-circle-outline me-2" aria-hidden="true"></i>Nonce</a></li>
+                            <li><a href="#iv"><i class="mdi mdi-shuffle me-2" aria-hidden="true"></i>IV (Initialization Vector)</a></li>
+                            <li><a href="#aes"><i class="mdi mdi-lock-check me-2" aria-hidden="true"></i>AES (Advanced Encryption Standard)</a></li>
+                            <li><a href="#symmetric-encryption"><i class="mdi mdi-link-variant me-2" aria-hidden="true"></i>Symmetric Encryption</a></li>
+                            <li><a href="#encryption"><i class="mdi mdi-lock me-2" aria-hidden="true"></i>Encryption</a></li>
+                            <li><a href="#decryption"><i class="mdi mdi-lock-open-check-outline me-2" aria-hidden="true"></i>Decryption</a></li>
+                            <li><a href="#plaintext"><i class="mdi mdi-file-document-outline me-2" aria-hidden="true"></i>Plaintext</a></li>
+                            <li><a href="#ciphertext"><i class="mdi mdi-file-lock-outline me-2" aria-hidden="true"></i>Ciphertext</a></li>
+                            <li><a href="#payload"><i class="mdi mdi-briefcase-outline me-2" aria-hidden="true"></i>Payload</a></li>
+                            <li><a href="#key-material"><i class="mdi mdi-key-chain-variant me-2" aria-hidden="true"></i>Key Material</a></li>
+                            <li><a href="#dek"><i class="mdi mdi-key-variant me-2" aria-hidden="true"></i>DEK (Data Encryption Key)</a></li>
+                            <li><a href="#kek"><i class="mdi mdi-key-change me-2" aria-hidden="true"></i>KEK (Key Encryption Key)</a></li>
+                            <li><a href="#key-wrapping"><i class="mdi mdi-shield-key-outline me-2" aria-hidden="true"></i>Key Wrapping</a></li>
+                            <li><a href="#envelope-encryption"><i class="mdi mdi-email-lock me-2" aria-hidden="true"></i>Envelope Encryption</a></li>
+                            <li><a href="#hsm"><i class="mdi mdi-chip me-2" aria-hidden="true"></i>HSM (Hardware Security Module)</a></li>
+                            <li><a href="#kms"><i class="mdi mdi-server-security me-2" aria-hidden="true"></i>KMS (Key Management System)</a></li>
+                            <li><a href="#master-key"><i class="mdi mdi-key-star me-2" aria-hidden="true"></i>Master Key</a></li>
+                            <li><a href="#key-rotation"><i class="mdi mdi-autorenew me-2" aria-hidden="true"></i>Key Rotation</a></li>
+                            <li><a href="#master-password"><i class="mdi mdi-form-textbox-password me-2" aria-hidden="true"></i>Master Password</a></li>
+                            <li><a href="#kdf"><i class="mdi mdi-cog me-2" aria-hidden="true"></i>KDF (Key Derivation Function)</a></li>
+                            <li><a href="#hash-function"><i class="mdi mdi-pound me-2" aria-hidden="true"></i>Hash Function</a></li>
+                            <li><a href="#argon2id"><i class="mdi mdi-shield-outline me-2" aria-hidden="true"></i>Argon2id</a></li>
+                            <li><a href="#argon2"><i class="mdi mdi-cog-outline me-2" aria-hidden="true"></i>Argon2 (Key Derivation)</a></li>
+                            <li><a href="#memory-hardened"><i class="mdi mdi-memory me-2" aria-hidden="true"></i>Memory-hardened</a></li>
+                            <li><a href="#salt"><i class="mdi mdi-snowflake me-2" aria-hidden="true"></i>Salt</a></li>
+                            <li><a href="#password-entropy"><i class="mdi mdi-sigma-lower me-2" aria-hidden="true"></i>Password Entropy</a></li>
+                            <li><a href="#brute-force-attack"><i class="mdi mdi-target-account me-2" aria-hidden="true"></i>Brute-force Attack</a></li>
+                            <li><a href="#base64"><i class="mdi mdi-code-tags me-2" aria-hidden="true"></i>Base64</a></li>
+                            <li><a href="#web-crypto-api"><i class="mdi mdi-web me-2" aria-hidden="true"></i>Web Crypto API</a></li>
+                            </ul>
+                        </div>
                         </div>
 
-                        <!-- AES -->
+                       <!-- AES-GCM -->
                         <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="aes">
-                                    <i class="mdi mdi-key"></i>
-                                    AES (Advanced Encryption Standard)
-                                </h3>
-                                <p>A popular symmetric cipher used worldwide to ensure secure data encryption.</p>
-                            </div>
+                        <div class="col-12">
+                            <h3 id="aes-gcm"><i class="mdi mdi-lock-check-outline me-2" aria-hidden="true"></i>AES-GCM (Galois/Counter Mode)</h3>
+                            <p>An AES mode that provides confidentiality and built-in authentication (<a href="#aead">AEAD</a>). It uses a unique <a href="#nonce">nonce</a>/<a href="#iv">IV</a> and produces an <a href="#authtag">AuthTag</a> that detects tampering.</p>
+                        </div>
                         </div>
 
-                        <!-- AES-GCM -->
+                        <!-- AEAD -->
                         <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="aes-gcm">
-                                    <i class="mdi mdi-lock-check-outline"></i>
-                                    AES-GCM (Galois/Counter Mode)
-                                </h3>
-                                <p>An advanced encryption mode of AES providing both confidentiality and built-in authentication, protecting against data tampering.</p>
-                            </div>
+                        <div class="col-12">
+                            <h3 id="aead"><i class="mdi mdi-shield-lock-outline me-2" aria-hidden="true"></i>AEAD (Authenticated Encryption with Associated Data)</h3>
+                            <p>An encryption approach (e.g., <a href="#aes-gcm">AES-GCM</a>) that ensures confidentiality, integrity, and authenticity. It authenticates both the ciphertext and optional <a href="#aad">associated data (AAD)</a>, outputting an <a href="#authtag">AuthTag</a>.</p>
+                        </div>
                         </div>
 
-                        <!-- Base64 -->
+                        <!-- AAD -->
                         <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="base64">
-                                    <i class="mdi mdi-code-tags"></i>
-                                    Base64
-                                </h3>
-                                <p>A method of encoding binary data into ASCII text, useful for secure data transmission.</p>
-                            </div>
+                        <div class="col-12">
+                            <h3 id="aad"><i class="mdi mdi-information-outline me-2" aria-hidden="true"></i>AAD (Associated Data)</h3>
+                            <p>Data (e.g., headers/metadata) that is not encrypted but is authenticated with the ciphertext in an <a href="#aead">AEAD</a> scheme. If AAD is altered, the <a href="#authtag">AuthTag</a> check fails.</p>
+                        </div>
                         </div>
 
-                        <!-- Ciphertext -->
+                        <!-- AuthTag -->
                         <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="ciphertext">
-                                    <i class="mdi mdi-file-lock-outline"></i>
-                                    Ciphertext
-                                </h3>
-                                <p>Encrypted data resulting from transforming plaintext; unreadable without a cryptographic key.</p>
-                            </div>
+                        <div class="col-12">
+                            <h3 id="authtag"><i class="mdi mdi-check-decagram me-2" aria-hidden="true"></i>AuthTag (Authentication Tag)</h3>
+                            <p>A short value produced by <a href="#aead">AEAD</a> modes like <a href="#aes-gcm">AES-GCM</a> that verifies ciphertext and <a href="#aad">AAD</a>. If verification fails, decryption is rejected.</p>
                         </div>
-
-                        <!-- Encryption -->
-                        <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="encryption">
-                                    <i class="mdi mdi-lock"></i>
-                                    Encryption
-                                </h3>
-                                <p>The conversion of plaintext into ciphertext to secure data against unauthorized access.</p>
-                            </div>
-                        </div>
-
-                        <!-- Decryption -->
-                        <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="decryption">
-                                    <i class="mdi mdi-lock-open"></i>
-                                    Decryption
-                                </h3>
-                                <p>The reversal of encryption, converting ciphertext back into original plaintext.</p>
-                            </div>
-                        </div>
-
-                        <!-- IV (Initialization Vector) -->
-                        <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="iv">
-                                    <i class="mdi mdi-shuffle"></i>
-                                    IV (Initialization Vector)
-                                </h3>
-                                <p>A unique random value used during encryption to produce distinct ciphertext for identical plaintext.</p>
-                            </div>
-                        </div>
-
-                        <!-- Nonce -->
-                        <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="nonce">
-                                    <i class="mdi mdi-numeric-1-circle-outline"></i>
-                                    Nonce
-                                </h3>
-                                <p>A "number used once" to secure cryptographic processes from replay attacks, essential in AES-GCM.</p>
-                            </div>
-                        </div>
-
-                        <!-- Argon2 -->
-                        <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="argon2">
-                                    <i class="mdi mdi-cog"></i>
-                                    Argon2 (Password-Based Key Derivation)
-                                </h3>
-                                <p>A method for securely deriving encryption keys from passwords using salts and is resistable to specialised hardware attacks.</p>
-                            </div>
-                        </div>
-
-                        <!-- Plaintext -->
-                        <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="plaintext">
-                                    <i class="mdi mdi-file-document-outline"></i>
-                                    Plaintext
-                                </h3>
-                                <p>Original, readable data before encryption, also called cleartext.</p>
-                            </div>
-                        </div>
-
-                        <!-- Salt -->
-                        <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="salt">
-                                    <i class="mdi mdi-snowflake"></i>
-                                    Salt
-                                </h3>
-                                <p>Random data combined with passwords during key derivation to prevent precomputed attacks.</p>
-                            </div>
-                        </div>
-
-                        <!-- Symmetric Encryption -->
-                        <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="symmetric-encryption">
-                                    <i class="mdi mdi-sync"></i>
-                                    Symmetric Encryption
-                                </h3>
-                                <p>Encryption where the same secret key is used for both encrypting and decrypting messages.</p>
-                            </div>
                         </div>
 
                         <!-- Tamper-proof -->
                         <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="tamper-proof">
-                                    <i class="mdi mdi-shield-check"></i>
-                                    Tamper-proof
-                                </h3>
-                                <p>A feature of secure cryptography (like AES-GCM) ensuring alterations in encrypted data are detectable.</p>
-                            </div>
+                        <div class="col-12">
+                            <h3 id="tamper-proof"><i class="mdi mdi-shield-check me-2" aria-hidden="true"></i>Tamper-proof</h3>
+                            <p>Informally describes tamper-evident protection: with <a href="#aead">AEAD</a> (e.g., <a href="#aes-gcm">AES-GCM</a>), any modification causes the <a href="#authtag">AuthTag</a> check to fail.</p>
+                        </div>
+                        </div>
+
+                        <!-- Nonce -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="nonce"><i class="mdi mdi-numeric-1-circle-outline me-2" aria-hidden="true"></i>Nonce</h3>
+                            <p>A number used once that must be unique for each encryption under a given key in <a href="#aes-gcm">AES-GCM</a>. Reuse breaks security. Often also called an <a href="#iv">IV</a>.</p>
+                        </div>
+                        </div>
+
+                        <!-- IV -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="iv"><i class="mdi mdi-shuffle me-2" aria-hidden="true"></i>IV (Initialization Vector)</h3>
+                            <p>A per-message value used to randomize encryption. In <a href="#aes-gcm">AES-GCM</a>, the IV/nonce must be unique (not necessarily secret) to maintain security.</p>
+                        </div>
+                        </div>
+
+                        <!-- AES -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="aes"><i class="mdi mdi-lock-check me-2" aria-hidden="true"></i>AES (Advanced Encryption Standard)</h3>
+                            <p>A widely used <a href="#symmetric-encryption">symmetric cipher</a> that encrypts data with 128-, 192-, or 256-bit keys. Modes like <a href="#aes-gcm">GCM</a> add authentication.</p>
+                        </div>
+                        </div>
+
+                        <!-- Symmetric Encryption -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="symmetric-encryption"><i class="mdi mdi-link-variant me-2" aria-hidden="true"></i>Symmetric Encryption</h3>
+                            <p>Encryption where the same secret key is used for both <a href="#encryption">encryption</a> and <a href="#decryption">decryption</a>, e.g., <a href="#aes">AES</a> in <a href="#aes-gcm">GCM</a> mode.</p>
+                        </div>
+                        </div>
+
+                        <!-- Encryption -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="encryption"><i class="mdi mdi-lock me-2" aria-hidden="true"></i>Encryption</h3>
+                            <p>The process of transforming <a href="#plaintext">plaintext</a> into <a href="#ciphertext">ciphertext</a> using a key, to protect data from unauthorized access.</p>
+                        </div>
+                        </div>
+
+                        <!-- Decryption -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="decryption"><i class="mdi mdi-lock-open-check-outline me-2" aria-hidden="true"></i>Decryption</h3>
+                            <p>The reverse of <a href="#encryption">encryption</a>, converting <a href="#ciphertext">ciphertext</a> back to <a href="#plaintext">plaintext</a> using the correct key (and validating the <a href="#authtag">AuthTag</a> in <a href="#aes-gcm">AES-GCM</a>).</p>
+                        </div>
+                        </div>
+
+                        <!-- Plaintext -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="plaintext"><i class="mdi mdi-file-document-outline me-2" aria-hidden="true"></i>Plaintext</h3>
+                            <p>Original, readable data before <a href="#encryption">encryption</a>—sometimes called cleartext.</p>
+                        </div>
+                        </div>
+
+                        <!-- Ciphertext -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="ciphertext"><i class="mdi mdi-file-lock-outline me-2" aria-hidden="true"></i>Ciphertext</h3>
+                            <p>Encrypted output produced from <a href="#plaintext">plaintext</a>. It is unreadable without the correct key and a valid <a href="#authtag">AuthTag</a> when using <a href="#aead">AEAD</a>.</p>
+                        </div>
+                        </div>
+
+                        <!-- Payload -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="payload"><i class="mdi mdi-briefcase-outline me-2" aria-hidden="true"></i>Payload</h3>
+                            <p>The data being protected (e.g., a file’s contents). It usually refers to the <a href="#plaintext">plaintext</a> before encryption or the protected <a href="#ciphertext">ciphertext</a> after encryption.</p>
+                        </div>
+                        </div>
+
+                        <!-- Key Material -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="key-material"><i class="mdi mdi-key-chain-variant me-2" aria-hidden="true"></i>Key Material</h3>
+                            <p>Any secret bits used as cryptographic keys. In this glossary, it includes <a href="#dek">DEKs</a>, <a href="#kek">KEKs</a>, and higher-level keys such as a <a href="#master-key">Master Key</a>.</p>
+                        </div>
+                        </div>
+
+                        <!-- DEK -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="dek"><i class="mdi mdi-key-variant me-2" aria-hidden="true"></i>DEK (Data Encryption Key)</h3>
+                            <p>A symmetric key that encrypts the actual data (<a href="#payload">payload</a>). A DEK is often wrapped by a <a href="#kek">KEK</a> using <a href="#key-wrapping">key wrapping</a>.</p>
+                        </div>
+                        </div>
+
+                        <!-- KEK -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="kek"><i class="mdi mdi-key-change me-2" aria-hidden="true"></i>KEK (Key Encryption Key)</h3>
+                            <p>A higher-trust key used to encrypt (wrap) other keys such as a <a href="#dek">DEK</a>. Typically protected by an <a href="#hsm">HSM</a> or managed by a <a href="#kms">KMS</a>.</p>
+                        </div>
+                        </div>
+
+                        <!-- Key Wrapping -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="key-wrapping"><i class="mdi mdi-shield-key-outline me-2" aria-hidden="true"></i>Key Wrapping</h3>
+                            <p>The process of encrypting one key (e.g., a <a href="#dek">DEK</a>) with another (a <a href="#kek">KEK</a>) for secure transport or storage—central to <a href="#envelope-encryption">envelope encryption</a>.</p>
+                        </div>
+                        </div>
+
+                        <!-- Envelope Encryption -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="envelope-encryption"><i class="mdi mdi-email-lock me-2" aria-hidden="true"></i>Envelope Encryption</h3>
+                            <p>A design where the data is encrypted with a <a href="#dek">DEK</a>, and that DEK is wrapped with a <a href="#kek">KEK</a> via <a href="#key-wrapping">key wrapping</a>. The wrapped DEK is stored with the ciphertext; an <a href="#hsm">HSM</a>/<a href="#kms">KMS</a> protects the KEK.</p>
+                        </div>
+                        </div>
+
+                        <!-- HSM -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="hsm"><i class="mdi mdi-chip me-2" aria-hidden="true"></i>HSM (Hardware Security Module)</h3>
+                            <p>A dedicated hardware device for secure key generation, storage, and use. Often safeguards <a href="#kek">KEKs</a> and a <a href="#master-key">Master Key</a> and enforces <a href="#key-rotation">key rotation</a> policies.</p>
+                        </div>
+                        </div>
+
+                        <!-- KMS -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="kms"><i class="mdi mdi-server-security me-2" aria-hidden="true"></i>KMS (Key Management System)</h3>
+                            <p>A secure service that manages cryptographic keys: creation, storage, access control, and <a href="#key-rotation">rotation</a>. May use <a href="#hsm">HSMs</a> for hardware-backed protection.</p>
+                        </div>
+                        </div>
+
+                        <!-- Master Key -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="master-key"><i class="mdi mdi-key-star me-2" aria-hidden="true"></i>Master Key</h3>
+                            <p>A high-level key (often root key material) used to derive or encrypt other keys such as <a href="#kek">KEKs</a>. Commonly protected within a <a href="#hsm">HSM</a>/<a href="#kms">KMS</a>.</p>
+                        </div>
+                        </div>
+
+                        <!-- Key Rotation -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="key-rotation"><i class="mdi mdi-autorenew me-2" aria-hidden="true"></i>Key Rotation</h3>
+                            <p>The periodic replacement of cryptographic keys (<a href="#dek">DEKs</a>, <a href="#kek">KEKs</a>, <a href="#master-key">Master Keys</a>) to reduce exposure. Often orchestrated by a <a href="#kms">KMS</a> or enforced by an <a href="#hsm">HSM</a>.</p>
+                        </div>
+                        </div>
+
+                        <!-- Master Password -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="master-password"><i class="mdi mdi-form-textbox-password me-2" aria-hidden="true"></i>Master Password</h3>
+                            <p>A user-chosen secret used to derive keys via a <a href="#kdf">KDF</a> (e.g., <a href="#argon2id">Argon2id</a>). Should have high <a href="#password-entropy">entropy</a>; never stored in plaintext.</p>
+                        </div>
+                        </div>
+
+                        <!-- KDF -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="kdf"><i class="mdi mdi-cog me-2" aria-hidden="true"></i>KDF (Key Derivation Function)</h3>
+                            <p>A function that derives strong cryptographic keys from secrets (e.g., a <a href="#master-password">master password</a>), using a <a href="#salt">salt</a> and substantial work (time/memory). Many KDFs use a <a href="#hash-function">hash function</a> or cipher primitives.</p>
+                        </div>
+                        </div>
+
+                        <!-- Hash Function -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="hash-function"><i class="mdi mdi-pound me-2" aria-hidden="true"></i>Hash Function</h3>
+                            <p>A one-way function that maps data to a fixed-size digest, with properties like preimage and collision resistance. Used for integrity checks and inside some <a href="#kdf">KDFs</a>.</p>
+                        </div>
+                        </div>
+
+                        <!-- Argon2id -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="argon2id"><i class="mdi mdi-shield-outline me-2" aria-hidden="true"></i>Argon2id</h3>
+                            <p>The recommended variant of <a href="#argon2">Argon2</a> for password-based key derivation. It blends data-independent and data-dependent memory access to resist side-channel and GPU/ASIC attacks.</p>
+                        </div>
+                        </div>
+
+                        <!-- Argon2 -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="argon2"><i class="mdi mdi-cog-outline me-2" aria-hidden="true"></i>Argon2 (Key Derivation)</h3>
+                            <p>A family of <a href="#kdf">KDFs</a> that are <a href="#memory-hardened">memory-hardened</a>. With a <a href="#salt">salt</a> and tunable time/memory/parallelism, Argon2 thwarts large-scale <a href="#brute-force-attack">brute-force</a> attempts.</p>
+                        </div>
+                        </div>
+
+                        <!-- Memory-hardened -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="memory-hardened"><i class="mdi mdi-memory me-2" aria-hidden="true"></i>Memory-hardened</h3>
+                            <p>Describes algorithms (e.g., <a href="#argon2">Argon2</a>) engineered to require significant memory, increasing cost for parallel cracking on GPUs/ASICs.</p>
+                        </div>
+                        </div>
+
+                        <!-- Salt -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="salt"><i class="mdi mdi-snowflake me-2" aria-hidden="true"></i>Salt</h3>
+                            <p>Random, per-password value added to <a href="#kdf">KDF</a> inputs to prevent precomputed and shared-work attacks, ensuring unique outputs even for identical passwords.</p>
+                        </div>
+                        </div>
+
+                        <!-- Password Entropy -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="password-entropy"><i class="mdi mdi-sigma-lower me-2" aria-hidden="true"></i>Password Entropy</h3>
+                            <p>A measure (in bits) of a password’s unpredictability based on length and character set. Higher entropy resists <a href="#brute-force-attack">brute-force</a> guessing.</p>
+                        </div>
+                        </div>
+
+                        <!-- Brute-force Attack -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="brute-force-attack"><i class="mdi mdi-target-account me-2" aria-hidden="true"></i>Brute-force Attack</h3>
+                            <p>Systematically trying all possibilities to recover a password or key. Practicality is reduced by <a href="#password-entropy">high entropy</a> and <a href="#kdf">KDF</a> costs (e.g., <a href="#argon2id">Argon2id</a>).</p>
+                        </div>
+                        </div>
+
+                        <!-- Base64 -->
+                        <div class="row my-4">
+                        <div class="col-12">
+                            <h3 id="base64"><i class="mdi mdi-code-tags me-2" aria-hidden="true"></i>Base64</h3>
+                            <p>An encoding that represents binary data (ciphertexts, nonces, wrapped keys) as ASCII text. It is not encryption.</p>
+                        </div>
                         </div>
 
                         <!-- Web Crypto API -->
                         <div class="row my-4">
-                            <div class="col-12">
-                                <h3 id="web-crypto-api">
-                                    <i class="mdi mdi-web"></i>
-                                    Web Crypto API
-                                </h3>
-                                <p>A secure JavaScript API offering cryptographic functions, such as AES-GCM encryption, key wrapping and key imports, in browsers.</p>
-                            </div>
+                        <div class="col-12">
+                            <h3 id="web-crypto-api"><i class="mdi mdi-web me-2" aria-hidden="true"></i>Web Crypto API</h3>
+                            <p>A browser API that provides primitives like <a href="#aes-gcm">AES-GCM</a>, <a href="#key-wrapping">key wrapping</a>, and <a href="#kdf">KDF</a> operations for building secure, in-browser cryptography.</p>
+                        </div>
                         </div>
                     </div>
                 </main>
@@ -570,5 +832,6 @@
 
         <!-- App JS-->
         <script src="../app/insertVersion.js" defer></script>
+        <script src="../app/glossary-scripts.js" defer></script>
     </body>
 </html>

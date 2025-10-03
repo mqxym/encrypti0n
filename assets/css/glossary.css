@@ -1,0 +1,24 @@
+  :root {
+    --anchor-pop-scale: 1.04;
+    --anchor-pop-duration: 600ms;
+  }
+
+  /* Brief enlarge/pulse for targeted headings */
+  @keyframes anchor-pop {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(var(--anchor-pop-scale)); }
+    100% { transform: scale(1); }
+  }
+
+  /* Applied to the <h3 id="..."> element */
+  .anchor-highlight {
+    animation: anchor-pop var(--anchor-pop-duration) cubic-bezier(.2,.7,.3,1);
+    will-change: transform;
+  }
+
+  /* Respect reduced-motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .anchor-highlight {
+      animation: none;
+    }
+  }
