@@ -3,6 +3,8 @@ import { EncryptionController } from './EncryptionController.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { argon2Service } from '../ui/services/argon2Service.js';
+import { delay } from '../utils/misc.js';
+import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
 
 /**
  * @class TextEncryptionController
@@ -31,10 +33,11 @@ export class TextEncryptionController extends EncryptionController {
     const laddaManager = new LaddaButtonManager('.action-button').startAll().setProgressAll(0.75);
 
     try {
-      const isEncrypted = await this.encryptionService.isEncrypted(inputText);
+      const isEncrypted = await Cryptit.isEncrypted(inputText);
       let result = false;
 
       if (isEncrypted) {
+        await delay(150);
         result = await this.handleDecryption();
         laddaManager.setProgressAll(1);
         if (!result) {
@@ -43,6 +46,7 @@ export class TextEncryptionController extends EncryptionController {
           ElementHandler.setPlaceholderById('outputText', 'Decryption failed. Please check data or password.');
         }
       } else {
+        await delay(150);
         result = await this.handleEncryption();
         laddaManager.setProgressAll(1);
         if (!result) {
@@ -74,10 +78,12 @@ export class TextEncryptionController extends EncryptionController {
 
     try {
       const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
-      this.encryptionService.setargon2Difficulty(usedOptions.roundDifficulty);
-      this.encryptionService.setSaltLengthDifficulty(usedOptions.saltDifficulty);
-      const encryptedB64 = await this.encryptionService.encryptText(inputText, key, 'aesgcm');
+      this.cryptit.setDifficulty(usedOptions.roundDifficulty);
+      this.cryptit.setSaltDifficulty(usedOptions.saltDifficulty);
+      const encrypted = await this.cryptit.encryptText(inputText, key);
+      const encryptedB64 = encrypted.base64;
       this.formHandler.setFormValue('outputText', encryptedB64);
+      encrypted.clear();
       return true;
     } catch (err) {
       return false;
@@ -101,14 +107,14 @@ export class TextEncryptionController extends EncryptionController {
     let decrypted;
 
     try {
-      decrypted = await this.encryptionService.decryptText(inputText, key);
-      this.formHandler.setFormValue('outputText', decrypted);
+      decrypted = await this.cryptit.decryptText(inputText, key);
+      this.formHandler.setFormValue('outputText', decrypted.text);
+      decrypted.clear();
       return true;
     } catch (error) {
       return false;
     } finally {
       key = null;
-      decrypted = null
     }
   }
 }

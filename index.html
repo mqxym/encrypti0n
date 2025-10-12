@@ -56,6 +56,15 @@
         <!-- Custom CSS -->
         <link href="assets/css/custom.css" rel="stylesheet" type="text/css" />
 
+        <script>
+              window.loadArgon2WasmBinary = () =>
+                fetch("./assets/libs/cryptit/argon2.wasm")
+                .then(r => r.arrayBuffer())
+                .then(buf => new Uint8Array(buf));
+
+        </script>
+
+
         <script type="application/ld+json">
             {
                 "@graph": [
@@ -255,58 +264,13 @@
 
                         <li role="presentation" class="menu-title">Coming Soon</li>
                         <li role="none" class="menu-item">
-                            <a href="/web-crypto-api-playground.html" role="menuitem" class="spinner-link menu-link">
+                            <a href="./pages/web-crypto-api-playground.html" role="menuitem" class="spinner-link menu-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-gamepad-variant-outline"></i></span>
                                 <span class="menu-text">Crypto Playground</span>
                             </a>
                         </li>
 
-                        <li role="presentation" class="menu-title">Deprecated Sites</li>
-                        <li role="none" class="menu-item">
-                            <a href="/index-deprecated.html" role="menuitem" class="menu-link spinner-link">
-                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-view-dashboard-outline"></i></span>
-                                <span class="menu-text">Previous App</span>
-                                <span class="badge bg-warning ms-auto">obs.</span>
-                            </a>
-                        </li>
-
-                        <li role="none" class="menu-item">
-                            <a role="menuitem" aria-haspopup="true" aria-expanded="false" data-bs-toggle="collapse" data-bs-target="#methods" class="menu-link">
-                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-video-input-component"></i></span>
-                                <span class="menu-text">Methods</span>
-                                <span class="menu-arrow"></span>
-                            </a>
-                            <ul id="methods" class="collapse" role="menu" aria-expanded="false">
-                                <li role="none" class="menu-item spinner-link">
-                                    <a href="/deprecated/pages/methods-aes-encryption.html" role="menuitem" class="menu-link">
-                                        <span class="menu-text">AES</span>
-                                    </a>
-                                </li>
-                                <li role="none" class="menu-item spinner-link">
-                                    <a href="/deprecated/pages/methods-blowfish-encryption.html" role="menuitem" class="menu-link">
-                                        <span class="menu-text">Blowfish</span>
-                                    </a>
-                                </li>
-                                <li role="none" class="menu-item spinner-link">
-                                    <a href="/deprecated/pages/methods-xor-encryption.html" role="menuitem" class="menu-link">
-                                        <span class="menu-text">XOR</span>
-                                    </a>
-                                </li>
-                                <li role="none" class="menu-item spinner-link">
-                                    <a href="/deprecated/pages/methods-password-hashing.html" role="menuitem" class="menu-link">
-                                        <span class="menu-text">Hashing</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li role="none" class="menu-item">
-                            <a href="/deprecated/pages/faq-old.html" role="menuitem" class="menu-link spinner-link">
-                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-help"></i></span>
-                                <span class="menu-text">FAQ</span>
-                                <span class="badge bg-warning ms-auto">obs.</span>
-                            </a>
-                        </li>
+                        
                     </ul>
                     <div class="clearfix"></div>
                 </nav>
@@ -372,13 +336,28 @@
                                         <i class="mdi mdi-lock me-1"></i>
                                         Encrypt Application
                                     </a>
+                                    <a class="dropdown-item notify-item" id="changeMasterPasswordModal">
+                                        <i class="mdi mdi-key-change me-1"></i>
+                                        Change Master-Password
+                                    </a>
                                     <a class="dropdown-item notify-item d-none" id="removeApplicationEncryption">
                                         <i class="mdi mdi-lock-open-plus me-1"></i>
                                         Remove Application Encryption
                                     </a>
 
                                     <div class="dropdown-divider"></div>
+                                    
+                                    <div class="dropdown-header rotateInterface noti-title">
+                                        <h6 class="text-overflow m-0">Local Data Protection</h6>
+                                    </div>
 
+                                    <a class="dropdown-item notify-item rotateInterface" id="rotatePasswordLessKeys">
+                                        <i class="mdi mdi-rotate-right me-1"></i>
+                                        Rotate Encryption Keys
+                                    </a>
+
+                                    <div class="dropdown-divider"></div>
+                                    
                                     <!-- item-->
                                     <div class="dropdown-header noti-title">
                                         <h6 class="text-overflow m-0">Reset all saved local data</h6>
@@ -820,6 +799,72 @@
                         </form>
                     </div>
                 </main>
+                <div id="do-masterpassword-rotation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="MasterPassworRotation-Modal" aria-hidden="true" aria-modal="true">
+                    <div class="modal-dialog">
+                        <form role="form" id="masterPasswordRotationForm" autocomplete="on">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Rotate Master Password</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p>
+                                                <i>Re-Encrypts</i>
+                                                <b>all security relevant locally saved data (e.g. passwords, names, Argon2 config)</b>
+                                                with your new master password.
+                                            </p>
+                                            <p>The encryption process uses AES-GCM-256 and Argon2id with a random salt and 20 Argon2id rounds with 64MiB of memory. Don't close the windows while changing.</p>
+                                            <div class="alert alert-warning mb-2">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="mdi mdi-alert-circle-outline me-2 font-18"></i>
+                                                    <div>
+                                                        If you forget your new master password, you can't decrypt your app data anymore when you visit the page again.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-1">
+                                                <label for="oldApplicationMPw" class="form-label">Old Master Password</label>
+                                                <input name="oldApplicationMPw" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="oldApplicationMPw" placeholder="Old Master Password" autocomplete="old-password" required />
+                                            </div>
+                            
+                                            <input type="text" autocomplete="username" class="cust-sr-offset" aria-hidden="true" value="anonymous" />
+                                            <div class="mb-1">
+                                                <label for="newApplicationMPw" class="form-label">New Master Password</label>
+                                                <input name="newApplicationMPw" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="newApplicationMPw" placeholder="New Secure Password" autocomplete="new-password" required />
+                                            </div>
+                                            <div class="progress cust-h-10">
+                                                <div id="password-strength-rotate" class="progress-bar cust-w-0" role="progressbar"></div>
+                                            </div>
+                                             <small id="password-strength-rotate-text" class="form-text mb-2"></small>
+                                            <div class="mb-3">
+                                                <label for="newApplicationPwConfirmation" class="form-label">Confirm Password</label>
+                                                <input name="newApplicationMPwConfirmation" aria-required="true" aria-invalid="false" type="password" class="form-control border border-secondary" id="newApplicationPwConfirmation" autocomplete="new-password" required />
+                                            </div>
+                                           
+                                           
+                                            <p class="text-pink d-none" id="newApplicationMatchFail">The two entered new passwords don't match.</p>
+                                            <p class="text-pink d-none" id="newApplicationMissingPw">You have to enter your new master password two times and your old password to change it.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">
+                                        <i class="mdi mdi-cancel"></i>
+                                        Close
+                                    </button>
+                                    <button type="submit" id="rotateMasterPassword" class="ladda-button btn btn-pink waves-effect waves-light" data-style="zoom-in" dir="ltr">
+                                        <i id="rotateMasterPasswordSuccess" aria-hidden="true" class="mdi mdi-check-all d-none"></i>
+                                        <i id="rotateMasterPasswordText" aria-hidden="true" class="mdi mdi-lock-outline"></i>
+                                        <span class="ladda-label" id="rotateMasterPasswordText">Change Password!</span>
+                                        <span aria-hidden="true" class="ladda-spinner"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
                 <div id="do-application-encryption" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="encryptApplication-Modal" aria-hidden="true" aria-modal="true">
                     <div class="modal-dialog">
                         <form role="form" id="encryptApplicationForm" autocomplete="on">

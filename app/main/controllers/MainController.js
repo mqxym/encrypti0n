@@ -4,13 +4,13 @@ import { KeyManagementController } from './KeyManagementController.js';
 import { AppDataController } from './AppDataController.js';
 import { FormHandler } from '../helpers/FormHandler.js';
 import { StorageService } from '../services/StorageService.js';
-import { EncryptionService } from '../services/EncryptionService.js';
 import { argon2Service } from '../ui/services/argon2Service.js';
 import { SlotUiService } from '../ui/services/SlotUiService.js';
 import { ConfigManager } from '../services/configManagement/ConfigManager.js';
 import { UIManager } from '../ui/UIManager.js';
 import { wrapAction } from '../utils/controller.js';
 import { EventBinder } from '../helpers/ElementHandler.js';
+import { createCryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js'
 import appState from '../state/AppState.js';
 
 /**
@@ -54,10 +54,11 @@ export class MainController {
    */
   async initializeServices() {
     const confManager = await ConfigManager.create();
+    const cryptit = createCryptit({acceptUnauthenticatedHeader: true});
     this.services = {
       config: confManager,
+      cryptit: cryptit,
       storage: new StorageService(),
-      encryption: new EncryptionService(),
       argon2: new argon2Service('argon2-modal', confManager),
       slots: new SlotUiService({ modalSelector: '#editSlotsModal' }, confManager),
       form: new FormHandler(this.formId),

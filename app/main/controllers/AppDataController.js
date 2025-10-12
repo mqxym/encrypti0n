@@ -40,14 +40,22 @@ export class AppDataController {
    * Binds click events on various buttons to their corresponding handlers.
    */
   bindEvents() {
-    EventBinder.on('#encryptApplication', 'click', () => wrapAction('encryptApplication', this.handleAppEncrypt.bind(this)));
-    EventBinder.on('#decryptApplication', 'click', () => wrapAction('decryptApplication', this.handleAppDecrypt.bind(this)));
+    EventBinder.on('#rotateMasterPassword', 'click', () =>
+      wrapAction('rotateMasterPassword', this.handleRotateMasterPassword.bind(this))
+    );
+    EventBinder.on('#encryptApplication', 'click', () =>
+      wrapAction('encryptApplication', this.handleAppEncrypt.bind(this))
+    );
+    EventBinder.on('#decryptApplication', 'click', () =>
+      wrapAction('decryptApplication', this.handleAppDecrypt.bind(this))
+    );
     EventBinder.on('#removeApplicationEncryption', 'click', () => this.handleAppEncryptionRemove());
     EventBinder.on('#removeAllData', 'click', () => this.removeAllData());
     EventBinder.on('#removeLocalDataDecryptionModal', 'click', () => this.removeAllData());
     EventBinder.on('#clearClipboard', 'click', () => this.clearClipboard());
     EventBinder.on('#exportDataBtn', 'click', () => wrapAction('exportData', this.handleExportData.bind(this)));
     EventBinder.on('#importDataBtn', 'click', () => wrapAction('importData', this.handleImportData.bind(this)));
+    EventBinder.on('#rotatePasswordLessKeys', 'click', () => this.handleRotateKeys());
   }
 
   /**
@@ -117,8 +125,63 @@ export class AppDataController {
       Swal.fire({
         icon: 'error',
         title: 'Failed to encrypt the application!',
-        text: 'Please try again or report the bug.',
+        text: 'Encryption failed. If you think this is a bug, open a GitHub issue.',
         timer: 2500,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
+    } finally {
+      laddaEncryptApplication.stop();
+    }
+  }
+
+
+  /**
+   * Handles re-encrypting the entire application:
+   * - Validates and confirms master password input
+   * - Derives and sets the master password
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
+  async handleRotateMasterPassword() {
+    ElementHandler.hide('newApplicationMissingPw');
+    ElementHandler.hide('newApplicationMatchFail');
+    const formHandlerLocal = new FormHandler('masterPasswordRotationForm');
+    formHandlerLocal.preventSubmitAction();
+    const { newApplicationMPw, newApplicationMPwConfirmation, oldApplicationMPw } = formHandlerLocal.getFormValues();
+    if (!newApplicationMPw || !newApplicationMPwConfirmation || !oldApplicationMPw) {
+      ElementHandler.show('newApplicationMissingPw');
+      return;
+    }
+    if (newApplicationMPw !== newApplicationMPwConfirmation) {
+      ElementHandler.show('newApplicationMatchFail');
+      return;
+    }
+    formHandlerLocal.setFormValue('oldApplicationMPw', '');
+    formHandlerLocal.setFormValue('newApplicationMPw', '');
+    formHandlerLocal.setFormValue('newApplicationMPwConfirmation', '');
+
+    const laddaEncryptApplication = this._laddaStart(document.getElementById('rotateMasterPassword'));
+
+    try {
+      await this.configManager.rotateMasterPassword(oldApplicationMPw, newApplicationMPw);
+      ElementHandler.hideModal('do-masterpassword-rotation');
+      this._reactAppUnlockedStatus();
+      Swal.fire({
+        icon: 'success',
+        title: 'Master Password Changed!',
+        text: 'Remember your password.',
+        timer: 3500,
+        showCancelButton: false,
+        confirmButtonText: 'Ok',
+      });
+      this.UIManager.handleMasterPasswordCase();
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to Change Master Password!',
+        text: 'Check your old password first. If you think this is a bug, open a GitHub issue.',
         showCancelButton: false,
         confirmButtonText: 'Ok',
       });
@@ -248,6 +311,46 @@ export class AppDataController {
   }
 
   /**
+   * Prompts user to confirm removal of application encryption,
+   * and if confirmed, removes the master password and updates UI.
+   */
+  handleRotateKeys() {
+    Swal.fire({
+      icon: 'info',
+      title: 'Do you want to rotate your local keys?',
+      text: 'The keys protecting your locally secured data (saved passwords, slot names, and options) will be rotated.',
+      showCancelButton: true,
+      confirmButtonText: 'Rotate',
+      cancelButtonText: 'Cancel',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await this.configManager.rotatePasswordless();
+          Swal.fire({
+            icon: 'success',
+            title: 'Rotation successful.',
+            text: 'Reload app now.',
+            showCancelButton: false,
+            confirmButtonText: 'Ok',
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              location.reload();
+            }
+          });
+        } catch (err) {
+          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Rotation failed. If you think this is a bug, open a GitHub issue.',
+            showCancelButton: false,
+            confirmButtonText: 'Ok',
+          });
+        }
+      }
+    });
+  }
+
+  /**
    * Prompts user to confirm clearing all local data, and if confirmed,
    * deletes all config data, resets UI, and shows success feedback.
    */
@@ -360,7 +463,7 @@ export class AppDataController {
       formHandlerLocal.setFormValue('exportDataPwConfirmation', '');
 
       let title = 'Failed to export the configuration!';
-      let text = 'Please try again or report the bug.';
+      let text = 'If you think this is a bug, open a GitHub issue.';
 
       if (err.message && err.message.includes('timed out')) {
         title = 'Export Timed Out';
@@ -443,12 +546,11 @@ export class AppDataController {
           showCancelButton: false,
           confirmButtonText: 'Ok',
         });
-        
+
         const loadingResult = await this.UIManager.loadApplicationData();
         if (loadingResult) throw Error('Failed to load application data');
         this.UIManager.handleMasterPasswordCase();
         this._reactAppUnlockedStatus();
-
       } else if (result === 'storedWithDeviceKey') {
         Swal.fire({
           icon: 'success',
@@ -459,12 +561,10 @@ export class AppDataController {
           confirmButtonText: 'Ok',
         });
         await this.UIManager.initUI();
-
       } else {
         throw new Error('Unknown return code from importConfig.');
       }
       ElementHandler.hideModal('do-data-import');
-
     } catch (err) {
       formHandlerLocal.setFormValue('importDataPw', '');
 
@@ -505,13 +605,13 @@ export class AppDataController {
    * @returns {void}
    */
   _downloadExport(buffer) {
-     const suffix = crypto
+    const suffix = crypto
       .getRandomValues(new Uint8Array(6))
       .reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
     const export_name = `export_${suffix}`;
     const extension = '.dat';
 
-    creaeDownloadData(buffer, export_name, extension)
+    creaeDownloadData(buffer, export_name, extension);
   }
 
   /**

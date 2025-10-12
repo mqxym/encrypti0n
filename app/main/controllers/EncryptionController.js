@@ -17,9 +17,9 @@ export class EncryptionController {
    * @param {ConfigManager} services.config - Configuration manager.
    */
   constructor(services) {
-    /** @protected */ this.encryptionService = services.encryption;
     /** @protected */ this.formHandler = services.form;
     /** @protected */ this.configManager = services.config;
+    /** @protected */ this.cryptit = services.cryptit;
   }
 
   /**

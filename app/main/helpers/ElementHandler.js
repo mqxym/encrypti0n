@@ -45,6 +45,16 @@ export class ElementHandler {
     if (el) el.classList.remove('d-none');
   }
 
+  static hideClass(className, hideClass = 'd-none') {
+    const elements = document.querySelectorAll(`.${className}`);
+    elements.forEach(el => el.classList.add(hideClass));
+  }
+
+  static showClass(className, hideClass = 'd-none') {
+    const elements = document.querySelectorAll(`.${className}`);
+    elements.forEach(el => el.classList.remove(hideClass));
+  }
+
   static showModal(modalId) {
     const modalElem = document.getElementById(modalId);
     if (!modalElem) return;

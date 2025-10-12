@@ -4,12 +4,8 @@
  * Utilizes shared Base64 utilities and an EncryptionService for header parsing.
  */
 
-import { EncryptionService } from "../main/services/EncryptionService.js";
-import {
-  arrayBufferToBase64,
-  base64ToUint8Array,
-} from "../main/utils/base64.js";
-import { AESGCMConstants } from "../main/constants/constants.js";
+import { Cryptit } from "../../assets/libs/cryptit/cryptit.browser.min.js";
+import { arrayBufferToBase64 } from "../main/utils/base64.js";
 
 /**
  * Class responsible for handling user input decoding, metadata extraction,
@@ -26,7 +22,7 @@ class DecodeController {
      * @type {EncryptionService}
      * @private
      */
-    this.service = new EncryptionService();
+    this.cryptit = Cryptit;
 
     // ---- Cache DOM ------------------------------------------------
     const $ = (id) => document.getElementById(id);
@@ -72,58 +68,42 @@ class DecodeController {
    * Resets the view if input is empty or parsing/decoding fails.
    * @private
    */
-  handleInput() {
+  async handleInput() {
     const raw = this.$input.value;
     if (!raw.trim()) {
       this.resetView();
       return;
     }
 
-    let bytes;
     try {
-      bytes = this.parseToUint8Array(raw);
-    } catch (e) {
-      this.resetView();
-      return;
-    }
-
-    try {
-      const { algorithmName, header, saltBytes, headerLength } =
-        this.service.decodeHeader(bytes);
+      const decodedHeader = await this.cryptit.decodeHeader(raw);
+      const decodedData = await this.cryptit.decodeData(raw);
 
       // Update status badge based on detected algorithm.
       this.setStatus(
-        algorithmName === "aesgcm" ? "encrypted" : "unknown",
-        algorithmName === "aesgcm" ? "bg-pink" : "bg-secondary",
-        algorithmName === "aesgcm" ? "border-pink" : "border-secondary"
+        decodedHeader.scheme === 0 ? "encrypted" : "unknown",
+        decodedHeader.scheme === 0 ? "bg-pink" : "bg-secondary",
+        decodedHeader.scheme === 0 ? "border-pink" : "border-secondary"
       );
 
       // Display salt metadata.
-      this.$saltLength.textContent = `${saltBytes.length}-byte`;
-      this.$saltValue.textContent = arrayBufferToBase64(saltBytes);
+      this.$saltLength.textContent = `${decodedHeader.saltLength}-byte`;
+      this.$saltValue.textContent = decodedHeader.salt;
 
       // Display Argon2 iteration count description.
-      this.$roundCount.textContent = this.describeRounds(
-        header.argon2Iterations
-      );
+      this.$roundCount.textContent = decodedHeader.difficulty;
 
       // Display header version (incremented by 1 for UI clarity).
-      this.$version.textContent = header.version + 1;
+      this.$version.textContent = decodedHeader.scheme + 1;
 
-      // Extract and display IV and payload lengths and values.
-      const IV_BYTES = AESGCMConstants.IV_LENGTH;
-      const ivBytes = bytes.slice(headerLength, headerLength + IV_BYTES);
-      this.$ivLength.textContent = `${IV_BYTES}-byte`;
-      this.$ivValue.textContent = arrayBufferToBase64(ivBytes);
+      this.$ivLength.textContent = `${decodedData.params.ivLength}-byte`;
+      this.$ivValue.textContent = arrayBufferToBase64(decodedData.params.iv);
 
-      const tagLenghtBytes = AESGCMConstants.TAG_LENGTH / 8;
 
-      const tag = bytes.slice(bytes.length - tagLenghtBytes);
+      this.$authLength.textContent = `${decodedData.params.tagLength}-byte`;
+      this.$authVal.textContent = arrayBufferToBase64(decodedData.params.tag);
 
-      this.$authLength.textContent = `${tagLenghtBytes}-byte`;
-      this.$authVal.textContent = arrayBufferToBase64(tag);
-
-      const payloadLen = bytes.length - headerLength - IV_BYTES - tagLenghtBytes;
+      const payloadLen = decodedData.payloadLength;
 
       if (payloadLen <= 0) {
         throw Error("Payload can't be smaller than 0");
@@ -138,28 +118,6 @@ class DecodeController {
   // ------------------------------------------------------------------
   // Helpers
   // ------------------------------------------------------------------
-
-  /**
-   * Converts arbitrary user input into a Uint8Array.
-   * If the input looks like Base64, decodes using shared utility;
-   * otherwise, encodes as UTF-8 bytes.
-   * @param {string} str - Input string to parse.
-   * @returns {Uint8Array} Parsed byte array.
-   * @throws {Error} Throws if Base64 decoding fails.
-   * @private
-   */
-  parseToUint8Array(str) {
-    const cleaned = str.trim();
-    const base64Regex = /^[A-Za-z0-9+/\s]*={0,2}$/;
-
-    // Detect Base64 by length multiple of 4 and regex match.
-    if (cleaned.length % 4 === 0 && base64Regex.test(cleaned)) {
-      return base64ToUint8Array(cleaned.replace(/\s+/g, ""));
-    }
-
-    // Fallback to UTF-8 encoding.
-    return new TextEncoder().encode(cleaned);
-  }
 
   /**
    * Returns a human-readable description of Argon2 iteration count.

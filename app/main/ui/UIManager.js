@@ -2,6 +2,7 @@ import { formatBytes } from '../utils/fileUtils.js';
 import { ElementHandler, EventBinder } from '../helpers/ElementHandler.js';
 import appState from '../state/AppState.js';
 import { handleActionSuccess, handleActionError, wrapAction } from '../utils/controller.js';
+import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
 
 /**
  * @class UIManager
@@ -25,7 +26,6 @@ export class UIManager {
     /** @private */ this.argon2Service = services.argon2;
     /** @private */ this.slotService = services.slots;
     /** @private */ this.storageService = services.storage;
-    /** @private */ this.encryptionService = services.encryption;
     /** @private */ this.keyManagementController = keyManagementController;
     this.bindEvents();
   }
@@ -52,9 +52,16 @@ export class UIManager {
     });
     EventBinder.on('#encryptApplicationModal', 'click', () => this.handleAppEncryptModal());
     EventBinder.on('#importDataModal', 'click', () => EventBinder.showModal('#do-data-import'));
+    EventBinder.on('#changeMasterPasswordModal', 'click', () => {
+      if (this.configManager.isLocked()) return;
+      EventBinder.showModal('#do-masterpassword-rotation')
+    });
     EventBinder.on('#exportDataModal', 'click', () => EventBinder.showModal('#do-data-export'));
     EventBinder.on('#encryptApplicationPw', 'input', () =>
       this.showPasswordStrenght('encryptApplicationPw', 'password-strength', 'password-strength-text')
+    );
+    EventBinder.on('#newApplicationMPw', 'input', () =>
+      this.showPasswordStrenght('newApplicationMPw', 'password-strength-rotate', 'password-strength-rotate-text')
     );
     EventBinder.on('#exportDataPw', 'input', () =>
       this.showPasswordStrenght('exportDataPw', 'export-password-strength', 'export-password-strength-text')
@@ -94,6 +101,9 @@ export class UIManager {
     ElementHandler.show('export-masterpassword-set');
     ElementHandler.disable('exportDataPw');
     ElementHandler.disable('exportDataPwConfirmation');
+    ElementHandler.disable('rotatePasswordLessKeys');
+    ElementHandler.hideClass('rotateInterface');
+    ElementHandler.show('changeMasterPasswordModal');
   }
 
   /**
@@ -104,9 +114,11 @@ export class UIManager {
    */
   handlePasswordlessCase() {
     ElementHandler.hide('removeApplicationEncryption');
+    ElementHandler.hide('changeMasterPasswordModal')
     ElementHandler.show('encryptApplicationModal');
     ElementHandler.show('export-no-masterpassword-set');
     ElementHandler.hide('export-masterpassword-set');
+    ElementHandler.showClass('rotateInterface');
     EventBinder.on('#encryptApplicationModal', 'click', () => this.handleAppEncryptModal());
   }
 
@@ -196,7 +208,7 @@ export class UIManager {
    */
   async handleDataChange(event) {
     const inputText = event.target.value;
-    const isEncrypted = await this.encryptionService.isEncrypted(inputText.trim());
+    const isEncrypted = await Cryptit.isEncrypted(inputText.trim());
     this.updateEncryptionState(isEncrypted);
   }
 
@@ -276,7 +288,7 @@ export class UIManager {
     fileListElem.empty();
     const files = Array.from(inputFilesElem.files);
     const encryptionChecks = files.map(async (file) => {
-      const isEncrypted = await this.encryptionService.isEncryptedFile(file);
+      const isEncrypted = await Cryptit.isEncrypted(file);
       const badge = isEncrypted
         ? $('<span class="badge bg-pink rounded-pill me-1">').text(`${file.name} | ${formatBytes(file.size)}`)
         : $('<span class="badge bg-blue rounded-pill me-1">').text(`${file.name} | ${formatBytes(file.size)}`);

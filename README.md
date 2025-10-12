@@ -4,7 +4,7 @@ is a simple web application to encrypt and decrypt text and files locally within
 
 > The app uses customizable key derivation algorithm Argon2id (salted) for the 256-bit AES-GCM encryption.
 
-![Encryption V3](https://mqxym.de/assets/encrypti0n-v3.png)
+![Encryption V3](https://mqxym.de/assets/encrypti0n-v3-1.png)
   
 ## App Features
 
@@ -22,3 +22,15 @@ Try it out here: [encryption.com](https://encrypti0n.com)
 ### Supports Local and Offline Execution
 
 Everything needed is included, with no external dependencies (except some fonts). Download the latest release on GitHub: [encrypti0n/releases](https://github.com/mqxym/encrypti0n/releases).
+
+## References
+
+The core encryption and decryption API for text and files is provided by [@mqxym/cryptit (GitHub)](https://github.com/mqxym/cryptit) / [(npm)](https://www.npmjs.com/package/@mqxym/cryptit).
+
+Local storage envelope encryption is provided by [@mqxym/secure-local-storage (GitHub)](https://github.com/mqxym/secure-local-storage) / [(npm)](https://www.npmjs.com/package/@mqxym/secure-local-storage).
+
+## Licence
+
+Custom Licence. See [LICENCE](LICENCE).
+
+Core logic is outsourced to MIT-licensed packages mentioned in the References chapter.
