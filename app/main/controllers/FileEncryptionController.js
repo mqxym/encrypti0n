@@ -6,12 +6,15 @@ import { formatBytes } from '../utils/fileUtils.js';
 import { argon2Service } from '../ui/services/argon2Service.js';
 import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
 import { delay } from '../utils/misc.js';
+
 /**
  * @class FileEncryptionController
  * @extends EncryptionController
  * @classdesc
  * Handles encryption and decryption of File objects in fixed-size chunks,
  * updating the UI with download links for each result.
+ *
+ * Extended: collects processed files and offers a single ZIP download (JSZip).
  */
 export class FileEncryptionController extends EncryptionController {
   /**
@@ -19,11 +22,25 @@ export class FileEncryptionController extends EncryptionController {
    */
   constructor(services) {
     super(services);
+
+    /** @private Batch state for current handleAction() run */
+    this._batchState = {
+      items: /** @type {{ name: string, blob: Blob }[]} */([]),
+      successCount: 0,
+      failCount: 0
+    };
+  }
+
+  /** @private */
+  _resetBatchState() {
+    this._batchState = { items: [], successCount: 0, failCount: 0, encrypted: 0, decrypted: 0 };
   }
 
   /**
    * Reads selected files, determines for each whether to encrypt or decrypt,
    * and processes them sequentially.
+   *
+   * When ≥ 2 files succeed, the “Download all as .zip” button is shown and wired.
    *
    * @async
    * @override
@@ -32,6 +49,10 @@ export class FileEncryptionController extends EncryptionController {
   async handleAction() {
     const laddaManager = new LaddaButtonManager('.action-button').startAll();
     try {
+      this._resetBatchState();
+      ElementHandler.buttonRemoveStatusAddText('downloadFiles');
+      ElementHandler.hide('downloadFiles');
+
       const inputFilesElem = $('#inputFiles')[0];
       const fileLength = inputFilesElem.files.length;
       let result = false;
@@ -59,16 +80,31 @@ export class FileEncryptionController extends EncryptionController {
         }
         ++fileCounter;
       }
+
+      // If we have 2+ successful outputs, enable the ZIP download button
+      if (this._batchState.successCount >= 2) {
+        this._attachZipDownloadHandler(); // (re)bind click
+        ElementHandler.show('downloadFiles');
+        if (this._batchState.encrypted > this._batchState.decrypted) {
+          ElementHandler.buttonClassBlueToPink('downloadFiles');
+        } else {
+          ElementHandler.buttonClassPinkToBlue('downloadFiles');
+        }
+      } else {
+        ElementHandler.hide('downloadFiles');
+      }
+
       await this.postActionHandling(result, laddaManager);
     } catch (error) {
       laddaManager.stopAll();
       ElementHandler.arrowsToCross();
+      ElementHandler.buttonRemoveTextAddFail('downloadFiles');
+      ElementHandler.hide('downloadFiles');
     }
   }
 
   /**
-   * Encrypts a single File using AES-GCM and Argon2 options,
-   * then appends a download link to the UI.
+   * Encrypts a single File, then appends a download link to the UI and records it.
    *
    * @async
    * @param {File} file - The file to encrypt.
@@ -78,7 +114,6 @@ export class FileEncryptionController extends EncryptionController {
     const { key } = this.getKeyData();
     if (!key) return false;
     this.insecurePasswordWarning(key);
-    const algo = 'aesgcm';
     const outputFilesDiv = document.getElementById('outputFiles');
     try {
       const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
@@ -87,16 +122,23 @@ export class FileEncryptionController extends EncryptionController {
 
       const blob = await this.cryptit.encryptFile(file, key);
       const size = formatBytes(blob.size);
-      this._appendDownloadLink(`${file.name}.bin`, `${file.name}.bin | ${size}`, blob, 'bg-pink', outputFilesDiv);
+      const name = `${file.name}.bin`;
+      this._appendDownloadLink(name, `${name} | ${size}`, blob, 'bg-pink', outputFilesDiv);
+
+      // record for batch zip
+      this._batchState.items.push({ name, blob });
+      this._batchState.successCount += 1;
+      this._batchState.encrypted +=1;
       return true;
     } catch (err) {
-      this._appendDownloadLink('',`FAILED: ${file.name}`,  null, 'bg-secondary', outputFilesDiv);
+      this._appendDownloadLink('', `FAILED: ${file.name}`, null, 'bg-secondary', outputFilesDiv);
+      this._batchState.failCount += 1;
       return false;
     }
   }
 
   /**
-   * Decrypts a single .bin File and appends a download link of the result.
+   * Decrypts a single .bin File and appends a download link of the result. Records it.
    *
    * @async
    * @param {File} file - The encrypted file to decrypt.
@@ -113,40 +155,131 @@ export class FileEncryptionController extends EncryptionController {
       const blob = new Blob([decryptedBytes], { type: 'application/octet-stream' });
       const size = formatBytes(blob.size);
       if (blob.size === 0) return false;
-      const downloadName = file.name.replace('.bin', '');
+      const downloadName = file.name.replace(/\.bin$/i, '');
       this._appendDownloadLink(downloadName, `${downloadName} | ${size}`, blob, 'bg-blue', outputFilesDiv);
+
+      // record for batch zip
+      this._batchState.items.push({ name: downloadName, blob });
+      this._batchState.successCount += 1;
+      this._batchState.decrypted +=1;
       return true;
     } catch (err) {
-      this._appendDownloadLink('',`FAILED: ${file.name}`,  null, 'bg-secondary', outputFilesDiv);
+      this._appendDownloadLink('', `FAILED: ${file.name}`, null, 'bg-secondary', outputFilesDiv);
+      this._batchState.failCount += 1;
       return false;
     }
   }
 
   /**
    * Appends a Bootstrap-styled download link to a container.
+   * (Fixed a scoping bug with `url` so it can be revoked.)
    *
-   * @param {string}      downloadName   – the exact text for the download filename
-   * @param {string}      downloadText   – the exact text for the link 
-   * @param {Blob}        blob           – the Blob or File to download
-   * @param {string}      bgColorClass   – Bootstrap bg-color class (e.g. "bg-primary")
-   * @param {HTMLElement} parentDiv      – container element to append the link into
+   * @param {string}      downloadName   – exact filename for download
+   * @param {string}      downloadText   – link text
+   * @param {Blob|null}   blob           – Blob to download, or null on failure
+   * @param {string}      bgColorClass   – e.g. "bg-primary"
+   * @param {HTMLElement} parentDiv      – container element
    */
   _appendDownloadLink(downloadName, downloadText, blob, bgColorClass, parentDiv) {
     const link = document.createElement('a');
+    let url = null;
 
     if (blob !== null) {
-      const url = URL.createObjectURL(blob);
+      url = URL.createObjectURL(blob);
       link.href = url;
       link.download = downloadName;
     }
 
     link.textContent = downloadText;
     link.className = ['btn', 'btn-sm', 'mb-1', bgColorClass, 'text-white', 'rounded-pill', 'me-1'].join(' ');
-
     parentDiv.appendChild(link);
 
-    link.addEventListener('click', () => {
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    if (url) {
+      link.addEventListener('click', () => {
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+    }
+  }
+
+  // -----------------------------
+  // ZIP building & download (JSZip)
+  // -----------------------------
+
+  /**
+   * Attaches the click handler for the “Download all as .zip” button.
+   * Debounces by cloning the button first to remove previous handlers.
+   * Uses an optional parameter to allow encrypted zip later (disabled by default).
+   * @private
+   */
+  _attachZipDownloadHandler() {
+    ElementHandler.removeHandler('downloadFiles'); // remove old listeners
+    const btn = document.getElementById('downloadFiles');
+
+    btn.addEventListener('click', async () => {
+      const laddaManager = new LaddaButtonManager('#downloadFiles').startAll();
+
+      await delay(150);
+      try {
+        ElementHandler.buttonRemoveStatusAddText('downloadFiles');
+
+        await this._buildAndOfferZip();
+
+        ElementHandler.buttonRemoveTextAddSuccess('downloadFiles');
+      } catch (e) {
+        ElementHandler.buttonRemoveTextAddFail('downloadFiles');
+      } finally {
+        laddaManager.stopAll();
+        setTimeout(() => {
+          ElementHandler.buttonRemoveStatusAddText('downloadFiles');
+        }, 1500);
+      }
     });
+  }
+
+  /**
+   * Builds a .zip in-memory and triggers a download.
+   *
+   *
+   * @private
+   */
+  async _buildAndOfferZip() {
+    if (this._batchState.successCount < 2 || this._batchState.items.length < 2) return;
+
+    const zip = new JSZip();
+
+    // Add each successfully processed Blob to the archive (root)
+    for (const item of this._batchState.items) {
+      zip.file(item.name, item.blob);
+    }
+
+    // Produce a Blob using DEFLATE level 9 (best compression).
+    // See: https://stuk.github.io/jszip/documentation/api_jszip/generate_async.html
+    const zipBlob = await zip.generateAsync({
+      type: 'blob',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 5 }
+    });
+
+    const name = `download_${new Date().toISOString().replace(/[:.]/g, '-')}.zip`;
+
+    this._downloadBlobAsFile(zipBlob, name);
+  }
+
+  /**
+   * Triggers a file download for a given Blob.
+   * @param {Blob} blob
+   * @param {string} filename
+   * @private
+   */
+  _downloadBlobAsFile(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    // Ensure it works in all browsers
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 }
