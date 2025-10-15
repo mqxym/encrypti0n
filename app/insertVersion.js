@@ -1,6 +1,6 @@
 'use strict';
 
-const appVersion = "3.0.0";
+const appVersion = "3.1.0";
 
 document.querySelectorAll(".version").forEach(function(el) {
   el.textContent = appVersion;
