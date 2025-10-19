@@ -319,6 +319,10 @@
                                         <strong><code>jQuery v3.6.0</code></strong>
                                         : Used for DOM manipulation but will be replaced by vanilla JS step by step <a target="_blank" href="https://jquery.com/">(Official Page)</a>.
                                     </li>
+                                     <li>
+                                        <strong><code>StreamSaver.js v2.0.6</code></strong>
+                                        : Used for streaming (downloading) large files directly to disk <a target="_blank" href="https://github.com/jimmywarting/StreamSaver.js">(Github)</a>.
+                                    </li>
                                     <li>
                                         <strong><code>SweetAlert2</code></strong>
                                         : For the informational popups <a target="_blank" href="https://sweetalert2.github.io/">(Official Page)</a>.
@@ -425,7 +429,12 @@
                                     </li>
                                     <li>
                                         <strong>Apple Safari:</strong>
-                                        Supported since version 11 (September 2017)
+                                        Supported since version 11 (September 2017). 
+                                        <ul>
+                                            <li>
+                                                Note that in this browser, file streaming to disk via Service Worker is not supported; therefore, the upload file limit for encryption is set to 150 MB.
+                                            </li>
+                                        </ul>
                                     </li>
                                     <li>
                                         <strong>Opera:</strong>

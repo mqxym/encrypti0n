@@ -3,6 +3,8 @@ import { ElementHandler, EventBinder } from '../helpers/ElementHandler.js';
 import appState from '../state/AppState.js';
 import { handleActionSuccess, handleActionError, wrapAction } from '../utils/controller.js';
 import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
+import { middleString } from '../utils/misc.js';
+import { FileOpsConstants } from '../constants/constants.js';
 
 /**
  * @class UIManager
@@ -27,6 +29,7 @@ export class UIManager {
     /** @private */ this.slotService = services.slots;
     /** @private */ this.storageService = services.storage;
     /** @private */ this.keyManagementController = keyManagementController;
+    /** @private */ this.fileStreamService = services.fss;
     this.bindEvents();
   }
 
@@ -80,6 +83,15 @@ export class UIManager {
    */
   async initUI() {
     this.resetUIState();
+
+    if (!this.fileStreamService.isSafari()) {
+      ElementHandler.hide('sizeLimitSafari');
+      ElementHandler.show('sizeLimitOther');
+    } else {
+      ElementHandler.show('sizeLimitSafari');
+      ElementHandler.hide('sizeLimitOther');
+    }
+
     if (this.configManager.isUsingMasterPassword()) {
       this.handleMasterPasswordCase();
       ElementHandler.showModal('do-application-decryption');
@@ -281,20 +293,40 @@ export class UIManager {
   async updateFileList() {
     const fileListElem = $('#fileList');
     const inputFilesElem = $('#inputFiles')[0];
-    if (!inputFilesElem.files.length) {
+    const usedSizeElem = $('#usedSize'); // new: reference to the size label
+    const SIZE_LIMIT = FileOpsConstants.STREAM_ENCRYPTION_MIN_SIZE;
+
+  if (!inputFilesElem.files.length) {
       fileListElem.text('Selected files appear here...');
+      usedSizeElem.text('0 MB').removeClass('text-danger');
       return;
     }
+
     fileListElem.empty();
     const files = Array.from(inputFilesElem.files);
+
+    const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+
+    usedSizeElem.text(formatBytes(totalSize));
+
+    if (totalSize > SIZE_LIMIT) {
+      usedSizeElem.addClass('text-danger');
+    } else {
+      usedSizeElem.removeClass('text-danger');
+    }
+
+
     const encryptionChecks = files.map(async (file) => {
       const isEncrypted = await Cryptit.isEncrypted(file);
       const badge = isEncrypted
-        ? $('<span class="badge bg-pink rounded-pill me-1">').text(`${file.name} | ${formatBytes(file.size)}`)
-        : $('<span class="badge bg-blue rounded-pill me-1">').text(`${file.name} | ${formatBytes(file.size)}`);
+        ? $('<span class="badge bg-pink rounded-pill me-1">')
+            .text(`${middleString(file.name)} | ${formatBytes(file.size)}`)
+        : $('<span class="badge bg-blue rounded-pill me-1">')
+            .text(`${middleString(file.name)} | ${formatBytes(file.size)}`);
       fileListElem.append(badge);
       return isEncrypted;
     });
+
     const results = await Promise.all(encryptionChecks);
     if (results.every(Boolean)) {
       this.updateEncryptionState(true);

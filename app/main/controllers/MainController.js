@@ -3,6 +3,7 @@ import { FileEncryptionController } from './FileEncryptionController.js';
 import { KeyManagementController } from './KeyManagementController.js';
 import { AppDataController } from './AppDataController.js';
 import { FormHandler } from '../helpers/FormHandler.js';
+import FileStreamService from '../stream/FileStreamService.js';
 import { StorageService } from '../services/StorageService.js';
 import { argon2Service } from '../ui/services/argon2Service.js';
 import { SlotUiService } from '../ui/services/SlotUiService.js';
@@ -12,6 +13,7 @@ import { wrapAction } from '../utils/controller.js';
 import { EventBinder } from '../helpers/ElementHandler.js';
 import { createCryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js'
 import appState from '../state/AppState.js';
+import { FileOpsConstants } from '../constants/constants.js';
 
 /**
  * @class MainController
@@ -55,6 +57,14 @@ export class MainController {
   async initializeServices() {
     const confManager = await ConfigManager.create();
     const cryptit = createCryptit({acceptUnauthenticatedHeader: true});
+
+    const fssOptions = {
+      streamSaverMitmPath: './assets/libs/streamsaver/mitm.html',
+      safariLargeFileLimit: FileOpsConstants.STREAM_ENCRYPTION_MIN_SIZE,
+      progressInterval: 100,
+    }
+
+    const fileStreamService = new FileStreamService(cryptit, fssOptions)
     this.services = {
       config: confManager,
       cryptit: cryptit,
@@ -62,6 +72,7 @@ export class MainController {
       argon2: new argon2Service('argon2-modal', confManager),
       slots: new SlotUiService({ modalSelector: '#editSlotsModal' }, confManager),
       form: new FormHandler(this.formId),
+      fss: fileStreamService,
     };
 
     this.services.form.preventSubmitAction();

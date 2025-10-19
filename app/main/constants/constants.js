@@ -23,30 +23,14 @@ export const UIConstants = {
 };
 
 /**
- * @namespace EncryptionServiceConstants
+ * @namespace UIConstants
  * @description
- * Configuration parameters for EncryptionService.
- * 
- * @property {number} LOW_ITERATION_COUNT - Low iteration count for Argon2id key derivation.
- * @property {number} MIDDLE_ITERATION_COUNT - Medium iteration count for Argon2id key derivation.
- * @property {number} HIGH_ITERATION_COUNT - High iteration count for Argon2id key derivation.
- * 
- * @property {number} LOW_SALT_LENGTH_BYTES - Salt length in bytes for Argon2id.
- * @property {number} HIGH_SALT_LENGTH_BYTES - Salt length in bytes for Argon2id.
- * 
- * @property {number} CURRENT_DATA_VERSION - Marks version of the encryption data format (algorithm/schema changes).
- * @property {number} START_BYTE - Identifier or flag byte to mark the beginning of encrypted data.
+ * Constants for UI behavior timing.
+ * @property {number} ACTION_DELAY - Delay in milliseconds for button feedback actions.
  */
-export const EncryptionServiceConstants = {
-    LOW_ITERATION_COUNT: 5,
-    MIDDLE_ITERATION_COUNT: 20,
-    HIGH_ITERATION_COUNT: 40,
-    LOW_SALT_LENGTH_BYTES: 12,
-    HIGH_SALT_LENGTH_BYTES: 16,
-    CURRENT_DATA_VERSION: 0b000, // 0-7 for 7 different schemas in the future
-    START_BYTE: 0x01
+export const FileOpsConstants = {
+    STREAM_ENCRYPTION_MIN_SIZE: 1024 * 1024 * 150,
 };
-
 
 /**
  * @namespace ConfigManagerConstants
@@ -89,38 +73,7 @@ export const AppDataConstants = {
 };
 
 /**
- * @namespace Argon2Constants
- * @description
- * Parameters for Argon2 key derivation.
- * @property {number} MEMORY_COST - Memory usage in KiB.
- * @property {number} PARALLELISM - Degree of parallelism for hashing.
- * @property {number} HASH_LEN - Desired hash length in bytes.
- * @property {number} KEY_LEN - Length in bits of imported AES-GCM key.
- * @property {number} ANIMATION_WAIT_MS - Delay in milliseconds before Argon2 starts (UI animation).
- */
-export const Argon2Constants = {
-    MEMORY_COST: 65536, // memoryCost: memory usage in KiB
-    PARALLELISM: 1,     // parallelism: degree of parallelism
-    HASH_LEN: 32,       // hashLen: key length in bytes (256 bits)
-    KEY_LEN: 256,       // 256 bits
-    ANIMATION_WAIT_MS: 150 // UI animation delay before hashing
-};
-
-/**
- * @namespace AESGCMConstants
- * @description
- * Constants for AES-GCM encryption parameters.
- * @property {number} IV_LENGTH - Length in bytes of the AES-GCM initialization vector.
- * @property {number} TAG_LENGTH - Length in bits of the AES-GCM authentication tag.
- */
-export const AESGCMConstants = {
-    IV_LENGTH: 12,
-    TAG_LENGTH: 128
-};
-
-
-/**
- * @namespace AESGCMConstants
+ * @namespace EncodeConstants
  * @description
  * Constants for data encoding
  * @property {Uint8Array} OBFUSCATION_VALUE - A static value used for XOR data obfuscation for export / import
