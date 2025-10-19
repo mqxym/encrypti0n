@@ -20,6 +20,7 @@ export class EncryptionController {
     /** @protected */ this.formHandler = services.form;
     /** @protected */ this.configManager = services.config;
     /** @protected */ this.cryptit = services.cryptit;
+    /** @protected */ this.fileStreamService = services.fss;
   }
 
   /**

@@ -480,16 +480,20 @@
                                                     <i class="mdi mdi-delete-circle-outline text-secondary" data-bs-container="#inputActionFiles" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Clear Files"></i>
                                                 </button>
                                             </div>
-                                            <div class="d-grid">
-                                                <button type="button" id="uploadFiles" class="mb-2 btn btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
+                                            <div class="d-grid mb-2">
+                                                <button type="button" id="uploadFiles" class="btn btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
                                                     <span>
                                                         <i class="mdi mdi-file-upload mr-5"></i>
                                                         Select Files
                                                     </span>
                                                 </button>
+                                                 <label class="help-block me-auto">
+                                                    <small class="d-none" id="sizeLimitSafari">File size limit (this browser/device): 150 MB | Used: <span id="usedSize"></span></small>
+                                                    <small id="sizeLimitOther">When the total file size exceeds 150 MB, encryption and decryption operations download all files directly to disk.</small>
+                                                </label>
                                             </div>
                                             <input class="d-none" id="inputFiles" name="inputFiles" type="file" class="upload" multiple />
-                                            <div class="form-control border border-secondary rounded scrollable cust-overflow-y-auto-h-120" id="fileList" name="fileList" role="status" aria-live="polite">Selected files appear here...</div>
+                                            <div class="form-control border border-secondary rounded scrollable cust-overflow-y-auto-h-120 mb-1" id="fileList" name="fileList" role="status" aria-live="polite">Selected files appear here...</div>
                                             <p class="card-text text-muted">
                                                 The site detects if your files are
                                                 <span class="badge badge-outline-pink rounded-pill" id="encryptedFilesPill">encrypted</span>
@@ -1275,6 +1279,9 @@
 
         <!-- JSZip -->
         <script src="assets/libs/jszip/jszip.min.js" defer></script>
+
+        <!-- StreamSaver JS -->
+        <script src="assets/libs/streamsaver/StreamSaver.min.js" defer></script>
 
         <script type="module" src="app/main/index.js" defer></script>
         

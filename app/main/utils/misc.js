@@ -7,3 +7,10 @@
 export function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+export function middleString(str) {
+  if (str.length > 25) {
+    return str.substring(0, 15) + '…' + str.substring(str.length-10, str.length);
+  }
+  return str;
+}

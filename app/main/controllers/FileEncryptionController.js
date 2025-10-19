@@ -5,7 +5,8 @@ import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
 import { formatBytes } from '../utils/fileUtils.js';
 import { argon2Service } from '../ui/services/argon2Service.js';
 import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
-import { delay } from '../utils/misc.js';
+import { delay, middleString } from '../utils/misc.js';
+import { FileOpsConstants } from '../constants/constants.js';
 
 /**
  * @class FileEncryptionController
@@ -13,6 +14,13 @@ import { delay } from '../utils/misc.js';
  * @classdesc
  * Handles encryption and decryption of File objects in fixed-size chunks,
  * updating the UI with download links for each result.
+ * 
+ * 
+ * Below 150mb: in context browser download with zip download function
+ * Above 150mb: 
+ * - only streaming support via FileStreamHelper ( show availability in UI)
+ * - warning for unsupported (safari), no processing
+ * 
  *
  * Extended: collects processed files and offers a single ZIP download (JSZip).
  */
@@ -47,16 +55,31 @@ export class FileEncryptionController extends EncryptionController {
    * @returns {Promise<void>}
    */
   async handleAction() {
-    const laddaManager = new LaddaButtonManager('.action-button').startAll();
+    
+    this.laddaManagerAction = new LaddaButtonManager('.action-button').startAll();
+    
     try {
       this._resetBatchState();
       ElementHandler.buttonRemoveStatusAddText('downloadFiles');
       ElementHandler.hide('downloadFiles');
 
-      const inputFilesElem = $('#inputFiles')[0];
-      const fileLength = inputFilesElem.files.length;
-      let result = false;
-      let fileCounter = 0;
+      this.inputFilesElem = $('#inputFiles')[0];
+      const fileLength = this.inputFilesElem.files.length;
+
+      const totalSize = Array.from(this.inputFilesElem.files).reduce((acc, f) => acc + f.size, 0);
+      const SIZE_LIMIT = FileOpsConstants.STREAM_ENCRYPTION_MIN_SIZE;
+      
+      if (totalSize > SIZE_LIMIT && this.fileStreamService.isSafari()) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'File Size Limit Exceeded',
+          html: `The total selected file size is <b>${formatBytes(totalSize)}</b>, which exceeds the 150 MB limit for Safari browser. Please switch to a supported browser to process files directly to disk. <br><br> Supported browsers: Chrome (Android / Desktop), Firefox (Desktop), Edge (Desktop)`,
+          confirmButtonText: 'OK',
+        });
+        // stop Ladda buttons and return early
+        this.laddaManagerAction.stopAll();
+        return;
+      }
       $('#outputFiles').empty();
 
       if (fileLength === 0) {
@@ -66,41 +89,146 @@ export class FileEncryptionController extends EncryptionController {
         return;
       }
 
-      for (let file of inputFilesElem.files) {
-        const isEncrypted = await Cryptit.isEncrypted(file);
-        laddaManager.setProgressAll(fileCounter / fileLength);
-        if (isEncrypted) {
-          await delay(150);
-          result = await this.handleDecryption(file);
-          if (!result) ElementHandler.arrowsToCross();
-        } else {
-          await delay(150);
-          result = await this.handleEncryption(file);
-          if (!result) ElementHandler.arrowsToCross();
-        }
-        ++fileCounter;
-      }
-
-      // If we have 2+ successful outputs, enable the ZIP download button
-      if (this._batchState.successCount >= 2) {
-        this._attachZipDownloadHandler(); // (re)bind click
-        ElementHandler.show('downloadFiles');
-        if (this._batchState.encrypted > this._batchState.decrypted) {
-          ElementHandler.buttonClassBlueToPink('downloadFiles');
-        } else {
-          ElementHandler.buttonClassPinkToBlue('downloadFiles');
-        }
+      if (totalSize > SIZE_LIMIT) {
+        await this.processAbove150mb();
       } else {
-        ElementHandler.hide('downloadFiles');
+        await this.processBelow150mb();
       }
 
-      await this.postActionHandling(result, laddaManager);
     } catch (error) {
-      laddaManager.stopAll();
+      this.laddaManagerAction.stopAll();
+      console.log(error);
       ElementHandler.arrowsToCross();
       ElementHandler.buttonRemoveTextAddFail('downloadFiles');
       ElementHandler.hide('downloadFiles');
     }
+  }
+
+  /**
+   * Reads selected files, determines for each whether to encrypt or decrypt,
+   * and processes them sequentially via 
+   * stream processing (StreamSaver.js or showSaveFilePicker)
+   *
+   *
+   * @async
+   * @override
+   * @returns {Promise<void>}
+   */
+
+  async processAbove150mb() {
+    let result = false;
+    
+    for (let file of this.inputFilesElem.files) {
+      const isEncrypted = await Cryptit.isEncrypted(file);
+      this.laddaManagerAction.setProgressAll(0);
+      
+      this.onProgressStream = ({ transferred, total, pct }) => {
+        this.laddaManagerAction.setProgressAll(pct.toFixed(1)*0.01);
+      };
+      if (isEncrypted) {
+        await delay(150);
+        result = await this.decryptFileStream(file);
+        if (!result) ElementHandler.arrowsToCross();
+      } else {
+        await delay(150);
+        result = await this.encryptFileStream(file);
+        if (!result) ElementHandler.arrowsToCross();
+      }
+    }
+
+    await this.postActionHandling(result, this.laddaManagerAction);
+  }
+  
+  /**
+   * Encrypts a single via cryptit stream capabilities as a .bin File and records a download indicator of the result. 
+   *
+   * @async
+   * @param {File} file - The raw file to encrypt.
+   * @returns {Promise<boolean>} True on success, false on failure.
+   */
+
+  async encryptFileStream(file) {
+    const { key } = this.getKeyData();
+    if (!key) return false;
+    this.insecurePasswordWarning(key);
+    const outputFilesDiv = document.getElementById('outputFiles');
+
+    try {
+      const usedOptions = await argon2Service.getCurrentOptions(this.configManager);
+      this.cryptit.setDifficulty(usedOptions.roundDifficulty);
+      this.cryptit.setSaltDifficulty(usedOptions.saltDifficulty);
+
+      await this.fileStreamService.encryptFile(file, key, {onProgress: this.onProgressStream});
+      
+      const name = `${file.name}.bin`;
+      this._appendDownloadLink('', `Downloaded: ${middleString(name)}`, null, 'bg-pink', outputFilesDiv);
+      return true;
+    } catch (err) {
+      console.log(err);
+      this._appendDownloadLink('', `FAILED: ${middleString(file.name)}`, null, 'bg-secondary', outputFilesDiv);
+      return false;
+    }
+  }
+
+  /**
+   * Decrypts a single via cryptit stream capabilities as a .bin File and records a download indicator of the result. 
+   *
+   * @async
+   * @param {File} file - The encrypted file to decrypt.
+   * @returns {Promise<boolean>} True on success, false on failure.
+   */
+  async decryptFileStream(file) {
+    const { key } = this.getKeyData();
+    const inputFilesElem = $('#inputFiles')[0];
+    if (!inputFilesElem.files.length || !key) return false;
+    const outputFilesDiv = document.getElementById('outputFiles');
+
+    try {
+      await this.fileStreamService.decryptFile(file, key, {onProgress: this.onProgressStream});
+      const downloadName = file.name.replace(/\.bin$/i, '');
+      this._appendDownloadLink('', `Downloaded: ${middleString(downloadName)}`, null, 'bg-blue', outputFilesDiv);
+      return true;
+    } catch (err) {
+      console.log(err);
+      this._appendDownloadLink('', `FAILED: ${middleString(downloadName)}`, null, 'bg-secondary', outputFilesDiv);
+      return false;
+    }
+  }
+
+  async processBelow150mb () {
+    let result = false;
+    let fileCounter = 0;
+    const fileLength = this.inputFilesElem.files.length;
+    
+    for (let file of this.inputFilesElem.files) {
+      const isEncrypted = await Cryptit.isEncrypted(file);
+      this.laddaManagerAction.setProgressAll(fileCounter / fileLength);
+      if (isEncrypted) {
+        await delay(150);
+        result = await this.handleDecryption(file);
+        if (!result) ElementHandler.arrowsToCross();
+      } else {
+        await delay(150);
+        result = await this.handleEncryption(file);
+        if (!result) ElementHandler.arrowsToCross();
+      }
+      ++fileCounter;
+    }
+
+    // If we have 2+ successful outputs, enable the ZIP download button
+    if (this._batchState.successCount >= 2) {
+      this._attachZipDownloadHandler(); // (re)bind click
+      ElementHandler.show('downloadFiles');
+      if (this._batchState.encrypted > this._batchState.decrypted) {
+        ElementHandler.buttonClassBlueToPink('downloadFiles');
+      } else {
+        ElementHandler.buttonClassPinkToBlue('downloadFiles');
+      }
+    } else {
+      ElementHandler.hide('downloadFiles');
+    }
+
+    await this.postActionHandling(result, this.laddaManagerAction);
   }
 
   /**
@@ -123,7 +251,7 @@ export class FileEncryptionController extends EncryptionController {
       const blob = await this.cryptit.encryptFile(file, key);
       const size = formatBytes(blob.size);
       const name = `${file.name}.bin`;
-      this._appendDownloadLink(name, `${name} | ${size}`, blob, 'bg-pink', outputFilesDiv);
+      this._appendDownloadLink(name, `${middleString(name)} | ${size}`, blob, 'bg-pink', outputFilesDiv);
 
       // record for batch zip
       this._batchState.items.push({ name, blob });
@@ -131,7 +259,7 @@ export class FileEncryptionController extends EncryptionController {
       this._batchState.encrypted +=1;
       return true;
     } catch (err) {
-      this._appendDownloadLink('', `FAILED: ${file.name}`, null, 'bg-secondary', outputFilesDiv);
+      this._appendDownloadLink('', `FAILED: ${fmiddleString(file.name)}`, null, 'bg-secondary', outputFilesDiv);
       this._batchState.failCount += 1;
       return false;
     }
@@ -156,7 +284,7 @@ export class FileEncryptionController extends EncryptionController {
       const size = formatBytes(blob.size);
       if (blob.size === 0) return false;
       const downloadName = file.name.replace(/\.bin$/i, '');
-      this._appendDownloadLink(downloadName, `${downloadName} | ${size}`, blob, 'bg-blue', outputFilesDiv);
+      this._appendDownloadLink(downloadName, `${middleString(downloadName)} | ${size}`, blob, 'bg-blue', outputFilesDiv);
 
       // record for batch zip
       this._batchState.items.push({ name: downloadName, blob });
@@ -164,7 +292,7 @@ export class FileEncryptionController extends EncryptionController {
       this._batchState.decrypted +=1;
       return true;
     } catch (err) {
-      this._appendDownloadLink('', `FAILED: ${file.name}`, null, 'bg-secondary', outputFilesDiv);
+      this._appendDownloadLink('', `FAILED: ${middleString(file.name)}`, null, 'bg-secondary', outputFilesDiv);
       this._batchState.failCount += 1;
       return false;
     }
