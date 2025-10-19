@@ -73,7 +73,7 @@ export class FileEncryptionController extends EncryptionController {
         await Swal.fire({
           icon: 'error',
           title: 'File Size Limit Exceeded',
-          html: `The total selected file size is <b>${formatBytes(totalSize)}</b>, which exceeds the 150 MB limit for Safari browser. Please switch to a supported browser to process files directly to disk. <br><br> Supported browsers: Chrome (Android / Desktop), Firefox (Desktop), Edge (Desktop)`,
+          html: `The total selected file size is <b>${formatBytes(totalSize)}</b>, which exceeds the 150 MB limit for your browser. Please switch to a supported browser to process files directly to disk. <br><br> Supported browsers: Chrome (Android / Desktop), Firefox (Desktop), Edge (Desktop)`,
           confirmButtonText: 'OK',
         });
         // stop Ladda buttons and return early
