@@ -5,6 +5,7 @@ import { handleActionSuccess, handleActionError, wrapAction } from '../utils/con
 import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
 import { middleString } from '../utils/misc.js';
 import { FileOpsConstants } from '../constants/constants.js';
+import getInMemoryProcessingBudgetBytes from '../utils/memoryBudget.js';
 
 /**
  * @class UIManager
@@ -84,6 +85,8 @@ export class UIManager {
   async initUI() {
     this.resetUIState();
 
+    appState.setState({memoryBudget: this.getMemoryBudget()})
+
     if (!this.fileStreamService.isSafari()) {
       ElementHandler.hide('sizeLimitSafari');
       ElementHandler.show('sizeLimitOther');
@@ -98,6 +101,13 @@ export class UIManager {
       return;
     }
     await this.initializeApplication();
+  }
+
+  getMemoryBudget() {
+    const memoryBudget = Math.floor(getInMemoryProcessingBudgetBytes() / 2.2);
+    const tenMB = 10 * 1024 * 1024;
+    const memoryBudgetRounded= Math.round(memoryBudget / tenMB) * tenMB;
+    return memoryBudgetRounded;
   }
 
   /**
@@ -294,7 +304,12 @@ export class UIManager {
     const fileListElem = $('#fileList');
     const inputFilesElem = $('#inputFiles')[0];
     const usedSizeElem = $('#usedSize'); // new: reference to the size label
-    const SIZE_LIMIT = FileOpsConstants.STREAM_ENCRYPTION_MIN_SIZE;
+    const { memoryBudget } = appState.state
+    const SIZE_LIMIT = memoryBudget;
+    
+    document.querySelectorAll('.device-max').forEach(el => {
+      el.textContent = formatBytes(SIZE_LIMIT);
+    });
 
   if (!inputFilesElem.files.length) {
       fileListElem.text('Selected files appear here...');
@@ -314,7 +329,6 @@ export class UIManager {
     } else {
       usedSizeElem.removeClass('text-danger');
     }
-
 
     const encryptionChecks = files.map(async (file) => {
       const isEncrypted = await Cryptit.isEncrypted(file);

@@ -7,6 +7,7 @@ import { argon2Service } from '../ui/services/argon2Service.js';
 import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
 import { delay, middleString } from '../utils/misc.js';
 import { FileOpsConstants } from '../constants/constants.js';
+import appState from '../state/AppState.js';
 
 /**
  * @class FileEncryptionController
@@ -67,8 +68,9 @@ export class FileEncryptionController extends EncryptionController {
       const fileLength = this.inputFilesElem.files.length;
 
       const totalSize = Array.from(this.inputFilesElem.files).reduce((acc, f) => acc + f.size, 0);
-      const SIZE_LIMIT = FileOpsConstants.STREAM_ENCRYPTION_MIN_SIZE;
-      
+      const { memoryBudget } = appState.state;
+      const SIZE_LIMIT = memoryBudget;
+
       if (totalSize > SIZE_LIMIT && this.fileStreamService.isSafari()) {
         await Swal.fire({
           icon: 'error',
@@ -97,7 +99,6 @@ export class FileEncryptionController extends EncryptionController {
 
     } catch (error) {
       this.laddaManagerAction.stopAll();
-      console.log(error);
       ElementHandler.arrowsToCross();
       ElementHandler.buttonRemoveTextAddFail('downloadFiles');
       ElementHandler.hide('downloadFiles');
@@ -164,7 +165,6 @@ export class FileEncryptionController extends EncryptionController {
       this._appendDownloadLink('', `Downloaded: ${middleString(name)}`, null, 'bg-pink', outputFilesDiv);
       return true;
     } catch (err) {
-      console.log(err);
       this._appendDownloadLink('', `FAILED: ${middleString(file.name)}`, null, 'bg-secondary', outputFilesDiv);
       return false;
     }
@@ -189,7 +189,6 @@ export class FileEncryptionController extends EncryptionController {
       this._appendDownloadLink('', `Downloaded: ${middleString(downloadName)}`, null, 'bg-blue', outputFilesDiv);
       return true;
     } catch (err) {
-      console.log(err);
       this._appendDownloadLink('', `FAILED: ${middleString(downloadName)}`, null, 'bg-secondary', outputFilesDiv);
       return false;
     }

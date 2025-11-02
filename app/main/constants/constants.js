@@ -23,10 +23,10 @@ export const UIConstants = {
 };
 
 /**
- * @namespace UIConstants
+ * @namespace FileOpsConstants
  * @description
- * Constants for UI behavior timing.
- * @property {number} ACTION_DELAY - Delay in milliseconds for button feedback actions.
+ * Default value for stream encryption file size limit
+ * @property {number} STREAM_ENCRYPTION_MIN_SIZE
  */
 export const FileOpsConstants = {
     STREAM_ENCRYPTION_MIN_SIZE: 1024 * 1024 * 150,

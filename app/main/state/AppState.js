@@ -16,6 +16,7 @@ class AppState {
       currentView: 'text',
       isLocked: false,
       actionInProgress: {},
+      memoryBudget: 50 * 1024 * 1024,
     };
     /** @private @type {Array<function(Object)>} */
     this.listeners = [];
