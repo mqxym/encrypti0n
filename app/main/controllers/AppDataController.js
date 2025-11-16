@@ -338,7 +338,6 @@ export class AppDataController {
             }
           });
         } catch (err) {
-          console.log(err);
           Swal.fire({
             icon: 'error',
             title: 'Rotation failed. If you think this is a bug, open a GitHub issue.',

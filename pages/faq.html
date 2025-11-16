@@ -131,7 +131,7 @@
                             "text": "Yes, data can be imported and exported through the Application Data Settings menu. If a master password has not been set up, you will be prompted to create an encryption password for the data export. If a master password is already in place, it will be used automatically for export."
                         }
                     },
-                    {
+                    {       
                         "@type": "Question",
                         "name": "What is the difference between encrypting text and files?",
                         "acceptedAnswer": {
@@ -145,6 +145,38 @@
                         "acceptedAnswer": {
                             "@type": "Answer",
                             "text": "Encrypted files must be downloaded from the app interface and can then be stored anywhere you choose."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Is there an upload file size limit?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "On Safari and iOS devices, uploads are limited to 150 MB due to missing browser features. On desktop browsers (Chrome, Firefox, Edge) there is no practical limit, and Android Chrome also supports large files."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Can I download all processed files as a ZIP?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes, you can download multiple processed files as a ZIP, but only up to a total of 150 MB due to in-memory processing limits."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What happens when files larger than 150 MB are uploaded?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Files exceeding 150 MB are streamed directly to disk instead of being processed in memory, allowing them to be downloaded or encrypted without hitting browser memory limits."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What does file streaming mean?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "File streaming means data is written to disk at the same time it’s being encrypted or decrypted. This process minimizes device memory usage and enables handling very large files efficiently."
                         }
                     },
                     {
@@ -570,13 +602,42 @@
                                     <h4 class="faq-question" data-wow-delay=".1s">What is the difference between encrypting text and files?</h4>
                                     <p class="faq-answer mb-4">Both use the same cryptographic algorithms, but file encryption splits files into chunks (each with a unique nonce), and generates a new Argon2 salt per file for improved security.</p>
                                 </div>
+
+                                <!-- Q13 -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question" data-wow-delay=".1s">Is there an upload file size limit?</h4>
+                                    <p class="faq-answer mb-4">On Safari and iOS devices, uploads are limited to a fixed value due to missing browser features. On desktop browsers (Chrome, Firefox, Edge) there is no practical limit, and Android Chrome also supports large files.</p>
+                                </div>
+
+                                <!-- Q15 -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question" data-wow-delay=".1s">What happens when files larger than the limit are uploaded?</h4>
+                                    <p class="faq-answer mb-4">Files exceeding the limit are streamed directly to disk instead of being processed in memory, allowing them to be downloaded or encrypted without hitting browser memory limits. This does not include iOS / Safari.</p>
+                                </div>
                             </div>
+
                             <div class="col-lg-5">
                                 <!-- Q12 -->
                                 <div>
                                     <div class="faq-question-q-box">Q.</div>
                                     <h4 class="faq-question" data-wow-delay=".1s">Where are my encrypted files stored?</h4>
                                     <p class="faq-answer mb-4">Encrypted files must be downloaded from the app interface and can then be stored anywhere you choose.</p>
+                                </div>
+
+                                <!-- Q14 -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question" data-wow-delay=".1s">Can I download all processed files as a ZIP?</h4>
+                                    <p class="faq-answer mb-4">Yes, you can download multiple processed files as a ZIP, but only up to a fixed size due to in-memory processing limits.</p>
+                                </div>
+
+                                <!-- Q16 -->
+                                <div>
+                                    <div class="faq-question-q-box">Q.</div>
+                                    <h4 class="faq-question" data-wow-delay=".1s">What does file streaming mean?</h4>
+                                    <p class="faq-answer mb-4">File streaming means data is written to disk at the same time it’s being encrypted or decrypted. This process minimizes device memory usage and enables handling very large files efficiently.</p>
                                 </div>
                             </div>
                         </div>

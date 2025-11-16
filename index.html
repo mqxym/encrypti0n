@@ -480,16 +480,20 @@
                                                     <i class="mdi mdi-delete-circle-outline text-secondary" data-bs-container="#inputActionFiles" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Clear Files"></i>
                                                 </button>
                                             </div>
-                                            <div class="d-grid">
-                                                <button type="button" id="uploadFiles" class="mb-2 btn btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
+                                            <div class="d-grid mb-2">
+                                                <button type="button" id="uploadFiles" class="btn btn-outline-blue waves-effect" onclick="document.getElementById('inputFiles').click();">
                                                     <span>
                                                         <i class="mdi mdi-file-upload mr-5"></i>
                                                         Select Files
                                                     </span>
                                                 </button>
+                                                 <label class="help-block me-auto">
+                                                    <small class="d-none" id="sizeLimitSafari">File size limit (this browser/device): <span class="device-max">150 MB</span> | Used: <span id="usedSize"></span></small>
+                                                    <small id="sizeLimitOther">When the total file size exceeds <span class="device-max">150 MB</span>, encryption and decryption operations download all files directly to disk.</small>
+                                                </label>
                                             </div>
                                             <input class="d-none" id="inputFiles" name="inputFiles" type="file" class="upload" multiple />
-                                            <div class="form-control border border-secondary rounded scrollable cust-overflow-y-auto-h-120" id="fileList" name="fileList" role="status" aria-live="polite">Selected files appear here...</div>
+                                            <div class="form-control border border-secondary rounded scrollable cust-overflow-y-auto-h-120 mb-1" id="fileList" name="fileList" role="status" aria-live="polite">Selected files appear here...</div>
                                             <p class="card-text text-muted">
                                                 The site detects if your files are
                                                 <span class="badge badge-outline-pink rounded-pill" id="encryptedFilesPill">encrypted</span>
@@ -675,6 +679,15 @@
                                                         <small id="outputFooter">Encrypted files are in raw binary format.</small>
                                                     </span>
                                                 </div>
+                                            </div>
+                                            <div class="d-grid">
+                                                <button id="downloadFiles" type="button" data-style="zoom-in" class="d-none downloadFiles ladda-button btn btn-pink waves-effect">
+                                                    <i id="downloadFilesText" aria-hidden="true" class="mdi mdi-download me-1"></i>
+                                                    <i id="downloadFilesSuccess" aria-hidden="true" class="mdi mdi-check-all me-1 d-none"></i>
+                                                    <i id="downloadFilesFail" aria-hidden="true" class="mdi mdi-close-circle-multiple me-1 d-none"></i>
+                                                    <span class="ladda-label">Download all as .zip</span>
+                                                    <span aria-hidden="true" class="ladda-spinner"></span>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -1261,11 +1274,14 @@
         <script src="assets/libs/ladda/spin.min.js" defer></script>
         <script src="assets/libs/ladda/ladda.min.js" defer></script>
 
-        <!-- Argos 2 JS -->
-        <script src="assets/libs/argon2/argon2-bundled.min.js" defer></script>
-
         <!-- PW strenght checker JS -->
         <script src="assets/libs/check-password-strength/umd.js" defer></script>
+
+        <!-- JSZip -->
+        <script src="assets/libs/jszip/jszip.min.js" defer></script>
+
+        <!-- StreamSaver JS -->
+        <script src="assets/libs/streamsaver/StreamSaver.min.js" defer></script>
 
         <script type="module" src="app/main/index.js" defer></script>
         
