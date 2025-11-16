@@ -10,8 +10,8 @@
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
 
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
         <!-- App favicon -->
         <link rel="shortcut icon" href="../assets/icons/favicon.ico" />
@@ -43,41 +43,29 @@
 
         <script type="application/ld+json">
             {
-              "@context": "https://schema.org",
-              "@type": "TechArticle",
-              "headline": "Developer Documentation & Technical Information",
-              "name": "Encrypti0n.com Developer Documentation",
-              "description": "Detailed technical documentation of Encrypti0n.com's cryptographic implementation, browser APIs used, and open-source libraries.",
-              "url": "https://encrypti0n.com/pages/developer-documentation-technical-information.html",
-              "author": {
-                "@type": "Organization",
-                "name": "Encrypti0n.com"
-              },
-              "publisher": {
-                "@type": "Organization",
-                "name": "Encrypti0n.com",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": "https://encrypti0n.com/assets/images/logo.webp"
-                }
-              },
-              "datePublished": "2025-04-28",
-              "articleSection": [
-                "Cryptographic Libraries & APIs",
-                "Source Available",
-                "Error Handling",
-                "Browser Compatibility"
-              ],
-              "keywords": [
-                "AES-GCM",
-                "Web Crypto API",
-                "Argon2id",
-                "browser cryptography",
-                "JavaScript encryption",
-                "technical documentation"
-              ]
+                "@context": "https://schema.org",
+                "@type": "TechArticle",
+                "headline": "Developer Documentation & Technical Information",
+                "name": "Encrypti0n.com Developer Documentation",
+                "description": "Detailed technical documentation of Encrypti0n.com's cryptographic implementation, browser APIs used, and open-source libraries.",
+                "url": "https://encrypti0n.com/pages/developer-documentation-technical-information.html",
+                "author": {
+                    "@type": "Organization",
+                    "name": "Encrypti0n.com"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Encrypti0n.com",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://encrypti0n.com/assets/images/logo.webp"
+                    }
+                },
+                "datePublished": "2025-04-28",
+                "articleSection": ["Cryptographic Libraries & APIs", "Source Available", "Error Handling", "Browser Compatibility"],
+                "keywords": ["AES-GCM", "Web Crypto API", "Argon2id", "browser cryptography", "JavaScript encryption", "technical documentation"]
             }
-            </script>
+        </script>
     </head>
 
     <body>
@@ -94,16 +82,16 @@
                 <div class="logo-box">
                     <a href="/" class="logo-light">
                         <img src="../assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
-                        <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo"  class="logo-sm" />
+                        <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo" class="logo-sm" />
                     </a>
                     <a href="/" class="logo-dark">
-                        <img src="../assets/images/logo.webp" aria-hidden="true"  class="logo-lg" />
+                        <img src="../assets/images/logo.webp" aria-hidden="true" class="logo-lg" />
                         <img src="../assets/images/logo-sm.webp" aria-hidden="true" class="logo-sm" />
                     </a>
                 </div>
 
                 <!-- menu-left -->
-               <nav class="scrollbar cust-scrollbar-hidden" role="navigation" aria-label="Main menu">
+                <nav class="scrollbar cust-scrollbar-hidden" role="navigation" aria-label="Main menu">
                     <!--- Menu -->
                     <ul class="menu" role="menubar">
                         <li class="p-2 menu-item text-white">
@@ -188,9 +176,6 @@
                                 <span class="menu-text">Crypto Playground</span>
                             </a>
                         </li>
-
-                        
-                        
                     </ul>
                     <!--- End Menu -->
                     <div class="clearfix"></div>
@@ -200,9 +185,9 @@
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
-                      <div class="topbar-menu d-flex align-items-center gap-1">
+                        <div class="topbar-menu d-flex align-items-center gap-1">
                             <div class="logo-box">
-                                 <a href="/" class="logo-light">
+                                <a href="/" class="logo-light">
                                     <img src="../assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
                                     <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo" class="logo-sm" />
                                 </a>
@@ -219,7 +204,7 @@
                             </button>
                         </div>
 
-                       <ul class="topbar-menu d-flex align-items-center">
+                        <ul class="topbar-menu d-flex align-items-center">
                             <li class="d-none d-md-inline-block">
                                 <a class="nav-link waves-effect waves-light" aria-label="Toggle fullscreen" href="" data-toggle="fullscreen">
                                     <i class="fe-maximize font-22"></i>
@@ -263,7 +248,9 @@
                                     behind
                                     <strong>Encrypti0n.com</strong>
                                     , focusing on
-                                    <strong>AES-GCM</strong>, <strong>open source libraries</strong>
+                                    <strong>AES-GCM</strong>
+                                    ,
+                                    <strong>open source libraries</strong>
                                     , and the
                                     <strong>Web Crypto API</strong>
                                     .
@@ -277,13 +264,17 @@
                                 <h2>Cryptographic Libraries &amp; APIs Used</h2>
                                 <p>Encrypti0n.com uses modern browser-native cryptographic libraries:</p>
                                 <ul>
-                                     <li>
+                                    <li>
                                         <strong><code>@mqxym/cryptit v2.2.1</code></strong>
-                                        : TypeScript powered API used for AES-GCM / Argon2id text and file encryption <a target="_blank" href="https://github.com/mqxym/cryptit">(GitHub)</a>.
+                                        : TypeScript powered API used for AES-GCM / Argon2id text and file encryption
+                                        <a target="_blank" href="https://github.com/mqxym/cryptit">(GitHub)</a>
+                                        .
                                     </li>
                                     <li>
                                         <strong><code>@mqxym/secure-local-storage v0.8.0</code></strong>
-                                        : Browser API used for securing the local storage data with AES-GCM envelope encryption <a target="_blank" href="https://github.com/mqxym/secure-local-storage">(GitHub)</a>.
+                                        : Browser API used for securing the local storage data with AES-GCM envelope encryption
+                                        <a target="_blank" href="https://github.com/mqxym/secure-local-storage">(GitHub)</a>
+                                        .
                                     </li>
                                     <li>
                                         <strong><code>window.crypto</code></strong>
@@ -293,10 +284,12 @@
                                         <strong><code>window.crypto.subtle</code></strong>
                                         : Provides essential cryptographic primitives like AES-GCM encryption/decryption and key imports (used in @mqxym/cryptit / @mqxym/secure-local-storage).
                                     </li>
-                                    
+
                                     <li>
                                         <strong><code>antelle/argon2-browser</code></strong>
-                                        : Provides the Argon2id key derivation implementation for browsers (used in @mqxym/cryptit / @mqxym/secure-local-storage) <a href="https://github.com/antelle/argon2-browser">(GitHub)</a>.
+                                        : Provides the Argon2id key derivation implementation for browsers (used in @mqxym/cryptit / @mqxym/secure-local-storage)
+                                        <a href="https://github.com/antelle/argon2-browser">(GitHub)</a>
+                                        .
                                     </li>
                                 </ul>
                                 <p>
@@ -313,44 +306,64 @@
                                 <ul>
                                     <li>
                                         <strong><code>Bootstrap v5</code></strong>
-                                        : Custom Bootstrap 5 template for the pages design <a target="_blank" href="https://getbootstrap.com/">(Official Page)</a>.
+                                        : Custom Bootstrap 5 template for the pages design
+                                        <a target="_blank" href="https://getbootstrap.com/">(Official Page)</a>
+                                        .
                                     </li>
                                     <li>
                                         <strong><code>jQuery v3.6.0</code></strong>
-                                        : Used for DOM manipulation but will be replaced by vanilla JS step by step <a target="_blank" href="https://jquery.com/">(Official Page)</a>.
+                                        : Used for DOM manipulation but will be replaced by vanilla JS step by step
+                                        <a target="_blank" href="https://jquery.com/">(Official Page)</a>
+                                        .
                                     </li>
-                                     <li>
+                                    <li>
                                         <strong><code>StreamSaver.js v2.0.6</code></strong>
-                                        : Used for streaming (downloading) large files directly to disk <a target="_blank" href="https://github.com/jimmywarting/StreamSaver.js">(Github)</a>.
+                                        : Used for streaming (downloading) large files directly to disk
+                                        <a target="_blank" href="https://github.com/jimmywarting/StreamSaver.js">(Github)</a>
+                                        .
                                     </li>
                                     <li>
                                         <strong><code>SweetAlert2</code></strong>
-                                        : For the informational popups <a target="_blank" href="https://sweetalert2.github.io/">(Official Page)</a>.
+                                        : For the informational popups
+                                        <a target="_blank" href="https://sweetalert2.github.io/">(Official Page)</a>
+                                        .
                                     </li>
                                     <li>
                                         <strong><code>HighlightJS v11.9</code></strong>
-                                        : For code highlighting <a target="_blank" href="https://highlightjs.org/">(Official Page)</a>.
+                                        : For code highlighting
+                                        <a target="_blank" href="https://highlightjs.org/">(Official Page)</a>
+                                        .
                                     </li>
                                     <li>
                                         <strong><code>deanilvincent/check-password-strength</code></strong>
-                                        : For encryption password strenght checking <a target="_blank" href="https://github.com/deanilvincent/check-password-strength">(GitHub)</a>.
+                                        : For encryption password strenght checking
+                                        <a target="_blank" href="https://github.com/deanilvincent/check-password-strength">(GitHub)</a>
+                                        .
                                     </li>
                                     <li>
                                         <strong><code>autonomoussoftware/fast-password-entropy</code></strong>
-                                        : For password generator entropy checking / displaying <a target="_blank" href="https://github.com/autonomoussoftware/fast-password-entropy">(GitHub)</a>.
+                                        : For password generator entropy checking / displaying
+                                        <a target="_blank" href="https://github.com/autonomoussoftware/fast-password-entropy">(GitHub)</a>
+                                        .
                                     </li>
                                     <li>
                                         <strong><code>IonDen/ion.rangeSlide</code></strong>
-                                        : Range-slider for password generator app <a target="_blank" href="https://github.com/IonDen/ion.rangeSlider">(GitHub)</a>.
+                                        : Range-slider for password generator app
+                                        <a target="_blank" href="https://github.com/IonDen/ion.rangeSlider">(GitHub)</a>
+                                        .
                                     </li>
                                     <li>
                                         <strong><code>dropbox/zxcvbn</code></strong>
-                                        : Password strenght estimation for password checker app <a target="_blank" href="https://github.com/dropbox/zxcvbn">(GitHub)</a>.
+                                        : Password strenght estimation for password checker app
+                                        <a target="_blank" href="https://github.com/dropbox/zxcvbn">(GitHub)</a>
+                                        .
                                     </li>
 
                                     <li>
                                         <strong><code>JSZip v3.10.1</code></strong>
-                                        : Zip Download / Upload of multiple encrypted files <a target="_blank" href="https://stuk.github.io/jszip/">(Official Page)</a>.
+                                        : Zip Download / Upload of multiple encrypted files
+                                        <a target="_blank" href="https://stuk.github.io/jszip/">(Official Page)</a>
+                                        .
                                     </li>
                                 </ul>
                             </section>
@@ -408,40 +421,104 @@
                         <!-- Browser Compatibility Notes Section -->
                         <div class="row my-4">
                             <section class="col-12">
-                                <h2>Browser Compatibility Notes</h2>
+                                <h2>Browser Compatibility</h2>
                                 <p>
-                                    Encrypti0n.com depends on the
+                                    Encrypti0n.com uses the
                                     <a href="./encryption-glossary.html#web-crypto-api">Web Crypto API</a>
-                                    , widely supported by modern browsers. The following browsers are confirmed to support necessary cryptographic APIs:
+                                    and depends on
+                                    <code>@mqxym/secure-local-storage</code>
+                                    and
+                                    <code>@mqxym/cryptit</code>
+                                    . To keep things simple for users, we publish a single, definitive minimum version per browser. This baseline is the
+                                    <em>highest</em>
+                                    requirement across both libraries and their underlying features (SubtleCrypto, IndexedDB, WebAssembly, and secure randomness).
                                 </p>
+
                                 <ul>
                                     <li>
                                         <strong>Google Chrome:</strong>
-                                        Supported since version 37 (August 2014)
+                                        <span class="badge bg-secondary">57+</span>
                                     </li>
                                     <li>
                                         <strong>Mozilla Firefox:</strong>
-                                        Supported since version 34 (December 2014)
+                                        <span class="badge bg-secondary">52+</span>
                                     </li>
                                     <li>
-                                        <strong>Microsoft Edge:</strong>
-                                        Supported since initial release (EdgeHTML) and fully in Edge Chromium (January 2020)
+                                        <strong>Microsoft Edge (Chromium):</strong>
+                                        <span class="badge bg-secondary">79+</span>
                                     </li>
                                     <li>
-                                        <strong>Apple Safari:</strong>
-                                        Supported since version 11 (September 2017). 
-                                        <ul>
-                                            <li>
-                                                Note that in this browser, file streaming to disk via Service Worker is not supported; therefore, the upload file limit for encryption is set to 150 MB.
-                                            </li>
-                                        </ul>
+                                        <strong>Apple Safari (macOS):</strong>
+                                        <span class="badge bg-secondary">11+</span>
+                                    </li>
+                                    <li>
+                                        <strong>Safari on iOS/iPadOS:</strong>
+                                        <span class="badge bg-secondary">11+</span>
                                     </li>
                                     <li>
                                         <strong>Opera:</strong>
-                                        Supported since version 24 (September 2014)
+                                        <span class="badge bg-secondary">44+</span>
+                                        <small class="text-muted">(Chromium-based)</small>
                                     </li>
                                 </ul>
-                                <p>Older or legacy browsers (such as Internet Explorer or significantly outdated browser versions) might lack proper Web Crypto API implementation, causing compatibility issues. Users are advised to update their browsers for full functionality and security.</p>
+
+                                <details class="mt-3">
+                                    <summary><strong>Why these versions?</strong></summary>
+                                    <div class="mt-2">
+                                        <ul>
+                                            <li>
+                                                <code>secure-local-storage</code>
+                                                requires
+                                                <strong>SubtleCrypto</strong>
+                                                and
+                                                <strong>IndexedDB</strong>
+                                                . While most browsers added SubtleCrypto early, the decisive constraint for Edge is IndexedDB/WebCrypto support in Chromium-based Edge, making
+                                                <strong>Edge&nbsp;79+</strong>
+                                                the minimum.
+                                            </li>
+                                            <li>
+                                                <code>cryptit</code>
+                                                requires
+                                                <strong>WebAssembly</strong>
+                                                and the Web Crypto API. WebAssembly raises the floor to
+                                                <strong>Chrome&nbsp;57+</strong>
+                                                ,
+                                                <strong>Firefox&nbsp;52+</strong>
+                                                , and
+                                                <strong>Safari&nbsp;11+</strong>
+                                                .
+                                            </li>
+                                            <li>
+                                                We take the
+                                                <em>maximum</em>
+                                                of these requirements per browser so a single baseline covers both dependencies: Chrome 57, Firefox 52, Edge 79, Safari 11, iOS Safari 11. For Opera, we align to its Chromium equivalent (WebAssembly-era), hence
+                                                <strong>Opera&nbsp;44+</strong>
+                                                .
+                                            </li>
+                                        </ul>
+                                        <p class="mb-0">
+                                            <small class="text-muted">
+                                                Note on language targets:
+                                                <code>sls</code>
+                                                compiles to ES2022 and
+                                                <code>cryptit</code>
+                                                to ES2020. The baseline above is governed by runtime features (WebAssembly, SubtleCrypto, IndexedDB), not syntax alone.
+                                            </small>
+                                        </p>
+                                    </div>
+                                </details>
+
+                                <div class="mt-3">
+                                    <p class="mb-1"><strong>Safari-specific note:</strong></p>
+                                    <p class="mb-2">Streaming large files to disk via a Service Worker is not supported in Safari. We automatically adjust the upload size limit for encryption based on the device to ensure reliability.</p>
+                                    <p class="mb-1"><strong>Security context:</strong></p>
+                                    <p class="mb-2">
+                                        The Web Crypto API only works in
+                                        <em>secure contexts</em>
+                                        (HTTPS). Older/legacy browsers (e.g., Internet Explorer or significantly outdated versions) are not supported.
+                                    </p>
+                                    <p class="mb-0 text-muted"><small>Tip: Updating to the latest browser version is recommended for best performance and security.</small></p>
+                                </div>
                             </section>
                         </div>
 
@@ -459,7 +536,8 @@
                         <div class="row">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <div>
-                                    <span id="currentYear"></span> © Encrypti0n.com | Version
+                                    <span id="currentYear"></span>
+                                    © Encrypti0n.com | Version
                                     <b class="version"></b>
                                 </div>
                             </div>
@@ -488,6 +566,5 @@
 
         <!-- Highlight.js -->
         <script src="../assets/libs/highlightjs/highlightjs.min.js" defer></script>
-
     </body>
 </html>

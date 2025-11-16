@@ -1,27 +1,69 @@
+// UIManager.js
+
+/**
+ * @fileoverview
+ * The UI orchestration layer for the app. This manager wires DOM controls,
+ * listens to user actions (view switches, file selection, clipboard, modals),
+ * and coordinates state with {@link appState}. It also calculates and displays
+ * a per-device memory budget that decides whether file operations are handled
+ * **in-memory** (with Blob-backed downloads and optional ZIP bundling) or
+ * **streamed to disk** (via File System Access API / StreamSaver through the
+ * FileStreamService instance supplied by the base controller).
+ *
+ * Key responsibilities:
+ * - Bind UI events to controller operations.
+ * - Render selected files, sizes, and encryption state badges.
+ * - Toggle between Text and File views and update explanatory hints/tooltips.
+ * - Initialize application data (slot names, Argon2 options).
+ * - Show app-encryption / import / export modals when requested.
+ * - Manage a device-aware memory budget and surface it in the UI.
+ *
+ * ### External dependencies (globals / environment)
+ * - jQuery (`$`) for simple DOM queries and text updates.
+ * - `Swal` (SweetAlert2) for user-friendly modals.
+ * - `checkPasswordStrength` global for password strength scoring.
+ *
+ * ### Notes
+ * - This class does not perform encryption itself; it delegates to services
+ *   provided by the base controller and other modules.
+ */
+
 import { formatBytes } from '../utils/fileUtils.js';
 import { ElementHandler, EventBinder } from '../helpers/ElementHandler.js';
 import appState from '../state/AppState.js';
 import { handleActionSuccess, handleActionError, wrapAction } from '../utils/controller.js';
 import { Cryptit } from '../../../assets/libs/cryptit/cryptit.browser.min.js';
 import { middleString } from '../utils/misc.js';
-import { FileOpsConstants } from '../constants/constants.js';
 import getInMemoryProcessingBudgetBytes from '../utils/memoryBudget.js';
+
+/**
+ * Service bag expected by {@link UIManager}'s constructor.
+ * Only the fields used directly here are listed. Additional fields may be
+ * present and consumed by other layers.
+ *
+ * @typedef {Object} UIManagerServices
+ * @property {FormHandler} form - Adapter for getting/setting form control values.
+ * @property {ConfigManager} config - Manages master password and key slots.
+ * @property {argon2Service} argon2 - Loads and exposes Argon2 difficulty options.
+ * @property {SlotsService} slots - Renders/controls the key slot management modal.
+ * @property {StorageService} storage - Simple key/value storage for UI preferences.
+ * @property {EncryptionService} encryption - Text/file crypto operations (indirect).
+ * @property {FileStreamService} fss - Streaming sink helper (used for Safari checks).
+ */
 
 /**
  * @class UIManager
  * @classdesc
- * Manages the application user interface: view toggles (text vs. file), input/output updates,
- * file listing, Argon2 options modal, and clipboard operations. Coordinates UI state with global appState.
+ * Manages the application user interface: view toggles (text vs. file), input/output
+ * updates, file listing, Argon2 options modal, and clipboard operations. Coordinates
+ * UI state with global {@link appState}.
  */
 export class UIManager {
   /**
-   * @param {Object} services
-   * @param {FormHandler} services.form - Handler for form inputs/outputs.
-   * @param {ConfigManager} services.config - Configuration manager for master password and slots.
-   * @param {argon2Service} services.argon2 - Service for Argon2 difficulty options.
-   * @param {StorageService} services.storage - Local storage service for UI preferences.
-   * @param {EncryptionService} services.encryption - Encryption service for text/file operations.
-   * @param {KeyManagementController} keyManagementController - Controller for key slot management.
+   * Create the UI manager and wire required services.
+   *
+   * @param {UIManagerServices} services
+   * @param {KeyManagementController} keyManagementController - Controller for slot generation/toggling.
    */
   constructor(services, keyManagementController) {
     /** @private */ this.formHandler = services.form;
@@ -35,7 +77,15 @@ export class UIManager {
   }
 
   /**
-   * Attaches event handlers for UI elements: view switches, file changes, Argon2 modal, etc.
+   * Attach event handlers for UI elements: view switches, file changes, modals, etc.
+   *
+   * DOM IDs/classes referenced:
+   * - `#showTextEncryption`, `#showFilesEncryption` — view toggles.
+   * - `#inputFiles` — `<input type="file">` for multi-file selection.
+   * - `#hideInformation` — toggle the information panel visibility.
+   * - `#inputText` — plaintext / ciphertext input area.
+   * - `#copyOutput`, `#clearInput`, `#clearInputFiles` — actions.
+   * - `#argon2-modal`, `#editSlotsModal`, `#do-data-import`, etc. — modals.
    *
    * @private
    * @returns {void}
@@ -73,10 +123,12 @@ export class UIManager {
   }
 
   /**
-   * Initializes the UI on application start:
-   * - Resets UI
-   * - Shows decryption modal if master password is set
-   * - Otherwise loads slots and Argon2 options
+   * Initialize UI at app startup:
+   * - Reset UI state.
+   * - Compute and store the device-aware memory budget.
+   * - Show browser-specific size limit hints.
+   * - If a master password is configured, prompt for decryption; otherwise
+   *   load app data (slot names, Argon2 options) and initialize key management.
    *
    * @public
    * @async
@@ -103,6 +155,20 @@ export class UIManager {
     await this.initializeApplication();
   }
 
+  /**
+   * Calculate a conservative in-memory processing limit for this device.
+   *
+   * Uses {@link getInMemoryProcessingBudgetBytes} (which returns a safe upper
+   * bound for transient processing) and then:
+   * - halves it (≈/2.2) to leave extra headroom for JS objects & UI.
+   * - rounds to the nearest 10 MB for user-facing presentation.
+   *
+   * @returns {number} A rounded byte budget (≥ 10 MB), suitable for total file size thresholds.
+   *
+   * @example
+   * const budget = ui.getMemoryBudget();
+   * document.querySelector('.device-max').textContent = formatBytes(budget);
+   */
   getMemoryBudget() {
     const memoryBudget = Math.floor(getInMemoryProcessingBudgetBytes() / 2.2);
     const tenMB = 10 * 1024 * 1024;
@@ -111,7 +177,10 @@ export class UIManager {
   }
 
   /**
-   * Disables encryption button when a master password exists.
+   * Update UI to reflect that a master password is already set (locked mode).
+   *
+   * Disables controls that should not be used when the app is encrypted and
+   * exposes options relevant to a locked state (export flows, rotation, etc.).
    *
    * @public
    * @returns {void}
@@ -129,7 +198,10 @@ export class UIManager {
   }
 
   /**
-   * Enables encryption button when a master password does not exist.
+   * Update UI to reflect passwordless mode (no master password configured).
+   *
+   * Enables app-encryption entry points and export flows that do not require
+   * the master password.
    *
    * @public
    * @returns {void}
@@ -145,7 +217,8 @@ export class UIManager {
   }
 
   /**
-   * Loads application data (slot names and Argon2 options); on failure, shows an error alert.
+   * Load application data (slot names and Argon2 options), with error handling
+   * that shows a user-facing alert if decryption fails.
    *
    * @private
    * @async
@@ -162,11 +235,11 @@ export class UIManager {
   }
 
   /**
-   * Reads slot names and Argon2 options; returns true if loading failed.
+   * Read slot names and Argon2 options.
    *
    * @private
    * @async
-   * @returns {Promise<boolean>}
+   * @returns {Promise<boolean>} `false` on success; `true` if loading failed.
    */
   async loadApplicationData() {
     try {
@@ -180,7 +253,7 @@ export class UIManager {
   }
 
   /**
-   * Displays an error alert when application data cannot be decrypted.
+   * Show a generic initialization error modal (e.g., corrupted local data).
    *
    * @private
    * @async
@@ -197,7 +270,7 @@ export class UIManager {
   }
 
   /**
-   * Performs an initial key generation and toggles key visibility.
+   * Perform an initial key generation and toggle key visibility in the UI.
    *
    * @private
    * @returns {void}
@@ -208,7 +281,7 @@ export class UIManager {
   }
 
   /**
-   * Resets all UI fields and file listings to default state.
+   * Reset high-level UI state to defaults: hide info panel, clear text and file fields.
    *
    * @private
    * @returns {void}
@@ -221,11 +294,13 @@ export class UIManager {
   }
 
   /**
-   * Handles input text changes by updating encryption/decryption indicators.
+   * Handle input text changes by checking whether the content is encrypted
+   * (using {@link Cryptit.isEncrypted}) and updating placeholder styles and
+   * button tooltips accordingly.
    *
    * @private
    * @async
-   * @param {Event} event - The input event containing the new text value.
+   * @param {Event & { target: HTMLTextAreaElement }} event - Input event from the text area.
    * @returns {Promise<void>}
    */
   async handleDataChange(event) {
@@ -235,7 +310,9 @@ export class UIManager {
   }
 
   /**
-   * Opens the modal to initiate application encryption if not already encrypted.
+   * Open the app-encryption modal if the app is not already protected by a master password.
+   *
+   * @returns {void}
    */
   handleAppEncryptModal() {
     if (this.configManager.isUsingMasterPassword()) return;
@@ -243,10 +320,10 @@ export class UIManager {
   }
 
   /**
-   * Updates UI styling and placeholders based on encryption state.
+   * Update styling, pills, placeholders, and tooltips based on encryption state.
    *
    * @private
-   * @param {boolean} isEncrypted - True if current input is encrypted.
+   * @param {boolean} isEncrypted - Whether current input looks like ciphertext.
    * @returns {void}
    */
   updateEncryptionState(isEncrypted) {
@@ -278,9 +355,11 @@ export class UIManager {
   }
 
   /**
-   * Toggles visibility of the informational section and persists preference.
+   * Toggle visibility of the informational section and persist user preference.
    *
-   * @param {boolean} [toggle=true] - Whether to flip visibility state.
+   * Preference key: `encInfoHidden` in {@link StorageService}.
+   *
+   * @param {boolean} [toggle=true] - If `true`, flip current state; if `false`, apply persisted state.
    * @returns {void}
    */
   setInformationTab(toggle = true) {
@@ -295,15 +374,23 @@ export class UIManager {
   }
 
   /**
-   * Updates the file list display and sets encryption indicators accordingly.
+   * Render the selected file list, compute aggregate size vs. device budget,
+   * and color the size label when the selection exceeds the memory limit.
+   *
+   * Also checks each file with {@link Cryptit.isEncrypted} to color-code badges
+   * and potentially flips the UI to “decrypt” posture when all are encrypted.
    *
    * @async
    * @returns {Promise<void>}
+   *
+   * @example
+   * // Automatically called when #inputFiles changes
+   * await ui.updateFileList();
    */
   async updateFileList() {
     const fileListElem = $('#fileList');
     const inputFilesElem = $('#inputFiles')[0];
-    const usedSizeElem = $('#usedSize'); // new: reference to the size label
+    const usedSizeElem = $('#usedSize'); // label showing total size vs. budget
     const { memoryBudget } = appState.state
     const SIZE_LIMIT = memoryBudget;
     
@@ -348,7 +435,7 @@ export class UIManager {
   }
 
   /**
-   * Shows the file-encryption UI panels and updates view state.
+   * Switch to the File Encryption view (and update state).
    *
    * @returns {void}
    */
@@ -364,7 +451,7 @@ export class UIManager {
   }
 
   /**
-   * Shows the text-encryption UI panels and updates view state.
+   * Switch to the Text Encryption view (and update state).
    *
    * @returns {void}
    */
@@ -379,7 +466,7 @@ export class UIManager {
   }
 
   /**
-   * Clears the text input field and resets encryption indicators.
+   * Clear the text input field and reset encryption indicators to "not encrypted".
    *
    * @returns {void}
    */
@@ -389,7 +476,7 @@ export class UIManager {
   }
 
   /**
-   * Clears the file input field and resets encryption indicators.
+   * Clear the file input field, reset file list placeholder, and set encryption UI to "not encrypted".
    *
    * @returns {void}
    */
@@ -401,7 +488,7 @@ export class UIManager {
   }
 
   /**
-   * Clears password input fields (blank and masked).
+   * Clear both password fields (visible and masked).
    *
    * @returns {void}
    */
@@ -411,7 +498,7 @@ export class UIManager {
   }
 
   /**
-   * Clears selected files and resets file list/output placeholders.
+   * Clear selected files and reset file I/O placeholders.
    *
    * @returns {void}
    */
@@ -422,7 +509,7 @@ export class UIManager {
   }
 
   /**
-   * Resets key slot select to default placeholder names (Slot 1…Slot 5).
+   * Reset key slot selection control to default placeholder names (Slot 1…5).
    *
    * @returns {void}
    */
@@ -438,7 +525,7 @@ export class UIManager {
   }
 
   /**
-   * Resets the entire UI: files, text, password fields, and slot names.
+   * Clear text, files, passwords, and slot names. Resets the slots modal as well.
    *
    * @returns {void}
    */
@@ -451,7 +538,10 @@ export class UIManager {
   }
 
   /**
-   * Copies the output text to clipboard with validation and feedback.
+   * Copy the output text to the clipboard with validation and success/failure UI feedback.
+   *
+   * Uses {@link wrapAction} to standardize async action UX and
+   * {@link handleActionSuccess}/{@link handleActionError} for status styling.
    *
    * @async
    * @returns {Promise<void>}
@@ -470,10 +560,10 @@ export class UIManager {
   }
 
   /**
-   * Validates that the output text is a non-empty string.
+   * Validate that the clipboard output is a non-empty string.
    *
    * @private
-   * @param {*} output - The value to validate.
+   * @param {*} output - Value to validate.
    * @throws {Error} If output is empty or not a string.
    */
   validateOutput(output) {
@@ -486,18 +576,23 @@ export class UIManager {
   }
 
   /**
-   * Updates the visual strength indicator and label for a password input.
+   * Update a password strength progress bar and label for a given input field.
    *
-   * Retrieves the value of the password field, computes its strength level,
-   * and adjusts a progress bar’s width, color class, and accompanying text
-   * to reflect "Very Weak", "Weak", "Medium", or "Strong".
+   * Uses a global `checkPasswordStrength.passwordStrength(password).id` that is
+   * expected to return an integer in `[0, 3]`:
+   * - 0 → Very Weak
+   * - 1 → Weak
+   * - 2 → Medium
+   * - 3 → Strong
    *
-   * @param {string} pwFieldId - The DOM id of the password input element.
-   * @param {string} barId     - The DOM id of the progress bar element.
-   * @param {string} textId    - The DOM id of the text label element.
+   * The method sets bar width and color (`bg-danger`, `bg-warning`, `bg-success`)
+   * accordingly and updates a textual label.
+   *
+   * @param {string} pwFieldId - DOM id of the password input element.
+   * @param {string} barId - DOM id of the progress bar element.
+   * @param {string} textId - DOM id of the label element next to the bar.
    * @returns {void}
    */
-
   showPasswordStrenght(pwFieldId, barId, textId) {
     const password = document.getElementById(pwFieldId).value;
     const strength = checkPasswordStrength.passwordStrength(password).id;

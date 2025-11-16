@@ -1,4 +1,33 @@
 // FileEncryptionController.js
+
+/**
+ * @fileoverview
+ * High-level controller for encrypting/decrypting one or more {@link File}
+ * objects from the UI. It chooses between **in-memory** processing and
+ * **streaming-to-disk** based on a runtime memory budget, updates progress
+ * buttons (via Ladda), and exposes per-file download links or a combined ZIP.
+ *
+ * ### Processing strategy
+ * - If the **total selected size** is **≤ `appState.state.memoryBudget`**:
+ *   - Process **in-memory** (reads each file fully, produces a new `Blob`).
+ *   - After 2+ successes, offer **“Download all as .zip”** (via global `JSZip`).
+ * - If the total size is **> memory budget**:
+ *   - Use **streaming** (File System Access API or StreamSaver) via
+ *     {@link FileStreamService}, writing results directly to disk.
+ *   - Shows “Downloaded: …” indicators (no in-memory blobs are kept).
+ *   - On Safari, large streaming operations are blocked with an alert.
+ *
+ * ### Dependencies / assumptions
+ * - Extends {@link EncryptionController} which provides:
+ *   - `this.cryptit` ({@link Cryptit}) — library for file encryption/decryption.
+ *   - `this.fileStreamService` — streaming sink helper.
+ *   - `this.configManager`, `this.postActionHandling`, `this.insecurePasswordWarning`,
+ *     `this.getKeyData()` and other controller utilities.
+ * - UI helpers: {@link ElementHandler}, {@link LaddaButtonManager}, jQuery (`$`),
+ *   and global `Swal` for alerts.
+ * - ZIP support expects **global** `JSZip` (not imported here).
+ */
+
 import { EncryptionController } from './EncryptionController.js';
 import { ElementHandler } from '../helpers/ElementHandler.js';
 import { LaddaButtonManager } from '../helpers/LaddaButtonHandler.js';
@@ -10,31 +39,36 @@ import { FileOpsConstants } from '../constants/constants.js';
 import appState from '../state/AppState.js';
 
 /**
- * @class FileEncryptionController
- * @extends EncryptionController
- * @classdesc
- * Handles encryption and decryption of File objects in fixed-size chunks,
- * updating the UI with download links for each result.
- * 
- * 
- * Below 150mb: in context browser download with zip download function
- * Above 150mb: 
- * - only streaming support via FileStreamHelper ( show availability in UI)
- * - warning for unsupported (safari), no processing
- * 
+ * Batch item captured for ZIP assembly (in-memory mode).
+ * @typedef {Object} BatchItem
+ * @property {string} name - File name to use inside the archive.
+ * @property {Blob} blob - The processed file blob.
+ */
+
+/**
+ * Controller that orchestrates file selection, per-file encryption/decryption,
+ * UI state updates, and optional ZIP bundling for multiple outputs.
  *
- * Extended: collects processed files and offers a single ZIP download (JSZip).
+ * Below 150 MB (or more precisely: below the runtime memory budget from
+ * `appState.state.memoryBudget`) the controller works in-memory and exposes
+ * Blob-backed download links. Above that threshold it streams directly to disk.
+ *
+ * @extends EncryptionController
  */
 export class FileEncryptionController extends EncryptionController {
   /**
-   * @param {Object} services - Shared services (encryption, form, config).
+   * @param {Object} services - Shared services passed to the base class.
    */
   constructor(services) {
     super(services);
 
-    /** @private Batch state for current handleAction() run */
+    /**
+     * Batch state accumulated over a single {@link handleAction} run.
+     * @private
+     * @type {{ items: BatchItem[], successCount: number, failCount: number, encrypted?: number, decrypted?: number }}
+     */
     this._batchState = {
-      items: /** @type {{ name: string, blob: Blob }[]} */([]),
+      items: /** @type {BatchItem[]} */([]),
       successCount: 0,
       failCount: 0
     };
@@ -46,12 +80,17 @@ export class FileEncryptionController extends EncryptionController {
   }
 
   /**
-   * Reads selected files, determines for each whether to encrypt or decrypt,
-   * and processes them sequentially.
+   * Entry point triggered by the main “Encrypt / Decrypt” action button.
    *
-   * When ≥ 2 files succeed, the “Download all as .zip” button is shown and wired.
+   * 1. Reads user-selected files.
+   * 2. Computes a total size and compares against the runtime memory budget
+   *    (`appState.state.memoryBudget`).
+   * 3. Routes to streaming or in-memory processing accordingly.
+   * 4. Updates UI states, progress, and error/success signals.
    *
-   * @async
+   * Safari guard: if the total size exceeds the budget **and** the browser is
+   * Safari, the user is prompted to switch to a supported browser for streaming.
+   *
    * @override
    * @returns {Promise<void>}
    */
@@ -64,6 +103,7 @@ export class FileEncryptionController extends EncryptionController {
       ElementHandler.buttonRemoveStatusAddText('downloadFiles');
       ElementHandler.hide('downloadFiles');
 
+      /** @type {HTMLInputElement} */
       this.inputFilesElem = $('#inputFiles')[0];
       const fileLength = this.inputFilesElem.files.length;
 
@@ -75,7 +115,7 @@ export class FileEncryptionController extends EncryptionController {
         await Swal.fire({
           icon: 'error',
           title: 'File Size Limit Exceeded',
-          html: `The total selected file size is <b>${formatBytes(totalSize)}</b>, which exceeds the 150 MB limit for your browser. Please switch to a supported browser to process files directly to disk. <br><br> Supported browsers: Chrome (Android / Desktop), Firefox (Desktop), Edge (Desktop)`,
+          html: `The total selected file size is <b>${formatBytes(totalSize)}</b>, which exceeds the ${formatBytes(SIZE_LIMIT)} limit for your browser. Please switch to a supported browser to process files directly to disk. <br><br> Supported browsers: Chrome (Android / Desktop), Firefox (Desktop), Edge (Desktop)`,
           confirmButtonText: 'OK',
         });
         // stop Ladda buttons and return early
@@ -87,14 +127,15 @@ export class FileEncryptionController extends EncryptionController {
       if (fileLength === 0) {
         ElementHandler.arrowsToCross();
         $('#outputFiles').text('Encryption / Decryption failed. Please check data or password.');
-        await this.postActionHandling(false, laddaManager);
+        // Note: using the active ladda manager for consistency
+        await this.postActionHandling(false, this.laddaManagerAction);
         return;
       }
 
       if (totalSize > SIZE_LIMIT) {
-        await this.processAbove150mb();
+        await this.processAboveStreamingLimit();
       } else {
-        await this.processBelow150mb();
+        await this.processBelowStreamingLimit();
       }
 
     } catch (error) {
@@ -106,23 +147,24 @@ export class FileEncryptionController extends EncryptionController {
   }
 
   /**
-   * Reads selected files, determines for each whether to encrypt or decrypt,
-   * and processes them sequentially via 
-   * stream processing (StreamSaver.js or showSaveFilePicker)
+   * Streaming path for large selections (total size > memory budget).
    *
+   * Each file is inspected with {@link Cryptit.isEncrypted} to decide whether
+   * to encrypt or decrypt. The actual work is delegated to
+   * {@link encryptFileStream} / {@link decryptFileStream}.
    *
-   * @async
-   * @override
+   * The controller pipes progress updates into the Ladda buttons.
+   *
    * @returns {Promise<void>}
    */
-
-  async processAbove150mb() {
+  async processAboveStreamingLimit() {
     let result = false;
     
     for (let file of this.inputFilesElem.files) {
       const isEncrypted = await Cryptit.isEncrypted(file);
       this.laddaManagerAction.setProgressAll(0);
       
+      /** @type {(p:{transferred:number,total:number,pct:number})=>void} */
       this.onProgressStream = ({ transferred, total, pct }) => {
         this.laddaManagerAction.setProgressAll(pct.toFixed(1)*0.01);
       };
@@ -141,13 +183,15 @@ export class FileEncryptionController extends EncryptionController {
   }
   
   /**
-   * Encrypts a single via cryptit stream capabilities as a .bin File and records a download indicator of the result. 
+   * Encrypt a single file using streaming sinks (no in-memory Blob produced).
    *
-   * @async
-   * @param {File} file - The raw file to encrypt.
-   * @returns {Promise<boolean>} True on success, false on failure.
+   * - Derives Argon2 settings from the current configuration.
+   * - Uses {@link FileStreamService.encryptFile} to stream directly to disk.
+   * - On success, appends a “Downloaded: …” indicator (no href).
+   *
+   * @param {File} file - Source file to encrypt.
+   * @returns {Promise<boolean>} Resolves `true` on success, `false` on failure.
    */
-
   async encryptFileStream(file) {
     const { key } = this.getKeyData();
     if (!key) return false;
@@ -171,21 +215,23 @@ export class FileEncryptionController extends EncryptionController {
   }
 
   /**
-   * Decrypts a single via cryptit stream capabilities as a .bin File and records a download indicator of the result. 
+   * Decrypt a single file using streaming sinks (no in-memory Blob produced).
    *
-   * @async
-   * @param {File} file - The encrypted file to decrypt.
-   * @returns {Promise<boolean>} True on success, false on failure.
+   * - Streams the ciphertext to a plaintext sink on disk.
+   * - On success, appends a “Downloaded: …” indicator (no href).
+   *
+   * @param {File} file - Encrypted input (`.bin`) to decrypt.
+   * @returns {Promise<boolean>} Resolves `true` on success, `false` on failure.
    */
   async decryptFileStream(file) {
     const { key } = this.getKeyData();
     const inputFilesElem = $('#inputFiles')[0];
     if (!inputFilesElem.files.length || !key) return false;
     const outputFilesDiv = document.getElementById('outputFiles');
+    const downloadName = file.name.replace(/\.bin$/i, '');
 
     try {
       await this.fileStreamService.decryptFile(file, key, {onProgress: this.onProgressStream});
-      const downloadName = file.name.replace(/\.bin$/i, '');
       this._appendDownloadLink('', `Downloaded: ${middleString(downloadName)}`, null, 'bg-blue', outputFilesDiv);
       return true;
     } catch (err) {
@@ -194,7 +240,19 @@ export class FileEncryptionController extends EncryptionController {
     }
   }
 
-  async processBelow150mb () {
+  /**
+   * In-memory path for smaller selections (total size ≤ memory budget).
+   *
+   * For each input file:
+   * - Detects whether it is already encrypted.
+   * - Calls {@link handleEncryption} or {@link handleDecryption}.
+   * - Updates per-item and overall Ladda progress.
+   *
+   * After processing, if there were 2+ successes, shows a button to build a ZIP.
+   *
+   * @returns {Promise<void>}
+   */
+  async processBelowStreamingLimit () {
     let result = false;
     let fileCounter = 0;
     const fileLength = this.inputFilesElem.files.length;
@@ -231,11 +289,12 @@ export class FileEncryptionController extends EncryptionController {
   }
 
   /**
-   * Encrypts a single File, then appends a download link to the UI and records it.
+   * Encrypt a single file in-memory and append a Blob-backed download link.
    *
-   * @async
-   * @param {File} file - The file to encrypt.
-   * @returns {Promise<boolean>} True on success, false on failure.
+   * Records the blob for optional ZIP bundling.
+   *
+   * @param {File} file - Plaintext input.
+   * @returns {Promise<boolean>} Resolves `true` on success, `false` on failure.
    */
   async handleEncryption(file) {
     const { key } = this.getKeyData();
@@ -258,18 +317,19 @@ export class FileEncryptionController extends EncryptionController {
       this._batchState.encrypted +=1;
       return true;
     } catch (err) {
-      this._appendDownloadLink('', `FAILED: ${fmiddleString(file.name)}`, null, 'bg-secondary', outputFilesDiv);
+      this._appendDownloadLink('', `FAILED: ${middleString(file.name)}`, null, 'bg-secondary', outputFilesDiv);
       this._batchState.failCount += 1;
       return false;
     }
   }
 
   /**
-   * Decrypts a single .bin File and appends a download link of the result. Records it.
+   * Decrypt a single `.bin` file in-memory and append a Blob-backed link.
    *
-   * @async
-   * @param {File} file - The encrypted file to decrypt.
-   * @returns {Promise<boolean>} True on success, false on failure.
+   * Records the blob for optional ZIP bundling.
+   *
+   * @param {File} file - Ciphertext input (`.bin`).
+   * @returns {Promise<boolean>} Resolves `true` on success, `false` on failure.
    */
   async handleDecryption(file) {
     const { key } = this.getKeyData();
@@ -298,14 +358,18 @@ export class FileEncryptionController extends EncryptionController {
   }
 
   /**
-   * Appends a Bootstrap-styled download link to a container.
-   * (Fixed a scoping bug with `url` so it can be revoked.)
+   * Append a Bootstrap-styled download link or status indicator to a container.
    *
-   * @param {string}      downloadName   – exact filename for download
-   * @param {string}      downloadText   – link text
-   * @param {Blob|null}   blob           – Blob to download, or null on failure
-   * @param {string}      bgColorClass   – e.g. "bg-primary"
-   * @param {HTMLElement} parentDiv      – container element
+   * - If `blob` is provided, the link is a download link backed by a Blob URL.
+   * - If `blob` is `null`, the link is a non-clickable status badge.
+   * - The Blob URL (if any) is revoked shortly after the user clicks the link.
+   *
+   * @param {string}      downloadName   Exact filename for download.
+   * @param {string}      downloadText   Link text / status text.
+   * @param {Blob|null}   blob           Blob to download, or `null` on failure/status.
+   * @param {string}      bgColorClass   e.g. `"bg-primary"`, `"bg-pink"`, `"bg-blue"`.
+   * @param {HTMLElement} parentDiv      Container element.
+   * @private
    */
   _appendDownloadLink(downloadName, downloadText, blob, bgColorClass, parentDiv) {
     const link = document.createElement('a');
@@ -333,9 +397,11 @@ export class FileEncryptionController extends EncryptionController {
   // -----------------------------
 
   /**
-   * Attaches the click handler for the “Download all as .zip” button.
-   * Debounces by cloning the button first to remove previous handlers.
-   * Uses an optional parameter to allow encrypted zip later (disabled by default).
+   * Attach the click handler for the “Download all as .zip” button.
+   *
+   * Debounces by removing previous listeners, then generates a ZIP on click.
+   * Uses a temporary Ladda manager for button-local progress.
+   *
    * @private
    */
   _attachZipDownloadHandler() {
@@ -364,10 +430,13 @@ export class FileEncryptionController extends EncryptionController {
   }
 
   /**
-   * Builds a .zip in-memory and triggers a download.
+   * Build a `.zip` archive **in-memory** (using global `JSZip`) and trigger a download.
    *
+   * - Skips if fewer than two successful outputs are available.
+   * - Uses DEFLATE with compression level **5** (balance of time/size).
    *
    * @private
+   * @returns {Promise<void>}
    */
   async _buildAndOfferZip() {
     if (this._batchState.successCount < 2 || this._batchState.items.length < 2) return;
@@ -379,7 +448,7 @@ export class FileEncryptionController extends EncryptionController {
       zip.file(item.name, item.blob);
     }
 
-    // Produce a Blob using DEFLATE level 9 (best compression).
+    // Produce a Blob
     // See: https://stuk.github.io/jszip/documentation/api_jszip/generate_async.html
     const zipBlob = await zip.generateAsync({
       type: 'blob',
@@ -393,7 +462,8 @@ export class FileEncryptionController extends EncryptionController {
   }
 
   /**
-   * Triggers a file download for a given Blob.
+   * Trigger a file download for a given Blob by creating a temporary anchor.
+   *
    * @param {Blob} blob
    * @param {string} filename
    * @private
