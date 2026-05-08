@@ -21,7 +21,7 @@ Try it out here: [encryption.com](https://encrypti0n.com)
 
 ### Supports Local and Offline Execution
 
-Everything needed is included, with no external dependencies (except some fonts). Download the latest release on GitHub: [encrypti0n/releases](https://github.com/mqxym/encrypti0n/releases).
+Everything needed is included, with no external dependencies. Download the latest release on GitHub: [encrypti0n/releases](https://github.com/mqxym/encrypti0n/releases).
 
 ## References
 
