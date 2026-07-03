@@ -26,6 +26,8 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 setCacheNameDetails({ prefix: 'encrypti0n' });
 
+const STATIC_ASSETS_CACHE = 'static-assets';
+
 // Activate a new worker immediately and take control of open pages so updated
 // code is served on the next page load without disrupting the current session.
 self.skipWaiting();
@@ -34,7 +36,7 @@ clientsClaim();
 // Pre-cache argon2.wasm on install so it is available even before first use.
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open('encrypti0n-static-assets').then((cache) =>
+        caches.open(STATIC_ASSETS_CACHE).then((cache) =>
             cache.add('/assets/libs/cryptit/argon2.wasm')
         )
     );
@@ -194,7 +196,7 @@ registerRoute(
 registerRoute(
     ({ url, request }) => request.destination === 'wasm' || url.pathname.endsWith('.wasm'),
     new CacheFirst({
-        cacheName: 'static-assets',
+        cacheName: STATIC_ASSETS_CACHE,
         plugins: [
             new CacheableResponsePlugin({ statuses: [0, 200] }),
             new ExpirationPlugin({
@@ -209,7 +211,7 @@ registerRoute(
 registerRoute(
     ({ request }) => ['font', 'image'].includes(request.destination),
     new CacheFirst({
-        cacheName: 'static-assets',
+        cacheName: STATIC_ASSETS_CACHE,
         plugins: [
             new CacheableResponsePlugin({ statuses: [0, 200] }),
             new ExpirationPlugin({
