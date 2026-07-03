@@ -189,8 +189,10 @@ registerRoute(
 );
 
 // WebAssembly modules: cache first with a 30-day lifetime.
+// Match both native WASM loads (destination === 'wasm') and plain fetch() calls
+// (destination === '') since loadArgon2WasmBinary uses fetch().arrayBuffer().
 registerRoute(
-    ({ request }) => request.destination === 'wasm',
+    ({ url, request }) => request.destination === 'wasm' || url.pathname.endsWith('.wasm'),
     new CacheFirst({
         cacheName: 'static-assets',
         plugins: [
