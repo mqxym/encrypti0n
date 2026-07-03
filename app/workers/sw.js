@@ -31,6 +31,15 @@ setCacheNameDetails({ prefix: 'encrypti0n' });
 self.skipWaiting();
 clientsClaim();
 
+// Pre-cache argon2.wasm on install so it is available even before first use.
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open('encrypti0n-static-assets').then((cache) =>
+            cache.add('/assets/libs/cryptit/argon2.wasm')
+        )
+    );
+});
+
 // ---------------------------------------------------------------------------
 // StreamSaver integration
 // ---------------------------------------------------------------------------
@@ -176,6 +185,21 @@ registerRoute(
     new StaleWhileRevalidate({
         cacheName: 'css-assets',
         plugins: [new CacheableResponsePlugin({ statuses: [0, 200] })],
+    })
+);
+
+// WebAssembly modules: cache first with a 30-day lifetime.
+registerRoute(
+    ({ request }) => request.destination === 'wasm',
+    new CacheFirst({
+        cacheName: 'static-assets',
+        plugins: [
+            new CacheableResponsePlugin({ statuses: [0, 200] }),
+            new ExpirationPlugin({
+                maxEntries: 10,
+                maxAgeSeconds: 30 * 24 * 60 * 60,
+            }),
+        ],
     })
 );
 
