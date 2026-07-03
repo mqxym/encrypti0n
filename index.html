@@ -393,6 +393,11 @@
                                     <i class="ri-moon-line font-22"></i>
                                 </div>
                             </li>
+                            <li id="offline-banner" class="d-none" aria-live="polite">
+                                <span class="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Connection lost: offline mode is active">
+                                    <i class="mdi mdi-wifi-off font-22 text-pink" aria-label="Offline"></i>
+                                </span>
+                            </li>
                         </ul>
                     </div>
                 </nav>
@@ -707,14 +712,14 @@
                             <div class="row informationRow">
                                 <!-- Card 1 -->
                                 <div class="col-lg-4 col-xxl-3 col-12 mb-3">
-                                    <section class="card border-dashed border-secondary border h-100">
+                                    <section class="card border-0 border-start border-primary border-3 h-100">
                                         <div class="card-header">
                                             <div class="row align-items-center">
                                                 <div class="col">
                                                     <h2 class="h4 mb-0">How is the data encrypted?</h2>
                                                 </div>
                                                 <h3 class="col-auto mt-3">
-                                                    <i class="mdi mdi-forwardburger"></i>
+                                                    <i class="mdi mdi-forwardburger text-primary"></i>
                                                 </h3>
                                             </div>
                                         </div>
@@ -744,14 +749,14 @@
 
                                 <!-- Card 2 -->
                                 <div class="col-lg-4 col-xxl-3 col-12 mb-3" id="Argon2Info">
-                                    <section class="card border-dashed border-secondary border h-100">
+                                    <section class="card border-0 border-start border-primary border-3  h-100">
                                         <div class="card-header">
                                             <div class="row align-items-center">
                                                 <div class="col">
                                                     <h2 class="h4 mb-0">What is the Argon2 key derivation algorithm?</h2>
                                                 </div>
                                                 <h3 class="col-auto mt-3">
-                                                    <i class="mdi mdi-file-code-outline"></i>
+                                                    <i class="mdi text-primary mdi-file-code-outline"></i>
                                                 </h3>
                                             </div>
                                         </div>
@@ -784,14 +789,14 @@
 
                                 <!-- Card 3 -->
                                 <div class="col-lg-4 col-xxl-4 col-12 mb-3" id="AESGCMInfo">
-                                    <section class="card border-dashed border-secondary border h-100">
+                                    <section class="card border-0 border-start border-primary border-3  h-100">
                                         <div class="card-header">
                                             <div class="row align-items-center">
                                                 <div class="col">
                                                     <h2 class="h4 mb-0">What is AES-GCM Encryption?</h2>
                                                 </div>
                                                 <h3 class="col-auto mt-3">
-                                                    <i class="mdi mdi-lock"></i>
+                                                    <i class="text-primary mdi mdi-lock"></i>
                                                 </h3>
                                             </div>
                                         </div>
@@ -1294,7 +1299,7 @@
         <script src="assets/libs/streamsaver/StreamSaver.min.js" defer></script>
 
         <script type="module" src="app/main/index.js" defer></script>
-        
+
         <script src="app/insertVersion.js" defer></script>
     </body>
 </html>

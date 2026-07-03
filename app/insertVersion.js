@@ -1,6 +1,6 @@
 'use strict';
 
-const appVersion = "3.1.2";
+const appVersion = "3.2.0";
 
 function normalizeUrl(url) {
     return url.replace(/\/$/, "");
@@ -39,4 +39,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
             hljs.highlightElement(el); 
         });
     }
+
+    var banner = document.getElementById('offline-banner');
+
+    function updateBanner() {
+        if (navigator.onLine) {
+            banner.classList.add('d-none');
+        } else {
+            banner.classList.remove('d-none');
+        }
+    }
+
+    updateBanner();
+
+    window.addEventListener('online', updateBanner);
+    window.addEventListener('offline', updateBanner);
 });

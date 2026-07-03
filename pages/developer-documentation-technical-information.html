@@ -213,6 +213,11 @@
                                     <i class="ri-moon-line font-22"></i>
                                 </a>
                             </li>
+                            <li id="offline-banner" class="d-none" aria-live="polite">
+                                <span class="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Connection lost: offline mode is active">
+                                    <i class="mdi mdi-wifi-off font-22 text-pink" aria-label="Offline"></i>
+                                </span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -263,13 +268,13 @@
                                 <p>Encrypti0n.com uses modern browser-native cryptographic libraries:</p>
                                 <ul>
                                     <li>
-                                        <strong><code>@mqxym/cryptit v2.2.1</code></strong>
+                                        <strong><code>@mqxym/cryptit v2.3.0</code></strong>
                                         : TypeScript powered API used for AES-GCM / Argon2id text and file encryption
                                         <a target="_blank" href="https://github.com/mqxym/cryptit">(GitHub)</a>
                                         .
                                     </li>
                                     <li>
-                                        <strong><code>@mqxym/secure-local-storage v0.8.0</code></strong>
+                                        <strong><code>@mqxym/secure-local-storage v0.8.2</code></strong>
                                         : Browser API used for securing the local storage data with AES-GCM envelope encryption
                                         <a target="_blank" href="https://github.com/mqxym/secure-local-storage">(GitHub)</a>
                                         .
@@ -361,6 +366,12 @@
                                         <strong><code>JSZip v3.10.1</code></strong>
                                         : Zip Download / Upload of multiple encrypted files
                                         <a target="_blank" href="https://stuk.github.io/jszip/">(Official Page)</a>
+                                        .
+                                    </li>
+                                    <li>
+                                        <strong><code>workbox v7.4.1</code></strong>
+                                        : Service Worker / Offline Capabilities
+                                        <a target="_blank" href="https://developer.chrome.com/docs/workbox">(Official Page)</a>
                                         .
                                     </li>
                                 </ul>
@@ -497,10 +508,9 @@
                                         <p class="mb-0">
                                             <small class="text-muted">
                                                 Note on language targets:
-                                                <code>sls</code>
-                                                compiles to ES2022 and
+                                                <code>sls</code>and
                                                 <code>cryptit</code>
-                                                to ES2020. The baseline above is governed by runtime features (WebAssembly, SubtleCrypto, IndexedDB), not syntax alone.
+                                                compile to ES2022. The baseline above is governed by runtime features (WebAssembly, SubtleCrypto, IndexedDB), not syntax alone.
                                             </small>
                                         </p>
                                     </div>
