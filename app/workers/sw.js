@@ -189,11 +189,23 @@ self.addEventListener('fetch', (event) => {
             caches.open(WASM_CACHE).then(async (cache) => {
                 const cached = await cache.match(url);
                 if (cached) return cached;
-                const response = await fetch(event.request);
-                if (response.ok || response.type === 'opaque') {
-                    cache.put(url, response.clone()).catch(() => {});
+
+                try {
+                    const response = await fetch(event.request);
+
+                    if (response.ok || response.type === 'opaque') {
+                        cache.put(url, response.clone()).catch(() => {});
+                    }
+
+                    return response;
+                } catch {
+                    return new Response('WASM asset is not available offline.', {
+                        status: 503,
+                        headers: {
+                            'Content-Type': 'text/plain; charset=utf-8',
+                        },
+                    });
                 }
-                return response;
             })
         );
         return;
@@ -239,16 +251,69 @@ const isServiceWorkerScript = (url) => /(^|\/)sw\.js$/.test(url.pathname);
 // get the latest version online, fall back to the cached copy when offline.
 // Transient download URLs never reach this route — the StreamSaver fetch handler
 // above stops their propagation first.
+const htmlNetworkFirst = new NetworkFirst({
+    cacheName: HTML_CACHE,
+    plugins: [
+        new CacheableResponsePlugin({ statuses: [0, 200] }),
+        new ExpirationPlugin({ maxEntries: 30 }),
+    ],
+});
+
+const getCachedHtmlFallback = async (request) => {
+    const cache = await caches.open(HTML_CACHE);
+    const url = new URL(request.url);
+
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+        return (
+            await cache.match('/') ||
+            await cache.match('/index.html') ||
+            await cache.match('/offline.html')
+        );
+    }
+
+    return (
+        await cache.match(request) ||
+        await cache.match('/offline.html') ||
+        await cache.match('/index.html') ||
+        await cache.match('/')
+    );
+};
+
 registerRoute(
-    new NavigationRoute(
-        new NetworkFirst({
-            cacheName: 'html-pages',
-            plugins: [
-                new CacheableResponsePlugin({ statuses: [0, 200] }),
-                new ExpirationPlugin({ maxEntries: 30 }),
-            ],
-        })
-    )
+    new NavigationRoute(async ({ event, request }) => {
+        try {
+            const response = await htmlNetworkFirst.handle({ event, request });
+
+            if (response) {
+                // Keep / and /index.html synchronized when either one succeeds.
+                const url = new URL(request.url);
+
+                if (url.pathname === '/' || url.pathname === '/index.html') {
+                    const cache = await caches.open(HTML_CACHE);
+                    cache.put('/', response.clone()).catch(() => {});
+                    cache.put('/index.html', response.clone()).catch(() => {});
+                }
+
+                return response;
+            }
+        } catch {
+            // Fall through to cache fallback below.
+        }
+
+        const fallback = await getCachedHtmlFallback(request);
+
+        if (fallback) return fallback;
+
+        return new Response(
+            '<!doctype html><title>Offline</title><h1>Offline</h1><p>This page is not available offline.</p>',
+            {
+                status: 503,
+                headers: {
+                    'Content-Type': 'text/html; charset=utf-8',
+                },
+            }
+        );
+    })
 );
 
 // JavaScript: bundled app code (assets/js/*.js), dev-time source modules
