@@ -1,178 +1,210 @@
 /**
- * @fileoverview Controller for decoding Base64 or UTF-8 input, extracting encryption metadata,
- * and updating the UI with header, salt, IV, and payload details in real time.
- * Utilizes shared Base64 utilities and an EncryptionService for header parsing.
+ * @fileoverview Controller for decoding Base64 text or binary File/Blob input,
+ * extracting encryption metadata, and updating the UI in real time.
+ * Supports both paste-text and drag-and-drop / browse file upload modes.
+ * Handles both single-block (non-chunked) and streaming (chunked) payloads.
  */
 
 import { Cryptit } from "../../assets/libs/cryptit/cryptit.browser.min.js";
 import { arrayBufferToBase64 } from "../main/utils/base64.js";
 
-/**
- * Class responsible for handling user input decoding, metadata extraction,
- * and live UI updates for each keystroke.
- */
 class DecodeController {
-  /**
-   * Creates an instance of DecodeController.
-   * @constructs DecodeController
-   */
   constructor() {
-    /**
-     * Service for decoding encryption headers.
-     * @type {EncryptionService}
-     * @private
-     */
     this.cryptit = Cryptit;
 
-    // ---- Cache DOM ------------------------------------------------
     const $ = (id) => document.getElementById(id);
 
-    /** @type {HTMLInputElement} Element for raw data input. */
-    this.$input          = $("dataInput");
-    /** @type {HTMLElement} Badge element displaying status. */
-    this.$status         = $("statusBadge");
-    /** @type {HTMLElement} Element showing salt length. */
-    this.$saltLength     = $("saltLength");
-    /** @type {HTMLElement} Element showing salt value. */
-    this.$saltValue      = $("saltValue");
-    /** @type {HTMLElement} Element showing Argon2 round count. */
-    this.$roundCount     = $("roundCount");
-    /** @type {HTMLElement} Element showing header version. */
-    this.$version        = $("version");
-    /** @type {HTMLElement} Element showing IV length. */
-    this.$ivLength       = $("ivLength");
-    /** @type {HTMLElement} Element showing IV value. */
-    this.$ivValue        = $("ivValue");
-    /** @type {HTMLElement} Element showing payload length. */
-    this.$payloadLength  = $("payloadLength");
-    /** @type {HTMLElement} Element showing payload length. */
-    this.$authLength  = $("authLength");
-    /** @type {HTMLElement} Element showing payload length. */
-    this.$authVal  = $("authVal");
+    // Input elements
+    this.$input              = $("dataInput");
+    this.$fileInput          = $("fileInput");
+    this.$fileNameDisplay    = $("fileNameDisplay");
+    this.$dropZone           = $("dropZone");
 
-    // Bind event listeners and process initial input.
+    // Result elements — header (always shown)
+    this.$status             = $("statusBadge");
+    this.$version            = $("version");
+    this.$saltLength         = $("saltLength");
+    this.$saltValue          = $("saltValue");
+    this.$roundCount         = $("roundCount");
+
+    // Result elements — non-chunked section
+    this.$nonChunkedSection  = $("nonChunkedSection");
+    this.$ivLength           = $("ivLength");
+    this.$ivValue            = $("ivValue");
+    this.$authLength         = $("authLength");
+    this.$authVal            = $("authVal");
+    this.$payloadLength      = $("payloadLength");
+
+    // Result elements — chunked section
+    this.$chunkedSection     = $("chunkedSection");
+    this.$chunkSize          = $("chunkSize");
+    this.$chunkCount         = $("chunkCount");
+    this.$totalPayload       = $("totalPayload");
+
+    // Loading indicator (shown for files > 200 MiB)
+    this.$loadingIndicator   = $("fileLoadingIndicator");
+
     this.bindEvents();
-    this.handleInput();
+    this.handleTextInput();
   }
 
-  /**
-   * Attaches input event listener to the data input field.
-   * @private
-   */
   bindEvents() {
-    this.$input.addEventListener("input", () => this.handleInput());
+    // Text tab
+    this.$input.addEventListener("input", () => this.handleTextInput());
+
+    // File tab — browse
+    this.$fileInput.addEventListener("change", () => this.handleFileChange());
+
+    // File tab — click anywhere on the drop zone to open the file picker
+    this.$dropZone.addEventListener("click", (e) => {
+      if (!e.target.closest("label") && e.target !== this.$fileInput) {
+        this.$fileInput.click();
+      }
+    });
+
+    // File tab — drag and drop
+    this.$dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      this.$dropZone.classList.remove("border-secondary", "border-pink");
+      this.$dropZone.classList.add("border-primary");
+    });
+    this.$dropZone.addEventListener("dragleave", () => {
+      this.$dropZone.classList.remove("border-primary", "border-pink");
+      this.$dropZone.classList.add("border-secondary");
+    });
+    this.$dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      this.$dropZone.classList.remove("border-primary");
+      const file = e.dataTransfer?.files?.[0];
+      if (file) this.processFile(file);
+    });
+
+    // Tab switches — re-evaluate active input when switching
+    document.getElementById("tab-text-btn")?.addEventListener("shown.bs.tab", () => this.handleTextInput());
+    document.getElementById("tab-file-btn")?.addEventListener("shown.bs.tab", () => {
+      if (!this.$fileInput.files?.length) this.resetView();
+    });
   }
 
-  /**
-   * Handles changes in the input field by parsing, decoding, and updating the UI.
-   * Resets the view if input is empty or parsing/decoding fails.
-   * @private
-   */
-  async handleInput() {
-    const raw = this.$input.value;
-    if (!raw.trim()) {
-      this.resetView();
-      return;
-    }
+  // ------------------------------------------------------------------
+  // Input handlers
+  // ------------------------------------------------------------------
 
+  async handleTextInput() {
+    const raw = this.$input.value.trim();
+    if (!raw) { this.resetView(); return; }
+    await this.decode(raw);
+  }
+
+  async handleFileChange() {
+    const file = this.$fileInput.files?.[0];
+    if (!file) { this.$fileNameDisplay.textContent = ""; this.resetView(); return; }
+    await this.processFile(file);
+  }
+
+  async processFile(file) {
+    this.$fileNameDisplay.textContent = file.name;
+    const isLarge = file.size > 200 * 1024 * 1024;
+    if (isLarge) this.$loadingIndicator.classList.remove("d-none");
     try {
-      const decodedHeader = await this.cryptit.decodeHeader(raw);
-      const decodedData = await this.cryptit.decodeData(raw);
+      await this.decode(file); // File extends Blob — accepted directly by Cryptit
+    } finally {
+      this.$loadingIndicator.classList.add("d-none");
+    }
+  }
 
-      // Update status badge based on detected algorithm.
+  // ------------------------------------------------------------------
+  // Core decode — accepts a Base64 string or a Blob/File
+  // ------------------------------------------------------------------
+
+  async decode(input) {
+    try {
+      const decodedHeader = await this.cryptit.decodeHeader(input);
+      const decodedData   = await this.cryptit.decodeData(input);
+
+      const isValid = decodedHeader.scheme === 0 || decodedHeader.scheme === 1;
       this.setStatus(
-        decodedHeader.scheme === 0 ? "encrypted" : "unknown",
-        decodedHeader.scheme === 0 ? "bg-pink" : "bg-secondary",
-        decodedHeader.scheme === 0 ? "border-pink" : "border-secondary"
+        isValid ? "encrypted" : "unknown",
+        isValid ? "bg-pink"   : "bg-secondary",
+        isValid ? "border-pink" : "border-secondary",
       );
 
-      // Display salt metadata.
+      // Header fields — always present
+      this.$version.textContent    = decodedHeader.scheme;
       this.$saltLength.textContent = `${decodedHeader.saltLength}-byte`;
-      this.$saltValue.textContent = decodedHeader.salt;
-
-      // Display Argon2 iteration count description.
+      this.$saltValue.textContent  = decodedHeader.salt;
       this.$roundCount.textContent = decodedHeader.difficulty;
 
-      // Display header version (incremented by 1 for UI clarity).
-      this.$version.textContent = decodedHeader.scheme + 1;
+      if (decodedData.isChunked) {
+        // Streaming / chunked file payload
+        this.$nonChunkedSection.classList.add("d-none");
+        this.$chunkedSection.classList.remove("d-none");
 
-      this.$ivLength.textContent = `${decodedData.params.ivLength}-byte`;
-      this.$ivValue.textContent = arrayBufferToBase64(decodedData.params.iv);
+        const { chunkSize, count, totalPayload } = decodedData.chunks;
+        this.$chunkSize.textContent    = this.formatBytes(chunkSize);
+        this.$chunkCount.textContent   = count;
+        this.$totalPayload.textContent = this.formatBytes(totalPayload);
+      } else {
+        // Single-block payload
+        this.$chunkedSection.classList.add("d-none");
+        this.$nonChunkedSection.classList.remove("d-none");
 
+        const payloadLen = decodedData.payloadLength;
+        if (payloadLen <= 0) throw new Error("Payload length must be positive");
 
-      this.$authLength.textContent = `${decodedData.params.tagLength}-byte`;
-      this.$authVal.textContent = arrayBufferToBase64(decodedData.params.tag);
-
-      const payloadLen = decodedData.payloadLength;
-
-      if (payloadLen <= 0) {
-        throw Error("Payload can't be smaller than 0");
+        this.$ivLength.textContent      = `${decodedData.params.ivLength}-byte`;
+        this.$ivValue.textContent       = arrayBufferToBase64(decodedData.params.iv);
+        this.$authLength.textContent    = `${decodedData.params.tagLength}-byte`;
+        this.$authVal.textContent       = arrayBufferToBase64(decodedData.params.tag);
+        this.$payloadLength.textContent = this.formatBytes(payloadLen);
       }
-
-      this.$payloadLength.textContent = `${payloadLen}-byte`;
-    } catch (err) {
+    } catch {
       this.resetView();
     }
   }
 
   // ------------------------------------------------------------------
-  // Helpers
+  // UI helpers
   // ------------------------------------------------------------------
 
-  /**
-   * Returns a human-readable description of Argon2 iteration count.
-   * @param {number} iters - Number of Argon2 iterations.
-   * @returns {string} Description label with iteration count.
-   * @private
-   */
-  describeRounds(iters) {
-    if (iters <= 5)  return `low (${iters})`;
-    if (iters <= 20) return `middle (${iters})`;
-    return `high (${iters})`;
-  }
-
-  /**
-   * Updates the status badge label and style.
-   * @param {string} label - Text label for the status.
-   * @param {string} badgeClass - CSS class for badge styling.
-   * @param {string} borderClass - CSS class for input border styling.
-   * @private
-   */
   setStatus(label, badgeClass, borderClass) {
     this.$status.textContent = label;
-    this.$status.className = `badge rounded-pill ${badgeClass}`;
-    this.$input.className = `cust-responsive-textarea form-control mb-1 cust-resize-none border ${borderClass}`;
+    this.$status.className   = `badge rounded-pill ${badgeClass} px-3 py-2`;
+    // Textarea border (text tab)
+    this.$input.className    = `form-control cust-resize-none border ${borderClass}`;
+    // Drop zone border (file tab)
+    this.$dropZone.classList.remove("border-secondary", "border-primary", "border-pink");
+    this.$dropZone.classList.add(borderClass);
   }
 
-  /**
-   * Clears all metadata fields in the UI to placeholder.
-   * @private
-   */
   clearFields() {
     [
-      this.$saltLength,
-      this.$saltValue,
-      this.$roundCount,
-      this.$version,
-      this.$ivLength,
-      this.$ivValue,
+      this.$version,      this.$saltLength,  this.$saltValue,  this.$roundCount,
+      this.$ivLength,     this.$ivValue,     this.$authLength, this.$authVal,
       this.$payloadLength,
-      this.$authLength,
-      this.$authVal,
+      this.$chunkSize,    this.$chunkCount,  this.$totalPayload,
     ].forEach((el) => (el.textContent = "—"));
   }
 
-  /**
-   * Resets status badge and clears metadata fields.
-   * @private
-   */
   resetView() {
     this.setStatus("unknown", "bg-secondary", "border-secondary");
+    this.$nonChunkedSection.classList.remove("d-none");
+    this.$chunkedSection.classList.add("d-none");
     this.clearFields();
+  }
+
+  /**
+   * Format a byte count into a human-readable string, e.g. "512 KiB".
+   * @param {number} bytes
+   * @returns {string}
+   */
+  formatBytes(bytes) {
+    if (bytes === 0) return "0 byte";
+    const units = ["byte", "KiB", "MiB", "GiB"];
+    const i = Math.min(Math.floor(Math.log2(bytes) / 10), units.length - 1);
+    const value = i === 0 ? bytes : (bytes / Math.pow(1024, i)).toFixed(2);
+    return `${value} ${units[i]}`;
   }
 }
 
 export default DecodeController;
-
-// Auto-instantiate when DOM is ready
-window.addEventListener("DOMContentLoaded", () => new DecodeController());

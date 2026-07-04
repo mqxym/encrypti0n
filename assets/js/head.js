@@ -103,3 +103,10 @@
     }
 
 })();
+
+// Register the offline service worker (silently updates on next page load).
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+        navigator.serviceWorker.register("/sw-compiled.js");
+    });
+}

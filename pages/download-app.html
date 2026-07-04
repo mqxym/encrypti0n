@@ -238,6 +238,11 @@
                                     <i class="ri-moon-line font-22"></i>
                                 </a>
                             </li>
+                            <li id="offline-banner" class="d-none" aria-live="polite">
+                                <span class="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Connection lost: offline mode is active">
+                                    <i class="mdi mdi-wifi-off font-22 text-pink" aria-label="Offline"></i>
+                                </span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -268,7 +273,7 @@
                                 <div class="card shadow border border-secondary">
                                     <div class="card-body text-center">
                                         <h2 class="card-title">Download Latest Release</h2>
-                                        <p class="card-text">Download the most recent release of Encrypti0n.com from our GitHub repository.</p>
+                                        <p class="card-text">Download the most recent release of Encrypti0n.com from our GitHub repository for offline usage or review the changelog.</p>
                                         <a href="https://github.com/mqxym/encrypti0n/releases" target="_blank" class="btn btn-pink">
                                             <i class="mdi mdi-progress-download me-1"></i>
                                             View Releases on GitHub
@@ -289,16 +294,58 @@
                             </div>
                         </div>
 
+                        <!-- PWA / Mobile Instructions -->
+                        <div class="row mb-4">
+                            <!-- iOS Instructions -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card shadow border-0 border-start border-primary border-3 h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h3 class="card-title"><i class="mdi mdi-apple me-1"></i>Add to Home Screen on iOS</h3>
+                                        <p class="card-text">Install Encrypti0n.com as a PWA on your iPhone or iPad for offline use:</p>
+                                        <ol class="mb-4">
+                                            <li>Open <strong>Safari</strong> and navigate to <a href="https://app.encrypti0n.com" target="_blank">app.encrypti0n.com</a>.</li>
+                                            <li>Tap the <strong>Share</strong> button <i class="mdi mdi-export-variant"></i> at the bottom of the screen.</li>
+                                            <li>Scroll down and tap <strong>&ldquo;Add to Home Screen&rdquo;</strong>.</li>
+                                            <li>Confirm the name and tap <strong>Add</strong> in the top-right corner.</li>
+                                            <li>The app icon will appear on your home screen and works offline after loading the app for the first time.</li>
+                                        </ol>
+                                        <p class="text-muted small mb-0"><i class="mdi mdi-information-outline me-1"></i>Must be opened in Safari — other browsers on iOS do not support PWA installation.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Android Instructions -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card shadow border-0 border-start border-primary border-3 h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h3 class="card-title"><i class="mdi mdi-android me-1"></i>Add to Home Screen on Android</h3>
+                                        <p class="card-text">Install Encrypti0n.com as a PWA on your Android device for offline use:</p>
+                                        <ol class="mb-4">
+                                            <li>Open <strong>Chrome</strong> and navigate to <a href="https://app.encrypti0n.com" target="_blank">app.encrypti0n.com</a>.</li>
+                                            <li>Tap the <strong>three-dot menu</strong> <i class="mdi mdi-dots-vertical"></i> in the top-right corner.</li>
+                                            <li>Tap <strong>&ldquo;Add to Home screen&rdquo;</strong>.</li>
+                                            <li>Confirm by tapping <strong>Add</strong> in the prompt.</li>
+                                            <li>The app icon will appear on your home screen and works offline after loading the app for the first time.</li>
+                                        </ol>
+                                        <p class="text-muted small mb-0"><i class="mdi mdi-information-outline me-1"></i>Chrome may also show an automatic install banner at the bottom of the screen — tap it to install directly.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row mb-4">
                             <!-- macOS Instructions -->
                             <div class="col-md-6 mb-4">
-                                <div class="card shadow border border-dashed border-secondary h-100">
+                                <div class="card shadow border-0 border-start border-primary border-3 h-100">
                                     <div class="card-body d-flex flex-column">
                                         <h3 class="card-title">Run via HTTP on macOS</h3>
                                         <p class="card-text">To serve the app locally and allow ES6 modules to load correctly, follow these steps:</p>
 
                                         <h4>Using Python</h4>
                                         <ol class="mb-4">
+                                            <li>
+                                                Navigate to the releases page from above and download the source code from the latest release and extract it.
+                                            </li>
                                             <li>Open Terminal.</li>
                                             <li>
                                                 Navigate to the extracted folder, e.g.:
@@ -326,13 +373,17 @@
 
                             <!-- Windows Instructions -->
                             <div class="col-md-6 mb-4">
-                                <div class="card shadow border border-dashed border-secondary h-100">
+                                <div class="card shadow border-0 border-start border-primary border-3 h-100">
                                     <div class="card-body d-flex flex-column">
                                         <h3 class="card-title">Run via HTTP on Windows</h3>
                                         <p class="card-text">To serve the app locally and allow ES6 modules to load correctly, choose one of the following:</p>
 
                                         <h4>Using Python</h4>
                                         <ol class="mb-4">
+                                            <li>
+                                                Navigate to the releases page from above and download the source code from the latest release and extract it.
+                                            </li>
+                                            </li>
                                             <li>Open PowerShell or CMD.</li>
                                             <li>
                                                 Navigate to the extracted folder, e.g.:

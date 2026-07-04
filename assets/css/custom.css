@@ -1,5 +1,10 @@
 /* Custom Styles for Encrypti0n.com */
 
+.offline-icon-wrap i {
+    font-size: 3.25rem;
+    line-height: 1;
+}
+
 /* Utility Classes */
 .cust-scrollbar-hidden {
     overflow-y: auto;

@@ -190,6 +190,11 @@
                                     <i class="ri-moon-line font-22"></i>
                                 </a>
                             </li>
+                            <li id="offline-banner" class="d-none" aria-live="polite">
+                                <span class="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Connection lost: offline mode is active">
+                                    <i class="mdi mdi-wifi-off font-22 text-pink" aria-label="Offline"></i>
+                                </span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -201,195 +206,275 @@
                                     <ol class="breadcrumb m-0">
                                         <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
                                         <li class="breadcrumb-item"><a href="http://app.encrypti0n.com">App</a></li>
-                                        <li class="breadcrumb-item active"><a href="./password-generator.html">Password Generator</a></li>
+                                        <li class="breadcrumb-item active"><a href="./data-decoder.html">Data Decoder</a></li>
                                     </ol>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="container my-3 my-md-5">
-                        <!-- Page Title -->
-                        <div class="row">
-                            <div class="col-12">
-                                <h1 class="mb-4 display-5">Data Decoder for Encrypti0n.com v3</h1>
-                                <p class="lead fs-5">
-                                    Gain insights into data
-                                    <strong>encrypted</strong>
-                                    on this
-                                    <a class="link-blue fw-bold text-decoration-underline" href="../index.html" target="_blank">
-                                        Data Encryption Platform
-                                    </a>
-                                    for debugging purposes.
-                                </p>
+
+                        <!-- Hero -->
+                        <section class="text-center mb-4">
+                            <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                                <span class="badge bg-primary px-3 py-2"><i class="mdi mdi-shield-lock me-1" aria-hidden="true"></i>Cryptit Data Decoder</span>
+                                <span class="badge bg-primary px-3 py-2"><i class="mdi mdi-laptop me-1" aria-hidden="true"></i>Client-Side Only</span>
+                                <span class="badge bg-primary px-3 py-2"><i class="mdi mdi-text-search me-1" aria-hidden="true"></i>Debug Tool</span>
                             </div>
-                        </div>
+                            <h1 class="display-5 fw-bold">Data Decoder</h1>
+                            <p class="lead text-muted">Inspect the encryption metadata of any Encrypti0n.com v3 or @mqxym/cryptit payload. Paste a Base64 string or drop an encrypted file.</p>
+                        </section>
 
+                        <!-- Analyzer card -->
                         <div class="card shadow-lg border border-secondary mb-4">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h2>Data Input</h2>
-                                        <label for="dataInput" class="help-block me-auto mb-3">
-                                            <span class="text-muted mb-0">Paste the encrypted text you want to analyze:</span>
-                                        </label>
+                            <div class="card-body p-3 p-md-4">
+                                <div class="row g-4">
 
-                                        <textarea id="dataInput" class="cust-responsive-textarea form-control mb-1 border border-pink cust-resize-none" name="dataInput" placeholder="Paste your encrypted text here." rows="18"></textarea>
+                                    <!-- LEFT: Input -->
+                                    <div class="col-lg-6">
+                                        <h2 class="h5 mb-3"><i class="mdi mdi-text-box-search-outline me-2 text-primary" aria-hidden="true"></i>Input</h2>
+                                        <ul class="nav nav-tabs mb-3" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="tab-text-btn" data-bs-toggle="tab" data-bs-target="#tab-text" type="button" role="tab" aria-controls="tab-text" aria-selected="true">
+                                                    <i class="mdi mdi-text-box-outline me-1" aria-hidden="true"></i>Paste Text
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="tab-file-btn" data-bs-toggle="tab" data-bs-target="#tab-file" type="button" role="tab" aria-controls="tab-file" aria-selected="false">
+                                                    <i class="mdi mdi-file-upload-outline me-1" aria-hidden="true"></i>Upload File
+                                                </button>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <!-- Text tab -->
+                                            <div class="tab-pane fade show active" id="tab-text" role="tabpanel" aria-labelledby="tab-text-btn">
+                                                <textarea id="dataInput" class="form-control cust-resize-none border border-secondary" name="dataInput" placeholder="Paste your Base64-encoded encrypted text here&hellip;" rows="10"></textarea>
+                                            </div>
+                                            <!-- File tab -->
+                                            <div class="tab-pane fade" id="tab-file" role="tabpanel" aria-labelledby="tab-file-btn">
+                                                <div id="dropZone" class="border border-2 border-dashed border-secondary rounded p-4 text-center" style="min-height: 220px; cursor: pointer;">
+                                                    <input type="file" id="fileInput" class="d-none" />
+                                                    <i class="mdi mdi-cloud-upload-outline text-muted" style="font-size: 3rem;" aria-hidden="true"></i>
+                                                    <p class="mt-2 mb-1 text-muted">Drag &amp; drop an encrypted file here</p>
+                                                    <p class="text-muted small mb-3">or</p>
+                                                    <label for="fileInput" class="btn btn-outline-secondary btn-sm">
+                                                        <i class="mdi mdi-folder-open-outline me-1" aria-hidden="true"></i>Browse file
+                                                    </label>
+                                                    <p id="fileNameDisplay" class="mt-3 small text-muted mb-0"></p>
+                                                    <div id="fileLoadingIndicator" class="mt-3 d-none" aria-live="polite">
+                                                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status" aria-hidden="true"></div>
+                                                        <span class="small text-muted">Analyzing large file&hellip;</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-12 col-md-6 mt-4 mt-md-0">
-                                        <!-- compact header with a floating status badge -->
-                                        <h2>Analysis Result</h2>
+
+                                    <!-- RIGHT: Results -->
+                                    <div class="col-lg-6">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <span class="text-muted mb-0">Status of Input</span>
+                                            <h2 class="h5 mb-0"><i class="mdi mdi-chart-box-outline me-2 text-primary" aria-hidden="true"></i>Analysis Result</h2>
                                             <span id="statusBadge" class="badge rounded-pill bg-secondary px-3 py-2">unknown</span>
                                         </div>
-
-                                        <!-- data grid ------------------------------------------------------>
                                         <div class="border rounded p-3">
-                                            <div class="row gy-2">
-                                                <!-- VERSION -->
-                                                <div class="col-6">Data Version</div>
-                                                <div id="version" class="col-6 text-end text-monospace fw-medium">—</div>
-                                                <h5 class="mb-0">Key Derivation Parameters:</h5>
-                                                <!-- SALT LEN -->
-                                                <div class="col-6 text-muted">Salt&nbsp;length</div>
+                                            <div class="row gy-2 align-items-center">
+
+                                                <!-- Header fields (always shown) -->
+                                                <div class="col-12">
+                                                    <span class="text-uppercase text-muted small fw-semibold">Header</span>
+                                                </div>
+                                                <div class="col-6 text-muted small">Data version</div>
+                                                <div id="version" class="col-6 text-end fw-medium">—</div>
+
+                                                <div class="col-6 text-muted small">Salt length</div>
                                                 <div id="saltLength" class="col-6 text-end text-monospace">—</div>
 
-                                                <!-- SALT VAL -->
-                                                <div class="col-6 text-muted">Salt&nbsp;value</div>
+                                                <div class="col-6 text-muted small">Salt value</div>
                                                 <div class="col-6 text-end">
                                                     <code id="saltValue" class="user-select-all text-break d-block small">—</code>
                                                 </div>
 
-                                                <!-- ROUND CNT -->
-                                                <div class="col-6 text-muted">Round&nbsp;count</div>
+                                                <div class="col-6 text-muted small">Round count</div>
                                                 <div id="roundCount" class="col-6 text-end text-monospace">—</div>
 
-                                                <h5 class="mb-0">Encryption Algorithm Parameters:</h5>
-                                                <!-- IV LEN -->
-                                                <div class="col-6 text-muted">IV&nbsp;length</div>
-                                                <div id="ivLength" class="col-6 text-end text-monospace">—</div>
+                                                <div class="col-12"><hr class="my-1" /></div>
 
-                                                <!-- IV VAL -->
-                                                <div class="col-6 text-muted">IV&nbsp;value</div>
-                                                <div class="col-6 text-end">
-                                                    <code id="ivValue" class="user-select-all text-break d-block small">—</code>
+                                                <!-- Non-chunked section (single block) -->
+                                                <div id="nonChunkedSection" class="col-12">
+                                                    <div class="row gy-2">
+                                                        <div class="col-12">
+                                                            <span class="text-uppercase text-muted small fw-semibold">Encryption (Single Block)</span>
+                                                        </div>
+                                                        <div class="col-6 text-muted small">IV length</div>
+                                                        <div id="ivLength" class="col-6 text-end text-monospace">—</div>
+
+                                                        <div class="col-6 text-muted small">IV value</div>
+                                                        <div class="col-6 text-end">
+                                                            <code id="ivValue" class="user-select-all text-break d-block small">—</code>
+                                                        </div>
+
+                                                        <div class="col-6 text-muted small">AuthTag length</div>
+                                                        <div id="authLength" class="col-6 text-end text-monospace">—</div>
+
+                                                        <div class="col-6 text-muted small">AuthTag value</div>
+                                                        <div class="col-6 text-end">
+                                                            <code id="authVal" class="user-select-all text-break d-block small">—</code>
+                                                        </div>
+
+                                                        <div class="col-6 text-muted small">Payload length</div>
+                                                        <div id="payloadLength" class="col-6 text-end text-monospace">—</div>
+                                                    </div>
                                                 </div>
 
-                                                <!-- AuthTag LEN -->
-                                                <div class="col-6 text-muted">AuthTag&nbsp;length</div>
-                                                <div id="authLength" class="col-6 text-end text-monospace">—</div>
+                                                <!-- Chunked section (streaming files) -->
+                                                <div id="chunkedSection" class="col-12 d-none">
+                                                    <div class="row gy-2">
+                                                        <div class="col-12">
+                                                            <span class="text-uppercase text-muted small fw-semibold">Encryption (Streaming / Chunked)</span>
+                                                        </div>
+                                                        <div class="col-6 text-muted small">Chunk size</div>
+                                                        <div id="chunkSize" class="col-6 text-end text-monospace">—</div>
 
-                                                <!-- AuthTag VAL -->
-                                                <div class="col-6 text-muted">AuthTag&nbsp;value</div>
-                                                <div class="col-6 text-end">
-                                                    <code id="authVal" class="user-select-all text-break d-block small">—</code>
+                                                        <div class="col-6 text-muted small">Chunk count</div>
+                                                        <div id="chunkCount" class="col-6 text-end text-monospace">—</div>
+
+                                                        <div class="col-6 text-muted small">Total payload</div>
+                                                        <div id="totalPayload" class="col-6 text-end text-monospace">—</div>
+                                                    </div>
                                                 </div>
 
-                                                <!-- PAYLOAD -->
-                                                <div class="col-6 text-muted">Payload&nbsp;length</div>
-                                                <div id="payloadLength" class="col-6 text-end text-monospace">—</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row mb-4">
-                            <!-- AES-GCM Encryption Details -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card shadow border border-dashed border-secondary h-100">
+
+                        <!-- Info cards -->
+                        <div class="row mb-4 g-3">
+                            <!-- AES-GCM -->
+                            <div class="col-md-6">
+                                <div class="card shadow-sm border-0 border-start border-primary border-3 h-100">
                                     <div class="card-body d-flex flex-column">
-                                        <h3 class="card-title">About Data Version 1: Encryption Scheme</h3>
-                                        <p class="card-text">Payloads labeled “Version 1” are secured using AES-GCM with a 256-bit key, providing both confidentiality and integrity.</p>
-
-                                        <h4>Algorithm Details</h4>
-                                        <ul class="mb-4">
-                                            <li>
-                                                <strong>Algorithm:</strong>
-                                                AES-GCM
-                                            </li>
-                                            <li>
-                                                <strong>Key Size:</strong>
-                                                256 bits (32 bytes)
-                                            </li>
-                                            <li>
-                                                <strong>IV / Nonce Size:</strong>
-                                                96 bits (12 bytes)
-                                            </li>
-                                            <li>
-                                                <strong>Authentication Tag:</strong>
-                                                128 bits (16 bytes)
-                                            </li>
+                                        <h3 class="card-title h5"><i class="mdi mdi-lock-outline text-primary me-2" aria-hidden="true"></i>Version 0: Encryption Scheme</h3>
+                                        <p class="card-text">Payloads labeled &ldquo;Version 0&rdquo; use AES-GCM with a 256-bit key, giving you both confidentiality and integrity in a single pass.</p>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <span class="badge bg-primary">AES-GCM</span>
+                                            <span class="badge bg-secondary">256-bit key</span>
+                                            <span class="badge bg-info text-dark">96-bit nonce</span>
+                                            <span class="badge bg-dark">128-bit auth tag</span>
+                                        </div>
+                                        <ul class="mb-3 small">
+                                            <li><strong>Algorithm:</strong> AES-GCM</li>
+                                            <li><strong>Key size:</strong> 256 bits (32 bytes)</li>
+                                            <li><strong>IV / Nonce size:</strong> 96 bits (12 bytes)</li>
+                                            <li><strong>Authentication tag:</strong> 128 bits (16 bytes)</li>
                                         </ul>
-
-                                        <h5>References</h5>
-                                        <ul class="list-unstyled mb-0">
-                                            <li>
-                                                <a href="https://tools.ietf.org/html/rfc5116" target="_blank">RFC 5116: An Interface and Algorithms for Authenticated Encryption</a>
-                                            </li>
-                                            <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html#cipher-modes" target="_blank">OWASP Cryptographic Storage Cheat Sheet: Cipher Modes</a></li>
-                                        </ul>
+                                        <div class="mt-auto">
+                                            <p class="small text-muted mb-1">References</p>
+                                            <ul class="list-unstyled small mb-0">
+                                                <li><a href="https://tools.ietf.org/html/rfc5116" target="_blank">RFC 5116: Authenticated Encryption</a></li>
+                                                <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html#cipher-modes" target="_blank">OWASP Cryptographic Storage Cheat Sheet</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Argon2id KDF Details -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card shadow border border-dashed border-secondary h-100">
+                            <!-- Argon2id -->
+                            <div class="col-md-6">
+                                <div class="card shadow-sm border-0 border-start border-primary border-3 h-100">
                                     <div class="card-body d-flex flex-column">
-                                        <h3 class="card-title">About Data Version 1: Key Derivation</h3>
-                                        <p class="card-text">The AES key is derived from your passphrase using Argon2id, tuned for strong security while accommodating JavaScript’s single-threaded environment.</p>
-
-                                        <h4>Argon2id Parameters</h4>
-                                        <ul class="mb-4">
-                                            <li>
-                                                <strong>Variant:</strong>
-                                                Argon2id
-                                            </li>
-                                            <li>
-                                                <strong>Parallelism:</strong>
-                                                1 (JS limitation)
-                                            </li>
-                                            <li>
-                                                <strong>Rounds:</strong>
-                                                5
-                                                <small>(low)</small>
-                                                - 20
-                                                <small>(default)</small>
-                                                - 40
-                                                <small>(high)</small>
-                                            </li>
-                                            <li>
-                                                <strong>Salt-Length:</strong>
-                                                12-byte
-                                                <small>(low)</small>
-                                                - 16-byte
-                                                <small>(default)</small>
-                                            </li>
-                                            <li>
-                                                <strong>Memory Cost:</strong>
-                                                65 536 KiB
-                                            </li>
-                                            <li>
-                                                <strong>Output Length:</strong>
-                                                32 bytes (256 bits)
-                                            </li>
+                                        <h3 class="card-title h5"><i class="mdi mdi-key-outline text-primary me-2" aria-hidden="true"></i>Version 0: Key Derivation</h3>
+                                        <p class="card-text">The AES key is derived from your passphrase using Argon2id, a memory-hard algorithm that makes brute-force attacks expensive.</p>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <span class="badge bg-success">Argon2id</span>
+                                            <span class="badge bg-secondary">64 MiB memory</span>
+                                            <span class="badge bg-info text-dark">1 thread</span>
+                                        </div>
+                                        <ul class="mb-3 small">
+                                            <li><strong>Variant:</strong> Argon2id</li>
+                                            <li><strong>Parallelism:</strong> 1 (JS limitation)</li>
+                                            <li><strong>Rounds:</strong> 5 (low) / 20 (default) / 40 (high)</li>
+                                            <li><strong>Salt length:</strong> 12-byte (low) / 16-byte (default)</li>
+                                            <li><strong>Memory cost:</strong> 65 536 KiB</li>
+                                            <li><strong>Output length:</strong> 32 bytes (256 bits)</li>
                                         </ul>
-
-                                        <h5>References</h5>
-                                        <ul class="list-unstyled mb-0">
-                                            <li>
-                                                <a href="https://www.rfc-editor.org/rfc/rfc9106.html" target="_blank">RFC 9106: Argon2 Password Hashing</a>
-                                            </li>
-                                            <li>
-                                                <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank">OWASP Password Storage Cheat Sheet: Argon2id Settings</a>
-                                            </li>
-                                        </ul>
+                                        <div class="mt-auto">
+                                            <p class="small text-muted mb-1">References</p>
+                                            <ul class="list-unstyled small mb-0">
+                                                <li><a href="https://www.rfc-editor.org/rfc/rfc9106.html" target="_blank">RFC 9106: Argon2 Password Hashing</a></li>
+                                                <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank">OWASP Password Storage Cheat Sheet</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <hr>
+                        <div class="row mb-1 g-3">
+                            <p>The following scheme 1 is only available for payloads encrypted via CLI or other projects using the <a href="https://github.com/mqxym/cryptit" target="_blank"><code>@mqxym/cryptit</code></a> library for encryption.</p>
+                        </div>
+                        <div class="row mb-4 g-3">
+                            <!-- AES-GCM -->
+                            <div class="col-md-6">
+                                <div class="card shadow-sm border-0 border-start border-primary border-3 h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h3 class="card-title h5"><i class="mdi mdi-lock-outline text-primary me-2" aria-hidden="true"></i>Version 1: Encryption Scheme</h3>
+                                        <p class="card-text">Payloads labeled &ldquo;Version 1&rdquo; use XChaCha20-Poly1305 with a 256-bit key, giving you both confidentiality and integrity in a single pass.</p>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <span class="badge bg-primary">XChaCha20-Poly1305</span>
+                                            <span class="badge bg-secondary">256-bit key</span>
+                                            <span class="badge bg-info text-dark">192-bit nonce</span>
+                                            <span class="badge bg-dark">128-bit auth tag</span>
+                                        </div>
+                                        <ul class="mb-3 small">
+                                            <li><strong>Algorithm:</strong>XChaCha20-Poly1305/li>
+                                            <li><strong>Key size:</strong> 256 bits (32 bytes)</li>
+                                            <li><strong>IV / Nonce size:</strong> 192 bits (24 bytes)</li>
+                                            <li><strong>Authentication tag:</strong> 128 bits (16 bytes)</li>
+                                        </ul>
+                                        <div class="mt-auto">
+                                            <p class="small text-muted mb-1">References</p>
+                                            <ul class="list-unstyled small mb-0">
+                                                <li><a href="https://tools.ietf.org/html/rfc5116" target="_blank">RFC 5116: Authenticated Encryption</a></li>
+                                                <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html#cipher-modes" target="_blank">OWASP Cryptographic Storage Cheat Sheet</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Argon2id -->
+                            <div class="col-md-6">
+                                <div class="card shadow-sm border-0 border-start border-primary border-3 h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h3 class="card-title h5"><i class="mdi mdi-key-outline text-primary me-2" aria-hidden="true"></i>Version 1: Key Derivation</h3>
+                                        <p class="card-text">The XChaCha20 key is derived from your passphrase using Argon2id, a memory-hard algorithm that makes brute-force attacks expensive.</p>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <span class="badge bg-success">Argon2id</span>
+                                            <span class="badge bg-secondary">64 MiB memory</span>
+                                            <span class="badge bg-info text-dark">multi-thread</span>
+                                        </div>
+                                        <ul class="mb-3 small">
+                                            <li><strong>Variant:</strong> Argon2id</li>
+                                            <li><strong>Parallelism:</strong> 2 (low) / 4 (middle / high)</li>
+                                            <li><strong>Rounds:</strong> 5 (low) / 10 (middle) / 20 (high)</li>
+                                            <li><strong>Salt length:</strong> 12-byte (low) / 16-byte (high)</li>
+                                            <li><strong>Memory cost:</strong> 65 536 KiB (low) / 98 304 (middle / high)</li>
+                                            <li><strong>Output length:</strong> 32 bytes (256 bits)</li>
+                                        </ul>
+                                        <div class="mt-auto">
+                                            <p class="small text-muted mb-1">References</p>
+                                            <ul class="list-unstyled small mb-0">
+                                                <li><a href="https://www.rfc-editor.org/rfc/rfc9106.html" target="_blank">RFC 9106: Argon2 Password Hashing</a></li>
+                                                <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank">OWASP Password Storage Cheat Sheet</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                 </main>
 
                 <footer class="footer py-2">

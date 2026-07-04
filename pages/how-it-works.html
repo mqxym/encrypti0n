@@ -216,6 +216,11 @@
                                     <i class="ri-moon-line font-22"></i>
                                 </a>
                             </li>
+                            <li id="offline-banner" class="d-none" aria-live="polite">
+                                <span class="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Connection lost: offline mode is active">
+                                    <i class="mdi mdi-wifi-off font-22 text-pink" aria-label="Offline"></i>
+                                </span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -254,416 +259,699 @@
                         <nav class="mb-4">
                             <h2>Table of Contents</h2>
                             <ul class="list-unstyled">
-                                <li><a href="#text-encryption-process">Text Encryption Process</a></li>
-                                <li><a href="#file-encryption-process">File Encryption Process</a></li>
-                                <li><a href="#decryption-process">Decryption Process</a></li>
-                                <li><a href="#encrypt-application">Encrypt Application</a></li>
-                                <li><a href="#import-export-flow">Import / Export Data</a></li>
+                                <li>
+                                    <a href="#overview">How Encryption Works</a>
+                                    <ul>
+                                        <li><a href="#text-encryption-process">Text Encryption Process</a></li>
+                                        <li><a href="#file-encryption-process">File Encryption Process</a></li>
+                                        <li><a href="#decryption-process">Decryption Process</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#sls-intro">How Local Data Encryption Works</a>
+                                    <ul>
+                                        <li><a href="#sls-modes">Protection Modes</a></li>
+                                        <li><a href="#sls-setup">Setup &amp; Initialization</a></li>
+                                        <li><a href="#sls-data">Reading &amp; Writing Data</a></li>
+                                        <li><a href="#sls-master-password">Master Password</a></li>
+                                        <li><a href="#sls-key-rotation">Device Key Rotation</a></li>
+                                        <li><a href="#sls-import-export">Export &amp; Import</a></li>
+                                        <li><a href="#sls-reset">Clear &amp; Reset</a></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </nav>
 
-                        <!-- Text Encryption Process Section -->
+                        <!-- Overview Section -->
+                        <section class="row my-4" id="overview">
+                            <div class="col-12">
+                                <h2>How Encryption Works</h2>
+                                <p>
+                                    All encryption on this site is performed client-side in your browser using
+                                    <a href="https://github.com/mqxym/cryptit" target="_blank" rel="noopener noreferrer">@mqxym/cryptit</a>,
+                                    an open-source MIT-licensed library. No plaintext or password ever leaves your device.
+                                </p>
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    <span class="badge bg-primary">AES-GCM-256</span>
+                                    <span class="badge bg-secondary">96-bit nonce per operation</span>
+                                    <span class="badge bg-info text-dark">Argon2id key derivation</span>
+                                    <span class="badge bg-dark">12-16 byte salt</span>
+                                    <span class="badge bg-success">MIT open-source</span>
+                                </div>                                   
+                                <p>
+                                    The library uses <strong>Scheme 0</strong>: a combination of
+                                    <a href="./encryption-glossary.html#aes-gcm">AES-256-GCM</a> for authenticated encryption and
+                                    <a href="./encryption-glossary.html#argon2">Argon2id</a> for password-based key derivation.
+                                    Every encrypted output is self-describing - it starts with a compact header that stores everything
+                                    needed for decryption (except your password):
+                                </p>
+                            
+
+                                <table class="table table-sm table-bordered w-auto mt-3">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Header field</th>
+                                            <th>Size</th>
+                                            <th>Purpose</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Magic byte</td><td>1 byte (<code>0x01</code>)</td><td>Identifies the format</td></tr>
+                                        <tr><td>Info byte</td><td>1 byte</td><td>Encodes scheme, salt size &amp; difficulty</td></tr>
+                                        <tr><td>Salt</td><td>12-16 bytes</td><td>Unique random value for key derivation</td></tr>
+                                    </tbody>
+                                </table>
+                                <p class="mb-0">
+                                    The Argon2id preset used for key derivation (middle difficulty) is:
+                                    <strong>20 iterations</strong>, <strong>64 MiB memory</strong>, <strong>1 thread</strong> -
+                                    making brute-force attacks computationally expensive.
+                                </p>                                 
+                            </div>
+                        </section>
+
+                        <!-- Text Encryption Section -->
                         <section class="row my-4" id="text-encryption-process">
                             <div class="col-12">
-                                <h2>Text Encryption Process</h2>
-                                <p>Encrypting text securely involves the following precise steps:</p>
+                                <h2>Text Encryption</h2>
+                                <p>
+                                    Text is encrypted as a single authenticated block. The entire process is
+                                    performed in memory and produces a compact Base64 string you can copy and share.
+                                </p>
                                 <ol>
                                     <li>
-                                        <strong>Retrieve Settings</strong>
-                                        : The app fetches cryptographic settings (rounds, salt length) from encrypted local storage.
+                                        <strong>Generate a random salt</strong>: A fresh 12&#x2013;16 byte cryptographic salt is generated
+                                        for every encryption. It is stored in the header so it can be recovered during decryption.
                                     </li>
                                     <li>
-                                        <strong>Encode Inputs</strong>
-                                        : Both your text and password are encoded into binary format (UTF-8).
+                                        <strong>Derive a 256-bit key</strong>: Argon2id turns your password + salt into a strong
+                                        256-bit key. The memory-hard algorithm makes brute-force attempts slow and expensive.
                                     </li>
                                     <li>
-                                        <strong>Generate Salt and Key</strong>
-                                        : A random salt is generated. Using
-                                        <a href="./encryption-glossary.html#argon2>">Argon2</a>
-                                        and the configured number of rounds, a secure 256-bit key is derived from your password.
+                                        <strong>Encrypt with AES-256-GCM</strong>: A random 12-byte nonce (IV) is generated and the
+                                        text is encrypted. The header bytes are passed as <em>additional authenticated data</em> (AAD),
+                                        binding them cryptographically to the ciphertext &#x2014; any tampering with the header will cause
+                                        decryption to fail.
                                     </li>
                                     <li>
-                                        <strong>Encrypt with AES-GCM</strong>
-                                        : The binary text data is encrypted using AES-GCM with the derived key and a securely generated 12-byte nonce (
-                                        <code>crypto.getRandomValues</code>
-                                        ).
-                                    </li>
-                                    <li>
-                                        <strong>Output Encrypted Data</strong>
-                                        : The encrypted data is encoded in base64 format for easy copying or storage.
+                                        <strong>Produce the final output</strong>: The header, IV, ciphertext and 16-byte authentication
+                                        tag are concatenated and Base64-encoded for easy copying or storage.
                                     </li>
                                 </ol>
-                                <p><strong>Below is a sample code snippet that shows how AES-GCM encryption is performed on text using a javscript-ish pseudo-code:</strong></p>
-                                <pre class="bg-light p-1 rounded"><code class="language-javascript">settings = getEncryptedStorageSettings();
-encodedText = utf8Encode(text);
-encodedPassword = utf8Encode(password);
-salt = crypto.getRandomValues(settings.saltLength);
-key = deriveArgon2Key(encodedPassword, salt, settings.rounds);
-iv = crypto.getRandomValues(12);
-ciphertext = AES_GCM_Encrypt(encodedText, key, iv);
-outputBase64(ciphertext);</code></pre>
+                                <p><strong>Pseudo-code:</strong></p>
+                                <pre class="bg-light p-3 rounded"><code class="language-javascript">// 1. Key derivation
+salt   = crypto.getRandomValues(16);   // fresh salt every time
+header = buildHeader({ scheme: 0, difficulty: "middle", salt });
+key    = await argon2id(password, salt, { time: 20, mem: 64 * 1024, parallelism: 1 });
+
+// 2. Authenticated encryption &#x2014; header is bound as AAD
+iv         = crypto.getRandomValues(12);
+ciphertext = await AES_GCM_Encrypt(utf8Encode(text), key, iv, aad: header);
+
+// 3. Output: header + IV + ciphertext + 16-byte auth tag &#x2192; Base64
+return base64(header + iv + ciphertext);</code></pre>
                             </div>
                         </section>
 
-                        <!-- File Encryption Process Section -->
+                        <!-- File Encryption Section -->
                         <section class="row my-4" id="file-encryption-process">
                             <div class="col-12">
-                                <h2>File Encryption Process</h2>
-                                <p>Encrypting files follows a similar core logic with additional file-specific enhancements for improved security and manageability:</p>
-                                <p class="fst-italic">If you’re uploading a sensitive PDF, the file-chunking approach makes sure that each chunk is encrypted independently, maximizing security and performance</p>
+                                <h2>File Encryption</h2>
+                                <p>
+                                    Files are encrypted using a <strong>streaming, chunk-based pipeline</strong>. The file is processed
+                                    in 512 KiB pieces &#x2014; large files are never loaded fully into memory, making it possible to encrypt
+                                    arbitrarily large files without exhausting RAM. Small files are handled in memory using the same pipeline.
+                                </p>
                                 <ol>
                                     <li>
-                                        <strong>Initial Steps</strong>
-                                        : Retrieve settings and encode the password as above, deriving a 256-bit key.
+                                        <strong>Derive a single key for the entire file</strong>: One random salt and one Argon2id key
+                                        derivation covers the whole file. The salt is written into the header once.
                                     </li>
                                     <li>
-                                        <strong>Chunk Splitting</strong>
-                                        : The file is split into 64 KiB chunks, each encrypted individually to ensure efficiency and security.
+                                        <strong>Stream and chunk</strong>: The file is read in 512 KiB chunks. Each chunk is encrypted
+                                        independently as its own AES-256-GCM block.
                                     </li>
                                     <li>
-                                        <strong>Individual Chunk Encryption</strong>
-                                        : Each chunk receives a newly generated 12-byte
-                                        <a href="./encryption-glossary.html#iv">nonce</a>
-                                        for AES-GCM encryption.
+                                        <strong>Fresh nonce per chunk</strong>: Every chunk gets a new random 12-byte IV. This ensures
+                                        no two chunks ever share a nonce even if they contain identical data.
                                     </li>
                                     <li>
-                                        <strong>File Header Creation</strong>
-                                        : Each chunk’s length information and encryption metadata (such as nonce and salt) are included in the file header.
+                                        <strong>Length-prefixed framing</strong>: Each encrypted chunk is preceded by a 4-byte
+                                        big-endian length field so the decryptor knows exactly how many bytes to read for each frame.
+                                        The format per frame is: <code>[4-byte length] [IV (12B)] [ciphertext] [auth tag (16B)]</code>.
                                     </li>
                                     <li>
-                                        <strong>Blob Generation and Download</strong>
-                                        : The encrypted chunks are combined into a Blob object, and a secure download link is generated for the user.
+                                        <strong>Download</strong>: The header followed by all encrypted frames is offered as a
+                                        direct file download.
                                     </li>
                                 </ol>
-                                <p><strong>Below is a sample code snippet that explains how AES-GCM encryption is performed on files using a javscript-ish pseudo-code:</strong></p>
-                                <pre class="bg-light p-1 rounded"><code class="language-javascript">settings = getEncryptedStorageSettings();
-encodedPassword = utf8Encode(password);
-salt = crypto.getRandomValues(settings.saltLenght);
-key = deriveArgon2Key(encodedPassword, salt, settings.rounds);
-chunks = splitFileIntoChunks(file, 65536);
-for each chunk:
-    iv = crypto.getRandomValues(12);
-    encryptedChunk = AES_GCM_Encrypt(chunk, key, iv);
-    storeInBlob(encryptedChunk, iv, chunk.length);
-createDownloadLink(blob);</code></pre>
+                                <p><strong>Pseudo-code:</strong></p>
+                                <pre class="bg-light p-3 rounded"><code class="language-javascript">// 1. Key derivation (once for the whole file)
+salt   = crypto.getRandomValues(16);
+header = buildHeader({ scheme: 0, difficulty: "middle", salt });
+key    = await argon2id(password, salt, { time: 20, mem: 64 * 1024, parallelism: 1 });
+
+output.write(header);   // header is written first
+
+// 2. Stream the file in 512 KiB chunks
+for await (const chunk of readChunks(file, 512 * 1024)) {
+    iv        = crypto.getRandomValues(12);              // fresh IV per chunk
+    encrypted = await AES_GCM_Encrypt(chunk, key, iv);  // includes 16-byte auth tag
+
+    output.write(uint32BE(encrypted.length));            // 4-byte length prefix
+    output.write(iv + encrypted);
+}</code></pre>
                             </div>
                         </section>
 
-                        <!-- Decryption Process Section -->
+                        <!-- Decryption Section -->
                         <section class="row my-4" id="decryption-process">
                             <div class="col-12">
-                                <h2>Decryption Process</h2>
-                                <p>Decryption meticulously reverses the encryption, ensuring data integrity:</p>
+                                <h2>Decryption</h2>
+                                <p>
+                                    Decryption works for both text and files. The library automatically detects the format
+                                    from the data structure after the header so no extra input from you is needed.
+                                </p>
                                 <ol>
                                     <li>
-                                        <strong>Header Verification</strong>
-                                        : Check that the file or text header begins with the identifier byte
-                                        <code>0x01</code>
-                                        to confirm it was encrypted with Encrypti0n.com.
+                                        <strong>Parse the header</strong>: The magic byte (<code>0x01</code>) confirms the format.
+                                        The info byte reveals the scheme and difficulty, and the salt is read from the following bytes.
                                     </li>
                                     <li>
-                                        <strong>Retrieve Encryption Parameters</strong>
-                                        : Extract the
-                                        <a href="pages/encryption-glossary.html#salt">salt</a>
-                                        and the Argon2 round count from the header.
+                                        <strong>Re-derive the key</strong>: Argon2id is run with your password and the extracted salt
+                                        using the same parameters that were used during encryption which produces the identical 256-bit key.
                                     </li>
                                     <li>
-                                        <strong>Key Derivation</strong>
-                                        : Using extracted parameters, derive the correct 256-bit key.
-                                    </li>
-                                    <li>
-                                        <strong>AES-GCM Decryption</strong>
-                                        : Perform decryption using AES-GCM with the derived key and nonce included within each chunk or encrypted text segment.
+                                        <strong>Detect format and decrypt</strong>: If the payload contains length-prefixed frames
+                                        it is treated as a chunked file; otherwise it is decrypted as a single text block.
+                                        AES-256-GCM&#x2019;s authentication tag is verified for every block so any modification to the
+                                        ciphertext or header is detected and rejected.
                                     </li>
                                 </ol>
-                                <p><strong>Below is a sample code snippet that illustrates how AES-GCM decryption is generally performed on this site using a javscript-ish pseudo-code:</strong></p>
-                                <pre class="bg-light p-1 rounded"><code class="language-javascript">header = readFileHeader(encryptedData);
-verify(header.startsWith(0x01));
-salt, rounds = extractHeaderParameters(header);
-key = deriveArgon2Key(encodedPassword, salt, rounds);
-decryptedData = AES_GCM_Decrypt(encryptedChunks, key, iv);
-outputOriginalData(decryptedData);</code></pre>
+                                <p><strong>Pseudo-code:</strong></p>
+                                <pre class="bg-light p-3 rounded"><code class="language-javascript">// 1. Read self-describing header
+header = parseHeader(data);   // extracts magic 0x01, scheme, difficulty, salt
+key    = await argon2id(password, header.salt, header.difficulty);
+
+// 2. Auto-detect text vs. chunked file format
+if (isChunked(data)) {
+    // File: read and decrypt each length-prefixed frame
+    while (data.hasMore()) {
+        length    = data.readUint32BE();
+        encrypted = data.readBytes(length);   // IV + ciphertext + auth tag
+        output   += await AES_GCM_Decrypt(encrypted, key);
+    }
+} else {
+    // Text: single AES-256-GCM block; header was bound as AAD
+    output = await AES_GCM_Decrypt(data, key, aad: header);
+}</code></pre>
                             </div>
                         </section>
 
-                        <!-- Encrypt Application (App Data Protection) Section -->
-                        <section class="row my-4" id="encrypt-application">
-                            <h2 class="">App Data Protection</h2>
 
-                            <h3 class="m-1 mb-0">Envelope-Encryption Stack:</h3>
-                            <ul class="m-2">
-                                <li class="list-group-item">
-                                    <h4>DEK (Data-Encryption-Key)</h4>
-                                    <ul class="mb-1">
-                                        <li>Random 256-bit AES-GCM key</li>
-                                        <li>Generated once per browser profile for encryption/decryption of local data</li>
-                                    </ul>
-                                </li>
-                                <li class="list-group-item">
-                                    <h4>KEK (Key-Encryption-Key)</h4>
-                                    <p class="mb-1">Two modes:</p>
-                                    <ul>
-                                        <li>
-                                            <strong>Password-less:</strong>
-                                            non-extractable, origin-bound WebCrypto key (
-                                            <code>DeviceKeyProvider</code>
-                                            )
-                                        </li>
-                                        <li>
-                                            <strong>Master-password:</strong>
-                                            Argon2id-derived key from user password
-                                        </li>
-                                    </ul>
-                                    <small class="text-muted">
-                                        Always stays in-browser as non-extractable
-                                        <code>CryptoKey</code>
-                                        handle.
-                                    </small>
-                                </li>
-                                <li class="list-group-item">
-                                    <h4>Authenticated Encryption</h4>
-                                    <p class="mb-0">AES-GCM (96-bit IV, 128-bit tag) with integrity check on every read.</p>
-                                </li>
-                                <li class="list-group-item">
-                                    <h4>Key Lifetimes</h4>
-                                    <ul class="mb-0">
-                                        <li>
-                                            Non-exportable DEK (usable just for
-                                            <code>encrypt/decrypt</code>
-                                            ) in RAM only while unlocked
-                                        </li>
-                                        <li>KEK handle only during DEK-unwrapping</li>
-                                        <li>No raw key material exportable to JS</li>
-                                    </ul>
-                                </li>
-                            </ul>
 
-                            <h3 class="m-1">Code Examples:</h3>
+<section class="row my-4" id="sls-intro">
+    <div class="col-12">
+        <h2>How Local Data Encryption Works</h2>
+        <p>
+            This app stores your data <strong>encrypted directly in the browser</strong> - no server involved,
+            no plain-text values ever written to <code>localStorage</code>.
+            It uses the open-source MIT-licensed
+            <a href="https://github.com/mqxym/secure-local-storage" target="_blank" rel="noopener noreferrer">
+                <strong>@mqxym/secure-local-storage</strong>
+            </a>
+            library, which implements an <em>envelope-encryption</em> scheme:
+            a random <strong>Data Encryption Key (DEK)</strong> encrypts your data with AES-GCM-256,
+            and the DEK itself is wrapped (re-encrypted) by a <strong>Key Encryption Key (KEK)</strong>
+            that never leaves the browser as raw bytes.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+            <span class="badge bg-primary">AES-GCM-256</span>
+            <span class="badge bg-secondary">96-bit nonce per operation</span>
+            <span class="badge bg-dark">DEK in RAM only while unlocked</span>
+            <span class="badge bg-info text-dark">Argon2id key derivation</span>
+            <span class="badge bg-success">MIT open-source</span>
+        </div>
+    </div>
+</section>
 
-                            <!-- Accordion for JSON + Code -->
-                            <div class="accordion mb-4" id="encryptAccordion">
-                                <!-- JSON Structures -->
-                                <div class="accordion-item">
-                                    <h5 class="accordion-header" id="headingJSON">
-                                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJSON" aria-expanded="false" aria-controls="collapseJSON">Local JSON Structures</button>
-                                    </h5>
-                                    <div id="collapseJSON" class="accordion-collapse collapse" aria-labelledby="headingJSON" data-bs-parent="#encryptAccordion">
-                                        <div class="accordion-body">
-                                            <ul class="nav nav-tabs mb-3" id="jsonTab" role="tablist">
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link active" id="passwordless-tab" data-bs-toggle="tab" data-bs-target="#passwordless" type="button" role="tab">Password-less</button>
-                                                </li>
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link" id="masterpassword-tab" data-bs-toggle="tab" data-bs-target="#masterpassword" type="button" role="tab">Master-password</button>
-                                                </li>
-                                            </ul>
-                                            <div class="tab-content">
-                                                <div class="tab-pane fade show active" id="passwordless" role="tabpanel">
-                                                    <pre class="bg-light p-3 rounded"><code class="language-json">{
-    "header": {
-        "v": 2,
-        "salt": "",
-        "rounds": 1,
-        "iv": "Zhg/WsALMJYanZsW",
-        "wrappedKey": "AAAA…=="
-    },
-    "data": {
-        "iv": "V0hzptZKrwI5wHbJ",
-        "ciphertext": "xxxxxx__secured_data"
-    }
+
+<section class="row my-4" id="sls-modes">
+    <div class="col-12">
+        <h2>Protection Modes</h2>
+        <p>The two modes differ only in <em>how the KEK is produced</em>. The data encryption algorithm is identical in both.</p>
+
+        <ul class="nav nav-tabs mb-3" id="slsModesTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="sls-device-tab" data-bs-toggle="tab"
+                        data-bs-target="#slsDeviceMode" type="button" role="tab">
+                    Device Mode <span class="badge bg-secondary ms-1">default</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sls-master-tab" data-bs-toggle="tab"
+                        data-bs-target="#slsMasterMode" type="button" role="tab">
+                    Master-Password Mode
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="slsModesTabsContent">
+            <!-- Device Mode -->
+            <div class="tab-pane fade show active" id="slsDeviceMode" role="tabpanel">
+                <p>
+                    The KEK is a non-extractable, origin-bound AES-GCM key generated once and stored in
+                    <strong>IndexedDB</strong>. The store is <strong>always unlocked</strong>, meaning data is
+                    accessible on every page load as long as the user is on the same device and origin.
+                    No password prompt, no manual unlock step.
+                </p>
+                <ul class="mb-3">
+                    <li>Device key survives page reloads; lost if browser storage is fully cleared</li>
+                    <li>Supports periodic <strong>key rotation</strong> via <code>rotateKeys()</code></li>
+                    <li>Export always requires a custom export password (the device key cannot travel)</li>
+                </ul>
+                <div class="accordion" id="slsDeviceAccordion">
+                    <div class="accordion-item">
+                        <h6 class="accordion-header" id="slsDeviceJsonH">
+                            <button class="accordion-button collapsed small fw-bold py-2" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#slsDeviceJsonC"
+                                    aria-expanded="false" aria-controls="slsDeviceJsonC">
+                                What is stored in localStorage (device mode)
+                            </button>
+                        </h6>
+                        <div id="slsDeviceJsonC" class="accordion-collapse collapse" aria-labelledby="slsDeviceJsonH">
+                            <div class="accordion-body">
+                                <pre class="bg-light p-3 rounded small mb-0"><code class="language-json">{
+  "header": {
+    "v": 3,
+    "salt": "",           // empty - no password-based derivation
+    "rounds": 1,          // 1 = device mode
+    "iv": "Zhg/WsAL…",   // 96-bit wrap nonce (base64)
+    "wrappedKey": "AAA…"  // DEK encrypted with the device KEK from IndexedDB
+  },
+  "data": {
+    "iv": "V0hzptZK…",   // 96-bit data nonce
+    "ciphertext": "xyz…" // AES-GCM-256 ciphertext of your JSON payload
+  }
 }</code></pre>
-                                                </div>
-                                                <div class="tab-pane fade" id="masterpassword" role="tabpanel">
-                                                    <pre class="bg-light p-3 rounded"><code class="language-json">{
-    "header": {
-        "v": 2,
-        "salt": "FtBVivCpev4+G0uqAn7Z5w==",
-        "rounds": 20,
-        "iv": "TQ5fMPx4cx5y5Yoi",
-        "wrappedKey": "BBBB…=="
-    },
-    "data": {
-        "iv": "2E1P2gN9rtRfTmcR",
-        "ciphertext": "xxxxxx__secured_data"
-    }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Master-Password Mode -->
+            <div class="tab-pane fade" id="slsMasterMode" role="tabpanel">
+                <p>
+                    The KEK is <strong>derived from a user-supplied password</strong> via Argon2id
+                    (20 iterations, 64 MiB memory) and cached in RAM for the current session only.
+                    The store is <strong>locked on every fresh page load</strong>, so data cannot be read
+                    or written until the user provides the correct password.
+                </p>
+                <ul class="mb-3">
+                    <li>The password is never stored anywhere; only its derived key lives in RAM during the session</li>
+                    <li>A 16-byte random salt is embedded in the header; a fresh salt is generated on every password change</li>
+                    <li>Supports password rotation and removal back to device mode</li>
+                </ul>
+                <div class="accordion" id="slsMasterAccordion">
+                    <div class="accordion-item">
+                        <h6 class="accordion-header" id="slsMasterJsonH">
+                            <button class="accordion-button collapsed small fw-bold py-2" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#slsMasterJsonC"
+                                    aria-expanded="false" aria-controls="slsMasterJsonC">
+                                What is stored in localStorage (master-password mode)
+                            </button>
+                        </h6>
+                        <div id="slsMasterJsonC" class="accordion-collapse collapse" aria-labelledby="slsMasterJsonH">
+                            <div class="accordion-body">
+                                <pre class="bg-light p-3 rounded small mb-0"><code class="language-json">{
+  "header": {
+    "v": 3,
+    "salt": "FtBViv…",   // 16-byte random Argon2id salt (base64)
+    "rounds": 20,         // Argon2id iteration count
+    "iv": "TQ5fMPx4…",   // 96-bit wrap nonce
+    "wrappedKey": "BBB…" // DEK encrypted with the Argon2id-derived KEK
+  },
+  "data": {
+    "iv": "2E1P2gN9…",
+    "ciphertext": "abc…"
+  }
 }</code></pre>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-                                <!-- Life-cycle Pseudo-Code -->
-                                <div class="accordion-item">
-                                    <h5 class="accordion-header" id="headingCode">
-                                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCode" aria-expanded="false" aria-controls="collapseCode">Life-Cycle Overview (pseudo-code)</button>
-                                    </h5>
-                                    <div id="collapseCode" class="accordion-collapse collapse" aria-labelledby="headingCode" data-bs-parent="#encryptAccordion">
-                                        <div class="accordion-body">
-                                            <!-- Step 1 -->
-                                            <div class="mb-4">
-                                                <h6 class="fw-bold">1. First run / reset</h6>
-                                                <pre class="bg-light p-3 rounded"><code class="language-javascript">// generate a fresh DEK
-dek = crypto.generateAesGcmKey(256);
 
-// pick a KEK
-if (userSetsMasterPassword) {
-    salt = randomSalt(); // crypto.getRandomValues(16-bytes)
-    rounds = randomRounds(); // 20-21
-    kek = argon2id(masterPassword, salt, rounds); // 64MiB memory used
-} else {
-    kek = DeviceKeyProvider.getKey(); // IndexedDB
-    salt = ""; rounds = 1;
+<section class="row my-4" id="sls-setup">
+    <div class="col-12">
+        <h2>Setup &amp; Initialization</h2>
+        <p>
+            Create a single instance at application startup. On first run it bootstraps a fresh
+            encrypted store in device mode. On returning visits it reloads the existing configuration
+            and restores the session automatically (device mode) or waits for <code>unlock()</code>
+            (master-password mode).
+        </p>
+        <pre class="bg-light p-3 rounded"><code class="language-javascript">// --- First run: no existing config in localStorage ---
+const dek = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+const deviceKek = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, false, ["wrapKey", "unwrapKey"]);
+await indexedDB.put("ENC_APP_KEYS", "keys", deviceKek);
+
+const wrapIv     = crypto.getRandomValues(new Uint8Array(12));
+const wrappedKey = await crypto.subtle.wrapKey("raw", dek, deviceKek, { name: "AES-GCM", iv: wrapIv });
+localStorage.setItem("encMainConf", JSON.stringify({
+    header: { v: 3, salt: "", rounds: 1, iv: base64(wrapIv), wrappedKey: base64(wrappedKey) },
+    data:   { iv: "", ciphertext: "" }
+}));
+
+// --- Returning visit (device mode): restore DEK from stored config ---
+const { header } = JSON.parse(localStorage.getItem("encMainConf"));
+const deviceKek  = await indexedDB.get("ENC_APP_KEYS", "keys");
+const dek        = await crypto.subtle.unwrapKey(
+    "raw", base64decode(header.wrappedKey), deviceKek,
+    { name: "AES-GCM", iv: base64decode(header.iv) },
+    { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
+);
+
+// --- Returning visit (master-password mode): header.rounds > 1 ---
+// No auto-unwrap on page load; isLocked() === true until unlock(password) is called
+</code></pre>
+    </div>
+</section>
+
+<!-- 3. Reading & Writing Data -->
+<section class="row my-4" id="sls-data">
+    <div class="col-12">
+        <h2>Reading &amp; Writing Data</h2>
+        <p>
+            <code>setData()</code> accepts any plain JSON-serializable object and encrypts it in one call.
+            <code>getData()</code> returns a read-only <code>SecureDataView</code> proxy; always call
+            <code>.clear()</code> on it when done to wipe the decrypted values from memory.
+            In master-password mode both methods throw <code>LockedError</code> if the store is locked.
+        </p>
+        <pre class="bg-light p-3 rounded"><code class="language-javascript">// --- Write ---
+const plaintext  = new TextEncoder().encode(JSON.stringify({ userId: "u_42", preferences: { theme: "dark" } }));
+const iv         = crypto.getRandomValues(new Uint8Array(12));
+const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, dek, plaintext);
+
+const config = JSON.parse(localStorage.getItem("encMainConf"));
+config.data  = { iv: base64(iv), ciphertext: base64(ciphertext) };
+localStorage.setItem("encMainConf", JSON.stringify(config));
+
+// --- Read ---
+const { data }  = JSON.parse(localStorage.getItem("encMainConf"));
+const plaintext = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: base64decode(data.iv) }, dek, base64decode(data.ciphertext)
+);
+const value = JSON.parse(new TextDecoder().decode(plaintext));
+// { userId: "u_42", preferences: { theme: "dark" } }
+// Returned as a read-only proxy; call view.clear() to wipe decrypted values from memory
+</code></pre>
+    </div>
+</section>
+
+<!-- 4. Master Password Lifecycle -->
+<section class="row my-4" id="sls-master-password">
+    <div class="col-12">
+        <h2>Master Password</h2>
+        <p>
+            All four password operations re-wrap the DEK without ever exposing raw key material.
+            The DEK is made temporarily extractable only for the re-wrapping step, then
+            re-imported as non-extractable.
+        </p>
+
+        <ul class="nav nav-tabs mb-3" id="slsPasswordTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="sls-addpw-tab" data-bs-toggle="tab"
+                        data-bs-target="#slsAddPw" type="button" role="tab">Add Password</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sls-unlock-tab" data-bs-toggle="tab"
+                        data-bs-target="#slsUnlockPw" type="button" role="tab">Unlock Session</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sls-change-tab" data-bs-toggle="tab"
+                        data-bs-target="#slsChangePw" type="button" role="tab">Change Password</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sls-remove-tab" data-bs-toggle="tab"
+                        data-bs-target="#slsRemovePw" type="button" role="tab">Remove Password</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="slsPasswordTabsContent">
+            <div class="tab-pane fade show active" id="slsAddPw" role="tabpanel">
+                <p>
+                    Transitions from device mode to master-password mode.
+                    The DEK is re-wrapped under a freshly derived Argon2id KEK.
+                    The session stays unlocked immediately after the call.
+                </p>
+                <pre class="bg-light p-3 rounded"><code class="language-javascript">const salt      = crypto.getRandomValues(new Uint8Array(16));
+const kekBytes  = await argon2id({ password: "MyStr0ngPassphrase!", salt, iterations: 20, memory: 65536 });
+const masterKek = await crypto.subtle.importKey("raw", kekBytes, { name: "AES-GCM" }, false, ["wrapKey"]);
+
+const wrapIv     = crypto.getRandomValues(new Uint8Array(12));
+const wrappedKey = await crypto.subtle.wrapKey("raw", dek, masterKek, { name: "AES-GCM", iv: wrapIv });
+
+config.header = { v: 3, salt: base64(salt), rounds: 20, iv: base64(wrapIv), wrappedKey: base64(wrappedKey) };
+localStorage.setItem("encMainConf", JSON.stringify(config));
+// masterKek cached in RAM for this session; next page load will start locked
+</code></pre>
+            </div>
+
+            <div class="tab-pane fade" id="slsUnlockPw" role="tabpanel">
+                <p>
+                    On every fresh page load a master-password protected store starts locked.
+                    <code>unlock()</code> runs Argon2id with the salt and iteration count from
+                    the stored header, caches the derived KEK in RAM, and unwraps the DEK.
+                    An incorrect password throws <code>ValidationError</code>.
+                </p>
+                <pre class="bg-light p-3 rounded"><code class="language-javascript">const { header } = JSON.parse(localStorage.getItem("encMainConf"));
+
+const kekBytes  = await argon2id({ password: "MyStr0ngPassphrase!", salt: base64decode(header.salt), iterations: header.rounds, memory: 65536 });
+const masterKek = await crypto.subtle.importKey("raw", kekBytes, { name: "AES-GCM" }, false, ["unwrapKey"]);
+
+try {
+    // Wrong password causes AES-GCM authentication tag verification to fail
+    dek = await crypto.subtle.unwrapKey(
+        "raw", base64decode(header.wrappedKey), masterKek,
+        { name: "AES-GCM", iv: base64decode(header.iv) },
+        { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
+    );
+    // masterKek + dek cached in session RAM; getData / setData now work
+} catch {
+    showError("Incorrect password, please try again.");
 }
 
-// wrap DEK + store
-ivWrap, wrappedKey = AES_GCM_Wrap(dek, kek);
-storeHeader({ v:2, salt, rounds, iv:ivWrap, wrappedKey });
-storeData({ iv:"", ciphertext:"" });</code></pre>
-                                            </div>
-                                            <!-- Step 2 -->
-                                            <div class="mb-4">
-                                                <h6 class="fw-bold">2. Unlock session</h6>
-                                                <pre class="bg-light p-3 rounded"><code class="language-javascript">header = readHeader();
-if (header.rounds > 1) {
-    kek = argon2id(promptPassword(), header.salt, header.rounds);
+// Lock: discard both keys from memory
+masterKek = null;
+dek = null;
+</code></pre>
+            </div>
+
+            <div class="tab-pane fade" id="slsChangePw" role="tabpanel">
+                <p>
+                    Verifies the old password, generates a fresh salt, derives a new KEK from the
+                    new password, and re-wraps the DEK atomically. Works from both locked and
+                    unlocked states.
+                </p>
+                <pre class="bg-light p-3 rounded"><code class="language-javascript">// 1. Verify old password: derive old KEK and unwrap DEK
+const oldKekBytes = await argon2id({ password: "MyStr0ngPassphrase!", salt: base64decode(header.salt), iterations: header.rounds, memory: 65536 });
+const oldKek = await crypto.subtle.importKey("raw", oldKekBytes, { name: "AES-GCM" }, false, ["unwrapKey"]);
+const rawDek = await crypto.subtle.unwrapKey(
+    "raw", base64decode(header.wrappedKey), oldKek,
+    { name: "AES-GCM", iv: base64decode(header.iv) },
+    { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]  // extractable for re-wrap
+);
+
+// 2. Derive new KEK from new password with a fresh random salt
+const newSalt     = crypto.getRandomValues(new Uint8Array(16));
+const newKekBytes = await argon2id({ password: "EvenStr0nger#2025", salt: newSalt, iterations: 20, memory: 65536 });
+const newKek      = await crypto.subtle.importKey("raw", newKekBytes, { name: "AES-GCM" }, false, ["wrapKey"]);
+
+// 3. Re-wrap DEK under new KEK and persist updated header
+const newIv         = crypto.getRandomValues(new Uint8Array(12));
+const newWrappedKey = await crypto.subtle.wrapKey("raw", rawDek, newKek, { name: "AES-GCM", iv: newIv });
+config.header = { v: 3, salt: base64(newSalt), rounds: 20, iv: base64(newIv), wrappedKey: base64(newWrappedKey) };
+localStorage.setItem("encMainConf", JSON.stringify(config));
+</code></pre>
+            </div>
+
+            <div class="tab-pane fade" id="slsRemovePw" role="tabpanel">
+                <p>
+                    Reverses the password setup: the DEK is re-wrapped under the device KEK and the
+                    header's salt and rounds are reset to device-mode values.
+                    The store must be unlocked before calling this.
+                </p>
+                <pre class="bg-light p-3 rounded"><code class="language-javascript">// Re-wrap the current DEK under the device KEK
+const deviceKek  = await indexedDB.get("ENC_APP_KEYS", "keys");
+const wrapIv     = crypto.getRandomValues(new Uint8Array(12));
+const wrappedKey = await crypto.subtle.wrapKey("raw", dek, deviceKek, { name: "AES-GCM", iv: wrapIv });
+
+// Reset header to device-mode values; discard master KEK from RAM
+config.header = { v: 3, salt: "", rounds: 1, iv: base64(wrapIv), wrappedKey: base64(wrappedKey) };
+localStorage.setItem("encMainConf", JSON.stringify(config));
+masterKek = null;
+</code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5. Device Key Rotation -->
+<section class="row my-4" id="sls-key-rotation">
+    <div class="col-12">
+        <h2>Device Key Rotation</h2>
+        <p>
+            Available in device mode only. Generates a new DEK and a new device KEK,
+            re-encrypts the existing data under the new DEK, and persists the updated bundle.
+            Your plaintext data is preserved; only the cryptographic keys change.
+        </p>
+        <pre class="bg-light p-3 rounded"><code class="language-javascript">// Generate new DEK and new device KEK
+const newDek       = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true,  ["encrypt", "decrypt"]);
+const newDeviceKek = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, false, ["wrapKey", "unwrapKey"]);
+await indexedDB.put("ENC_APP_KEYS", "keys", newDeviceKek);
+
+// Re-encrypt existing data under the new DEK
+const plain      = await crypto.subtle.decrypt({ name: "AES-GCM", iv: base64decode(config.data.iv) }, oldDek, base64decode(config.data.ciphertext));
+const dataIv     = crypto.getRandomValues(new Uint8Array(12));
+const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv: dataIv }, newDek, plain);
+
+// Wrap new DEK with new device KEK and persist
+const wrapIv     = crypto.getRandomValues(new Uint8Array(12));
+const wrappedKey = await crypto.subtle.wrapKey("raw", newDek, newDeviceKek, { name: "AES-GCM", iv: wrapIv });
+config.header = { v: 3, salt: "", rounds: 1, iv: base64(wrapIv), wrappedKey: base64(wrappedKey) };
+config.data   = { iv: base64(dataIv), ciphertext: base64(ciphertext) };
+localStorage.setItem("encMainConf", JSON.stringify(config));
+</code></pre>
+        <p class="text-muted small mt-2">
+            Use this as a periodic hygiene operation or after a suspected device compromise.
+        </p>
+    </div>
+</section>
+
+<!-- 6. Export & Import -->
+<section class="row my-4" id="sls-import-export">
+    <div class="col-12">
+        <h2>Export &amp; Import</h2>
+        <p>
+            Bundles are self-contained JSON strings that carry the encrypted DEK and the
+            ciphertext together, portable across browsers and devices.
+        </p>
+
+        <ul class="nav nav-tabs mb-3" id="slsExportImportTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="sls-export-tab" data-bs-toggle="tab"
+                        data-bs-target="#slsExport" type="button" role="tab">Export</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sls-import-tab2" data-bs-toggle="tab"
+                        data-bs-target="#slsImport" type="button" role="tab">Import</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="slsExportImportTabsContent">
+            <div class="tab-pane fade show active" id="slsExport" role="tabpanel">
+                <p>Three variants depending on the current mode and whether you supply a custom password:</p>
+                <pre class="bg-light p-3 rounded"><code class="language-javascript">// --- Device mode: wrap DEK under an Argon2id key derived from the export password ---
+const exportSalt     = crypto.getRandomValues(new Uint8Array(16));
+const exportKekBytes = await argon2id({ password: "ExportSecret99", salt: exportSalt, iterations: 20, memory: 65536 });
+const exportKek      = await crypto.subtle.importKey("raw", exportKekBytes, { name: "AES-GCM" }, false, ["wrapKey"]);
+const exportWrapIv   = crypto.getRandomValues(new Uint8Array(12));
+const exportWrapped  = await crypto.subtle.wrapKey("raw", dek, exportKek, { name: "AES-GCM", iv: exportWrapIv });
+const bundle = JSON.stringify({
+    header: { v: 3, salt: base64(exportSalt), rounds: 20, iv: base64(exportWrapIv), wrappedKey: base64(exportWrapped), ctx: "export" },
+    data:   config.data  // ciphertext copied as-is; only the DEK wrapping differs
+});
+
+// --- Master-password mode, no custom password: DEK already wrapped by master KEK ---
+// Copy existing header into bundle with export context; no re-wrapping needed
+const bundle = JSON.stringify({ header: { ...config.header, ctx: "export", mPw: true }, data: config.data });
+
+// --- Master-password mode + custom password: same Argon2id wrap flow as device mode above ---
+
+// Trigger file download
+const a    = document.createElement("a");
+a.href     = URL.createObjectURL(new Blob([bundle], { type: "application/octet-stream" }));
+a.download = "app-backup.bin";
+a.click();
+URL.revokeObjectURL(a.href);
+</code></pre>
+            </div>
+
+            <div class="tab-pane fade" id="slsImport" role="tabpanel">
+                <p>
+                    <code>importData()</code> returns a discriminator string that tells you how the
+                    bundle was protected so you can handle the subsequent session state correctly.
+                </p>
+                <pre class="bg-light p-3 rounded"><code class="language-javascript">const bundle = JSON.parse(await selectedFile.text());
+const { salt, rounds, iv, wrappedKey, mPw } = bundle.header;
+
+// Derive the unwrap KEK from the supplied password
+const kekBytes  = await argon2id({ password: "ExportSecret99", salt: base64decode(salt), iterations: rounds, memory: 65536 });
+const importKek = await crypto.subtle.importKey("raw", kekBytes, { name: "AES-GCM" }, false, ["unwrapKey"]);
+
+// Unwrap the DEK; wrong password causes AES-GCM authentication tag to fail
+const importedDek = await crypto.subtle.unwrapKey(
+    "raw", base64decode(wrappedKey), importKek,
+    { name: "AES-GCM", iv: base64decode(iv) },
+    { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]
+);
+
+if (mPw) {
+    // Master-password bundle: persist as-is; instance is now locked
+    localStorage.setItem("encMainConf", JSON.stringify(bundle));
+    // caller must call unlock(masterPassword) before accessing data
 } else {
-    kek = DeviceKeyProvider.getKey(); 
+    // Device-mode bundle: re-wrap imported DEK under the local device KEK
+    const deviceKek  = await indexedDB.get("ENC_APP_KEYS", "keys");
+    const newWrapIv  = crypto.getRandomValues(new Uint8Array(12));
+    const newWrapped = await crypto.subtle.wrapKey("raw", importedDek, deviceKek, { name: "AES-GCM", iv: newWrapIv });
+    localStorage.setItem("encMainConf", JSON.stringify({
+        header: { v: 3, salt: "", rounds: 1, iv: base64(newWrapIv), wrappedKey: base64(newWrapped) },
+        data:   bundle.data
+    }));
 }
+</code></pre>
+                <p class="text-muted small mt-2">
+                    Legacy v2 bundles are automatically migrated to the current v3 format
+                    with AAD context binding during import.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
-dek = AES_GCM_Unwrap(header.wrappedKey, kek, header.iv);</code></pre>
-                                            </div>
-                                            <!-- Step 3 -->
-                                            <div>
-                                                <h6 class="fw-bold">3. Encrypt / decrypt data</h6>
-                                                <pre class="bg-light p-3 rounded"><code class="language-javascript">// save
-ivData, cipher = AES_GCM_Encrypt(plainData, dek);
-storeData({ iv:ivData, ciphertext:cipher });
+<!-- 7. Clear & Reset -->
+<section class="row my-4" id="sls-reset">
+    <div class="col-12">
+        <h2>Clear &amp; Reset</h2>
+        <p>
+            <code>clear()</code> performs a complete wipe: the localStorage bundle is deleted,
+            the device key is removed from IndexedDB, and any in-memory DEK/KEK is discarded.
+            A fresh device-mode store is then initialised automatically and the instance is
+            immediately usable again.
+        </p>
+        <pre class="bg-light p-3 rounded"><code class="language-javascript">localStorage.removeItem("encMainConf");
+await indexedDB.delete("ENC_APP_KEYS", "keys");
+dek = null; masterKek = null;
 
-// load
-{ iv, ciphertext } = readData();
-plainData = AES_GCM_Decrypt(ciphertext, dek, iv);</code></pre>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Key Rotation / Password Mgmt Card -->
-                            <h3 class="mb-0 m-1">Key Rotation &amp; Password Management:</h3>
-
-                            <ul class="m-2">
-                                <li class="list-group-item">
-                                    <strong>Set / Change password:</strong>
-                                    <br />
-                                    DEK is temporarily unwrapped (
-                                    <code>extractable:true</code>
-                                    ), re-wrapped under the new KEK, then re-imported as non-extractable.
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Remove password:</strong>
-                                    <br />
-                                    Reverse flow: re-wrap DEK with device key, update header.
-                                </li>
-                            </ul>
-
-                            <p class="text-muted">With this layered approach, an attacker needs both the encrypted payload AND either your master password or physical access to the device key store.</p>
-                        </section>
-                        <section class="row my-4" id="import-export-flow">
-                            <div class="col-12">
-                                <h2>Data Import and Export Flow</h2>
-                                <p>The following outlines the secure process for exporting and importing encrypted data. Use the tabs to toggle between the two flows:</p>
-
-                                <ul class="nav nav-tabs" id="importExportTabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="export-tab" data-bs-toggle="tab" data-bs-target="#export" type="button" role="tab" aria-controls="export" aria-selected="true">Export</button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="import-tab" data-bs-toggle="tab" data-bs-target="#import" type="button" role="tab" aria-controls="import" aria-selected="false">Import</button>
-                                    </li>
-                                </ul>
-
-                                <div class="tab-content pt-3" id="importExportTabsContent">
-                                    <!-- Export Tab -->
-                                    <div class="tab-pane fade show active" id="export" role="tabpanel" aria-labelledby="export-tab">
-                                        <ol>
-                                            <li>
-                                                <strong>Determine Export Mode</strong>
-                                                : If a master password is set, the Data Encryption Key (DEK) is already wrapped using Argon2id. Otherwise, a custom export password is used to derive a 256-bit key.
-                                            </li>
-                                            <li>
-                                                <strong>Wrap DEK</strong>
-                                                : If no master password is present, the DEK is encrypted with the export-derived key using Argon2id + AES-GCM-256.
-                                            </li>
-                                            <li>
-                                                <strong>Build Export Structure</strong>
-                                                : Construct the export object to include the versioned header with salt, Argon2 rounds, IV, and wrapped DEK. The encrypted data is added as-is.
-                                            </li>
-                                            <li>
-                                                <strong>Generate Download</strong>
-                                                : Serialize the export structure, encode it in binary, and trigger a file download via a JavaScript-created temporary element.
-                                            </li>
-                                        </ol>
-                                        <p><strong>Sample export file structure:</strong></p>
-                                        <pre class="bg-light p-1 rounded"><code class="language-json">{
-    "header": {
-        "v": 2,
-        "salt": "tmKYbB...",
-        "rounds": 20,
-        "iv": "pmb26K...",
-        "wrappedKey": "+aEaNG..."
-    },
-    "data": {
-        "iv": "PbxE0D...",
-        "ciphertext": "IeysxB4H..."
-    }
-}</code></pre>
-                                    </div>
-
-                                    <!-- Import Tab -->
-                                    <div class="tab-pane fade" id="import" role="tabpanel" aria-labelledby="import-tab">
-                                        <ol>
-                                            <li>
-                                                <strong>Binary Decode</strong>
-                                                : Begin by decoding the binary import data back into JSON format.
-                                            </li>
-                                            <li>
-                                                <strong>Extract Header Parameters</strong>
-                                                : Parse the header to retrieve the version, salt, Argon2id parameters, IV, and wrapped DEK.
-                                            </li>
-                                            <li>
-                                                <strong>Key Unwrapping</strong>
-                                                : Use the appropriate password (master or export) to derive the unwrapping key via Argon2id, then decrypt the wrapped DEK using AES-GCM.
-                                            </li>
-                                            <li>
-                                                <strong>Data Decryption</strong>
-                                                : Once the DEK is recovered and setup for decryption, the imported data can be decrypted when needed.
-                                            </li>
-                                             <li>
-                                                <strong>Save New Config</strong>
-                                                : The imported config is saved to local storage. When a device key is used, the DEK is re-wrapped with the device key.
-                                            </li>
-                                        </ol>
-                                        <p><strong>Pseudocode overview of the import logic:</strong></p>
-                                        <pre class="bg-light p-1 rounded"><code class="language-javascript">decoded = binaryDecode(fileContents);
-header = decoded.header;
-salt, rounds, iv = header.salt, header.rounds, header.iv;
-key = deriveArgon2Key(password, salt, rounds);
-DEK = AES_GCM_Decrypt(header.wrappedKey, key, iv);
-plaintext = AES_GCM_Decrypt(decoded.data.ciphertext, DEK, decoded.data.iv); //when needed
-if (masterPasswordUsed) {
-    saveLocalData(decoded)
-} else {
-    kek = DeviceKeyProvider.getKey(); // IndexedDB
-    header.wrappedKey, header.iv = AES_GCM_Encrypt(DEK, kek)
-    header.salt = ""
-    header.rounds = 1
-    saveLocalData(header, decode.data)
-}</code></pre>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
+// Reinitialise with fresh keys and an empty encrypted store
+const dek       = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true,  ["encrypt", "decrypt"]);
+const deviceKek = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, false, ["wrapKey", "unwrapKey"]);
+await indexedDB.put("ENC_APP_KEYS", "keys", deviceKek);
+const wrapIv     = crypto.getRandomValues(new Uint8Array(12));
+const wrappedKey = await crypto.subtle.wrapKey("raw", dek, deviceKek, { name: "AES-GCM", iv: wrapIv });
+localStorage.setItem("encMainConf", JSON.stringify({
+    header: { v: 3, salt: "", rounds: 1, iv: base64(wrapIv), wrappedKey: base64(wrappedKey) },
+    data:   { iv: "", ciphertext: "" }
+}));
+</code></pre>
+    </div>
+</section>
                     </div>
                 </main>
 

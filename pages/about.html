@@ -188,6 +188,11 @@
                                     <i class="ri-moon-line font-22"></i>
                                 </a>
                             </li>
+                            <li id="offline-banner" class="d-none" aria-live="polite">
+                                <span class="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Connection lost: offline mode is active">
+                                    <i class="mdi mdi-wifi-off font-22 text-pink" aria-label="Offline"></i>
+                                </span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -206,81 +211,149 @@
                         </div>
                     </div>
                     <div class="container my-5">
+
                         <!-- Hero Section -->
                         <section class="text-center mb-5">
-                            <h1 class="display-5">About Encrypti0n.com</h1>
-                            <p class="lead">Your secure and user-centric platform designed to empower you to protect your data through robust, customizable, local-first encryption.</p>
+                            <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                                <span class="badge bg-primary px-3 py-2"><i class="mdi mdi-shield-lock me-1" aria-hidden="true"></i>AES-256-GCM</span>
+                                <span class="badge bg-primary px-3 py-2"><i class="mdi mdi-laptop me-1" aria-hidden="true"></i>100% Client-Side</span>
+                                <span class="badge bg-primary px-3 py-2"><i class="mdi mdi-source-branch me-1" aria-hidden="true"></i>Source Code Available</span>
+                            </div>
+                            <h1 class="display-5 fw-bold">About Encrypti0n.com</h1>
+                            <p class="lead text-muted">A straightforward encryption tool that runs entirely in your browser. No accounts, no servers, no surprises.</p>
                         </section>
 
-                        <!-- Mission & Vision Section -->
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="card h-100 shadow-sm">
-                                    <div class="card-body">
-                                        <h2 class="card-title">Our Mission</h2>
-                                        <p class="card-text">At Encrypti0n.com, we firmly believe that privacy is not merely an option—it's a fundamental right. Our mission is to equip everyday users, developers, and privacy enthusiasts with simple, reliable, and transparent encryption tools that operate entirely within the browser. We champion user autonomy, digital minimalism, and informational self-determination, ensuring you retain complete control over your sensitive information.</p>
+                        <!-- Stats Strip -->
+                        <div class="row text-center mb-5 g-3">
+                            <div class="col-6 col-md-3">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body py-4">
+                                        <i class="mdi mdi-server-off text-primary" style="font-size: 2rem;" aria-hidden="true"></i>
+                                        <h3 class="fw-bold mt-2 mb-0">0</h3>
+                                        <p class="text-muted small mb-0">Servers processing your data</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 mt-4 mt-md-0">
-                                <div class="card h-100 shadow-sm">
+                            <div class="col-6 col-md-3">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body py-4">
+                                        <i class="mdi mdi-database-off text-primary" style="font-size: 2rem;" aria-hidden="true"></i>
+                                        <h3 class="fw-bold mt-2 mb-0">0</h3>
+                                        <p class="text-muted small mb-0">Confidential bytes sent</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body py-4">
+                                        <i class="mdi mdi-code-braces text-primary" style="font-size: 2rem;" aria-hidden="true"></i>
+                                        <h3 class="fw-bold mt-2 mb-0">100%</h3>
+                                        <p class="text-muted small mb-0">Source available</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body py-4">
+                                        <i class="mdi mdi-cookie-off text-primary" style="font-size: 2rem;" aria-hidden="true"></i>
+                                        <h3 class="fw-bold mt-2 mb-0">0</h3>
+                                        <p class="text-muted small mb-0">Cookies or trackers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mission & Vision Section -->
+                        <div class="row mb-4 g-3">
+                            <div class="col-md-6">
+                                <div class="card h-100 shadow-sm border-0 border-start border-primary border-3">
                                     <div class="card-body">
-                                        <h2 class="card-title">Vision</h2>
-                                        <p class="card-text">Our vision is to create a digital environment where privacy isn't a privilege but the standard. By utilizing state-of-the-art encryption methods, openly sharing our source code, and strictly adhering to local-only data storage principles, Encrypti0n.com is committed to standards in data protection and privacy-centric software.</p>
+                                        <h2 class="card-title"><i class="mdi mdi-hammer-wrench text-primary me-2" aria-hidden="true"></i>Why We Built This</h2>
+                                        <p class="card-text">We built Encrypti0n.com because keeping your data private shouldn't require trusting a company. Everything happens in your browser, nothing leaves your device, and the source code is open for anyone to read. Whether you're a developer, someone sceptical of cloud storage, or just curious about encryption, this was built with you in mind.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 shadow-sm border-0 border-start border-primary border-3">
+                                    <div class="card-body">
+                                        <h2 class="card-title"><i class="mdi mdi-target text-primary me-2" aria-hidden="true"></i>What We're Going For</h2>
+                                        <p class="card-text">We want privacy tools to be the normal option, not the technical one. That means strong encryption using well-established algorithms, source code you can actually read, and a design that works without sending anything to a server. We're not reinventing cryptography. We're making it accessible.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Why Local-First Encryption Section -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div class="card shadow-sm">
-                                    <div class="card-body">
-                                        <h2 class="card-title">Why Local-First Encryption?</h2>
-                                        <p class="card-text">Encrypti0n.com is built upon the principles of digital minimalism and data sovereignty. We choose a strictly local-first approach because:</p>
-                                        <ul>
-                                            <li>
-                                                <strong>Security:</strong>
-                                                Encrypting and storing data locally eliminates risks associated with data breaches, unauthorized access, or external surveillance.
-                                            </li>
-                                            <li>
-                                                <strong>Autonomy:</strong>
-                                                You remain the sole custodian of your data—we never store or transmit your information online.
-                                            </li>
-                                            <li>
-                                                <strong>Transparency:</strong>
-                                                Our source-available approach ensures full transparency, allowing anyone to verify our cryptographic processes.
-                                            </li>
-                                        </ul>
+                        <div class="mb-4">
+                            <h2 class="mb-1"><i class="mdi mdi-shield-check text-primary me-2" aria-hidden="true"></i>Why Local-First?</h2>
+                            <p class="text-muted mb-3">There are a lot of encryption tools out there that send your data to a server "for processing". We don't do that. Here's why it matters:</p>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="card h-100 shadow-sm text-center">
+                                        <div class="card-body py-4">
+                                            <i class="mdi mdi-lock-outline text-primary" style="font-size: 2.5rem;" aria-hidden="true"></i>
+                                            <h3 class="h5 fw-semibold mt-3">Less attack surface</h3>
+                                            <p class="text-muted small mb-0">If your data never leaves your device, there's nothing for someone else to intercept or leak.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100 shadow-sm text-center">
+                                        <div class="card-body py-4">
+                                            <i class="mdi mdi-account-key-outline text-primary" style="font-size: 2.5rem;" aria-hidden="true"></i>
+                                            <h3 class="h5 fw-semibold mt-3">You're in control</h3>
+                                            <p class="text-muted small mb-0">We have no servers storing your files, no backups of your keys, and no account tied to your activity. Your data is yours.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100 shadow-sm text-center">
+                                        <div class="card-body py-4">
+                                            <i class="mdi mdi-eye-outline text-primary" style="font-size: 2.5rem;" aria-hidden="true"></i>
+                                            <h3 class="h5 fw-semibold mt-3">No trust required</h3>
+                                            <p class="text-muted small mb-0">The source code is public. You don't have to take our word for how it works; you can read it yourself.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Commitment to Privacy & Transparency Section -->
+                        <!-- Open Source Section -->
                         <div class="row mb-4">
                             <div class="col-12">
-                                <div class="card shadow-sm">
+                                <div class="card shadow-sm border border-secondary">
                                     <div class="card-body">
-                                        <h2 class="card-title">Commitment to Privacy and Transparency</h2>
-                                        <p class="card-text">
-                                            We proudly embrace transparency, making our entire platform source-available for scrutiny and collaboration. You can review our cryptographic standards, implementation details, and even contribute to our ongoing development on our
-                                            <a href="https://github.com/mqxym/encrypti0n" target="_blank">GitHub repository</a>
-                                            .
-                                        </p>
+                                        <div class="d-flex align-items-start gap-3">
+                                            <i class="mdi mdi-github" style="font-size: 3rem; line-height: 1;" aria-hidden="true"></i>
+                                            <div>
+                                                <h2 class="card-title mb-1">Source Code and Honest About It</h2>
+                                                <p class="card-text mb-3">The full source is on GitHub. If you want to check how something works, spot a bug, or suggest an improvement, you're welcome to. We'd rather have people audit the code than ask them to trust a marketing page.</p>
+                                                <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="btn btn-outline-secondary">
+                                                    <i class="mdi mdi-github me-1" aria-hidden="true"></i>View on GitHub
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Join Us Section -->
+                        <!-- CTA Section -->
                         <div class="row mb-4">
                             <div class="col-12">
-                                <div class="card shadow-sm">
-                                    <div class="card-body">
-                                        <h2 class="card-title">Join Us</h2>
-                                        <p class="card-text">Whether you're a developer, privacy advocate, or someone seeking reliable encryption tools, Encrypti0n.com is here to serve your needs securely and transparently. Join us in advancing digital privacy and ensure that your data remains truly yours.</p>
+                                <div class="card shadow-sm bg-primary text-white">
+                                    <div class="card-body text-center py-5">
+                                        <i class="mdi mdi-rocket-launch-outline" style="font-size: 2.5rem;" aria-hidden="true"></i>
+                                        <h2 class="card-title text-white mt-2">Get Involved</h2>
+                                        <p class="card-text mb-4">If you've made it this far, you probably care about where your data ends up. So do we. Try the app, read through the source, or just use the password generator. If something seems off or could be better, open an issue on GitHub.</p>
+                                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                            <a href="../index.html" class="btn btn-light spinner-link">
+                                                <i class="mdi mdi-application-import me-1" aria-hidden="true"></i>Try the App
+                                            </a>
+                                            <a href="https://github.com/mqxym/encrypti0n/issues" target="_blank" class="text-white btn btn-outline-light">
+                                                <i class="mdi mdi-bug-outline me-1" aria-hidden="true"></i>Open an Issue
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -288,7 +361,7 @@
 
                         <!-- Footer Statement -->
                         <footer class="text-center mt-5">
-                            <p class="small mb-0">Encrypti0n.com | Empowering Privacy, One Local Encryption at a Time.</p>
+                            <p class="small mb-0 text-muted">Encrypti0n.com | Your data stays yours.</p>
                         </footer>
                     </div>
                 </main>

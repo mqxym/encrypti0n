@@ -2,13 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Contact - Encrypti0n.com</title>
+        <title>Offline - Encrypti0n.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="Contact" />
+        <meta name="description" content="Encrypti0n.com offline fallback page" />
         <meta name="author" content="Marques Xiaomi" />
         <meta name="page-topic" content="Computer" />
         <meta http-equiv="Reply-to" content="maxim@omg.lol" />
-
 
         <!-- App favicon -->
         <link rel="shortcut icon" href="../assets/icons/favicon.ico" />
@@ -35,6 +34,7 @@
 
         <!-- Custom CSS -->
         <link href="../assets/css/custom.css" rel="stylesheet" type="text/css" />
+
     </head>
 
     <body>
@@ -51,17 +51,15 @@
                 <div class="logo-box">
                     <a href="/" class="logo-light">
                         <img src="../assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
-                        <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo"  class="logo-sm" />
+                        <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo" class="logo-sm" />
                     </a>
                     <a href="/" class="logo-dark">
-                        <img src="../assets/images/logo.webp" aria-hidden="true"  class="logo-lg" />
+                        <img src="../assets/images/logo.webp" aria-hidden="true" class="logo-lg" />
                         <img src="../assets/images/logo-sm.webp" aria-hidden="true" class="logo-sm" />
                     </a>
                 </div>
 
-                <!-- menu-left -->
-               <nav class="scrollbar cust-scrollbar-hidden" role="navigation" aria-label="Main menu">
-                    <!--- Menu -->
+                <nav class="scrollbar cust-scrollbar-hidden" role="navigation" aria-label="Main menu">
                     <ul class="menu" role="menubar">
                         <li class="p-2 menu-item text-white">
                             <a href="../index.html" class="spinner-link menu-link btn btn-primary">
@@ -130,26 +128,22 @@
                         </li>
 
                         <li class="menu-title">Links</li>
-
                         <li class="menu-item">
-                            <a href="https://github.com/mqxym/encrypti0n" target="_blank" class="menu-link">
+                            <a href="https://github.com/mqxym/encrypti0n" target="_blank" rel="noopener noreferrer" class="menu-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-code-braces"></i></span>
                                 <span class="menu-text">Sourcecode</span>
                             </a>
                         </li>
-                        <li class="menu-title">Coming soon</li>
 
+                        <li class="menu-title">Coming soon</li>
                         <li class="menu-item">
                             <a href="./web-crypto-api-playground.html" class="spinner-link menu-link">
                                 <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-gamepad-variant-outline"></i></span>
                                 <span class="menu-text">Crypto Playground</span>
                             </a>
                         </li>
-
-                        
-                        
                     </ul>
-                    <!--- End Menu -->
+
                     <div class="clearfix"></div>
                 </nav>
             </div>
@@ -157,9 +151,9 @@
             <div class="content-page">
                 <div class="navbar-custom">
                     <div class="topbar">
-                      <div class="topbar-menu d-flex align-items-center gap-1">
+                        <div class="topbar-menu d-flex align-items-center gap-1">
                             <div class="logo-box">
-                                 <a href="/" class="logo-light">
+                                <a href="/" class="logo-light">
                                     <img src="../assets/images/logo-dark.webp" alt="Encrypti0n.com main logo" class="logo-lg" />
                                     <img src="../assets/images/logo-sm.webp" alt="Encrypti0n.com small logo" class="logo-sm" />
                                 </a>
@@ -170,24 +164,23 @@
                                 </a>
                             </div>
 
-                            <!-- Sidebar Menu Toggle Button -->
                             <button class="button-toggle-menu" aria-label="Toggle navigation menu" aria-expanded="false">
                                 <i class="mdi mdi-menu" aria-hidden="true"></i>
                             </button>
                         </div>
 
-                       <ul class="topbar-menu d-flex align-items-center">
+                        <ul class="topbar-menu d-flex align-items-center">
                             <li class="d-none d-md-inline-block">
-                                <a class="nav-link waves-effect waves-light" aria-label="Toggle fullscreen" href="" data-toggle="fullscreen">
-                                    <i class="fe-maximize font-22"></i>
+                                <a class="nav-link waves-effect waves-light" href="" data-toggle="fullscreen" aria-label="Toggle fullscreen">
+                                    <i class="fe-maximize font-22" aria-hidden="true"></i>
                                 </a>
                             </li>
-                            <li class="">
-                                <a class="nav-link waves-effect waves-light" id="light-dark-mode" aria-label="Toggle darkmode">
-                                    <i class="ri-moon-line font-22"></i>
-                                </a>
+                            <li class="d-none d-sm-inline-block">
+                                <button class="nav-link waves-effect waves-light border-0 bg-transparent" id="light-dark-mode" aria-label="Toggle light or dark mode">
+                                    <i class="ri-moon-line font-22" aria-hidden="true"></i>
+                                </button>
                             </li>
-                            <li id="offline-banner" class="d-none" aria-live="polite">
+                            <li id="offline-banner" aria-live="polite">
                                 <span class="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Connection lost: offline mode is active">
                                     <i class="mdi mdi-wifi-off font-22 text-pink" aria-label="Offline"></i>
                                 </span>
@@ -195,6 +188,7 @@
                         </ul>
                     </div>
                 </div>
+
                 <main class="content">
                     <div class="container-fluid px-2">
                         <div class="col-12 mb-1">
@@ -202,19 +196,130 @@
                                 <div class="page-title-right">
                                     <ol class="breadcrumb m-0">
                                         <li class="breadcrumb-item"><a href="https://encrypti0n.com">Encrypti0n.com</a></li>
-                                        <li class="breadcrumb-item"><a href="http://app.encrypti0n.com">App</a></li>
-                                        <li class="breadcrumb-item active"><a href="./contact.html">Contact</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Offline</li>
                                     </ol>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="container my-5">
-                        <!-- Hero Section -->
-                        <section class="text-center mb-5">
-                            <h1 class="display-5">Contact</h1>
-                            <p class="lead">Links coming soon.</p>
+                        <section class="offline-hero card shadow-sm text-center p-4 p-md-5 mb-4" aria-labelledby="offline-title">
+                            <div class="card-body">
+                                <div class="offline-icon-wrap mb-4" aria-hidden="true">
+                                    <i class="mdi mdi-wifi-off"></i>
+                                </div>
+
+                                <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill bg-light text-dark mb-3">
+                                    <span class="offline-status-dot" aria-hidden="true"></span>
+                                    <span class="fw-semibold">Offline mode is active</span>
+                                </div>
+
+                                <h1 id="offline-title" class="display-5 mb-3">This page is not available offline</h1>
+
+                                <p class="lead mb-4">
+                                    Encrypti0n.com could not load the page you requested because it has not been cached yet.
+                                    Your connection appears to be unavailable or unstable.
+                                </p>
+
+                                <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                                    <button type="button" class="btn btn-primary btn-lg" onclick="window.location.reload()">
+                                        <i class="mdi mdi-refresh me-1" aria-hidden="true"></i>
+                                        Try again
+                                    </button>
+
+                                    <a href="../index.html" class="btn btn-outline-primary btn-lg spinner-link">
+                                        <i class="mdi mdi-application-import me-1" aria-hidden="true"></i>
+                                        Open cached app
+                                    </a>
+                                </div>
+                            </div>
                         </section>
+
+                        <div class="row g-3 my-4">
+                            <div class="col-md-4">
+                                <div class="card offline-card shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <span class="avatar-sm rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center">
+                                                <i class="mdi mdi-cloud-off-outline font-22" aria-hidden="true"></i>
+                                            </span>
+                                            <h2 class="h4 mb-0">Why am I seeing this?</h2>
+                                        </div>
+                                        <p class="mb-0">
+                                            The PWA can only show pages and assets that were previously saved in the browser cache.
+                                            This requested page is currently missing from that cache.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card offline-card shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <span class="avatar-sm rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center">
+                                                <i class="mdi mdi-shield-lock-outline font-22" aria-hidden="true"></i>
+                                            </span>
+                                            <h2 class="h4 mb-0">Your data is safe</h2>
+                                        </div>
+                                        <p class="mb-0">
+                                            Encrypti0n.com processes data locally on your device. Going offline does not send,
+                                            sync, or expose your entered data to a server.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card offline-card shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <span class="avatar-sm rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center">
+                                                <i class="mdi mdi-cellphone-link font-22" aria-hidden="true"></i>
+                                            </span>
+                                            <h2 class="h4 mb-0">What can I do?</h2>
+                                        </div>
+                                        <p class="mb-0">
+                                            Reconnect to the internet, refresh this page, or return to the cached app.
+                                            Once a page is visited online, it may become available offline later.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <section class="offline-muted-box p-4 my-4" aria-labelledby="offline-tips-title">
+                            <h2 id="offline-tips-title" class="h3 mb-3">
+                                <i class="mdi mdi-lightbulb-on-outline me-1" aria-hidden="true"></i>
+                                Offline troubleshooting
+                            </h2>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <ul class="mb-lg-0">
+                                        <li>Check your Wi-Fi or mobile data connection.</li>
+                                        <li>Disable airplane mode if it is enabled.</li>
+                                        <li>Try refreshing after your connection returns.</li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-6">
+                                    <ul class="mb-0">
+                                        <li>Open the main app if it was previously cached.</li>
+                                        <li>Visit important pages once while online to make them available later.</li>
+                                        <li>Update the PWA if your browser offers an app refresh.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="alert alert-info d-flex align-items-start gap-2" role="status">
+                            <i class="mdi mdi-information-outline font-22 mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong>Tip:</strong>
+                                This offline page is served by the service worker when navigation fails and the requested page is not already cached.
+                            </div>
+                        </div>
                     </div>
                 </main>
 
@@ -241,17 +346,32 @@
             </div>
         </div>
 
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var offlineBanner = document.getElementById("offline-banner");
+
+                function updateOfflineBanner() {
+                    if (!offlineBanner) return;
+
+                    if (navigator.onLine) {
+                        offlineBanner.classList.add("d-none");
+                    } else {
+                        offlineBanner.classList.remove("d-none");
+                    }
+                }
+
+                updateOfflineBanner();
+
+                window.addEventListener("online", updateOfflineBanner);
+                window.addEventListener("offline", updateOfflineBanner);
+            });
+        </script>
+
         <!-- Vendor js -->
         <script src="../assets/js/vendor.min.js" defer></script>
 
         <!-- Theme App js -->
         <script src="../assets/js/app.js" defer></script>
-
-        <!-- Toast-->
-        <script src="../assets/libs/jquery-toast-plugin/jquery.toast.min.js" defer></script>
-
-        <!-- Sweet Alerts js -->
-        <script src="../assets/libs/sweetalert2/sweetalert2.all.min.js" defer></script>
 
         <!-- App JS-->
         <script src="../app/insertVersion.js" defer></script>

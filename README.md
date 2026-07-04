@@ -17,9 +17,9 @@ The main feature is encryption and decryption of text and files with standard cr
 - Password strenght checking
 - Importing / exporting local app data with envelope encryption applied
 
-Try it out here: [encryption.com](https://encrypti0n.com)
+Try it out here: [app.encryption.com](https://app.encrypti0n.com)
 
-### Supports Local and Offline Execution
+### Supports Local and Offline Execution via Service Worker or Download
 
 Everything needed is included, with no external dependencies. Download the latest release on GitHub: [encrypti0n/releases](https://github.com/mqxym/encrypti0n/releases).
 

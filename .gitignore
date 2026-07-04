@@ -3,6 +3,7 @@
 node_modules/
 *package*.json
 build/
+/sw.js
 *.test
 .venv/
 appFeatures.md
