@@ -267,13 +267,13 @@ const getCachedHtmlFallback = async (request) => {
         return (
             await cache.match('/') ||
             await cache.match('/index.html') ||
-            await cache.match('/offline.html')
+            await cache.match('/pages/offline.html')
         );
     }
 
     return (
         await cache.match(request) ||
-        await cache.match('/offline.html') ||
+        await cache.match('/pages/offline.html') ||
         await cache.match('/index.html') ||
         await cache.match('/')
     );
