@@ -19,6 +19,9 @@
  *   `mitm.html` iframe reuses the broadest matching worker registration, so
  *   this worker must implement both offline caching and streamed-download
  *   handling.
+ * - Treat StreamSaver's `mitm.html` as a special navigation. It must never fall
+ *   back to `/index.html` or `/pages/offline.html`, because those pages do not
+ *   contain StreamSaver's message-forwarding script.
  * - Avoid caching transient StreamSaver download URLs by intercepting them
  *   before Workbox routes run.
  */
@@ -72,11 +75,25 @@ const STATIC_ASSETS_CACHE = 'static-assets';
 const HTML_CACHE = 'html-pages';
 
 /**
+ * StreamSaver MITM iframe path.
+ *
+ * Design decisions:
+ * - This path must be cached as its exact file.
+ * - It must never use the generic HTML fallback chain because replacing this
+ *   file with `/index.html` or `/pages/offline.html` breaks StreamSaver's
+ *   parent-window/message-port handshake.
+ *
+ * @type {string}
+ */
+const STREAMSAVER_MITM_PATH = '/assets/libs/streamsaver/mitm.html';
+
+/**
  * Core HTML pages that should be available before first navigation.
  *
  * Design decision:
- * - Pre-cache only the minimum HTML set needed for a reliable offline shell.
- *   Other HTML pages are cached lazily as users visit them.
+ * - Pre-cache only the minimum HTML set needed for a reliable offline shell,
+ *   plus StreamSaver's MITM file because downloads depend on the exact contents
+ *   of that HTML document.
  *
  * @type {string[]}
  */
@@ -84,6 +101,7 @@ const CORE_HTML_URLS = [
     '/',
     '/index.html',
     '/pages/offline.html',
+    STREAMSAVER_MITM_PATH,
 ];
 
 /**
@@ -123,16 +141,26 @@ self.skipWaiting();
 clientsClaim();
 
 /**
+ * Tests whether a URL points to StreamSaver's MITM document.
+ *
+ * @param {URL} url - Parsed request URL.
+ * @returns {boolean} True when the request targets StreamSaver's `mitm.html`.
+ */
+const isStreamSaverMitm = (url) => url.pathname === STREAMSAVER_MITM_PATH;
+
+/**
  * Installs the service worker and primes critical offline caches.
  *
  * Design decisions:
  * - Cache Argon2 WASM during install so cryptographic functionality can work
  *   offline as early as possible.
+ * - Cache StreamSaver's MITM HTML during install so streamed downloads continue
+ *   to work offline.
  * - Skip network fetches for assets that are already cached. This allows a
  *   service-worker script update to install while the user is offline.
  * - Treat all install-time cache failures as non-fatal. A failed logo, HTML
- *   page, or WASM fetch should not prevent the worker from installing; runtime
- *   fallback logic still handles missing resources.
+ *   page, MITM page, or WASM fetch should not prevent the worker from
+ *   installing; runtime fallback logic still handles missing resources.
  *
  * @param {ExtendableEvent} event - Browser install event.
  * @returns {void}
@@ -304,12 +332,15 @@ self.addEventListener('message', (event) => {
 /**
  * Handles fetches that must run before Workbox routing:
  * - StreamSaver `/ping` keep-alive requests.
- * - WASM asset requests.
  * - StreamSaver one-time virtual download URLs.
+ * - WASM asset requests.
  *
  * Design decisions:
  * - Use `stopImmediatePropagation()` for these requests so Workbox never sees
  *   or caches them.
+ * - Check StreamSaver one-time download URLs before WASM. This prevents a
+ *   streamed download whose generated URL ends with `.wasm` from being mistaken
+ *   for a normal WASM asset request.
  * - Handle WASM manually to avoid Workbox cache-name prefixing.
  * - Use URL strings as WASM cache keys instead of `Request` objects to avoid
  *   `Vary`-header differences causing unnecessary cache misses.
@@ -326,6 +357,38 @@ self.addEventListener('fetch', (event) => {
     if (url.endsWith('/ping')) {
         event.stopImmediatePropagation();
         event.respondWith(new Response('pong'));
+        return;
+    }
+
+    const hijack = streamMap.get(url);
+
+    if (hijack) {
+        event.stopImmediatePropagation();
+        streamMap.delete(url);
+
+        const [stream, data] = hijack;
+
+        // Only copy the length & disposition; don't let callers set arbitrary headers.
+        const responseHeaders = new Headers({
+            'Content-Type': 'application/octet-stream; charset=utf-8',
+            'Content-Security-Policy': "default-src 'none'",
+            'X-Content-Security-Policy': "default-src 'none'",
+            'X-WebKit-CSP': "default-src 'none'",
+            'X-XSS-Protection': '1; mode=block',
+            'Cross-Origin-Embedder-Policy': 'require-corp',
+        });
+
+        const headers = new Headers(data.headers || {});
+
+        if (headers.has('Content-Length')) {
+            responseHeaders.set('Content-Length', headers.get('Content-Length'));
+        }
+
+        if (headers.has('Content-Disposition')) {
+            responseHeaders.set('Content-Disposition', headers.get('Content-Disposition'));
+        }
+
+        event.respondWith(new Response(stream, { headers: responseHeaders }));
         return;
     }
 
@@ -357,38 +420,7 @@ self.addEventListener('fetch', (event) => {
                 }
             })
         );
-        return;
     }
-
-    const hijack = streamMap.get(url);
-    if (!hijack) return; // Not a download — let the Workbox routes handle it.
-
-    event.stopImmediatePropagation();
-    streamMap.delete(url);
-
-    const [stream, data] = hijack;
-
-    // Only copy the length & disposition; don't let callers set arbitrary headers.
-    const responseHeaders = new Headers({
-        'Content-Type': 'application/octet-stream; charset=utf-8',
-        'Content-Security-Policy': "default-src 'none'",
-        'X-Content-Security-Policy': "default-src 'none'",
-        'X-WebKit-CSP': "default-src 'none'",
-        'X-XSS-Protection': '1; mode=block',
-        'Cross-Origin-Embedder-Policy': 'require-corp',
-    });
-
-    const headers = new Headers(data.headers || {});
-
-    if (headers.has('Content-Length')) {
-        responseHeaders.set('Content-Length', headers.get('Content-Length'));
-    }
-
-    if (headers.has('Content-Disposition')) {
-        responseHeaders.set('Content-Disposition', headers.get('Content-Disposition'));
-    }
-
-    event.respondWith(new Response(stream, { headers: responseHeaders }));
 });
 
 // ---------------------------------------------------------------------------
@@ -406,7 +438,7 @@ self.addEventListener('fetch', (event) => {
  * @param {URL} url - Parsed request URL.
  * @returns {boolean} True when the request targets `sw.js`.
  */
-const isServiceWorkerScript = (url) => /(^|\/)[^/]*sw\.js$/.test(url.pathname);
+const isServiceWorkerScript = (url) => /(^|\/)sw\.js$/.test(url.pathname);
 
 /**
  * Network-first strategy used for navigations and HTML documents.
@@ -432,6 +464,7 @@ const htmlNetworkFirst = new NetworkFirst({
  * Resolves an offline HTML fallback for a failed navigation.
  *
  * Fallback priority:
+ * - For StreamSaver's `mitm.html`, only return the exact cached MITM document.
  * - For `/` and `/index.html`, try both canonical home-page variants before
  *   the offline page.
  * - For other pages, try the exact cached request, then the offline page, then
@@ -442,6 +475,9 @@ const htmlNetworkFirst = new NetworkFirst({
  *   request either form.
  * - Prefer a cached copy of the exact page when available, because it is more
  *   useful than a generic offline page.
+ * - Do not use generic fallbacks for StreamSaver's MITM document. The MITM page
+ *   contains required StreamSaver glue code; replacing it with app HTML makes
+ *   the iframe load but silently breaks the download handshake.
  *
  * @param {Request} request - Failed navigation request.
  * @returns {Promise<Response|undefined>} Cached fallback response, if present.
@@ -449,6 +485,10 @@ const htmlNetworkFirst = new NetworkFirst({
 const getCachedHtmlFallback = async (request) => {
     const cache = await caches.open(HTML_CACHE);
     const url = new URL(request.url);
+
+    if (isStreamSaverMitm(url)) {
+        return await cache.match(request) || await cache.match(STREAMSAVER_MITM_PATH);
+    }
 
     if (url.pathname === '/' || url.pathname === '/index.html') {
         return (
@@ -467,6 +507,27 @@ const getCachedHtmlFallback = async (request) => {
 };
 
 /**
+ * Creates a minimal HTML response for navigations that cannot be served from
+ * either the network or cache.
+ *
+ * Design decision:
+ * - Keep the final fallback inline so the service worker can still return valid
+ *   HTML even if every cached fallback page is missing.
+ *
+ * @returns {Response} Minimal offline HTML response.
+ */
+const createOfflineHtmlResponse = () =>
+    new Response(
+        '<!doctype html><title>Offline</title><h1>Offline</h1><p>This page is not available offline.</p>',
+        {
+            status: 503,
+            headers: {
+                'Content-Type': 'text/html; charset=utf-8',
+            },
+        }
+    );
+
+/**
  * Registers the navigation route for HTML pages.
  *
  * Design decisions:
@@ -474,8 +535,9 @@ const getCachedHtmlFallback = async (request) => {
  *   strategy so the app can apply project-specific fallback ordering.
  * - Keep `/` and `/index.html` synchronized after any successful home-page
  *   network response.
- * - Return a minimal inline offline document as the last resort so navigation
- *   failures always produce a valid HTML response.
+ * - Treat StreamSaver's MITM page as exact-match only during fallback.
+ * - Return a minimal inline offline document as the last resort so normal app
+ *   navigation failures always produce a valid HTML response.
  */
 registerRoute(
     new NavigationRoute(async ({ event, request }) => {
@@ -483,9 +545,9 @@ registerRoute(
             const response = await htmlNetworkFirst.handle({ event, request });
 
             if (response) {
-                // Keep / and /index.html synchronized when either one succeeds.
                 const url = new URL(request.url);
 
+                // Keep / and /index.html synchronized when either one succeeds.
                 if (url.pathname === '/' || url.pathname === '/index.html') {
                     const cache = await caches.open(HTML_CACHE);
                     cache.put('/', response.clone()).catch(() => {});
@@ -502,15 +564,7 @@ registerRoute(
 
         if (fallback) return fallback;
 
-        return new Response(
-            '<!doctype html><title>Offline</title><h1>Offline</h1><p>This page is not available offline.</p>',
-            {
-                status: 503,
-                headers: {
-                    'Content-Type': 'text/html; charset=utf-8',
-                },
-            }
-        );
+        return createOfflineHtmlResponse();
     })
 );
 
@@ -591,28 +645,20 @@ registerRoute(
  * Design decisions:
  * - Navigation failures should resolve to a friendly offline page whenever
  *   possible.
+ * - StreamSaver's MITM page must only resolve to the exact cached MITM file.
+ *   Returning app HTML for that URL would break StreamSaver while appearing to
+ *   load successfully.
  * - Non-navigation failures should remain real failures via `Response.error()`;
  *   returning placeholder JS, CSS, image, or WASM responses could hide bugs and
  *   leave the app in a misleading partial state.
  */
 setCatchHandler(async ({ request }) => {
     if (request.mode === 'navigate') {
-        const cache = await caches.open(HTML_CACHE);
+        const fallback = await getCachedHtmlFallback(request);
 
-        return (
-            await cache.match('/pages/offline.html') ||
-            await cache.match('/index.html') ||
-            await cache.match('/') ||
-            new Response(
-                '<!doctype html><title>Offline</title><h1>Offline</h1><p>This page is not available offline.</p>',
-                {
-                    status: 503,
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8',
-                    },
-                }
-            )
-        );
+        if (fallback) return fallback;
+
+        return createOfflineHtmlResponse();
     }
 
     return Response.error();
