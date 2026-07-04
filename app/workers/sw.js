@@ -26,6 +26,9 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 setCacheNameDetails({ prefix: 'encrypti0n' });
 
+// WASM_CACHE is managed entirely outside Workbox so the cache name is never
+// transformed by Workbox's prefix logic (setCacheNameDetails).
+const WASM_CACHE = 'wasm-assets';
 const STATIC_ASSETS_CACHE = 'static-assets';
 
 // Activate a new worker immediately and take control of open pages so updated
@@ -34,9 +37,11 @@ self.skipWaiting();
 clientsClaim();
 
 // Pre-cache argon2.wasm on install so it is available even before first use.
+// Skip the network fetch when the entry is already present (e.g. after a SW
+// script update while offline) so the install does not fail unnecessarily.
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(STATIC_ASSETS_CACHE).then(async (cache) => {
+        caches.open(WASM_CACHE).then(async (cache) => {
             const existing = await cache.match('/assets/libs/cryptit/argon2.wasm');
             if (existing) return;
             return cache.add('/assets/libs/cryptit/argon2.wasm');
@@ -119,6 +124,28 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // WASM assets: cache-first using a dedicated cache whose name is not
+    // transformed by Workbox's prefix logic. Handles both native WASM loads
+    // (destination === 'wasm') and plain fetch() calls (destination === '').
+    // Use the URL string as the cache key (not the Request object) so that
+    // Vary-header differences between requests (e.g. Accept-Encoding sent
+    // from different page contexts) never cause a spurious cache miss.
+    if (url.endsWith('.wasm')) {
+        event.stopImmediatePropagation();
+        event.respondWith(
+            caches.open(WASM_CACHE).then(async (cache) => {
+                const cached = await cache.match(url);
+                if (cached) return cached;
+                const response = await fetch(event.request);
+                if (response.ok || response.type === 'opaque') {
+                    cache.put(url, response.clone()).catch(() => {});
+                }
+                return response;
+            })
+        );
+        return;
+    }
+
     const hijack = streamMap.get(url);
     if (!hijack) return; // Not a download — let the Workbox routes handle it.
 
@@ -189,23 +216,6 @@ registerRoute(
     new StaleWhileRevalidate({
         cacheName: 'css-assets',
         plugins: [new CacheableResponsePlugin({ statuses: [0, 200] })],
-    })
-);
-
-// WebAssembly modules: cache first with a 30-day lifetime.
-// Match both native WASM loads (destination === 'wasm') and plain fetch() calls
-// (destination === '') since loadArgon2WasmBinary uses fetch().arrayBuffer().
-registerRoute(
-    ({ url, request }) => request.destination === 'wasm' || url.pathname.endsWith('.wasm'),
-    new CacheFirst({
-        cacheName: STATIC_ASSETS_CACHE,
-        plugins: [
-            new CacheableResponsePlugin({ statuses: [0, 200] }),
-            new ExpirationPlugin({
-                maxEntries: 10,
-                maxAgeSeconds: 30 * 24 * 60 * 60,
-            }),
-        ],
     })
 );
 
