@@ -19,7 +19,7 @@
  */
 
 import { clientsClaim, setCacheNameDetails } from 'workbox-core';
-import { registerRoute, NavigationRoute } from 'workbox-routing';
+import { registerRoute, NavigationRoute, setCatchHandler  } from 'workbox-routing';
 import { NetworkFirst, StaleWhileRevalidate, CacheFirst } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
@@ -31,6 +31,8 @@ setCacheNameDetails({ prefix: 'encrypti0n' });
 const WASM_CACHE = 'wasm-assets';
 const STATIC_ASSETS_CACHE = 'static-assets';
 
+
+
 // Activate a new worker immediately and take control of open pages so updated
 // code is served on the next page load without disrupting the current session.
 self.skipWaiting();
@@ -39,13 +41,64 @@ clientsClaim();
 // Pre-cache argon2.wasm on install so it is available even before first use.
 // Skip the network fetch when the entry is already present (e.g. after a SW
 // script update while offline) so the install does not fail unnecessarily.
+const HTML_CACHE = 'html-pages';
+
+const CORE_HTML_URLS = [
+    '/',
+    '/index.html',
+    '/pages/offline.html',
+];
+
+const SHELL_ASSETS_CACHE = 'shell-assets';
+
+const ALWAYS_CACHE_ASSETS = [
+    '/assets/images/logo.webp',
+    '/assets/images/logo-dark.webp',
+    '/assets/images/logo-sm.webp',
+];
+
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(WASM_CACHE).then(async (cache) => {
-            const existing = await cache.match('/assets/libs/cryptit/argon2.wasm');
-            if (existing) return;
-            return cache.add('/assets/libs/cryptit/argon2.wasm');
-        })
+        Promise.all([
+            caches.open(WASM_CACHE).then(async (cache) => {
+                const existing = await cache.match('/assets/libs/cryptit/argon2.wasm');
+                if (existing) return;
+
+                try {
+                    await cache.add('/assets/libs/cryptit/argon2.wasm');
+                } catch {
+                    // Do not fail SW installation just because WASM could not be cached.
+                }
+            }),
+
+            caches.open(HTML_CACHE).then(async (cache) => {
+                await Promise.all(
+                    CORE_HTML_URLS.map(async (url) => {
+                        try {
+                            const existing = await cache.match(url);
+                            if (!existing) {
+                                await cache.add(url);
+                            }
+                        } catch {
+                            // Keep install resilient. The navigation route still has fallbacks.
+                        }
+                    })
+                );
+            }),
+
+            caches.open(SHELL_ASSETS_CACHE).then(async (cache) => {
+                await Promise.all(
+                    ALWAYS_CACHE_ASSETS.map(async (url) => {
+                        try {
+                            const existing = await cache.match(url);
+                            if (!existing) {
+                                await cache.add(url);
+                            }
+                        } catch {}
+                    })
+                );
+            }),
+        ])
     );
 });
 
@@ -219,6 +272,16 @@ registerRoute(
     })
 );
 
+registerRoute(
+    ({ url }) => ALWAYS_CACHE_ASSETS.includes(url.pathname),
+    new CacheFirst({
+        cacheName: SHELL_ASSETS_CACHE,
+        plugins: [
+            new CacheableResponsePlugin({ statuses: [0, 200] }),
+        ],
+    })
+);
+
 // Fonts, icons and images: rarely change, cache first with a 30-day lifetime.
 registerRoute(
     ({ request }) => ['font', 'image'].includes(request.destination),
@@ -233,3 +296,26 @@ registerRoute(
         ],
     })
 );
+
+setCatchHandler(async ({ event, request }) => {
+    if (request.mode === 'navigate') {
+        const cache = await caches.open(HTML_CACHE);
+
+        return (
+            await cache.match('/pages/offline.html') ||
+            await cache.match('/index.html') ||
+            await cache.match('/') ||
+            new Response(
+                '<!doctype html><title>Offline</title><h1>Offline</h1><p>This page is not available offline.</p>',
+                {
+                    status: 503,
+                    headers: {
+                        'Content-Type': 'text/html; charset=utf-8',
+                    },
+                }
+            )
+        );
+    }
+
+    return Response.error();
+});
