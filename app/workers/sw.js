@@ -36,9 +36,11 @@ clientsClaim();
 // Pre-cache argon2.wasm on install so it is available even before first use.
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(STATIC_ASSETS_CACHE).then((cache) =>
-            cache.add('/assets/libs/cryptit/argon2.wasm')
-        )
+        caches.open(STATIC_ASSETS_CACHE).then(async (cache) => {
+            const existing = await cache.match('/assets/libs/cryptit/argon2.wasm');
+            if (existing) return;
+            return cache.add('/assets/libs/cryptit/argon2.wasm');
+        })
     );
 });
 
