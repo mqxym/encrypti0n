@@ -76,7 +76,6 @@ export class UIManager {
     this.bindEvents();
     
     /** @private */ this.passwordStrengthTimers = {};
-    /** @private */ this.passwordStrengthCache = {};
   }
 
   /**
@@ -592,20 +591,14 @@ export class UIManager {
     clearTimeout(this.passwordStrengthTimers[pwFieldId]);
 
     this.passwordStrengthTimers[pwFieldId] = setTimeout(() => {
-      const password = document.getElementById(pwFieldId).value;
-
-      let strength;
-
-      if (this.passwordStrengthCache[password] !== undefined) {
-        strength = this.passwordStrengthCache[password];
-      } else {
-        const result = zxcvbn(password);
-        strength = result.score;
-        this.passwordStrengthCache[password] = strength;
-      }
-
+      const password = document.getElementById(pwFieldId);
       const bar = document.getElementById(barId);
       const text = document.getElementById(textId);
+
+      if (!password || !bar || !text) return;
+
+      const result = zxcvbn(password.value);
+      const strength = result.score;
 
       bar.classList.remove('bg-danger', 'bg-warning', 'bg-info', 'bg-success');
 
