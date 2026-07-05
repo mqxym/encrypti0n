@@ -74,6 +74,9 @@ export class UIManager {
     /** @private */ this.keyManagementController = keyManagementController;
     /** @private */ this.fileStreamService = services.fss;
     this.bindEvents();
+    
+    /** @private */ this.passwordStrengthTimers = {};
+    /** @private */ this.passwordStrengthCache = {};
   }
 
   /**
@@ -578,53 +581,61 @@ export class UIManager {
   /**
    * Update a password strength progress bar and label for a given input field.
    *
-   * Uses a global `checkPasswordStrength.passwordStrength(password).id` that is
-   * expected to return an integer in `[0, 3]`:
-   * - 0 → Very Weak
-   * - 1 → Weak
-   * - 2 → Medium
-   * - 3 → Strong
+   * Debounces zxcvbn calls to avoid running it too often on slower devices.
    *
-   * The method sets bar width and color (`bg-danger`, `bg-warning`, `bg-success`)
-   * accordingly and updates a textual label.
-   *
-   * @param {string} pwFieldId - DOM id of the password input element.
-   * @param {string} barId - DOM id of the progress bar element.
-   * @param {string} textId - DOM id of the label element next to the bar.
+   * @param {string} pwFieldId
+   * @param {string} barId
+   * @param {string} textId
    * @returns {void}
    */
   showPasswordStrenght(pwFieldId, barId, textId) {
-    const password = document.getElementById(pwFieldId).value;
-    const strength = checkPasswordStrength.passwordStrength(password).id;
+    clearTimeout(this.passwordStrengthTimers[pwFieldId]);
 
-    const bar = document.getElementById(barId);
-    const text = document.getElementById(textId);
+    this.passwordStrengthTimers[pwFieldId] = setTimeout(() => {
+      const password = document.getElementById(pwFieldId).value;
 
-    // Remove previous strength classes
-    bar.classList.remove('bg-danger', 'bg-warning', 'bg-info', 'bg-success');
+      let strength;
 
-    // Set based on strength level
-    switch (strength) {
-      case 0:
-        bar.style.width = '10%';
-        bar.classList.add('bg-danger');
-        text.textContent = 'Strength: Very Weak';
-        break;
-      case 1:
-        bar.style.width = '35%';
-        bar.classList.add('bg-danger');
-        text.textContent = 'Strength: Weak';
-        break;
-      case 2:
-        bar.style.width = '65%';
-        bar.classList.add('bg-warning');
-        text.textContent = 'Strength: Medium';
-        break;
-      case 3:
-        bar.style.width = '100%';
-        bar.classList.add('bg-success');
-        text.textContent = 'Strength: Strong';
-        break;
-    }
+      if (this.passwordStrengthCache[password] !== undefined) {
+        strength = this.passwordStrengthCache[password];
+      } else {
+        const result = zxcvbn(password);
+        strength = result.score;
+        this.passwordStrengthCache[password] = strength;
+      }
+
+      const bar = document.getElementById(barId);
+      const text = document.getElementById(textId);
+
+      bar.classList.remove('bg-danger', 'bg-warning', 'bg-info', 'bg-success');
+
+      switch (strength) {
+        case 0:
+          bar.style.width = '10%';
+          bar.classList.add('bg-danger');
+          text.textContent = 'Strength: Very Weak';
+          break;
+        case 1:
+          bar.style.width = '10%';
+          bar.classList.add('bg-danger');
+          text.textContent = 'Strength: Very Weak';
+          break;
+        case 2:
+          bar.style.width = '35%';
+          bar.classList.add('bg-danger');
+          text.textContent = 'Strength: Weak';
+          break;
+        case 3:
+          bar.style.width = '65%';
+          bar.classList.add('bg-warning');
+          text.textContent = 'Strength: Medium';
+          break;
+        case 4:
+          bar.style.width = '100%';
+          bar.classList.add('bg-success');
+          text.textContent = 'Strength: Strong';
+          break;
+      }
+    }, 150);
   }
 }
