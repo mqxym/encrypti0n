@@ -1,11 +1,11 @@
   {
   "scripts": {
     "build": "npm run build:sw && npm run build:main && npm run build:password && npm run build:decoder",
-    "build:sw": "npx esbuild app/workers/sw.js --outfile=sw-compiled.js --bundle --minify",
-    "build:main": "npx esbuild app/main/index.js --outfile=build/main/index.js --bundle --minify",
-    "build:password": "npx esbuild app/passwordGenerator/index.js --outfile=build/passwordGenerator/index.js --bundle --minify",
-    "build:decoder": "npx esbuild app/dataDecoder/index.js --outfile=build/dataDecoder/index.js --bundle --minify",
-    "build:pwi": "npx esbuild app/passwordIntelligence/index.js --outfile=build/PasswordIntelligence/index.js --bundle --minify"
+     "build:sw": "esbuild app/workers/sw.js --outfile=sw-compiled.js --bundle --minify",
+     "build:main": "esbuild app/main/index.js --outfile=build/main/index.js --bundle --minify",
+     "build:password": "esbuild app/passwordGenerator/index.js --outfile=build/passwordGenerator/index.js --bundle --minify",
+     "build:decoder": "esbuild app/dataDecoder/index.js --outfile=build/dataDecoder/index.js --bundle --minify",
+     "build:pwi": "esbuild app/passwordIntelligence/index.js --outfile=build/PasswordIntelligence/index.js --bundle --minify"
   },
   "dependencies": {
     "esbuild": "^0.25.3",
