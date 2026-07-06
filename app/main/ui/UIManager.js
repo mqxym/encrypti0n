@@ -66,6 +66,7 @@ export class UIManager {
    * @param {KeyManagementController} keyManagementController - Controller for slot generation/toggling.
    */
   constructor(services, keyManagementController) {
+    /** @private */ this.passwordStrengthTimers = {};  
     /** @private */ this.formHandler = services.form;
     /** @private */ this.configManager = services.config;
     /** @private */ this.argon2Service = services.argon2;
@@ -74,8 +75,6 @@ export class UIManager {
     /** @private */ this.keyManagementController = keyManagementController;
     /** @private */ this.fileStreamService = services.fss;
     this.bindEvents();
-    
-    /** @private */ this.passwordStrengthTimers = {};
   }
 
   /**
