@@ -578,13 +578,19 @@ export class UIManager {
   }
 
   /**
-   * Update a password strength progress bar and label for a given input field.
+   * Updates a password strength indicator for the specified password input.
    *
-   * Debounces zxcvbn calls to avoid running it too often on slower devices.
+   * The password is evaluated using `zxcvbn` after a short debounce delay
+   * (150 ms) to avoid performing expensive strength calculations on every
+   * keystroke. The method updates both the progress bar's width/color and
+   * the accompanying strength label.
    *
-   * @param {string} pwFieldId
-   * @param {string} barId
-   * @param {string} textId
+   * If any of the required DOM elements cannot be found, the method exits
+   * without making any changes.
+   *
+   * @param {string} pwFieldId - ID of the password `<input>` element.
+   * @param {string} barId - ID of the progress bar element that visualizes password strength.
+   * @param {string} textId - ID of the element that displays the textual strength description.
    * @returns {void}
    */
   showPasswordStrenght(pwFieldId, barId, textId) {
