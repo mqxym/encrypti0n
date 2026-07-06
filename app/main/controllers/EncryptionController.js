@@ -105,7 +105,7 @@ export class EncryptionController {
     if (typeof key !== "string") return;
     const result = zxcvbn(key);
     const strength = result.score;
-    if (strength !== 4) {
+    if (strength < 3) {
       Swal.fire({
         icon: 'warning',
         title: 'Your password is weak.',
