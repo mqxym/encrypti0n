@@ -67,6 +67,7 @@ export class UIManager {
    */
   constructor(services, keyManagementController) {
     /** @private */ this.passwordStrengthTimers = {};  
+    
     /** @private */ this.formHandler = services.form;
     /** @private */ this.configManager = services.config;
     /** @private */ this.argon2Service = services.argon2;
@@ -631,6 +632,7 @@ export class UIManager {
           bar.style.width = '0%';
           text.textContent = 'Strength: Unknown';
           break;
+      }
     }, 150);
   }
 }
