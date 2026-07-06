@@ -609,26 +609,29 @@ export class UIManager {
           text.textContent = 'Strength: Very Weak';
           break;
         case 1:
-          bar.style.width = '10%';
-          bar.classList.add('bg-danger');
-          text.textContent = 'Strength: Very Weak';
-          break;
-        case 2:
           bar.style.width = '35%';
           bar.classList.add('bg-danger');
           text.textContent = 'Strength: Weak';
           break;
-        case 3:
+        case 2:
           bar.style.width = '65%';
           bar.classList.add('bg-warning');
-          text.textContent = 'Strength: Medium';
+          text.textContent = 'Strength: Fair';
+          break;
+        case 3:
+          bar.style.width = '85%';
+          bar.classList.add('bg-info');
+          text.textContent = 'Strength: Strong';
           break;
         case 4:
           bar.style.width = '100%';
           bar.classList.add('bg-success');
-          text.textContent = 'Strength: Strong';
+          text.textContent = 'Strength: Very Strong';
           break;
-      }
+        default:
+          bar.style.width = '0%';
+          text.textContent = 'Strength: Unknown';
+          break;
     }, 150);
   }
 }
