@@ -66,6 +66,8 @@ export class UIManager {
    * @param {KeyManagementController} keyManagementController - Controller for slot generation/toggling.
    */
   constructor(services, keyManagementController) {
+    /** @private */ this.passwordStrengthTimers = {};  
+    
     /** @private */ this.formHandler = services.form;
     /** @private */ this.configManager = services.config;
     /** @private */ this.argon2Service = services.argon2;
@@ -576,55 +578,67 @@ export class UIManager {
   }
 
   /**
-   * Update a password strength progress bar and label for a given input field.
+   * Updates a password strength indicator for the specified password input.
    *
-   * Uses a global `checkPasswordStrength.passwordStrength(password).id` that is
-   * expected to return an integer in `[0, 3]`:
-   * - 0 → Very Weak
-   * - 1 → Weak
-   * - 2 → Medium
-   * - 3 → Strong
+   * The password is evaluated using `zxcvbn` after a short debounce delay
+   * (150 ms) to avoid performing expensive strength calculations on every
+   * keystroke. The method updates both the progress bar's width/color and
+   * the accompanying strength label.
    *
-   * The method sets bar width and color (`bg-danger`, `bg-warning`, `bg-success`)
-   * accordingly and updates a textual label.
+   * If any of the required DOM elements cannot be found, the method exits
+   * without making any changes.
    *
-   * @param {string} pwFieldId - DOM id of the password input element.
-   * @param {string} barId - DOM id of the progress bar element.
-   * @param {string} textId - DOM id of the label element next to the bar.
+   * @param {string} pwFieldId - ID of the password `<input>` element.
+   * @param {string} barId - ID of the progress bar element that visualizes password strength.
+   * @param {string} textId - ID of the element that displays the textual strength description.
    * @returns {void}
    */
   showPasswordStrenght(pwFieldId, barId, textId) {
-    const password = document.getElementById(pwFieldId).value;
-    const strength = checkPasswordStrength.passwordStrength(password).id;
+    clearTimeout(this.passwordStrengthTimers[pwFieldId]);
 
-    const bar = document.getElementById(barId);
-    const text = document.getElementById(textId);
+    this.passwordStrengthTimers[pwFieldId] = setTimeout(() => {
+      const password = document.getElementById(pwFieldId);
+      const bar = document.getElementById(barId);
+      const text = document.getElementById(textId);
 
-    // Remove previous strength classes
-    bar.classList.remove('bg-danger', 'bg-warning', 'bg-info', 'bg-success');
+      if (!password || !bar || !text) return;
 
-    // Set based on strength level
-    switch (strength) {
-      case 0:
-        bar.style.width = '10%';
-        bar.classList.add('bg-danger');
-        text.textContent = 'Strength: Very Weak';
-        break;
-      case 1:
-        bar.style.width = '35%';
-        bar.classList.add('bg-danger');
-        text.textContent = 'Strength: Weak';
-        break;
-      case 2:
-        bar.style.width = '65%';
-        bar.classList.add('bg-warning');
-        text.textContent = 'Strength: Medium';
-        break;
-      case 3:
-        bar.style.width = '100%';
-        bar.classList.add('bg-success');
-        text.textContent = 'Strength: Strong';
-        break;
-    }
+      const result = zxcvbn(password.value);
+      const strength = result.score;
+
+      bar.classList.remove('bg-danger', 'bg-warning', 'bg-info', 'bg-success');
+
+      switch (strength) {
+        case 0:
+          bar.style.width = '10%';
+          bar.classList.add('bg-danger');
+          text.textContent = 'Strength: Very Weak';
+          break;
+        case 1:
+          bar.style.width = '35%';
+          bar.classList.add('bg-danger');
+          text.textContent = 'Strength: Weak';
+          break;
+        case 2:
+          bar.style.width = '65%';
+          bar.classList.add('bg-warning');
+          text.textContent = 'Strength: Fair';
+          break;
+        case 3:
+          bar.style.width = '85%';
+          bar.classList.add('bg-info');
+          text.textContent = 'Strength: Strong';
+          break;
+        case 4:
+          bar.style.width = '100%';
+          bar.classList.add('bg-success');
+          text.textContent = 'Strength: Very Strong';
+          break;
+        default:
+          bar.style.width = '0%';
+          text.textContent = 'Strength: Unknown';
+          break;
+      }
+    }, 150);
   }
 }

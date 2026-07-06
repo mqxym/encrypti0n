@@ -1,6 +1,6 @@
 'use strict';
 
-const appVersion = "3.2.1";
+const appVersion = "3.2.2";
 
 function normalizeUrl(url) {
     return url.replace(/\/$/, "");
