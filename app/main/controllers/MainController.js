@@ -56,7 +56,7 @@ export class MainController {
    */
   async initializeServices() {
     const confManager = await ConfigManager.create();
-    const cryptit = createCryptit({acceptUnauthenticatedHeader: true});
+    const cryptit = createCryptit();
 
     const fssOptions = {
       streamSaverMitmPath: './assets/libs/streamsaver/mitm.html',

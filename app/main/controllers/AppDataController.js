@@ -357,7 +357,7 @@ export class AppDataController {
     Swal.fire({
       icon: 'warning',
       title: 'Clear all data?',
-      text: "All local data from main app v3 will be rewritten with default values. This action can't be undone.",
+      text: "All local data from the app will be overwritten with default values. This action can't be undone.",
       showCancelButton: true,
       confirmButtonText: '<i class="mdi mdi-delete me-1"></i> Clear',
       cancelButtonText: '<i class="mdi mdi-cancel me-1"></i>Cancel',
