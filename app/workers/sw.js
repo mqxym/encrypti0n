@@ -212,6 +212,61 @@ self.addEventListener('install', (event) => {
     );
 });
 
+
+let refreshStarted = false;
+
+self.addEventListener('fetch', () => {
+    if (refreshStarted) return;
+    refreshStarted = true;
+    void refreshCaches();
+});
+
+/**
+ * Updates cached resources in the background.
+ *
+ * Existing cache entries are replaced only after a successful network fetch.
+ * Network failures are ignored so offline users keep their current cache.
+ */
+async function refreshCaches() {
+    const refreshList = [
+        {
+            cache: WASM_CACHE,
+            urls: ['/assets/libs/cryptit/argon2.wasm'],
+        },
+        {
+            cache: HTML_CACHE,
+            urls: CORE_HTML_URLS,
+        },
+        {
+            cache: SHELL_ASSETS_CACHE,
+            urls: ALWAYS_CACHE_ASSETS,
+        },
+    ];
+
+    await Promise.all(
+        refreshList.map(async ({ cache: cacheName, urls }) => {
+            const cache = await caches.open(cacheName);
+
+            await Promise.all(
+                urls.map(async (url) => {
+                    try {
+                        const response = await fetch(url, {
+                            cache: "reload",
+                        });
+
+                        if (response.ok) {
+                            await cache.put(url, response.clone());
+                        }
+                    } catch {
+                        // Offline or network error.
+                        // Keep the existing cached version.
+                    }
+                })
+            );
+        })
+    );
+}
+
 // ---------------------------------------------------------------------------
 // StreamSaver integration
 // ---------------------------------------------------------------------------
