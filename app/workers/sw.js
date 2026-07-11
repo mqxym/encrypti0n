@@ -213,12 +213,13 @@ self.addEventListener('install', (event) => {
 });
 
 
-let refreshStarted = false;
-
-self.addEventListener('fetch', () => {
-    if (refreshStarted) return;
-    refreshStarted = true;
-    void refreshCaches();
+self.addEventListener("activate", (event) => {
+    event.waitUntil(
+        (async () => {
+            await self.clients.claim();
+            void refreshCaches();
+        })()
+    );
 });
 
 /**
