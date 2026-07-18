@@ -492,9 +492,10 @@ self.addEventListener('fetch', (event) => {
  *   newer script bytes.
  *
  * @param {URL} url - Parsed request URL.
- * @returns {boolean} True when the request targets `sw.js`.
+ * @returns {boolean} True when the request targets `sw.js or sw-compiled`.
  */
-const isServiceWorkerScript = (url) => /(^|\/)sw\.js$/.test(url.pathname);
+const isServiceWorkerScript = (url) =>
+    /(^|\/)(sw|sw-compiled)\.js$/.test(url.pathname);
 
 /**
  * Network-first strategy used for navigations and HTML documents.
