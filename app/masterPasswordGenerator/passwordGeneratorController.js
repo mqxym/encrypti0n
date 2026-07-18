@@ -10,8 +10,9 @@ export class PasswordGeneratorController {
   /**
    * @param {PasswordGenerator} generator - Instance of PasswordGenerator to use for generation.
    */
-  constructor(generator) {
+  constructor(generator, calculateEntropy) {
     /** @private */ this.generator = generator;
+    /** @private */ this.entropy = calculateEntropy;
     this.bindUI();
   }
 
@@ -24,9 +25,9 @@ export class PasswordGeneratorController {
   bindUI() {
     $(document).ready(() => {
       $('#lengthSlider').ionRangeSlider({
-        min: 12,
-        max: 64,
-        from: 24,
+        min: 4,
+        max: 10,
+        from: 5,
         grid: true,
         extra_classes: 'irs-primary',
       });
@@ -59,20 +60,13 @@ export class PasswordGeneratorController {
    */
   handleGenerate() {
     const length = parseInt(document.getElementById('lengthSlider').value, 10);
-    const specialChars = document.getElementById('specialChars').value;
-    const password = this.generator.generate(length, specialChars);
+    const separators = document.getElementById('specialChars').value;
+    const options = {wordCount : length, separators: [...separators]}
+    const password = this.generator(options);
+    const entropy = this.entropy(options);
     document.getElementById('passwordOutput').value = password;
-    document.getElementById('lol').textContent = password;
-    this.showEntropy(password);
-  }
-
-  /**
-   * Displays the passwords entropy in bits
-   *
-   * @returns {void}
-   */
-  showEntropy(password) {
-    document.getElementById('pw-entropy').textContent = passwordEntropy(password);
+    document.getElementById('pw-entropy').textContent = Math.round(entropy.totalEntropy);
+    document.getElementById('pw-real-entropy').textContent = passwordEntropy(password);
   }
 
   /**

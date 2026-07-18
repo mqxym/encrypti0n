@@ -134,14 +134,6 @@
                                 <span class="menu-text">Sourcecode</span>
                             </a>
                         </li>
-
-                        <li class="menu-title">Coming soon</li>
-                        <li class="menu-item">
-                            <a href="./web-crypto-api-playground.html" class="spinner-link menu-link">
-                                <span class="menu-icon" aria-hidden="true"><i class="mdi mdi-gamepad-variant-outline"></i></span>
-                                <span class="menu-text">Crypto Playground</span>
-                            </a>
-                        </li>
                     </ul>
 
                     <div class="clearfix"></div>
@@ -212,77 +204,78 @@
 
                                 <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill bg-light text-dark mb-3">
                                     <span class="offline-status-dot" aria-hidden="true"></span>
-                                    <span class="fw-semibold">Offline mode is active</span>
+                                    <span class="fw-semibold">You're currently offline</span>
                                 </div>
 
-                                <h1 id="offline-title" class="display-5 mb-3">This page is not available offline</h1>
+                                <h1 id="offline-title" class="display-5 mb-3">
+                                    We couldn't open this page
+                                </h1>
 
                                 <p class="lead mb-4">
-                                    Encrypti0n.com could not load the page you requested because it has not been cached yet.
-                                    Your connection appears to be unavailable or unstable.
+                                    It looks like your internet connection is unavailable, and this page isn't available on your device yet.
+                                    Check your connection and try again, or return to the Encrypti0n app.
                                 </p>
 
                                 <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
                                     <button type="button" class="btn btn-primary btn-lg" onclick="window.location.reload()">
-                                        <i class="mdi mdi-refresh me-1" aria-hidden="true"></i>
+                                        <i class="mdi mdi-refresh me-1"></i>
                                         Try again
                                     </button>
 
                                     <a href="../index.html" class="btn btn-outline-primary btn-lg spinner-link">
-                                        <i class="mdi mdi-application-import me-1" aria-hidden="true"></i>
-                                        Open cached app
+                                        <i class="mdi mdi-home-outline me-1"></i>
+                                        Go to the app
                                     </a>
                                 </div>
                             </div>
                         </section>
 
                         <div class="row g-3 my-4">
-                            <div class="col-md-4">
-                                <div class="card offline-card shadow-sm">
+                            <div class="col-md-4 d-flex">
+                                <div class="card offline-card shadow-sm h-100 w-100">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center gap-3 mb-3">
                                             <span class="avatar-sm rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center">
                                                 <i class="mdi mdi-cloud-off-outline font-22" aria-hidden="true"></i>
                                             </span>
-                                            <h2 class="h4 mb-0">Why am I seeing this?</h2>
-                                        </div>
+                                            <h2 class="h4 mb-0">What happened?</h2>
+                                         </div>
                                         <p class="mb-0">
-                                            The PWA can only show pages and assets that were previously saved in the browser cache.
-                                            This requested page is currently missing from that cache.
+                                            This page isn't available without an internet connection because it hasn't been saved on your device yet.
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <div class="card offline-card shadow-sm">
+                            <div class="col-md-4 d-flex">
+                                <div class="card offline-card shadow-sm h-100 w-100">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center gap-3 mb-3">
                                             <span class="avatar-sm rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center">
                                                 <i class="mdi mdi-shield-lock-outline font-22" aria-hidden="true"></i>
                                             </span>
-                                            <h2 class="h4 mb-0">Your data is safe</h2>
+                                            <h2 class="h4 mb-0">Your information is safe</h2>
                                         </div>
                                         <p class="mb-0">
-                                            Encrypti0n.com processes data locally on your device. Going offline does not send,
-                                            sync, or expose your entered data to a server.
+                                            Encrypti0n.com works directly on your device. Going offline does not upload or share your information.
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <div class="card offline-card shadow-sm">
+                            <div class="col-md-4 d-flex">
+                                <div class="card offline-card shadow-sm h-100 w-100">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center gap-3 mb-3">
                                             <span class="avatar-sm rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center">
                                                 <i class="mdi mdi-cellphone-link font-22" aria-hidden="true"></i>
                                             </span>
-                                            <h2 class="h4 mb-0">What can I do?</h2>
+                                            <h2 class="h4 mb-0">What can you do?</h2>
                                         </div>
                                         <p class="mb-0">
-                                            Reconnect to the internet, refresh this page, or return to the cached app.
-                                            Once a page is visited online, it may become available offline later.
+                                            <strong>1.</strong> Check your internet connection.<br>
+                                            <strong>2.</strong> Tap <strong>Try again</strong>.<br>
+                                            <strong>3.</strong> Or go back to the app and use features that are already available offline.
                                         </p>
                                     </div>
                                 </div>
@@ -336,7 +329,7 @@
                                 <div class="d-flex footer-links flex-column flex-md-row gap-2 gap-md-4 justify-content-center justify-content-md-end">
                                     <a href="./about.html">About</a>
                                     <a href="./privacy-policy.html">Privacy Policy</a>
-                                    <a href="./download-app.html">Download Project</a>
+                                    <a href="./download-app.html">Download App</a>
                                     <a href="./contact.html">Contact</a>
                                 </div>
                             </div>

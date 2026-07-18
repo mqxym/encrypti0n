@@ -212,6 +212,62 @@ self.addEventListener('install', (event) => {
     );
 });
 
+
+self.addEventListener("activate", (event) => {
+    event.waitUntil(
+        (async () => {
+            await self.clients.claim();
+            void refreshCaches();
+        })()
+    );
+});
+
+/**
+ * Updates cached resources in the background.
+ *
+ * Existing cache entries are replaced only after a successful network fetch.
+ * Network failures are ignored so offline users keep their current cache.
+ */
+async function refreshCaches() {
+    const refreshList = [
+        {
+            cache: WASM_CACHE,
+            urls: ['/assets/libs/cryptit/argon2.wasm'],
+        },
+        {
+            cache: HTML_CACHE,
+            urls: CORE_HTML_URLS,
+        },
+        {
+            cache: SHELL_ASSETS_CACHE,
+            urls: ALWAYS_CACHE_ASSETS,
+        },
+    ];
+
+    await Promise.all(
+        refreshList.map(async ({ cache: cacheName, urls }) => {
+            const cache = await caches.open(cacheName);
+
+            await Promise.all(
+                urls.map(async (url) => {
+                    try {
+                        const response = await fetch(url, {
+                            cache: "reload",
+                        });
+
+                        if (response.ok) {
+                            await cache.put(url, response.clone());
+                        }
+                    } catch {
+                        // Offline or network error.
+                        // Keep the existing cached version.
+                    }
+                })
+            );
+        })
+    );
+}
+
 // ---------------------------------------------------------------------------
 // StreamSaver integration
 // ---------------------------------------------------------------------------
@@ -436,9 +492,10 @@ self.addEventListener('fetch', (event) => {
  *   newer script bytes.
  *
  * @param {URL} url - Parsed request URL.
- * @returns {boolean} True when the request targets `sw.js`.
+ * @returns {boolean} True when the request targets `sw.js or sw-compiled`.
  */
-const isServiceWorkerScript = (url) => /(^|\/)sw\.js$/.test(url.pathname);
+const isServiceWorkerScript = (url) =>
+    /(^|\/)(sw|sw-compiled)\.js$/.test(url.pathname);
 
 /**
  * Network-first strategy used for navigations and HTML documents.
