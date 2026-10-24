@@ -19,6 +19,10 @@ The main feature is encryption and decryption of text and files with standard cr
 
 Try it out here: [app.encryption.com](https://app.encrypti0n.com)
 
+Mirrors:
+
+- GitHub Pages [mqxym.github.io/encrypti0n](https://mqxym.github.io/encrypti0n/index.html)
+
 ### Supports Local and Offline Execution via Service Worker or Download
 
 Everything needed is included, with no external dependencies. Download the latest release on GitHub: [encrypti0n/releases](https://github.com/mqxym/encrypti0n/releases).
